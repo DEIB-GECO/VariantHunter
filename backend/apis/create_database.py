@@ -21,7 +21,7 @@ import argparse
 file_path = argv[1]
 location_db = argv[2]
 date_db = argv[3]
-print("file name: ", file_path)
+print("file name: ", file_path, location_db, date_db)
 
 api = Namespace('create_database', description='create_database')
 
@@ -738,7 +738,17 @@ def insert_in_database_tsv():
     mydb.viruclust_db_0.drop()
     mycol2 = mydb["viruclust_db_0"]
 
+    len_file = sum(1 for line in open(f"{real_file_path}", 'r'))
+    kk = 0
+    last_perc = 0
     for line in f:
+        kk = kk + 1
+        num_file_perc = (kk / len_file) * 100
+        int_num_file_perc = int(num_file_perc)
+        if (int_num_file_perc % 5) == 0 and int_num_file_perc != last_perc:
+            print("database --> ", int_num_file_perc, " % ")
+            last_perc = int_num_file_perc
+
         d = {}
         for t, f in zip(titles, line.split('\t')):
             d[t] = f.strip()
@@ -755,7 +765,7 @@ def insert_in_database_tsv():
             mydict2 = insert_single_line_tsv(d)
             mycol2.insert_one(mydict2)
     end = timeit.default_timer()
-    print("TIMER ", end - start)
+    print("DATABASE UPDATE ENDED (TIMER: ", end - start, ' )')
 
     resp = mycol2.create_index(
         [

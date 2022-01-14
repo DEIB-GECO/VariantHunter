@@ -135,8 +135,9 @@ export default {
       let nextAnalysisDate = new Date(analysisDate.getTime() + (days * 24 * 60 * 60 * 1000));
       let previousAnalysisDate = new Date(analysisDate.getTime() - (days * 24 * 60 * 60 * 1000));
       let todayDate = new Date();
+      let todayDateAfter4Week = new Date(todayDate.getTime() + (days * 24 * 60 * 60 * 1000));
       let startDate = new Date('2019-12-01');
-      this.checkNextDate = nextAnalysisDate > todayDate;
+      this.checkNextDate = nextAnalysisDate > todayDateAfter4Week;
       this.checkPreviousDate = previousAnalysisDate < startDate;
     },
     analyzePeriod(period){
@@ -233,7 +234,7 @@ export default {
       let result_sorted = this.unionOfAllData();
       let headers = this.calculateHeaders();
       let text = this.json2csv(result_sorted, headers);
-      let filename = 'mutsDiffusionTable.csv';
+      let filename = 'mutsDiffusionTable_' + this.singleInfo['location'] + '_' + this.minDate + '_' + this.maxDate + '.csv';
       let element = document.createElement('a');
       element.setAttribute('download', filename);
       var data = new Blob([text]);
@@ -256,6 +257,9 @@ export default {
             return fields2.map(function (fieldName) {
                 let string_val;
                 string_val = String(row[fieldName]);
+                if(string_val === 'NaN'){
+                  string_val = '0';
+                }
                 string_val = string_val.replaceAll("\n", " ");
                 return JSON.stringify(string_val);
             }).join(',')
@@ -265,6 +269,8 @@ export default {
     },
     unionOfAllData(){
         let jsonResults = {};
+
+        let totalRes = {'mut': 'Total', 'location': 'Total', 'protein': 'Total'};
 
         Object.keys(this.listOfPeriods).forEach(key => {
           for (let i = 0; i < this.listOfPeriods[key].length; i++){
@@ -276,6 +282,16 @@ export default {
               let key1 = 'count_with_mut_this_week_' + analysis_date;
               let key2 = 'count_without_mut_this_week_' + analysis_date;
               let percentage = this.listOfPeriods[key][i][key1] / (this.listOfPeriods[key][i][key1] + this.listOfPeriods[key][i][key2]);
+
+              // eslint-disable-next-line no-prototype-builtins
+              if (totalRes.hasOwnProperty(analysis_date)) {
+                if(totalRes[analysis_date] < (this.listOfPeriods[key][i][key1] + this.listOfPeriods[key][i][key2])){
+                  totalRes[analysis_date] = (this.listOfPeriods[key][i][key1] + this.listOfPeriods[key][i][key2]);
+                }
+              }
+              else{
+                totalRes[analysis_date] = (this.listOfPeriods[key][i][key1] + this.listOfPeriods[key][i][key2]);
+              }
 
               let jsonKey = location + '_' + protein + '_' + mut
 
@@ -300,6 +316,8 @@ export default {
         Object.keys(jsonResults).forEach(key => {
           arrayResults.push(jsonResults[key]);
         });
+
+        arrayResults.push(totalRes);
 
         return arrayResults;
     },

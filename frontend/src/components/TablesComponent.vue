@@ -47,7 +47,16 @@
        </v-layout>
     </v-flex>
 
-    <v-flex class="no-horizontal-padding xs12 md8 lg8 d-flex" style="justify-content: center;">
+    <v-flex class="no-horizontal-padding xs12 md4 lg4 d-flex" style="justify-content: center;">
+      <v-switch
+        v-model="switch_show_perc"
+      >
+        <template v-slot:label>
+          <span style="color: white">Show Percentage</span>
+       </template>
+      </v-switch>
+    </v-flex>
+    <v-flex class="no-horizontal-padding xs12 md4 lg4 d-flex" style="justify-content: center;">
     </v-flex>
     <v-flex class="no-horizontal-padding xs12 md4 lg4 d-flex" style="justify-content: center;">
       <v-btn @click="dialogTableHeaders = true" color="primary">
@@ -92,7 +101,7 @@
                             </span>
                             <span v-else-if="header.value !== 'location' && header.value !== 'lineage'
                             && header.value !== 'protein' && header.value !== 'mut' && item[header.value] !== null
-                            && item[header.value] !== undefined"
+                            && item[header.value] !== undefined && !header.value.includes('perc')"
                                   style="white-space: pre-line">{{Number.parseFloat(item[header.value]).toPrecision(2)}}
                             </span>
                             <span v-else style="white-space: pre-line"> {{item[header.value]}}</span>
@@ -233,6 +242,7 @@ export default {
       filteredResults: [],
       showCharts: false,
       maxNumberOfImportantMuts: 20,
+      switch_show_perc: false,
 
       selectedRows: [],
 
@@ -267,7 +277,11 @@ export default {
     downloadTable(){
       let result_sorted = this.customSort(this.filteredResults, this.sortByTable, this.sortDescTable);
       let text = this.json2csv(result_sorted, this.headerTable);
-      let filename = 'mutationTable.csv';
+      let filename = "LinSpec_" + this.singleInfo['location'] + '_';
+      if(this.singleInfo['lineage'] !== null && this.singleInfo['lineage'] !== undefined){
+        filename += this.singleInfo['lineage'] + '_';
+      }
+      filename += this.singleInfo['date'] + '_' + this.singleInfo['weekNum'] + 'week.csv'
       let element = document.createElement('a');
       element.setAttribute('download', filename);
       var data = new Blob([text]);
@@ -305,7 +319,7 @@ export default {
           let desc = isDesc[i];
           if(idx !== null && idx !== undefined) {
             items.sort((a, b) => {
-              if (!idx.includes('p_value') && !idx.includes('polyfit') && !idx.includes('perc')) {
+              if (!idx.includes('p_value') && !idx.includes('polyfit')) {
                 if (idx === 'mut') {
                   if (desc) {
                     let pos_a = a['muts'][0]['loc'];
@@ -321,6 +335,57 @@ export default {
                     let pos_b = b['muts'][0]['loc'];
                     if (pos_a !== pos_b || i >= len) {
                       return pos_b > pos_a ? -1 : 1;
+                    }
+                    else{
+                      return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+                    }
+                  }
+                }
+                else if(idx.includes('perc')){
+                  let date = idx.replace('perc_with_absolute_number','');
+                  let realKey = 'perc_with_mut_this_week' + date;
+                  if (desc) {
+                    if(a[idx] === null || a[idx] === undefined){
+                      if (b[idx] !== a[idx] || i >= len) {
+                        return 1;
+                      }
+                      else{
+                        return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+                      }
+                    }
+                    if(b[idx] === null || b[idx] === undefined){
+                      if (b[idx] !== a[idx] || i >= len) {
+                        return -1;
+                      }
+                      else{
+                        return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+                      }
+                    }
+                    if (b[realKey] !== a[realKey] || i >= len) {
+                      return Number(b[realKey]) < Number(a[realKey]) ? -1 : 1;
+                    }
+                    else{
+                      return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+                    }
+                  } else {
+                    if(a[idx] === null || a[idx] === undefined){
+                      if (b[idx] !== a[idx] || i >= len) {
+                        return 1;
+                      }
+                      else{
+                        return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+                      }
+                    }
+                    if(b[idx] === null || b[idx] === undefined){
+                      if (b[idx] !== a[idx] || i >= len) {
+                        return -1;
+                      }
+                      else{
+                        return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+                      }
+                    }
+                    if (b[realKey] !== a[realKey] || i >= len) {
+                      return Number(b[realKey]) > Number(a[realKey]) ? -1 : 1;
                     }
                     else{
                       return this.singleCustomSort(a, b, i+1, len, index, isDesc);
@@ -402,7 +467,7 @@ export default {
     singleCustomSort(a, b, i, len, index, isDesc) {
       let idx = index[i];
       let desc = isDesc[i];
-      if (!idx.includes('p_value') && idx.includes('polyfit') && idx.includes('perc')) {
+      if (!idx.includes('p_value') && !idx.includes('polyfit')) {
         if (idx === 'mut') {
           if (desc) {
             let pos_a = a['muts'][0]['loc'];
@@ -418,6 +483,57 @@ export default {
             let pos_b = b['muts'][0]['loc'];
             if (pos_a !== pos_b || i >= len) {
               return pos_b > pos_a ? -1 : 1;
+            }
+            else{
+              return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+            }
+          }
+        }
+        else if(idx.includes('perc')){
+          let date = idx.replace('perc_with_absolute_number','');
+          let realKey = 'perc_with_mut_this_week' + date;
+          if (desc) {
+            if(a[idx] === null || a[idx] === undefined){
+              if (b[idx] !== a[idx] || i >= len) {
+                return 1;
+              }
+              else{
+                return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+              }
+            }
+            if(b[idx] === null || b[idx] === undefined){
+              if (b[idx] !== a[idx] || i >= len) {
+                return -1;
+              }
+              else{
+                return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+              }
+            }
+            if (b[realKey] !== a[realKey] || i >= len) {
+              return Number(b[realKey]) < Number(a[realKey]) ? -1 : 1;
+            }
+            else{
+              return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+            }
+          } else {
+            if(a[idx] === null || a[idx] === undefined){
+              if (b[idx] !== a[idx] || i >= len) {
+                return 1;
+              }
+              else{
+                return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+              }
+            }
+            if(b[idx] === null || b[idx] === undefined){
+              if (b[idx] !== a[idx] || i >= len) {
+                return -1;
+              }
+              else{
+                return this.singleCustomSort(a, b, i+1, len, index, isDesc);
+              }
+            }
+            if (b[realKey] !== a[realKey] || i >= len) {
+              return Number(b[realKey]) > Number(a[realKey]) ? -1 : 1;
             }
             else{
               return this.singleCustomSort(a, b, i+1, len, index, isDesc);
@@ -649,6 +765,31 @@ export default {
 
       predefined_headers = predefined_headers.concat(additional_headers);
 
+      let array_to_add = []
+      if(this.switch_show_perc){
+        let array_added_headers = ['perc_with_absolute_number'];
+        max = this.singleInfo['weekNum'];
+        analysis_date = this.singleInfo['date'];
+        for(let j=0; j<max; j=j+1){
+          let this_date = new Date(analysis_date);
+          for(let i = 0; i < array_added_headers.length; i++){
+            let value = array_added_headers[i] + '_' + analysis_date;
+            let text = array_added_headers[i] + '_' + analysis_date + '\n';
+            text = text.replaceAll('_', ' ');
+            text = text.charAt(0).toUpperCase() + text.slice(1);
+            if(array_added_headers[i] === 'perc_with_absolute_number'){
+              text = 'Presence (%) ' + analysis_date + '\n';
+            }
+            let single_header = {text: text, value: value, sortable: true, show: true, align: 'center', width: '15vh'};
+            array_to_add.unshift(single_header);
+          }
+          let days = 7 ;
+          let previous_date = new Date(this_date.getTime() - (days * 24 * 60 * 60 * 1000));
+          analysis_date = previous_date.toISOString().split('T')[0]
+        }
+        predefined_headers = predefined_headers.concat(array_to_add);
+      }
+
       this.headerTable = predefined_headers;
       this.headerTableSubPlaces = predefined_headers;
 
@@ -726,6 +867,11 @@ export default {
     }
   },
   watch: {
+    switch_show_perc(){
+      if(this.filteredResults.length > 0) {
+        this.loadTables();
+      }
+    },
     switch_alert(){
       this.doFilterOnResults();
     },

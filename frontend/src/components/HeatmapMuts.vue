@@ -31,9 +31,15 @@ export default {
 
       heatmap: {
         tooltip: {
-          position: 'top',
-          trigger: 'item',
-          show: false,
+            trigger: 'item',
+            formatter: function (params) {
+
+              let form = `<span><b>percentage:</b> ${Number(params.data[2]).toPrecision(3)}</span> <br />
+                        <span><b># sequences with mut:</b> ${params.data[3]}</span><br />
+                        <span><b># sequences total:</b> ${params.data[4]}</span><br />`
+
+              return `${form}`;
+            },
         },
         grid: {
           top: 100,
@@ -427,21 +433,33 @@ export default {
         this.y_axis.push(name);
         for(let k=0; k<this.x_axis.length; k++){
           let key;
+          let key_with_mut;
+          let key_without_mut;
           if(this.withLineages) {
             key = 'p_value_comparative_mut_' + this.x_axis[k];
+            key_with_mut = 'count_with_mut_this_week_' + this.x_axis[k];
+            key_without_mut = 'count_without_mut_this_week_' + this.x_axis[k];
           }
           else{
             key = 'perc_with_mut_this_week_' + this.x_axis[k];
+            key_with_mut = 'count_with_mut_this_week_' + this.x_axis[k];
+            key_without_mut = 'count_without_mut_this_week_' + this.x_axis[k];
           }
           let value;
+          let numerator;
+          let denominator;
           // eslint-disable-next-line no-prototype-builtins
           if(met[j].hasOwnProperty(key)) {
             value = met[j][key];
+            numerator = met[j][key_with_mut];
+            denominator = (met[j][key_with_mut] + met[j][key_without_mut]);
           }
           else{
             value = '-';
+            numerator = '-';
+            denominator = '-';
           }
-          let single_cell = [k, j, value];
+          let single_cell = [k, j, value, numerator, denominator, value];
           this.data_inside_heatmap.push(single_cell);
         }
       }

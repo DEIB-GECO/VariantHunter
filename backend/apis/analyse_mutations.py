@@ -375,11 +375,16 @@ def get_all_mutation_for_lineage_for_each_geo_previous_week(date, granularity, r
 
         all_mutations_dict = get_all_mutation_not_characteristics(date, granularity, real_location, lineage)
         mut_dict = all_mutations_dict
+        mut_len = len(mut_dict)
+        kk = 0
         for mut in mut_dict:
-            #FILTER SPIKE
+            kk = kk + 1
+            num_mut_perc = (kk / mut_len) * 100
+            # FILTER SPIKE
             if '*' not in mut and '_-' not in mut:  # and 'Spike' in mut:
 
-                print("mut analysis ---> ", date, real_location, lineage, mut)
+                print("", real_location, "-", lineage, "-", date, "-", mut, " --> ", num_mut_perc, " % ")
+                # print("mut analysis ---> ", date, real_location, lineage, mut)
 
                 m = PATTERN.fullmatch(mut)
                 if m:
@@ -461,14 +466,14 @@ def get_all_mutation_for_lineage_for_each_geo_previous_week(date, granularity, r
                     results_without_mut_this_week = collection_db.count_documents(query_without_mut_this_week)
                     results_without_mut_prev_week = collection_db.count_documents(query_without_mut_prev_week)
 
-                    if denominator_prev_week_with_mut != 0:
+                    if (results_with_mut_prev_week + results_without_mut_prev_week) != 0:
                         perc_with_mut_prev_week = (
                                                           results_with_mut_prev_week /
                                                           (results_with_mut_prev_week + results_without_mut_prev_week)) \
                                                   * 100
                     else:
                         perc_with_mut_prev_week = 0
-                    if denominator_this_week_with_mut != 0:
+                    if (results_with_mut_this_week + results_without_mut_this_week) != 0:
                         perc_with_mut_this_week = (
                                                           results_with_mut_this_week /
                                                           (results_with_mut_this_week + results_without_mut_this_week)) \
@@ -477,14 +482,16 @@ def get_all_mutation_for_lineage_for_each_geo_previous_week(date, granularity, r
                         perc_with_mut_this_week = 0
                     diff_perc_with_mut = perc_with_mut_this_week - perc_with_mut_prev_week
 
-                    if denominator_prev_week_without_mut != 0:
+                    if (results_with_mut_prev_week + results_without_mut_prev_week) != 0:
                         perc_without_mut_prev_week = \
-                            (results_without_mut_prev_week / denominator_prev_week_without_mut) * 100
+                            (results_without_mut_prev_week /
+                             (results_with_mut_prev_week + results_without_mut_prev_week)) * 100
                     else:
                         perc_without_mut_prev_week = 0
-                    if denominator_this_week_without_mut != 0:
+                    if (results_with_mut_this_week + results_without_mut_this_week) != 0:
                         perc_without_mut_this_week = \
-                            (results_without_mut_this_week / denominator_this_week_without_mut) * 100
+                            (results_without_mut_this_week /
+                             (results_with_mut_this_week + results_without_mut_this_week)) * 100
                     else:
                         perc_without_mut_this_week = 0
                     diff_perc_without_mut = perc_without_mut_this_week - perc_without_mut_prev_week
@@ -506,6 +513,10 @@ def get_all_mutation_for_lineage_for_each_geo_previous_week(date, granularity, r
                         [results_with_mut_prev_week, results_with_mut_this_week],
                         [results_without_mut_prev_week, results_without_mut_this_week]]
                     odds_comparative_mut, p_comparative_mut = fisher_exact(table_comparative_mutation)
+
+                    to_float = perc_with_mut_this_week
+                    format_float = "{:.2f}".format(to_float)
+                    perc_with_absolute_number = format_float + f'  ({results_with_mut_this_week})'
 
                     full_object = {f'{granularity}': location,
                                    'lineage': lineage,
@@ -530,7 +541,8 @@ def get_all_mutation_for_lineage_for_each_geo_previous_week(date, granularity, r
                                    'p_value_comparative_mut': p_comparative_mut,
                                    'analysis_date': date.strftime("%Y-%m-%d"),
                                    'granularity': granularity,
-                                   'location': location
+                                   'location': location,
+                                   'perc_with_absolute_number': perc_with_absolute_number,
                                    }
 
                     array_results.append(full_object)
@@ -577,7 +589,8 @@ def create_unique_array_results(array_results, today_date, array_date):
                         key == 'perc_with_mut_this_week' or \
                         key == 'perc_with_mut_prev_week' or \
                         key == 'count_with_mut_this_week' or \
-                        key == 'count_with_mut_prev_week':
+                        key == 'count_with_mut_prev_week' or \
+                        key == 'perc_with_absolute_number':
                     new_key = key + '_' + analysis_date
                     single_obj[new_key] = single_res[key]
                 elif key == 'total_seq_pop_this_week_with_mut':
@@ -628,7 +641,8 @@ def create_unique_array_results(array_results, today_date, array_date):
                         key == 'perc_with_mut_this_week' or \
                         key == 'perc_with_mut_prev_week' or \
                         key == 'count_with_mut_this_week' or \
-                        key == 'count_with_mut_prev_week':
+                        key == 'count_with_mut_prev_week' or \
+                        key == 'perc_with_absolute_number':
                     new_key = key + '_' + analysis_date
                     result_dict[id_single_obj][new_key] = single_res[key]
                 elif key == 'total_seq_pop_this_week_with_mut':
@@ -816,7 +830,7 @@ def create_unique_array_results(array_results, today_date, array_date):
             array_x_polyfit.append(float(j))
             j = j + 1
 
-        print("qui", array_x_polyfit, array_y_polyfit)
+        # print("qui", array_x_polyfit, array_y_polyfit)
         if len(array_x_polyfit) > 1:
             z = np.polyfit(array_x_polyfit, array_y_polyfit, 1)
             json_obj['polyfit_slope'] = z[0]

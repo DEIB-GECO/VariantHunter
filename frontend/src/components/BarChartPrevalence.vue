@@ -495,15 +495,15 @@ export default {
         for(let k=0; k<arrX.length; k++){
           let key1 = 'count_with_mut_this_week_' + arrX[k];
           let key2 = 'count_without_mut_this_week_' + arrX[k];
-          let total_seq = objNumSeqDate[arrX[k]];
+          // let total_seq = objNumSeqDate[arrX[k]];
           // eslint-disable-next-line no-prototype-builtins
           if(met[j].hasOwnProperty(key1)){
             let value = (met[j][key1] / (met[j][key1] + met[j][key2])) * 100;
-            let obj = {value: value, name: arrX[k], total: total_seq}
+            let obj = {value: value, name: arrX[k], total: met[j][key1]}
             singleArrY.push(obj);
           }
           else{
-            let obj = {value: 0, name: arrX[k], total: total_seq}
+            let obj = {value: 0, name: arrX[k], total: 0}
             singleArrY.push(obj);
           }
         }

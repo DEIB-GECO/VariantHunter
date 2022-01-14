@@ -144,9 +144,9 @@
           </v-card-title>
 
           <v-card-text class="text-xs-center" style="padding: 20px">
-            <li><b>P value with mut: </b>  shows if the population «lineage + mutation» is growing differently compared to everything. </li><br>
-            <li><b>P value without mut: </b>  shows if the population «lineage without mutation» is growing differently compared to everything. </li><br>
-            <li><b>P value comparative: </b>  shows if the population «lineage + mutation» is growing differently compared to the population «lineage without mutation». </li><br>
+            <li><b>P value with mut: </b>  shows if the population «with mutation» is growing differently compared to everything. </li><br>
+            <li><b>P value without mut: </b>  shows if the population «without mutation» is growing differently compared to everything. </li><br>
+            <li><b>P value comparative: </b>  shows if the population «with mutation» is growing differently compared to the population «without mutation». </li><br>
             <li><b>Slope: </b> is calculated through a linear interpolation of the diffusion (percentage).  (y=<b>m</b>x + q)</li><br>
             <li><b>Y-intercept: </b> is calculated through a linear interpolation of the diffusion (percentage).  (y=mx + <b>q</b>)</li><br>
           </v-card-text>
@@ -291,7 +291,7 @@ export default {
     downloadTable(){
       let result_sorted = this.customSort(this.filteredResults, this.sortByTable, this.sortDescTable);
       let text = this.json2csv(result_sorted, this.headerTable);
-      let filename = 'mutationTable.csv';
+      let filename = "LinIndep_" + this.singleInfo['location'] + '_' + this.singleInfo['date'] + '_' + this.singleInfo['weekNum'] + 'week.csv'
       let element = document.createElement('a');
       element.setAttribute('download', filename);
       var data = new Blob([text]);
@@ -477,7 +477,7 @@ export default {
     singleCustomSort(a, b, i, len, index, isDesc) {
       let idx = index[i];
       let desc = isDesc[i];
-      if (!idx.includes('p_value') && idx.includes('polyfit')) {
+      if (!idx.includes('p_value') && !idx.includes('polyfit')) {
         if (idx === 'mut') {
           if (desc) {
             let pos_a = a['muts'][0]['loc'];

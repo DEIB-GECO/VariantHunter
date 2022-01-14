@@ -148,11 +148,16 @@ def get_all_mutation_for_each_geo_previous_week(date, granularity, real_location
 
     all_mutations_dict = get_all_mutation_not_characteristics(date, granularity, real_location)
     mut_dict = all_mutations_dict
+    mut_len = len(mut_dict)
+    kk = 0
     for mut in mut_dict:
+        kk = kk + 1
+        num_mut_perc = (kk / mut_len) * 100
         # FILTER ON SPIKE
         if '*' not in mut and '_-' not in mut:  # and 'Spike' in mut:
 
-            print("mut analysis ---> ", date, real_location, mut)
+            print("", real_location, "-", date, "-", mut, " --> ", num_mut_perc, " % ")
+            # print("mut analysis ---> ", date, real_location, mut)
 
             m = PATTERN.fullmatch(mut)
             if m:
@@ -231,14 +236,14 @@ def get_all_mutation_for_each_geo_previous_week(date, granularity, real_location
                 results_without_mut_this_week = collection_db.count_documents(query_without_mut_this_week)
                 results_without_mut_prev_week = collection_db.count_documents(query_without_mut_prev_week)
 
-                if denominator_prev_week_with_mut != 0:
+                if (results_with_mut_prev_week + results_without_mut_prev_week) != 0:
                     perc_with_mut_prev_week = (
                                                       results_with_mut_prev_week /
                                                       (results_with_mut_prev_week + results_without_mut_prev_week)) \
                                               * 100
                 else:
                     perc_with_mut_prev_week = 0
-                if denominator_this_week_with_mut != 0:
+                if (results_with_mut_this_week + results_without_mut_this_week) != 0:
                     perc_with_mut_this_week = (
                                                       results_with_mut_this_week /
                                                       (results_with_mut_this_week + results_without_mut_this_week)) \
@@ -595,7 +600,7 @@ def create_unique_array_results(array_results, today_date, array_date, function)
                 array_x_polyfit.append(float(j))
                 j = j + 1
 
-            print("qui", array_x_polyfit, array_y_polyfit)
+            # print("qui", array_x_polyfit, array_y_polyfit)
             if len(array_x_polyfit) > 1:
                 z = np.polyfit(array_x_polyfit, array_y_polyfit, 1)
                 json_obj['polyfit_slope'] = z[0]
@@ -686,8 +691,12 @@ class FieldList(Resource):
             print("DATE ", single_date)
             analysis_date = datetime.strptime(single_date, '%Y-%m-%d')
             last_week_date = analysis_date.replace(day=analysis_date.day) - timedelta(days=7)
+            mut_len = len(list_of_muts)
+            kk = 0
             for mut in list_of_muts:
-                print("mut analysis ---> ", single_date, location, mut)
+                kk = kk + 1
+                num_mut_perc = (kk / mut_len) * 100
+                print("", location, "-", single_date, "-", mut, " --> ", num_mut_perc, " % ")
 
                 m = PATTERN.fullmatch(mut)
                 if m:
