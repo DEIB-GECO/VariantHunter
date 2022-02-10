@@ -1,7 +1,7 @@
 <template>
   <v-container fluid grid-list-xl style="justify-content: center; padding: 0;">
     <v-tabs v-model="selectedTabAnalyze"
-              background-color="#c1121f"
+              :background-color="menu_color"
               dark
               show-arrows
               :slider-color="toolbar_color"

@@ -162,7 +162,7 @@ export default {
   name: 'App',
 
   components: {
-    MenuPage,
+    MenuPage
   },
 
   data() {

@@ -106,18 +106,6 @@
                        </v-flex>
                        <v-flex class="no-horizontal-padding xs12 md4 d-flex" style="justify-content: center;">
                          <v-layout row wrap justify-center>
-                          <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <span style="color: white"># Week:</span>
-                          </v-flex>
-                          <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <v-select
-                              v-model="selectedWeekNum"
-                              :items="possibleWeekNum"
-                              label="# Week"
-                              solo
-                              hide-details
-                            ></v-select>
-                          </v-flex>
                          </v-layout>
                        </v-flex>
                        <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
@@ -200,8 +188,6 @@ export default {
       selectedSpecificGeo: null,
       possibleSpecificGeo: [],
       selectedDate: null,
-      selectedWeekNum: 4,
-      possibleWeekNum: [2,3,4],
 
       expansionPanels: [],
       expansionPanelsSingleInfo: [],
@@ -233,7 +219,6 @@ export default {
       this.overlay = true;
       let countNumAnalysis = this.rowsTable.length;
       let url = `/analyse_mutations_without_lineages/getStatistics`;
-      // let url = `/automatic_analysis/getStatistics`;
       let to_send = {
         'granularity': this.selectedGeo,
         'value': this.selectedSpecificGeo,
@@ -245,7 +230,6 @@ export default {
           return res.data;
         })
         .then((res) => {
-          let that = this;
 
           this.expansionPanelsSingleInfo[countNumAnalysis] = {
             'weekNum': this.selectedWeekNum,
@@ -254,13 +238,7 @@ export default {
             'location': this.selectedSpecificGeo,
           };
 
-          this.rowsTable[countNumAnalysis] = JSON.parse(JSON.stringify(res)).filter(function (el) {
-            let granularity = that.selectedGeo;
-            if (that.selectedGeo === 'continent'){
-              granularity = 'geo_group';
-            }
-            return el['granularity'] ===  granularity
-          });
+          this.rowsTable[countNumAnalysis] = JSON.parse(JSON.stringify(res));
 
           this.selectedWeekNum = 4;
           this.selectedDate = new Date().toISOString().slice(0, 10);

@@ -23,27 +23,7 @@
 
     <v-flex class="no-horizontal-padding xs12 md12 lg12 d-flex" style="justify-content: center;">
        <v-layout row wrap justify-center style="padding-top: 30px;">
-         <v-flex class="no-horizontal-padding xs6 md4 lg2 d-flex" style="justify-content: center;">
-          <v-switch
-            v-model="switch_alert"
-            label="Only Important Mutation"
-          >
-            <template v-slot:label>
-              <span style="color: white">Only Important Mutation</span>
-           </template>
-          </v-switch>
-         </v-flex>
-         <v-flex class="no-horizontal-padding xs6 md2 lg1 d-flex" style="justify-content: center;">
-          <v-text-field
-            v-model="maxNumberOfImportantMuts"
-            label="Protein"
-            solo
-            min="0"
-            hide-details
-            type="number"
-            style="width: 10%"
-          ></v-text-field>
-         </v-flex>
+
        </v-layout>
     </v-flex>
 
@@ -89,28 +69,6 @@
                 :sort-desc.sync="sortDescTable"
                 :custom-sort="customSort"
           >
-<!--              <template v-slot:item ="{ item }">-->
-<!--                <tr>-->
-<!--                  <td style="white-space:pre-wrap; word-wrap:break-word; text-align: center" v-for="header in headerTableSubPlaces"-->
-<!--                          :key="header.value" v-show="header.show">-->
-<!--                           <span v-if="header.value === 'info'">-->
-<!--                                <v-btn-->
-<!--                                  class="info-button"-->
-<!--                                  x-small-->
-<!--                                  text icon color="blue"-->
-<!--                                   @click.stop="handleClickRow(item)">-->
-<!--                                  <v-icon class="info-icon">mdi-information</v-icon>-->
-<!--                                </v-btn>-->
-<!--                            </span>-->
-<!--                            <span v-else-if="header.value !== 'location' && header.value !== 'lineage'-->
-<!--                            && header.value !== 'protein' && header.value !== 'mut' && item[header.value] !== null-->
-<!--                            && item[header.value] !== undefined"-->
-<!--                                  style="white-space: pre-line">{{Number.parseFloat(item[header.value]).toPrecision(2)}}-->
-<!--                            </span>-->
-<!--                            <span v-else style="white-space: pre-line"> {{item[header.value]}}</span>-->
-<!--                      </td>-->
-<!--                </tr>-->
-<!--              </template>-->
           </v-data-table>
     </v-flex>
 
@@ -211,22 +169,16 @@
       </HeatmapMuts>
     </v-flex>
 
-    <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center" v-if="showCharts">
+    <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center">
         <h2 style="color: white; margin-top: 80px;">
           DIFFUSION BAR CHART
         </h2>
     </v-flex>
 
-    <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;" v-if="showCharts">
-      <BarChartPrevalence
-        :time-name="timeName"
-        :time-distribution="filteredResults"
-        :singleInfo = "singleInfo"
-        :sortColumn="sortByTable"
-        :descColumn="sortDescTable"
-        :withLineages="withLineages"
-        style="padding: 0; width: 100%; margin-top: 50px;">
-      </BarChartPrevalence>
+    <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
+      <NewBarChart style="justify-content: center;"
+          :tableForLinePlot="tableForLinePlot"
+      ></NewBarChart>
     </v-flex>
 
   </v-layout>
@@ -235,12 +187,12 @@
 <script>
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import HeatmapMuts from "@/components/HeatmapMuts";
-import BarChartPrevalence from "@/components/BarChartPrevalence";
 import DialogAnalyseSelectedMuts from "@/components/DialogAnalyseSelectedMuts";
+import NewBarChart from "./NewBarChart";
 
 export default {
   name: "TablesComponentWithoutLineages",
-  components: {DialogAnalyseSelectedMuts, BarChartPrevalence, HeatmapMuts},
+  components: {DialogAnalyseSelectedMuts, HeatmapMuts, NewBarChart},
   props: {
     rowsTable: {required: true,},
     singleInfo: {required: true},
@@ -250,14 +202,13 @@ export default {
   },
   data() {
     return {
-      switch_alert: true,
+      switch_alert: false,
       switch_show_p_values: false,
       filteredResults: [],
-      showCharts: false,
-      maxNumberOfImportantMuts: 20,
-
+      showCharts: true,
       maxNumberSelectedMuts: 20,
 
+      tableForLinePlot : [],
       selectedRows: [],
 
       headerTable: [],
@@ -692,93 +643,28 @@ export default {
         ]
       }
       else{
+
         predefined_headers = [
           // {text: 'Info', value: 'info', sortable: false, show: true, align: 'center', width: '3vh'},
           {text: 'Location', value: 'location', sortable: true, show: true, align: 'center', width: '13vh'},
           {text: 'Protein', value: 'protein', sortable: true, show: true, align: 'center', width: '13vh'},
           {text: 'Mut', value: 'mut', sortable: true, show: true, align: 'center', width: '13vh'},
           {text: 'Slope', value: 'polyfit_slope', sortable: true, show: true, align: 'center', width: '13vh'},
-          {text: 'Y-intercept', value: 'polyfit_intercept', sortable: true, show: true, align: 'center', width: '13vh'},
+          {text: '28-22 days before', value: 'w1', sortable: true, show: true, align: 'center', width: '13vh' },
+          {text: '21-15 days before', value: 'w2', sortable: true, show: true, align: 'center', width: '13vh' },
+          {text: '14-8 days before', value: 'w3', sortable: true, show: true, align: 'center', width: '13vh' },
+          {text: '7-0 days before', value: 'w4', sortable: true, show: true, align: 'center', width: '13vh' }
         ]
       }
 
-      let additional_headers = [];
       // let array_possible_header = ['diff_perc', 'perc_this_week', 'perc_prev_week', 'count_this_week',
       //   'count_prev_week']
       let array_possible_header = [];
-      if(this.switch_show_p_values) {
-        array_possible_header = [
-          // 'p_value_comparative_mut',
-          // 'p_value_with_mut',
-          // 'p_value_without_mut',
-          // 'diff_perc_without_mut',
-          //1'perc_without_mut_this_week',
-          //1'perc_without_mut_prev_week',
-          //1'count_without_mut_this_week',
-          //1'count_without_mut_prev_week',
-
-          //'diff_perc',
-          // 'diff_perc_with_mut',
-          //1'perc_with_mut_this_week',
-          //1'perc_with_mut_prev_week',
-          //1'count_with_mut_this_week',
-          //1'count_with_mut_prev_week',
-          //1'total_seq_lineage_this_week',
-          //1'total_seq_lineage_prev_week',
-          //1'total_seq_pop_this_week',
-          //1'total_seq_pop_prev_week'
-        ]
-      }
 
       if(!this.withLineages){
         // array_possible_header.unshift('perc_with_mut_this_week');
         array_possible_header.unshift('perc_with_absolute_number');
       }
-
-      let analysis_date = this.singleInfo['date'];
-      for(let i = 0; i < array_possible_header.length; i++){
-        let value = array_possible_header[i] + '_' + analysis_date;
-        let text = array_possible_header[i] + '_' + analysis_date + '\n';
-        // let text = i.toString();
-        text = text.replaceAll('_', ' ');
-        text = text.charAt(0).toUpperCase() + text.slice(1);
-        //if(array_possible_header[i] === 'perc_with_mut_this_week'){
-        if(array_possible_header[i] === 'perc_with_absolute_number'){
-          text = 'Presence (%) ' + analysis_date + '\n';
-        }
-        let single_header = {text: text, value: value, sortable: true, show: true, align: 'center', width: '10vh'};
-        additional_headers.unshift(single_header);
-      }
-
-      let max = this.singleInfo['weekNum'] - 1;
-
-      for(let j=0; j<max; j=j+1){
-        let this_date = new Date(analysis_date);
-        let days = 7 ;
-        // if(j === 0) {
-        //   days = 7;
-        // }
-        // else{
-        //   days = 6;
-        // }
-        let previous_date = new Date(this_date.getTime() - (days * 24 * 60 * 60 * 1000));
-        analysis_date = previous_date.toISOString().split('T')[0]
-        for(let i = 0; i < array_possible_header.length; i++){
-          let value = array_possible_header[i] + '_' + analysis_date;
-          let text = array_possible_header[i] + '_' + analysis_date + '\n';
-          // let text = i.toString();
-          text = text.replaceAll('_', ' ');
-          text = text.charAt(0).toUpperCase() + text.slice(1);
-          //if(array_possible_header[i] === 'perc_with_mut_this_week'){
-          if(array_possible_header[i] === 'perc_with_absolute_number'){
-            text = 'Presence (%) ' + analysis_date + '\n';
-          }
-          let single_header = {text: text, value: value, sortable: true, show: true, align: 'center', width: '10vh'};
-          additional_headers.unshift(single_header);
-        }
-      }
-
-      predefined_headers = predefined_headers.concat(additional_headers);
 
       if(this.switch_show_p_values){
         let total_p_value_headers = [
@@ -788,10 +674,8 @@ export default {
         ]
         predefined_headers = predefined_headers.concat(total_p_value_headers);
       }
-
       this.headerTable = predefined_headers;
       this.headerTableSubPlaces = predefined_headers;
-
       // let i = 0;
       this.filteredResults.forEach(elem => {
         if(this.withLineages) {
@@ -801,7 +685,7 @@ export default {
           }
           this.possibleLineage.sort();
         }
-        let protein = elem['muts'][0]['pro'];
+        let protein = elem.protein;
 
         if (!this.possibleProtein.includes(protein)){
           this.possibleProtein.push(protein);
@@ -815,76 +699,33 @@ export default {
             if(location !== null) {
               this.possibleLocationFirstTable.push(location);
             }
-            // else{
-            //   this.possibleLocationFirstTable.push('N/D');
-            // }
           }
-          Object.keys(elem).forEach(key => {
-            if((key.includes('perc_with_mut_this_week') ||
-                key.includes('p_value_comparative_mut') ||
-                key.includes('p_value_with_mut') ||
-                key.includes('p_value_without_mut') ||
-                key.includes('polyfit_slope')) &&
-                elem[key] !== null
-                && elem[key] !== undefined){
-              elem[key] = Number.parseFloat(elem[key]).toPrecision(2);
-            }
-          });
 
         }
-        // else{
-        //   this.possibleLocationFirstTable.push('World');
-        // }
         this.possibleLocationFirstTable.sort();
 
       });
 
     },
     doFilterOnResults(){
-      let that = this;
-      let partially_filtered = JSON.parse(JSON.stringify(this.rowsTable)).filter(function (el) {
-        return (
-            (that.selectedLineage === null || el['lineage'] ===  that.selectedLineage)
-            &&
-            (that.selectedProtein === null || el['muts'][0]['pro'] ===  that.selectedProtein)
-            &&
-            (that.selectedLocationFirstTable === null || el[that.rowsTable[0]['granularity']] ===  that.selectedLocationFirstTable)
-        )
-      });
-      if(this.switch_alert){
-        let copyResults = JSON.parse(JSON.stringify(partially_filtered));
-        //// FILTRO I PIU ALTI
-        let copyResults2 = this.customSort(copyResults, ['polyfit_slope'], [true]);
-        this.filteredResults = JSON.parse(JSON.stringify(copyResults2.slice(0, this.maxNumberOfImportantMuts)));
-      }
-      else{
-        this.filteredResults = JSON.parse(JSON.stringify(partially_filtered));
-      }
-      if(this.switch_alert){
-        this.showCharts = true;
-      }
-      else{
-        if(this.filteredResults.length <= 50){
-          this.showCharts = true;
-        }
-        else{
-          this.showCharts = false;
-        }
+      this.filteredResults = this.rowsTable
+      console.log("SONO CUA");
+      if ( this.selectedProtein != null ) {
+        console.log("SONO CUI");
+        this.filteredResults = this.filteredResults.filter((item) => item.protein == this.selectedProtein)
       }
     },
+    doTableForLinePlot() {
+    var sorted = this.filteredResults.sort(function(b,a){
+      return a.polyfit_slope - b.polyfit_slope
+    })
+    this.tableForLinePlot = sorted.slice(0,5).concat(sorted.slice(-5))
+  },
   },
   mounted() {
     this.doFilterOnResults();
-    if(this.filteredResults.length > 0) {
-      this.loadTables();
-      let i = 0;
-      this.filteredResults.forEach(elem => {
-        if(i < this.maxNumberSelectedMuts && i < this.filteredResults.length){
-          this.selectedRows.push(elem);
-        }
-        i = i + 1;
-      })
-    }
+    this.loadTables();
+    this.doTableForLinePlot();
   },
   watch: {
     selectedRows (val, oldVal) {
@@ -920,6 +761,7 @@ export default {
     filteredResults(){
       if(this.filteredResults.length > 0) {
         this.loadTables();
+        this.doTableForLinePlot();
       }
       let newArray = [];
       for(let i = 0; i < this.selectedRows.length; i++){
@@ -940,8 +782,5 @@ export default {
 
 <style scoped>
 
-.provaprova {
-  color:red
-}
 
 </style>

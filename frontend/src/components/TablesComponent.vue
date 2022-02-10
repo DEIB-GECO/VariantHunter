@@ -24,14 +24,14 @@
     <v-flex class="no-horizontal-padding xs12 md12 lg12 d-flex" style="justify-content: center;">
        <v-layout row wrap justify-center style="padding-top: 30px;">
          <v-flex class="no-horizontal-padding xs6 md4 lg2 d-flex" style="justify-content: center;">
-          <v-switch
-            v-model="switch_alert"
-            label="Only Important Mutation"
-          >
-            <template v-slot:label>
-              <span style="color: white">Only Important Mutation</span>
-           </template>
-          </v-switch>
+<!--          <v-switch-->
+<!--            v-model="switch_alert"-->
+<!--            label="Only Important Mutation"-->
+<!--          >-->
+<!--            <template v-slot:label>-->
+<!--              <span style="color: white">Only Important Mutation</span>-->
+<!--           </template>-->
+<!--          </v-switch>-->
          </v-flex>
          <v-flex class="no-horizontal-padding xs6 md2 lg1 d-flex" style="justify-content: center;">
           <v-text-field
@@ -238,7 +238,7 @@ export default {
   },
   data() {
     return {
-      switch_alert: true,
+      switch_alert: false,
       filteredResults: [],
       showCharts: false,
       maxNumberOfImportantMuts: 20,
@@ -703,25 +703,6 @@ export default {
       // let array_possible_header = ['diff_perc', 'perc_this_week', 'perc_prev_week', 'count_this_week',
       //   'count_prev_week']
       let array_possible_header = [
-        //   'p_value_comparative_mut',
-        //   'p_value_with_mut',
-        // 'p_value_without_mut',
-        // 'diff_perc_without_mut',
-        //1'perc_without_mut_this_week',
-        //1'perc_without_mut_prev_week',
-        //1'count_without_mut_this_week',
-        //1'count_without_mut_prev_week',
-
-        //'diff_perc',
-        // 'diff_perc_with_mut',
-        //1'perc_with_mut_this_week',
-        //1'perc_with_mut_prev_week',
-        //1'count_with_mut_this_week',
-        //1'count_with_mut_prev_week',
-        //1'total_seq_lineage_this_week',
-        //1'total_seq_lineage_prev_week',
-        //1'total_seq_pop_this_week',
-        //1'total_seq_pop_prev_week'
       ]
 
       if(!this.withLineages){

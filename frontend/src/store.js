@@ -4,9 +4,9 @@ import Vuex from 'vuex'
 Vue.use(Vuex);
 
 const state = {
-    toolbar_color: '#780116',
-    menu_color: '#C32F27',
-    background_card_color: '#F8C462',
+    toolbar_color: '#014878',
+    menu_color: 'rgb(53,177,236)',
+    background_card_color: '#014878',
     all_geo: [],
     all_lineages: [],
 };

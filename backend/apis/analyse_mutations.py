@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import re
+import time
 import timeit
 
 import numpy as np
@@ -9,6 +10,7 @@ from threading import Timer
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
 from pymongo import MongoClient
+import sqlite3
 
 api = Namespace('analyse_mutations', description='analyse_mutations')
 
@@ -16,6 +18,8 @@ uri = "mongodb://localhost:27017/gcm_gisaid"
 client = MongoClient(uri)
 db = client.gcm_gisaid
 collection_db = db.database_2022_01_07
+
+sqlite_db_name = 'varianthunter.db'
 
 # client = MongoClient(host='test_mongodb',
 #                      port=27017,
@@ -36,98 +40,39 @@ PATTERN = re.compile("([a-zA-Z0-9]+)_([a-zA-Z~@#$^*()_+=[\]{}|\\,.?: -]+)([\d]+)
 
 all_lineage_dict = {}
 
-
 def get_all_lineage():
-    print("inizio request lineage")
-    start_date = datetime.strptime("2019-01-01", '%Y-%m-%d')
-    query = [
-        {
-            "$match": {
-                'collection_date': {
-                    '$gte': start_date
-                },
-                'c_coll_date_prec': {
-                    '$eq': 2
-                },
-                'covv_lineage': {
-                    '$ne': ''
-                },
-            },
-        },
-        {"$group": {"_id": {'lineage': '$covv_lineage',
-                            },
-                    }
-         },
-    ]
-
-    results = collection_db.aggregate(query, allowDiskUse=True)
-
-    array_results = []
-    for single_item in results:
-        array_results.append(single_item['_id']['lineage'])
+    print("Start lineage request...", end="")
+    startx = time.time()
+    con = sqlite3.connect(sqlite_db_name)
+    cur = con.cursor()
+    array_results = [x[0] for x in
+                     cur.execute("select * from lineage_table where lineage is not null;").fetchall()]
 
     array_results.sort()
-
     all_lineage_dict['all_lineage'] = array_results
-    print("fine request lineage")
-    # x = datetime.today()
-    # y = x.replace(day=x.day, hour=2, minute=0, second=0, microsecond=0) + timedelta(days=1)
-    # delta_t = y - x
-    # secs = delta_t.total_seconds()
-    # t4 = Timer(secs, get_all_lineage)
-    # t4.start()
+    con.close()
+    print(f"...done in {time.time() - startx:.5f} seconds.")
 
 
 all_geo_dict = {}
 
-
 def get_all_geo():
-    print("inizio request geo")
-    start_date = datetime.strptime("2019-01-01", '%Y-%m-%d')
-    query = [
-        {
-            "$match": {
-                'collection_date': {
-                    '$gte': start_date
-                },
-                'c_coll_date_prec': {
-                    '$eq': 2
-                },
-                'covv_lineage': {
-                    '$ne': ''
-                },
-            },
-        },
-        {"$group": {"_id": {'geo_group': '$location.geo_group',
-                            'country': "$location.country",
-                            'region': "$location.region",
-                            },
-                    }
-         },
-    ]
+    print("Start geo request...", end="")
+    startx = time.time()
+    con = sqlite3.connect(sqlite_db_name)
+    cur = con.cursor()
+    array_continent = [x[0] for x in
+                       cur.execute("select * from continent_table where continent is not null;").fetchall()]
 
-    results = collection_db.aggregate(query, allowDiskUse=True)
-
-    array_continent = []
-    array_country = []
-    array_region = []
-    for single_item in results:
-        if single_item['_id']['geo_group'] not in array_continent:
-            array_continent.append(single_item['_id']['geo_group'])
-        if single_item['_id']['country'] not in array_country:
-            array_country.append(single_item['_id']['country'])
-        if single_item['_id']['region'] not in array_region:
-            array_region.append(single_item['_id']['region'])
+    array_country = [x[0] for x in
+                     cur.execute("select * from country_table where country is not null;").fetchall()]
+    array_region = [x[0] for x in
+                    cur.execute("select * from region_table where region is not null;").fetchall()]
+    con.close()
     list_geo_dict = {'continent': array_continent, 'country': array_country, 'region': array_region}
-
     all_geo_dict['all_geo'] = list_geo_dict
-    print("fine request geo")
-    # x = datetime.today()
-    # y = x.replace(day=x.day, hour=2, minute=0, second=0, microsecond=0) + timedelta(days=1)
-    # delta_t = y - x
-    # secs = delta_t.total_seconds()
-    # t4 = Timer(secs, get_all_geo)
-    # t4.start()
+
+    print(f"...done in {time.time() - startx:.5f} seconds.")
 
 
 all_important_mutation_dict = {}
