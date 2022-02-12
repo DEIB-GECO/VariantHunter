@@ -630,6 +630,7 @@ export default {
       this.dialogSelectedItem = false;
     },
     loadTables(){
+      console.log("loadTables");
       let predefined_headers = [];
       if(this.withLineages) {
         predefined_headers = [
@@ -716,11 +717,14 @@ export default {
       }
     },
     doTableForLinePlot() {
-    var sorted = this.filteredResults.sort(function(b,a){
-      return a.polyfit_slope - b.polyfit_slope
-    })
-    this.tableForLinePlot = sorted.slice(0,5).concat(sorted.slice(-5))
-  },
+      // console.log("doTableForLinePlot");
+      // array.sort() sorts the array inline, so it starts the watch function of filteredResults
+      // [...this.filteredResults]=> makes a shallow copy of the array
+      var sorted = [...this.filteredResults].sort(function (b, a) {
+        return a.polyfit_slope - b.polyfit_slope
+      })
+      this.tableForLinePlot = sorted.slice(0, 5).concat(sorted.slice(-5))
+    },
   },
   mounted() {
     this.doFilterOnResults();
@@ -728,9 +732,9 @@ export default {
     this.doTableForLinePlot();
   },
   watch: {
-    selectedRows (val, oldVal) {
-      if (val.length > this.maxNumberSelectedMuts) {
-        if(val.length - this.maxNumberSelectedMuts > 2){
+    selectedRows (newVal, oldVal) {
+      if (newVal.length > this.maxNumberSelectedMuts) {
+        if(newVal.length - this.maxNumberSelectedMuts > 2){
           this.selectedRows = [];
         }
         else {
@@ -758,18 +762,22 @@ export default {
     maxNumberOfImportantMuts(){
       this.doFilterOnResults();
     },
-    filteredResults(){
-      if(this.filteredResults.length > 0) {
-        this.loadTables();
-        this.doTableForLinePlot();
-      }
-      let newArray = [];
-      for(let i = 0; i < this.selectedRows.length; i++){
-        if(this.filteredResults.some(item => item['mut'] === this.selectedRows[i]['mut'] && item['protein'] === this.selectedRows[i]['protein'])){
-          newArray.push(this.selectedRows[i]);
+    filteredResults(newVal, oldVal){
+      // if nothing has been changed, then not run the code below.
+      if(JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        console.log("filteredResults");
+        if (this.filteredResults.length > 0) {
+          this.loadTables();
+          this.doTableForLinePlot();
         }
+        let newArray = [];
+        for (let i = 0; i < this.selectedRows.length; i++) {
+          if (this.filteredResults.some(item => item['mut'] === this.selectedRows[i]['mut'] && item['protein'] === this.selectedRows[i]['protein'])) {
+            newArray.push(this.selectedRows[i]);
+          }
+        }
+        this.selectedRows = newArray;
       }
-      this.selectedRows = newArray;
     },
     switch_show_p_values(){
       if(this.filteredResults.length > 0) {
