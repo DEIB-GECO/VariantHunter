@@ -157,21 +157,16 @@
           HEATMAP (Diffusion)
         </h2>
     </v-flex>
-
-    <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;" v-if="showCharts">
-      <HeatmapMuts
-        :nameHeatmap="nameHeatmap"
-        :mutsData="filteredResults"
-        :singleInfo= "singleInfo"
-        :sortColumn="sortByTable"
-        :descColumn="sortDescTable"
-        :withLineages="withLineages">
-      </HeatmapMuts>
+    <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
+      <NewHeatMap style="justify-content: center;"
+          :tableForHeatMap="tableForLinePlot"
+      ></NewHeatMap>
     </v-flex>
+
 
     <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center">
         <h2 style="color: white; margin-top: 80px;">
-          DIFFUSION BAR CHART
+          DIFFUSION TRED CHART
         </h2>
     </v-flex>
 
@@ -189,10 +184,11 @@ import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import HeatmapMuts from "@/components/HeatmapMuts";
 import DialogAnalyseSelectedMuts from "@/components/DialogAnalyseSelectedMuts";
 import NewBarChart from "./NewBarChart";
+import NewHeatMap from "./NewHeatMap";
 
 export default {
   name: "TablesComponentWithoutLineages",
-  components: {DialogAnalyseSelectedMuts, HeatmapMuts, NewBarChart},
+  components: {NewHeatMap, DialogAnalyseSelectedMuts, HeatmapMuts, NewBarChart},
   props: {
     rowsTable: {required: true,},
     singleInfo: {required: true},

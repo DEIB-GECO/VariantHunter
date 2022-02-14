@@ -52,7 +52,6 @@ export default {
 
     //var data = [get_trace(this.tableForLinePlot[1], 1), get_trace(this.tableForLinePlot[2], 2)]
 
-    console.log(data)
 
     var layout = {
       title: 'Top 5 decreasing + Top 5 increasing mutations',
