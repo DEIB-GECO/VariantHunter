@@ -717,7 +717,6 @@ class FieldList(Resource):
 
         tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4 = week_sequence_counts
         mut_w1, mut_w2, mut_w3, mut_w4 = mutation_data
-        print(mut_w1)
         array_to_return = []
         for mut, c4 in mut_w4.items():
             protein, mutation = mut.split("_")

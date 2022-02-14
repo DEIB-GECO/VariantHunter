@@ -166,7 +166,7 @@
 
     <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center">
         <h2 style="color: white; margin-top: 80px;">
-          DIFFUSION TRED CHART
+          DIFFUSION TREND CHART
         </h2>
     </v-flex>
 
@@ -181,14 +181,13 @@
 
 <script>
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
-import HeatmapMuts from "@/components/HeatmapMuts";
 import DialogAnalyseSelectedMuts from "@/components/DialogAnalyseSelectedMuts";
 import NewBarChart from "./NewBarChart";
 import NewHeatMap from "./NewHeatMap";
 
 export default {
   name: "TablesComponentWithoutLineages",
-  components: {NewHeatMap, DialogAnalyseSelectedMuts, HeatmapMuts, NewBarChart},
+  components: {NewHeatMap, DialogAnalyseSelectedMuts, NewBarChart},
   props: {
     rowsTable: {required: true,},
     singleInfo: {required: true},
@@ -636,7 +635,10 @@ export default {
           {text: 'Protein', value: 'protein', sortable: true, show: true, align: 'center', width: '13vh'},
           {text: 'Mut', value: 'mut', sortable: true, show: true, align: 'center', width: '13vh'},
           {text: 'Slope', value: 'polyfit_slope', sortable: true, show: true, align: 'center', width: '13vh'},
-          {text: 'Y-intercept', value: 'polyfit_intercept', sortable: true, show: true, align: 'center', width: '13vh'},
+          {text: '28-22 days before', value: 'w1', sortable: true, show: true, align: 'center', width: '13vh' },
+          {text: '21-15 days before', value: 'w2', sortable: true, show: true, align: 'center', width: '13vh' },
+          {text: '14-8 days before', value: 'w3', sortable: true, show: true, align: 'center', width: '13vh' },
+          {text: '7-0 days before', value: 'w4', sortable: true, show: true, align: 'center', width: '13vh' }
         ]
       }
       else{
@@ -706,9 +708,7 @@ export default {
     },
     doFilterOnResults(){
       this.filteredResults = this.rowsTable
-      console.log("SONO CUA");
       if ( this.selectedProtein != null ) {
-        console.log("SONO CUI");
         this.filteredResults = this.filteredResults.filter((item) => item.protein == this.selectedProtein)
       }
     },

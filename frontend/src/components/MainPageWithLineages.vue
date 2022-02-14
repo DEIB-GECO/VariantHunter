@@ -51,26 +51,6 @@
                        <v-flex class="no-horizontal-padding xs12 md4 d-flex" style="justify-content: center;">
                          <v-layout row wrap justify-center>
                           <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <span style="color: white">Lineage (optional) :</span>
-                          </v-flex>
-                           <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                              <v-autocomplete
-                                v-model="selectedLineage"
-                                :items="possibleLineage"
-                                label="Lineage"
-                                solo
-                                clearable
-                                hide-details
-                              >
-                              </v-autocomplete>
-                           </v-flex>
-                         </v-layout>
-                      </v-flex>
-                       <v-flex class="no-horizontal-padding xs12 md12 d-flex" style="justify-content: center;">
-                       </v-flex>
-                       <v-flex class="no-horizontal-padding xs12 md4 d-flex" style="justify-content: center;">
-                         <v-layout row wrap justify-center>
-                          <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
                             <span style="color: white">Date:</span>
                           </v-flex>
                            <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
@@ -122,22 +102,29 @@
                            </v-flex>
                          </v-layout>
                        </v-flex>
+
                        <v-flex class="no-horizontal-padding xs12 md4 d-flex" style="justify-content: center;">
                          <v-layout row wrap justify-center>
                           <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <span style="color: white"># Week:</span>
+                            <span style="color: white">Lineage :</span>
                           </v-flex>
-                          <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <v-select
-                              v-model="selectedWeekNum"
-                              :items="possibleWeekNum"
-                              label="# Week"
-                              solo
-                              hide-details
-                            ></v-select>
-                          </v-flex>
+                           <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
+                              <v-autocomplete
+                                v-model="selectedLineage"
+                                :items="possibleLineage"
+                                label="Lineage"
+                                solo
+                                clearable
+                                hide-details
+                                :disabled="selectedSpecificGeo === null || selectedDate == null"
+                              >
+                              </v-autocomplete>
+                           </v-flex>
                          </v-layout>
+                      </v-flex>
+                       <v-flex class="no-horizontal-padding xs12 md12 d-flex" style="justify-content: center;">
                        </v-flex>
+
                        <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
                        <v-btn
                                @click="doAnalysis();"
@@ -169,14 +156,14 @@
                             </span>
                         </v-expansion-panel-header>
                         <v-expansion-panel-content :color="menu_color">
-                          <TablesComponent
+                          <TablesComponentWithoutLineages
                             :rowsTable="rowsTable[index]"
                             :singleInfo = expansionPanelsSingleInfo[index]
                             :nameHeatmap="'heatmapWithLineage' + index"
                             :timeName="'timeDistributionWithLineage'+index"
                             :withLineages="true"
                             v-if="rowsTable[index].length > 0">
-                          </TablesComponent>
+                          </TablesComponentWithoutLineages>
                           <div v-else style="text-align: center; margin-top: 20px">
                             <h2 style="color: white"> Not enough data for this location </h2>
                           </div>
@@ -205,10 +192,11 @@
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import axios from "axios";
 import TablesComponent from "@/components/TablesComponent";
+import TablesComponentWithoutLineages from "./TablesComponentWithoutLineages";
 
 export default {
   name: "MainPageWithLineages",
-  components: {TablesComponent},
+  components: {TablesComponentWithoutLineages, TablesComponent},
   data() {
     return {
       menu: false,
@@ -257,18 +245,15 @@ export default {
       let url = `/analyse_mutations/getStatistics`;
       // let url = `/automatic_analysis/getStatistics`;
       let to_send = {
-        'granularity': this.selectedGeo,
         'value': this.selectedSpecificGeo,
         'lineage': this.selectedLineage,
-        'date': this.selectedDate,
-        'numWeek': this.selectedWeekNum};
+        'date': this.selectedDate};
 
       axios.post(url, to_send)
         .then((res) => {
           return res.data;
         })
         .then((res) => {
-          let that = this;
 
           this.expansionPanelsSingleInfo[countNumAnalysis] = {
             'weekNum': this.selectedWeekNum,
@@ -278,13 +263,7 @@ export default {
             'lineage': this.selectedLineage
           };
 
-          this.rowsTable[countNumAnalysis] = JSON.parse(JSON.stringify(res)).filter(function (el) {
-            let granularity = that.selectedGeo;
-            if (that.selectedGeo === 'continent'){
-              granularity = 'geo_group';
-            }
-            return el['granularity'] ===  granularity
-          });
+          this.rowsTable[countNumAnalysis] = JSON.parse(JSON.stringify(res));
 
           this.selectedWeekNum = 4;
           this.selectedDate = new Date().toISOString().slice(0, 10);
@@ -295,9 +274,22 @@ export default {
           this.expansionPanels.push(countNumAnalysis);
         });
     },
+    getAvailableLineages(){
+    if (!(this.selectedSpecificGeo == null || this.selectedDate == null)){
+      let url = `/analyse_mutations/getGeoLineages`;
+      let to_send = {
+        'geo': this.selectedSpecificGeo,
+        'date' : this.selectedDate
+        };
+      axios.post(url, to_send)
+          .then((res) => {
+            this.possibleLineage = res.data;
+        })
+    }
+  }
   },
   mounted() {
-      this.selectedDate = new Date().toISOString().slice(0, 10);
+      this.selectedDate = null;//new Date().toISOString().slice(0, 10);
       this.selectedSpecificGeo = null;
       this.possibleSpecificGeo = [];
       this.allGeo = this.all_geo;
@@ -309,6 +301,12 @@ export default {
     },
     all_lineages(){
       this.possibleLineage = this.all_lineages;
+    },
+    selectedSpecificGeo(){
+      this.getAvailableLineages()
+    },
+    selectedDate(){
+      this.getAvailableLineages()
     },
     selectedGeo(){
       this.possibleSpecificGeo = [];
