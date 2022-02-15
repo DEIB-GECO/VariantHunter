@@ -21,46 +21,6 @@ def get_env_variable(name):
         raise Exception(message)
 
 
-# def get_db_uri():
-#     database_name = "vcm_du_1"
-#
-#     try:
-#         # /home/metadata/virusurf_active_databases.txt
-#         with open("/home/metadata/virusurf_active_databases.txt") as f:
-#             lines = f.readlines()
-#             database_name = [x for x in lines if 'gisaid' not in x][0]
-#     except IOError:
-#         pass
-#
-#     # postgres_url = get_env_variable("POSTGRES_URL")
-#     # postgres_user = get_env_variable("POSTGRES_USER")
-#     # postgres_pw = get_env_variable("POSTGRES_PW")
-#     # postgres_db = get_env_variable("POSTGRES_DB")
-#     postgres_url = "localhost"
-#     postgres_user = "geco"
-#     postgres_pw = "geco78"
-#     postgres_db = database_name.strip()
-#
-#     application_name = []
-#
-#     if 'ENV' in my_app.config:
-#         application_name.append(my_app.config['ENV'])
-#
-#     application_name.append(os.uname()[1])
-#
-#     application_name.append(base_url)
-#
-#     application_name = ", ".join(application_name)
-#
-#     result = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}?application_name="{application_name}"'.format(
-#         user=postgres_user,
-#         pw=postgres_pw,
-#         url=postgres_url,
-#         db=postgres_db,
-#         application_name=application_name, )
-#     print(result)
-#     return result
-
 
 dictConfig({
     'version': 1,
@@ -146,8 +106,8 @@ def index_all(path):
     return redirect(base_url)
 
 
-#if __name__ == '__main__':
-#    my_app.run(host="0.0.0.0", port=5000, use_reloader=False, debug=False)
+if __name__ == '__main__':
+   my_app.run(host="0.0.0.0", port=5000, use_reloader=False, debug=False)
 
 # if __name__ == '__main__':
 #     my_app.run()

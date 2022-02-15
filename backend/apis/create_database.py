@@ -6,15 +6,18 @@ import datetime as dtime
 import sqlite3
 import time
 
+import sys
 
+input_file_name = sys.argv[1]
+select_country = set([x.lower() for x in sys.argv[2].strip().split(',')])
 
 api = Namespace('create_database', description='create_database')
 
 startex = time.time()
 print("Starting database creation...")
-select_country = set(["italy", "denmark"])
 
-with open("/Users/pietropinoli/Desktop/varianttest/data/metadata.tsv") as f:
+
+with open(input_file_name) as f:
     startdate = dtime.datetime.strptime("2020-01-01", "%Y-%m-%d")
 
     con = sqlite3.connect('varianthunter.db')
@@ -153,11 +156,6 @@ with open("/Users/pietropinoli/Desktop/varianttest/data/metadata.tsv") as f:
 
     cur.execute("DROP TABLE timeloclin;")
     con.commit()
-
-    print(f"cursor = {cur}")
-    cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    print(cur.fetchall())
-    print("fine test")
 
     con.close()
 

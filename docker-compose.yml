@@ -1,27 +1,13 @@
 services:
   app:
     build: .
-    image: lucacilibrasi/varianthunter
-    command: python -u ./backend/app.py ${FILE_NAME} '${LOCATION}' ${DATE}
+    image: gecopolimi/varianthunter
+    command: python -u ./backend/app.py /backend/app/database/${FILE_NAME} '${LOCATION}'
     ports:
       - "5000:5000"
     volumes:
-      - ${FILE_PATH}:/backend/app/database
-    links:
-      - db
+      - ${FILE_PATH}:/backend/app/database/
     environment:
       - FILE_PATH=${FILE_PATH}
       - FILE_NAME=${FILE_NAME}
       - LOCATION=${LOCATION}
-      - DATE=${DATE}
-  db:
-    image: mongo:latest
-    hostname: test_mongodb
-    environment:
-      - MONGO_INITDB_DATABASE=viruclust_db
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=pass
-    ports:
-      - 27017:27017
-    logging:
-      driver: "none"

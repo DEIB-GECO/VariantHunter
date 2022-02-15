@@ -1,9 +1,7 @@
-bio
 numpy
 Pillow
 scipy
 cffi
-ipython
 pip
 lxml
 tornado
@@ -16,8 +14,6 @@ jedi
 pytz
 tqdm
 requests
-ipywidgets
-notebook
 Jinja2
 Werkzeug==0.16.1
 itsdangerous
