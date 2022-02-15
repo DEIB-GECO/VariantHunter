@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%;">
-    <div id='myDiv4' style="width: 100%; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <div :id="'div_heatmap_' + plotlyId" style="width: 100%; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div>
   </div>
 </template>
 
@@ -11,6 +11,7 @@ export default {
   name: "NewHeatMap",
   props: {
     tableForHeatMap: {required: true,},
+    plotlyId: {required: true,},
   },
   data() {
     return {
@@ -57,7 +58,7 @@ export default {
         }
     };
 
-      Plotly.newPlot('myDiv4', data, layout);
+      Plotly.newPlot(`div_heatmap_${this.plotlyId}`, data, layout);
 
     }
   },

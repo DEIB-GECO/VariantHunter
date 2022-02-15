@@ -2,3 +2,8 @@
 /frontend/node_modules/
 .idea
 venv
+/frontend/dist
+/backend/varianthunter.db
+/metadata*.*
+
+venv2

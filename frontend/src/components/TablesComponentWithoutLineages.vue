@@ -72,14 +72,6 @@
           </v-data-table>
     </v-flex>
 
-    <v-flex class="no-horizontal-padding xs12 md12 lg12 d-flex" style="justify-content: center;">
-      <DialogAnalyseSelectedMuts
-      :selectedMuts="selectedRows"
-      :singleInfo = "singleInfo">
-      </DialogAnalyseSelectedMuts>
-    </v-flex>
-
-
     <v-dialog
       persistent
       v-model="dialogTableHeaders"
@@ -159,7 +151,8 @@
     </v-flex>
     <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
       <NewHeatMap style="justify-content: center;"
-          :tableForHeatMap="tableForLinePlot"
+                  :tableForHeatMap="tableForLinePlot"
+                  :plotlyId="tableIndex"
       ></NewHeatMap>
     </v-flex>
 
@@ -172,7 +165,8 @@
 
     <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
       <NewBarChart style="justify-content: center;"
-          :tableForLinePlot="tableForLinePlot"
+                   :tableForLinePlot="tableForLinePlot"
+                   :plotlyId="tableIndex"
       ></NewBarChart>
     </v-flex>
 
@@ -181,19 +175,20 @@
 
 <script>
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
-import DialogAnalyseSelectedMuts from "@/components/DialogAnalyseSelectedMuts";
+// import DialogAnalyseSelectedMuts from "@/components/DialogAnalyseSelectedMuts";
 import NewBarChart from "./NewBarChart";
 import NewHeatMap from "./NewHeatMap";
 
 export default {
   name: "TablesComponentWithoutLineages",
-  components: {NewHeatMap, DialogAnalyseSelectedMuts, NewBarChart},
+  components: {NewHeatMap, /*DialogAnalyseSelectedMuts,*/ NewBarChart},
   props: {
     rowsTable: {required: true,},
     singleInfo: {required: true},
     nameHeatmap: {required: true},
     timeName: {required: true},
-    withLineages: {required: true}
+    withLineages: {required: true},
+    tableIndex: {required: true},
   },
   data() {
     return {
@@ -716,10 +711,25 @@ export default {
       // console.log("doTableForLinePlot");
       // array.sort() sorts the array inline, so it starts the watch function of filteredResults
       // [...this.filteredResults]=> makes a shallow copy of the array
-      var sorted = [...this.filteredResults].sort(function (b, a) {
+      let temp_table;
+      if (this.selectedRows.length > 0) {
+        temp_table = [...this.selectedRows];
+      }
+      else{
+        temp_table = [...this.filteredResults];
+      }
+      let sorted = temp_table.sort(function (b, a) {
         return a.polyfit_slope - b.polyfit_slope
       })
-      this.tableForLinePlot = sorted.slice(0, 5).concat(sorted.slice(-5))
+      // get first 5 and last 5
+      let selected = sorted.slice(0, 5).concat(sorted.slice(-5))
+      //remove duplicates
+      selected = [...new Set(selected)]
+      //sort again
+      selected = selected.sort(function (b, a) {
+        return a.polyfit_slope - b.polyfit_slope
+      })
+      this.tableForLinePlot = selected
     },
   },
   mounted() {
@@ -729,16 +739,7 @@ export default {
   },
   watch: {
     selectedRows (newVal, oldVal) {
-      if (newVal.length > this.maxNumberSelectedMuts) {
-        if(newVal.length - this.maxNumberSelectedMuts > 2){
-          this.selectedRows = [];
-        }
-        else {
-          this.$nextTick(() => {
-            this.selectedRows = oldVal
-          })
-        }
-      }
+      this.doTableForLinePlot();
     },
     switch_alert(){
       this.doFilterOnResults();
@@ -748,6 +749,7 @@ export default {
     },
     selectedProtein(){
       this.doFilterOnResults();
+      this.selectedRows = []
     },
     selectedLocation(){
       this.doFilterOnResults();
@@ -766,13 +768,6 @@ export default {
           this.loadTables();
           this.doTableForLinePlot();
         }
-        let newArray = [];
-        for (let i = 0; i < this.selectedRows.length; i++) {
-          if (this.filteredResults.some(item => item['mut'] === this.selectedRows[i]['mut'] && item['protein'] === this.selectedRows[i]['protein'])) {
-            newArray.push(this.selectedRows[i]);
-          }
-        }
-        this.selectedRows = newArray;
       }
     },
     switch_show_p_values(){

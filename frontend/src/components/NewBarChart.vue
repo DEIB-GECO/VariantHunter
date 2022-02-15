@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%;">
-    <div id='myDiv3' style="width: 100%; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    <div :id="'div_barchart_' + plotlyId" style="width: 100%; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div>
   </div>
 </template>
 
@@ -11,6 +11,7 @@ export default {
   name: "NewBarChart",
   props: {
     tableForLinePlot: {required: true,},
+    plotlyId:{required: true,},
   },
   data() {
     return {
@@ -42,6 +43,8 @@ export default {
         x: [1, 2, 3, 4],
         y: [l.f1, l.f2, l.f3, l.f4],
         name: l.protein + "_" + l.mut,
+        //set showlegend to true, otherwise, with only one element it doesn't show it.
+        showlegend: true,
         marker: {color: colors[i]},
         type: 'scatter'
       };
@@ -82,7 +85,7 @@ export default {
       bargroupgap: 0.1
     };
 
-    Plotly.newPlot('myDiv3', data, layout);
+    Plotly.newPlot(`div_barchart_${this.plotlyId}`, data, layout);
     }
   },
   mounted() {

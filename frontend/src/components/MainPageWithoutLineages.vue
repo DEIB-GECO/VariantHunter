@@ -123,16 +123,16 @@
                  </v-flex>
 
                  <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; margin-top: 50px" v-if="rowsTable.length > 0">
-                   <h2>RESULTS: </h2>
+                   <h2 style="color: white">RESULTS: </h2>
                   </v-flex>
                  <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
                    <v-expansion-panels
                     v-model="expansionPanels"
                     :value="expansionPanels"
-                    multiple>
+                    multiple focusable>
                       <v-expansion-panel style="margin-bottom: 10px" v-for="(array_rows, index) in rowsTable" v-bind:key="index">
-                        <v-expansion-panel-header :color="toolbar_color">
-                            <span style="width: 80%; color: white;">{{expansionPanelsSingleInfo[index]['location']}} /
+                        <v-expansion-panel-header :color="menu_color">
+                            <span style="width: 80%; color: black;">{{expansionPanelsSingleInfo[index]['location']}} /
                                               {{expansionPanelsSingleInfo[index]['date']}} /
                                               {{expansionPanelsSingleInfo[index]['weekNum']}} weeks
                             </span>
@@ -144,6 +144,7 @@
                             :nameHeatmap="'heatmapWithoutLineage' + index"
                             :timeName="'timeDistributionWithoutLineage'+index"
                             :withLineages="false"
+                            :tableIndex="'wo_l_' + index"
                             v-if="rowsTable[index].length > 0">
                           </TablesComponentWithoutLineages>
                           <div v-else style="text-align: center; margin-top: 20px">
@@ -254,6 +255,15 @@ export default {
       this.selectedSpecificGeo = null;
       this.possibleSpecificGeo = [];
       this.allGeo = this.all_geo;
+
+      // //DEFAULT VALUES
+      // setTimeout(() => {
+      //   this.selectedGeo = 'country';
+      //   this.selectedDate = '2022-02-01';
+      //   this.selectedSpecificGeo = 'Italy';
+      //   this.doAnalysis();
+      // }, 1000);
+      // //DEFAULT VALUES
   },
   watch: {
     all_geo(){
