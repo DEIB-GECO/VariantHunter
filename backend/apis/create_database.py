@@ -9,12 +9,15 @@ import time
 import sys
 
 input_file_name = sys.argv[1]
-select_country = set([x.lower() for x in sys.argv[2].strip().split(',')])
+select_country = set([x.lower() for x in sys.argv[2].strip().split(',') if x])
 
 api = Namespace('create_database', description='create_database')
 
 startex = time.time()
 print("Starting database creation...")
+file_len = None
+with open(input_file_name) as f:
+    file_len = len(f.readlines())
 
 
 with open(input_file_name) as f:
@@ -59,7 +62,7 @@ with open(input_file_name) as f:
     i = 0
     batch = []
     batch_timeloclin = []
-    for line in tqdm.tqdm(f):
+    for line in tqdm.tqdm(f, total=file_len):
         s = line.split("\t")
 
         locs = s[4].split('/')
@@ -156,6 +159,19 @@ with open(input_file_name) as f:
 
     cur.execute("DROP TABLE timeloclin;")
     con.commit()
+
+    cur.execute("CREATE INDEX mutsg_idx1 ON  mutsg(location, date, lineage);")
+    con.commit()
+
+    cur.execute("CREATE INDEX mutsg_idx2 ON  mutsg(date, lineage);")
+    con.commit()
+
+    cur.execute("CREATE INDEX timelocling1 ON  timelocling(date, lineage);")
+    con.commit()
+
+    cur.execute("CREATE INDEX timelocling2 ON  timelocling(date, lineage);")
+    con.commit()
+
 
     con.close()
 
