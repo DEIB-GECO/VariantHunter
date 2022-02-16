@@ -55,10 +55,8 @@
                           </v-flex>
                            <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
                              <v-menu
-                                ref="menu"
                                 v-model="menu"
                                 :close-on-content-click="false"
-                                :return-value.sync="selectedDate"
                                 transition="scale-transition"
                                 offset-y
                                 min-width="auto"
@@ -81,22 +79,8 @@
                                   first-day-of-week="1"
                                   no-title
                                   scrollable
+                                  @input="menu = false"
                                 >
-                                  <v-spacer></v-spacer>
-                                  <v-btn
-                                    text
-                                    color="primary"
-                                    @click="menu = false"
-                                  >
-                                    Cancel
-                                  </v-btn>
-                                  <v-btn
-                                    text
-                                    color="primary"
-                                    @click="$refs.menu.save(selectedDate)"
-                                  >
-                                    OK
-                                  </v-btn>
                                 </v-date-picker>
                               </v-menu>
                            </v-flex>
@@ -151,8 +135,9 @@
                         <v-expansion-panel-header :color="menu_color">
                             <span style="width: 80%; color: black;">{{expansionPanelsSingleInfo[index]['location']}} /
                                               {{expansionPanelsSingleInfo[index]['lineage']}} /
-                                              {{expansionPanelsSingleInfo[index]['date']}} /
-                                              {{expansionPanelsSingleInfo[index]['weekNum']}} weeks
+                                              {{expansionPanelsSingleInfo[index]['date']}}
+<!--                              /
+                                              {{expansionPanelsSingleInfo[index]['weekNum']}} weeks-->
                             </span>
                         </v-expansion-panel-header>
                         <v-expansion-panel-content :color="menu_color">
@@ -266,13 +251,13 @@ export default {
 
           this.rowsTable[countNumAnalysis] = JSON.parse(JSON.stringify(res));
 
-          this.selectedWeekNum = 4;
-          this.selectedDate = new Date().toISOString().slice(0, 10);
-          this.selectedGeo = 'world';
-          this.selectedSpecificGeo = null;
-          this.selectedLineage = null;
+          // this.selectedWeekNum = 4;
+          // this.selectedDate = new Date().toISOString().slice(0, 10);
+          // this.selectedGeo = 'world';
+          // this.selectedSpecificGeo = null;
+          // this.selectedLineage = null;
           this.overlay = false;
-          this.expansionPanels.push(countNumAnalysis);
+          this.expansionPanels = [countNumAnalysis];
         });
     },
     getAvailableLineages(){

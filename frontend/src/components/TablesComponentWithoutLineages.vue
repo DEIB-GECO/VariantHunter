@@ -1,15 +1,15 @@
 <template>
   <v-layout row wrap justify-center style="padding-top: 30px;">
-    <v-flex class="no-horizontal-padding xs12 md4 lg2 d-flex" style="justify-content: center;" v-if="withLineages">
-      <v-autocomplete
-        v-model="selectedLineage"
-        :items="possibleLineage"
-        label="Lineage"
-        solo
-        hide-details
-        clearable
-      ></v-autocomplete>
-    </v-flex>
+<!--    <v-flex class="no-horizontal-padding xs12 md4 lg2 d-flex" style="justify-content: center;" v-if="withLineages">-->
+<!--      <v-autocomplete-->
+<!--        v-model="selectedLineage"-->
+<!--        :items="possibleLineage"-->
+<!--        label="Lineage"-->
+<!--        solo-->
+<!--        hide-details-->
+<!--        clearable-->
+<!--      ></v-autocomplete>-->
+<!--    </v-flex>-->
     <v-flex class="no-horizontal-padding xs12 md4 lg2 d-flex" style="justify-content: center;">
       <v-autocomplete
         v-model="selectedProtein"
@@ -153,6 +153,7 @@
       <NewHeatMap style="justify-content: center;"
                   :tableForHeatMap="tableForLinePlot"
                   :plotlyId="tableIndex"
+                  :title="plotlyTitle"
       ></NewHeatMap>
     </v-flex>
 
@@ -167,6 +168,7 @@
       <NewBarChart style="justify-content: center;"
                    :tableForLinePlot="tableForLinePlot"
                    :plotlyId="tableIndex"
+                   :title="plotlyTitle"
       ></NewBarChart>
     </v-flex>
 
@@ -192,6 +194,7 @@ export default {
   },
   data() {
     return {
+      plotlyTitle: 'Top 5 decreasing + Top 5 increasing mutations',
       switch_alert: false,
       switch_show_p_values: false,
       filteredResults: [],
@@ -711,24 +714,24 @@ export default {
       // console.log("doTableForLinePlot");
       // array.sort() sorts the array inline, so it starts the watch function of filteredResults
       // [...this.filteredResults]=> makes a shallow copy of the array
-      let temp_table;
+
+      let selected;
       if (this.selectedRows.length > 0) {
-        temp_table = [...this.selectedRows];
+        this.plotlyTitle = `Selected mutations (${this.selectedRows.length})`;
+        selected = [...this.selectedRows];
+      } else {
+        this.plotlyTitle = 'Top 5 decreasing + Top 5 increasing mutations';
+        let sorted = [...this.filteredResults].sort(function (b, a) {
+          return a.polyfit_slope - b.polyfit_slope
+        });
+        // get first 5 and last 5
+        selected = sorted.slice(0, 5).concat(sorted.slice(-5));
       }
-      else{
-        temp_table = [...this.filteredResults];
-      }
-      let sorted = temp_table.sort(function (b, a) {
-        return a.polyfit_slope - b.polyfit_slope
-      })
-      // get first 5 and last 5
-      let selected = sorted.slice(0, 5).concat(sorted.slice(-5))
-      //remove duplicates
-      selected = [...new Set(selected)]
+      selected = [...new Set(selected)];
       //sort again
       selected = selected.sort(function (b, a) {
         return a.polyfit_slope - b.polyfit_slope
-      })
+      });
       this.tableForLinePlot = selected
     },
   },

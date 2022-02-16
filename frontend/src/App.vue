@@ -138,18 +138,18 @@
       <MenuPage></MenuPage>
     </v-main>
 
-    <v-footer app>
-        <v-flex
-                lighten-2
-                xs6
-                class="bottom-info"
-                style="font-size:12px;">
-            <div>Data used in this web application remain subject to GISAID’s <a
-                href="http://gisaid.org/DAA/" target="_blank">Terms
-              and Conditions</a>.
-            </div>
-        </v-flex>
-    </v-footer>
+<!--    <v-footer app>-->
+<!--        <v-flex-->
+<!--                lighten-2-->
+<!--                xs6-->
+<!--                class="bottom-info"-->
+<!--                style="font-size:12px;">-->
+<!--            <div>Data used in this web application remain subject to GISAID’s <a-->
+<!--                href="http://gisaid.org/DAA/" target="_blank">Terms-->
+<!--              and Conditions</a>.-->
+<!--            </div>-->
+<!--        </v-flex>-->
+<!--    </v-footer>-->
 
   </v-app>
 </template>
