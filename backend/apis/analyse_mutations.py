@@ -921,10 +921,10 @@ class FieldList(Resource):
             c1 = mut_w1.get(mut, 0)
             c2 = mut_w2.get(mut, 0)
             c3 = mut_w3.get(mut, 0)
-            f1 = (c1 / tot_seq_w1) * 100
-            f2 = (c2 / tot_seq_w2) * 100
-            f3 = (c3 / tot_seq_w3) * 100
-            f4 = (c4 / tot_seq_w4) * 100
+            f1 = (c1 / tot_seq_w1) * 100 if tot_seq_w1 > 0 else 0
+            f2 = (c2 / tot_seq_w2) * 100 if tot_seq_w2 > 0 else 0
+            f3 = (c3 / tot_seq_w3) * 100 if tot_seq_w3 > 0 else 0
+            f4 = (c4 / tot_seq_w4) * 100 if tot_seq_w4 > 0 else 0
             slope, intercept = np.polyfit([0, 1, 2, 3], [f1, f2, f3, f4], 1)
             array_to_return.append({
                 'location': location,
