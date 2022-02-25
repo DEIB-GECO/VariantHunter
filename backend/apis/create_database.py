@@ -5,12 +5,11 @@ import tqdm
 import datetime as dtime
 import sqlite3
 import time
-
 import sys
 
 input_file_name = sys.argv[1]
 select_country = set([x.lower() for x in sys.argv[2].strip().split(',') if x])
-
+db_name = 'varianthunter.db'
 api = Namespace('create_database', description='create_database')
 
 startex = time.time()
@@ -23,7 +22,7 @@ with open(input_file_name) as f:
 with open(input_file_name) as f:
     startdate = dtime.datetime.strptime("2020-01-01", "%Y-%m-%d")
 
-    con = sqlite3.connect('varianthunter.db')
+    con = sqlite3.connect(db_name)
     # con.execute("begin exclusive")
     con.execute("pragma journal_mode=off;")
     con.execute("pragma locking_mode=EXCLUSIVE;")
