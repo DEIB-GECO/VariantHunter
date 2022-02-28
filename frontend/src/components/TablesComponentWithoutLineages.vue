@@ -68,6 +68,7 @@
                 :sort-by.sync="sortByTable"
                 :sort-desc.sync="sortDescTable"
                 :custom-sort="customSort"
+                :footer-props="{'items-per-page-options': [5, 10, 20, 50, 100, -1]}"
           >
           </v-data-table>
     </v-flex>
@@ -727,11 +728,11 @@ export default {
         // get first 5 and last 5
         selected = sorted.slice(0, 5).concat(sorted.slice(-5));
       }
-      selected = [...new Set(selected)];
-      //sort again
-      selected = selected.sort(function (b, a) {
-        return a.polyfit_slope - b.polyfit_slope
-      });
+        selected = [...new Set(selected)];
+        //sort again
+        selected = selected.sort(function (b, a) {
+          return a.polyfit_slope - b.polyfit_slope
+        });
       this.tableForLinePlot = selected
     },
   },
