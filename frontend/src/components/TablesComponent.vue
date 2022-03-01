@@ -243,10 +243,6 @@ export default {
       dialogTableHeaders: false,
     }
   },
-  computed: {
-    ...mapState(['toolbar_color']),
-    ...mapGetters({}),
-  },
   methods: {
     ...mapMutations([]),
     ...mapActions([]),

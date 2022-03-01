@@ -2,13 +2,13 @@
   <v-app>
 
     <!-- Navbar -->
-    <v-toolbar :color="primary_color" class="navbar" dark>
+    <v-toolbar :color="primary_color" class="navbar" dark flat>
 
       <!-- Logo -->
       <v-img :src="websiteLogo" contain max-height="39px" max-width="39px"/>
-      <v-toolbar-title class="headline">
-        <span>Variant</span>
-        <span class="font-weight-light"> Hunter</span>
+      <v-toolbar-title class="site-title">
+        <span class="emphasis">Variant</span>
+        <span>Hunter</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
 
@@ -60,7 +60,7 @@
     </v-toolbar>
 
     <v-main>
-      <MenuPage></MenuPage>
+      <TabView></TabView>
     </v-main>
 
   </v-app>
@@ -69,17 +69,17 @@
 <script>
 
 import {mapState} from "vuex";
-import MenuPage from "@/components/MenuPage";
+import TabView from "@/components/TabView";
 
 export default {
   components: {
-    MenuPage
+    TabView
   },
 
   data() {
     return {
       /** VariantHunter logo */
-      websiteLogo: require('./images/virusurf_logo.png'),
+      websiteLogo: require('./assets/virusurf_logo.png'),
     }
   },
   computed: {
@@ -96,9 +96,18 @@ export default {
   max-height: 65px;
 }
 
-.headline {
-  font-size: 32px !important;
+.site-title {
+  font-size: 33px;
   margin-left: 20px;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  font-weight: 200;
+}
+
+.emphasis {
+  letter-spacing: -1px;
+  font-weight: 600;
+  margin-right: 6px;
 }
 
 /* Navbar links styling */
@@ -140,8 +149,15 @@ export default {
 
 </style>
 <style>
-.main-svg{
+/* Global styling */
+
+.main-svg {
   border: 1px solid grey;
   border-radius: 4px;
 }
+
+.v-application {
+  font-family: "Inter" !important;
+}
+
 </style>

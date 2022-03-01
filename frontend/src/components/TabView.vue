@@ -1,5 +1,5 @@
 <!--
-  Component:    MenuPage
+  Component:    TabView
   Description:  Component to switch between the analysis tabs.
                 It also fetches all possible locations and lineages values saving them in the store.
 -->
@@ -11,6 +11,7 @@
             active-class="active-tab"
             dark
             height="60"
+            centered
             show-arrows
             slider-size="6">
 
@@ -23,11 +24,11 @@
       </v-tab>
 
       <v-tab-item class="tab-content">
-        <MainPageWithoutLineages/>
+        <TabWithoutLineages :allLocations="allLocations"/>
       </v-tab-item>
 
       <v-tab-item class="tab-content">
-        <MainPageWithLineages/>
+        <TabWithLineages :allLocations="allLocations" :allLineages="allLineages"/>
       </v-tab-item>
 
     </v-tabs>
@@ -57,12 +58,12 @@
 <script>
 import axios from "axios";
 import {mapMutations, mapState} from "vuex";
-import MainPageWithLineages from "@/components/MainPageWithLineages";
-import MainPageWithoutLineages from "@/components/MainPageWithoutLineages";
+import TabWithLineages from "@/components/TabWithLineages";
+import TabWithoutLineages from "@/components/TabWithoutLineages";
 
 export default {
-  name: "MenuPage",
-  components: {MainPageWithoutLineages, MainPageWithLineages},
+  name: "TabView",
+  components: {TabWithoutLineages, TabWithLineages},
   data() {
     return {
       /** Currently selected tab */
@@ -75,14 +76,17 @@ export default {
       progressStatus: 0,
 
       /** Server error flag */
-      errorOccurred: false
+      errorOccurred: false,
+
+      /** Lineages fetched from server*/
+      allLineages: [],
+
+      /** Locations fetched from server*/
+      allLocations: []
     }
   },
   computed: {
     ...mapState(['primary_color', 'secondary_color']),
-  },
-  methods: {
-    ...mapMutations(['setAllLocations', 'setAllLineages']),
   },
   watch: {
     /** Progress watcher */
@@ -92,7 +96,7 @@ export default {
   },
   mounted() {
     /** Fetch all possible values for locations (continents, countries, regions) */
-    // let locationsAPI = `http://localhost:5001/variant_hunter/api/analyse_mutations/getAllGeo`; //TODO development env
+    //let locationsAPI = `http://localhost:5001/variant_hunter/api/analyse_mutations/getAllGeo`; //TODO development env
     let locationsAPI = `/analyse_mutations/getAllGeo`;
     axios.get(locationsAPI)
         .then((res) => {
@@ -100,14 +104,15 @@ export default {
         })
         .then((res) => {
           this.progressStatus = this.progressStatus + 50;
-          this.setAllLocations(res);
+          this.allLocations=res;
+          //this.setAllLocations(res);
         })
         .catch(() => {
           this.errorOccurred = true
         });
 
     /** Fetch all possible values for lineages */
-    // let lineageAPI = `http://0.0.0.0:5001/variant_hunter/api/analyse_mutations/getAllLineage`; //TODO development env
+    //let lineageAPI = `http://0.0.0.0:5001/variant_hunter/api/analyse_mutations/getAllLineage`; //TODO development env
     let lineageAPI = `/analyse_mutations/getAllLineage`;
     axios.get(lineageAPI)
         .then((res) => {
@@ -115,7 +120,8 @@ export default {
         })
         .then((res) => {
           this.progressStatus = this.progressStatus + 50;
-          this.setAllLineages(res);
+          this.allLineages = res;
+          //this.setAllLineages(res);
         })
         .catch(() => {
           this.errorOccurred = true
@@ -142,7 +148,6 @@ export default {
 .tab {
   font-size: 16px;
   font-weight: normal;
-  border-right: #014878 solid 1px;
   width: 33%;
   border-bottom: #014878 solid 1px;
 }

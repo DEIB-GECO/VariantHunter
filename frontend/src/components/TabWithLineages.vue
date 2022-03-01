@@ -1,6 +1,6 @@
 <!--
-  Component:    MainPageWithoutLineages
-  Description:  Tab to perform lineage independent analyses.
+  Component:    TabWithLineages
+  Description:  Tab to perform lineage specific analyses.
 -->
 
 <template>
@@ -21,7 +21,7 @@
 
               <!-- Form fields -->
               <!---- Granularity -->
-              <v-flex class="xs12 sm6 md4 d-flex">
+              <v-flex class="xs12 sm6 md3 d-flex">
                 <v-layout row wrap>
                   <v-flex class="xs12 d-flex field-label">
                     <span>Granularity</span>
@@ -38,10 +38,10 @@
               </v-flex>
 
               <!---- Location -->
-              <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm6 md4 d-flex">
+              <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm6 md3 d-flex">
                 <v-layout row wrap>
                   <v-flex class="xs12 d-flex field-label">
-                    <span>Location:</span>
+                    <span>Location</span>
                   </v-flex>
 
                   <v-flex class="xs12 d-flex field-element">
@@ -60,10 +60,10 @@
               </v-flex>
 
               <!---- Date -->
-              <v-flex class="xs12 sm6 md4 d-flex">
+              <v-flex class="xs12 sm6 md3 d-flex">
                 <v-layout justify-center row wrap>
                   <v-flex class="xs12 d-flex field-label">
-                    <span>Date:</span>
+                    <span>Date</span>
                   </v-flex>
 
                   <v-flex class="xs12 d-flex field-element">
@@ -92,6 +92,28 @@
                                      @input="menuVisibility = false"
                       />
                     </v-menu>
+                  </v-flex>
+                </v-layout>
+              </v-flex>
+
+              <!---- Lineage -->
+              <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm6 md3 d-flex">
+                <v-layout row wrap>
+                  <v-flex class="xs12 d-flex field-label">
+                    <span>Lineage</span>
+                  </v-flex>
+
+                  <v-flex class="xs12 d-flex field-element">
+                    <v-autocomplete
+                        v-model="selectedLineage"
+                        :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world') || selectedDate === null"
+                        :items="possibleLineages"
+                        clearable
+                        hide-details
+                        label="Lineage"
+                        solo
+                    >
+                    </v-autocomplete>
                   </v-flex>
                 </v-layout>
               </v-flex>
@@ -136,7 +158,8 @@
                   <b>Results for:</b>
                   {{ expansionPanelsSingleInfo[index]['granularity'] }} /
                   {{ expansionPanelsSingleInfo[index]['location'] }} /
-                  {{ expansionPanelsSingleInfo[index]['date'] }}
+                  {{ expansionPanelsSingleInfo[index]['date'] }} /
+                  {{ expansionPanelsSingleInfo[index]['lineage'] }}
                 </span>
               </v-expansion-panel-header>
 
@@ -144,13 +167,13 @@
               <v-expansion-panel-content :color="secondary_color">
                 <TablesComponent
                     v-if="rowsTable[index].length > 0"
-                    :nameHeatmap="'heatmapWithoutLineage' + index"
+                    :nameHeatmap="'heatmapWithLineage' + index"
                     :rowsTable="rowsTable[index]"
                     :singleInfo=expansionPanelsSingleInfo[index]
-                    :tableIndex="'wo_l_' + index"
-                    :timeName="'timeDistributionWithoutLineage'+index"
-                    :withLineages="false">
-                </TablesComponent>
+                    :tableIndex="'w_l_' + index"
+                    :timeName="'timeDistributionWithLineage'+index"
+                    :withLineages="true"
+                />
                 <div v-else class="empty-result-alert">
                   <h4>
                     <v-icon color="white" left>mdi-alert-circle-outline</v-icon>
@@ -184,6 +207,7 @@
         </v-alert>
       </v-container>
     </v-overlay>
+
   </div>
 </template>
 
@@ -191,11 +215,18 @@
 
 import {mapState} from "vuex";
 import axios from "axios";
-import TablesComponent from "@/components/TablesComponent";
+import TablesComponent from "./TablesComponent";
 
 export default {
-  name: "MainPageWithoutLineages",
+  name: "TabWithLineages",
   components: {TablesComponent},
+  props: {
+    /** Location: all options */
+    allLocations: {required: true},
+
+    /** Lineages: all options */
+    allLineages: {required: true}
+  },
   data() {
     return {
       /** Visibility flag of date picker menu */
@@ -212,15 +243,18 @@ export default {
       /** Granularity: selected option */
       selectedGranularity: null,
 
-      /** Location: all options */
-      allLocations: [],
-      /** Location: available options (wrt to other params)*/
+      /** Location: available options (wrt to other params) */
       possibleLocations: [],
       /** Location: selected option */
       selectedLocation: null,
 
       /** Date: selected date (by default the current date) */
       selectedDate: new Date().toISOString().slice(0, 10),
+
+      /** Lineage: available options (wrt to other params) */
+      possibleLineages: this.allLineages,
+      /** Lineage: selected option */
+      selectedLineage: null,
 
       /** Today date */
       today: new Date().toISOString().slice(0, 10),
@@ -236,12 +270,12 @@ export default {
     }
   },
   computed: {
-    ...mapState(['secondary_color', 'all_locations']),
+    ...mapState(['secondary_color']),
 
     /** Form error flag: true if the form cannot be sent */
     formError() {
-      return !((this.selectedGranularity === 'world' && this.selectedDate != null) ||
-          (this.selectedGranularity !== null && this.selectedLocation !== null && this.selectedDate !== null)
+      return !((this.selectedGranularity === 'world' && this.selectedDate !== null && this.selectedLineage !== null) ||
+          (this.selectedGranularity !== null && this.selectedLocation !== null && this.selectedDate !== null && this.selectedLineage !== null)
       )
     },
   },
@@ -261,13 +295,15 @@ export default {
     doAnalysis() {
       this.isLoading = true;
       let countNumAnalysis = this.rowsTable.length;
-      // let url = `http://localhost:5001/variant_hunter/api/analyse_mutations_without_lineages/getStatistics`; // TODO development env
-      let url = `/analyse_mutations_without_lineages/getStatistics`;
+      //let url = `http://localhost:5001/variant_hunter/api/analyse_mutations/getStatistics`; // TODO development env
+      let url = `/analyse_mutations/getStatistics`;
       let to_send = {
         'granularity': this.selectedGranularity,
         'value': this.selectedLocation,
-        'date': this.selectedDate
+        'date': this.selectedDate,
+        'lineage': this.selectedLineage
       };
+
       axios.post(url, to_send)
           .then((res) => {
             return res.data;
@@ -278,6 +314,7 @@ export default {
               'granularity': to_send.granularity,
               'location': to_send.value,
               'date': to_send.date,
+              'lineage': to_send.lineage
             };
 
             // Save the result data
@@ -299,70 +336,100 @@ export default {
       this.possibleLocations = [];
       this.selectedLocation = null;
       let i = 0;
-      if (this.selectedGranularity !== 'world') {
-        while (i < this.allLocations[this.selectedGranularity].length) {
-          if (this.allLocations[this.selectedGranularity][i] != null) {
-            this.possibleLocations.push(this.allLocations[this.selectedGranularity][i]);
-          } else {
-            this.possibleLocations.push('N/D');
+      if (this.allLocations !== null) {
+        if (this.selectedGranularity !== 'world') {
+          while (i < this.allLocations[this.selectedGranularity].length) {
+            if (this.allLocations[this.selectedGranularity][i] != null) {
+              this.possibleLocations.push(this.allLocations[this.selectedGranularity][i]);
+            } else {
+              this.possibleLocations.push('N/D');
+            }
+            i = i + 1;
           }
-          i = i + 1;
+        } else {
+          this.selectedLocation = 'all'
         }
-      } else {
-        this.selectedLocation = 'all'
       }
       this.possibleLocations.sort();
+    },
+
+    /** Fetch all possible values for lineages (given the other params) */
+    getPossibleLineages() {
+      if (this.selectedLocation !== null && this.selectedDate !== null) {
+        //let url = `http://localhost:5001/variant_hunter/api/analyse_mutations/getGeoLineages`; // TODO development env
+        let url = `/analyse_mutations/getGeoLineages`;
+        let to_send = {
+          'geo': this.selectedLocation,
+          'date': this.selectedDate
+        };
+        axios.post(url, to_send)
+            .then((res) => {
+              this.possibleLineages = res.data;
+            })
+      }
     }
   },
   mounted() {
     // Default values (test purposes only)
     // setTimeout(() => {
-    //  this.selectedGranularity = 'country';
-    //  this.selectedDate = '2022-02-01';
-    //  this.selectedLocation = 'Italy';
-    //  this.doAnalysis();
+    //   this.selectedGranularity = 'country';
+    //   this.selectedDate = '2022-02-01';
+    //   this.selectedLocation = 'Italy';
+    //   this.selectedLineage = 'BA.1';
+    //   this.doAnalysis();
     // }, 1000);
   },
   watch: {
-    /** Fetch the locations from the state */
-    all_locations() {
-      this.allLocations = this.all_locations;
-    },
-
-    /** Adjust the location according to the selected granularity */
+    /** Adjust the possible locations according to the selected granularity */
     selectedGranularity() {
       this.computePossibleLocations()
+    },
+
+    /** Adjust the possible lineages according to the selected location */
+    selectedLocation() {
+      this.getPossibleLineages()
+    },
+
+    /** Adjust the possible lineages according to the selected date */
+    selectedDate() {
+      this.getPossibleLineages()
     },
   },
 }
 </script>
 
 <style scoped>
+
+/* Root tab container styling */
 .root-container {
   margin: 0 auto auto auto;
-  min-width: 96vw;
+  min-width: 97vw;
   height: 100%;
 }
 
+/* Child tab container styling */
 .child-container {
   background-color: #014878;
   border-radius: 8px;
-  margin-top: 25px;
+  margin-top: 15px;
   margin-bottom: 0;
-  min-width: 92vw;
+  min-width: 96vw;
 }
 
+/* Form container styling */
 .card-container {
-  margin: 25px auto;
+  margin: 15px auto;
   justify-content: center;
-  padding: 20px 3vw 20px 3vw;
+  padding: 15px 1vw 15px 1vw;
 }
 
+/* Form content styling */
 .card-content {
   padding: 30px;
   margin: auto;
 }
 
+/* Headings */
 .form-header, .result-header {
   color: white;
   justify-content: center;
@@ -373,6 +440,7 @@ export default {
   margin-bottom: 20px;
 }
 
+/* Form labels styling */
 .field-label {
   justify-content: center;
   padding-top: 5px !important;
@@ -380,17 +448,20 @@ export default {
   color: white;
 }
 
+/* Form elements styling */
 .field-element {
   padding-top: 0 !important;
   padding-bottom: 4px !important;
   text-transform: capitalize;
 }
 
+/* Form controls styling */
 .form-controls {
   margin-top: 26px !important;
   justify-content: center !important;
 }
 
+/* Result list styling */
 .result-list {
   margin-bottom: 20px;
 }
@@ -410,6 +481,7 @@ v-expansion-panel-header {
   border-radius: 4px;
 }
 
+/* No result message styling */
 .empty-result-alert {
   text-align: center;
   margin-top: 40px;
