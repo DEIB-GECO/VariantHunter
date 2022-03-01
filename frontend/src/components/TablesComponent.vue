@@ -64,6 +64,7 @@
           :items="filteredResults"
           :sort-by.sync="sortByTable"
           :sort-desc.sync="sortDescTable"
+          :footer-props="{'items-per-page-options': [5, 10, 20, 50, 100, -1]}"
           class="data-table table_prov_reg mytable"
           item-key="mut"
           multi-sort
