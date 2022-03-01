@@ -31,7 +31,6 @@ SQLAlchemy
 certifi
 chardet
 Pygments
-ipykernel
 traitlets
 testpath
 decorator

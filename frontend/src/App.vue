@@ -1,182 +1,147 @@
 <template>
   <v-app>
-      <v-toolbar dark :color="toolbar_color" style="width: 100%; max-height:65px">
-        <v-img :src="require('./images/virusurf_logo.png')" contain max-width="39px" max-height="39px"></v-img>
-        <v-toolbar-title class="headline" style="font-size: 32px !important; margin-left: 20px">
-            <span>Variant</span>
-            <span class="font-weight-light"> Hunter</span>
-        </v-toolbar-title>
 
-        <v-spacer></v-spacer>
+    <!-- Navbar -->
+    <v-toolbar :color="primary_color" class="navbar" dark>
 
-        <v-toolbar-items style="background-color: transparent" class="hidden-lg-and-down">
-          <v-btn icon text href="http://gmql.eu/virusurf/" target="_blank"
-                style="background-color: transparent; width: 100px">
-              <span>ViruSurf</span>
-          </v-btn>
-          <v-btn icon text href="http://gmql.eu/virusurf_gisaid/" target="_blank"
-                style="background-color: transparent; width: 200px">
-              <span>ViruSurf</span>
-              <img style="vertical-align: middle;" :src="require('./assets/enabled_gisaid_white.png')" alt="gisaid-logo"
-                     height="40px"/>
-          </v-btn>
-          <v-btn icon text href="http://gmql.eu/episurf/" target="_blank"
-                 style="background-color: transparent; width: 100px">
-              <span>EpiSurf</span>
-          </v-btn>
-          <v-btn icon text href="http://gmql.eu/episurf_gisaid/" target="_blank"
-                 style="background-color: transparent; width: 200px">
-              <span>EpiSurf</span>
-              <img style="vertical-align: middle;" :src="require('./assets/enabled_gisaid_white.png')" alt="gisaid-logo"
-                     height="40px"/>
-          </v-btn>
-          <v-btn icon text href="http://gmql.eu/virusviz/" target="_blank"
-                 style="background-color: transparent; width: 100px">
-              <span>VirusViz</span>
-          </v-btn>
-          <v-btn icon text href="http://gmql.eu/viruclust_gisaid/" target="_blank"
-                 style="background-color: transparent; width: 200px">
-              <span>ViruClust</span>
-              <img style="vertical-align: middle;" :src="require('./assets/enabled_gisaid_white.png')" alt="gisaid-logo"
-                     height="40px"/>
-          </v-btn>
-<!--          <v-btn icon text href="https://github.com/DEIB-GECO/ViruClust/wiki" target="_blank"-->
-<!--                 style="background-color: transparent; width: 100px">-->
-<!--              <span>Wiki</span>-->
-<!--          </v-btn>-->
-<!--          <v-btn icon text href="/viruclust_gisaid/repo_static/about__viruclust.html" target="_blank"-->
-<!--            style="background-color: transparent; width: 100px">-->
-<!--              <span>ABOUT</span>-->
-<!--          </v-btn>-->
-        </v-toolbar-items>
+      <!-- Logo -->
+      <v-img :src="websiteLogo" contain max-height="39px" max-width="39px"/>
+      <v-toolbar-title class="headline">
+        <span>Variant</span>
+        <span class="font-weight-light"> Hunter</span>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
 
-        <div class="hidden-xl-only">
-        <v-menu>
-          <template v-slot:activator="{ on, attrs }">
-            <v-app-bar-nav-icon
-              v-bind="attrs"
-              v-on="on"
-            >
-            </v-app-bar-nav-icon>
-          </template>
-          <v-list-item style="background-color: white;">
-              <v-list-item-content>
-                <v-btn icon text href="http://gmql.eu/virusurf/" target="_blank"
-                      style="background-color: transparent; width: 200px">
-                    <span>ViruSurf</span>
-                </v-btn>
-              </v-list-item-content>
-          </v-list-item>
-          <v-list-item style="background-color: white; border-top: grey solid 1px">
-              <v-list-item-content>
-                <v-btn icon text href="http://gmql.eu/virusurf_gisaid/" target="_blank"
-                      style="background-color: transparent; width: 200px">
-                    <span>ViruSurf</span>
-                    <img style="vertical-align: middle;" :src="require('./assets/enabled_gisaid_grey.png')" alt="gisaid-logo"
-                     height="50px"/>
-                </v-btn>
-              </v-list-item-content>
-          </v-list-item>
-          <v-list-item style="background-color: white; border-top: grey solid 1px">
-              <v-list-item-content>
-                <v-btn icon text href="http://gmql.eu/episurf/" target="_blank"
-                       style="background-color: transparent; width: 200px">
-                    <span>EpiSurf</span>
-                </v-btn>
-              </v-list-item-content>
-          </v-list-item>
-          <v-list-item style="background-color: white; border-top: grey solid 1px">
-              <v-list-item-content>
-                <v-btn icon text href="http://gmql.eu/episurf_gisaid/" target="_blank"
-                       style="background-color: transparent; width: 200px">
-                    <span>EpiSurf</span>
-                    <img style="vertical-align: middle;" :src="require('./assets/enabled_gisaid_grey.png')" alt="gisaid-logo"
-                     height="50px"/>
-                </v-btn>
-              </v-list-item-content>
-          </v-list-item>
-          <v-list-item style="background-color: white; border-top: grey solid 1px">
-              <v-list-item-content>
-                <v-btn icon text href="http://gmql.eu/virusviz/" target="_blank"
-                       style="background-color: transparent; width: 200px">
-                    <span>VirusViz</span>
-                </v-btn>
-              </v-list-item-content>
-          </v-list-item>
-          <v-list-item style="background-color: white; border-top: grey solid 1px">
-              <v-list-item-content>
-                <v-btn icon text href="http://gmql.eu/viruclust_gisaid/" target="_blank"
-                       style="background-color: transparent; width: 200px">
-                    <span>ViruClust</span>
-                    <img style="vertical-align: middle;" :src="require('./assets/enabled_gisaid_grey.png')" alt="gisaid-logo"
-                     height="50px"/>
-                </v-btn>
-              </v-list-item-content>
-          </v-list-item>
-<!--          <v-list-item style="background-color: white; border-top: grey solid 1px">-->
-<!--              <v-list-item-content>-->
-<!--                <v-btn icon text href="https://github.com/DEIB-GECO/ViruClust/wiki" target="_blank"-->
-<!--                       style="background-color: transparent; width: 200px">-->
-<!--                    <span>Wiki</span>-->
-<!--                </v-btn>-->
-<!--              </v-list-item-content>-->
-<!--          </v-list-item>-->
-<!--          <v-list-item style="background-color: white; border-top: grey solid 1px">-->
-<!--              <v-list-item-content>-->
-<!--                <v-btn icon text href="/viruclust_gisaid/repo_static/about__viruclust.html" target="_blank"-->
-<!--                  style="background-color: transparent; width: 200px">-->
-<!--                    <span>ABOUT</span>-->
-<!--                </v-btn>-->
-<!--              </v-list-item-content>-->
-<!--          </v-list-item>-->
-        </v-menu>
-        </div>
 
-      </v-toolbar>
+      <!-- Navbar links to the other tools -->
+      <!--      <v-toolbar-items class="hidden-lg-and-down navbar-links">-->
+      <!--        <v-btn text href="https://github.com/DEIB-GECO/VariantHunter/wiki" target="_blank" class="navbar-link">-->
+      <!--            <span>Wiki</span>-->
+      <!--        </v-btn>-->
+
+      <!--        <v-btn text href="/viruclust_gisaid/repo_static/about__variantHunter.html" target="_blank" class="navbar-link">-->
+      <!--            <span>ABOUT</span>-->
+      <!--        </v-btn>-->
+      <!--      </v-toolbar-items>-->
+
+
+      <!-- Menu links to the other tools -->
+      <!--      <div class="hidden-xl-only">-->
+      <!--        <v-menu>-->
+
+      <!--          &lt;!&ndash; Menu icon &ndash;&gt;-->
+      <!--          <template v-slot:activator="{ on, attrs }">-->
+      <!--            <v-app-bar-nav-icon v-bind="attrs" v-on="on"/>-->
+      <!--          </template>-->
+
+      <!--          &lt;!&ndash; Menu links&ndash;&gt;-->
+      <!--          <div class="nav-menu">-->
+      <!--            <v-list-item class="menu-links">-->
+      <!--              <v-list-item-content>-->
+      <!--                      <v-list-item class="menu-links">-->
+      <!--                          <v-list-item-content>-->
+      <!--                            <v-btn text  href="https://github.com/DEIB-GECO/VariantHunter/wiki" target="_blank" class="menu-link">-->
+      <!--                                <span>Wiki</span>-->
+      <!--                            </v-btn>-->
+      <!--                          </v-list-item-content>-->
+      <!--                      </v-list-item>-->
+
+      <!--                      <v-list-item class="menu-links">-->
+      <!--                          <v-list-item-content>-->
+      <!--                            <v-btn text  href="/viruclust_gisaid/repo_static/about__variantHunter.html" target="_blank" class="menu-link">-->
+      <!--                                <span>ABOUT</span>-->
+      <!--                            </v-btn>-->
+      <!--                          </v-list-item-content>-->
+      <!--                      </v-list-item>-->
+      <!--          </div>-->
+      <!--        </v-menu>-->
+      <!--      </div>-->
+
+    </v-toolbar>
 
     <v-main>
       <MenuPage></MenuPage>
     </v-main>
 
-<!--    <v-footer app>-->
-<!--        <v-flex-->
-<!--                lighten-2-->
-<!--                xs6-->
-<!--                class="bottom-info"-->
-<!--                style="font-size:12px;">-->
-<!--            <div>Data used in this web application remain subject to GISAID’s <a-->
-<!--                href="http://gisaid.org/DAA/" target="_blank">Terms-->
-<!--              and Conditions</a>.-->
-<!--            </div>-->
-<!--        </v-flex>-->
-<!--    </v-footer>-->
-
   </v-app>
 </template>
 
 <script>
-import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
+
+import {mapState} from "vuex";
 import MenuPage from "@/components/MenuPage";
 
 export default {
-  name: 'App',
-
   components: {
     MenuPage
   },
 
   data() {
     return {
-
+      /** VariantHunter logo */
+      websiteLogo: require('./images/virusurf_logo.png'),
     }
   },
   computed: {
-    ...mapState(['toolbar_color']),
-    ...mapGetters({}),
-  },
-  methods: {
-    ...mapMutations([]),
-    ...mapActions([]),
-  },
+    ...mapState(['primary_color']),
+  }
 };
+
 </script>
+
+<style scoped>
+
+.navbar {
+  width: 100%;
+  max-height: 65px;
+}
+
+.headline {
+  font-size: 32px !important;
+  margin-left: 20px;
+}
+
+/* Navbar links styling */
+.navbar-links, .navbar-links > * {
+  background: transparent;
+}
+
+.navbar-link {
+  width: 100px !important;
+}
+
+.navbar-link-large {
+  width: 200px !important;
+}
+
+.navbar-link-large img, .menu-link-large img {
+  vertical-align: middle;
+  justify-content: left;
+  margin: 4px 0 2px 8px;
+}
+
+/* Menu links styling */
+.nav-menu .menu-links {
+  background-color: white;
+}
+
+.nav-menu .menu-links:not(:first-child) {
+  border-top: #606060 solid 1px;
+}
+
+.menu-link {
+  width: 200px;
+  color: #606060;
+}
+
+.menu-link-large {
+  height: fit-content !important;
+}
+
+</style>
+<style>
+.main-svg{
+  border: 1px solid grey;
+  border-radius: 4px;
+}
+</style>

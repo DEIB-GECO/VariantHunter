@@ -1,12 +1,12 @@
 <template>
   <div>
-    <v-card width="100%" color="white" style="padding: 50px; min-height: 90.5vh">
+    <v-card width="100%" color="white" style="padding: 40px; min-height: 90.5vh"> // TODO: temporary fix. Requires reengineering.
         <v-row justify="center" align="center">
-          <v-card width="95%" style="padding: 50px; margin-top: 50px; margin-bottom: 50px" :color="background_card_color">
+          <v-card width="99%" style="padding: 20px; margin-top: 50px; margin-bottom: 50px" :color="background_card_color">
              <v-card-text>
                <v-layout row wrap justify-center style="padding: 30px;">
                  <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
-                   <v-card width="95%" :color="menu_color">
+                   <v-card width="98%" :color="menu_color"> // TODO: temporary fix. Requires reengineering.
                      <v-layout row wrap justify-center style="padding: 30px;">
                        <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; margin-top: 10px">
                        <h2 style="color: white">DEFINE ANALYSIS:</h2>
@@ -141,7 +141,7 @@
                             </span>
                         </v-expansion-panel-header>
                         <v-expansion-panel-content :color="menu_color">
-                          <TablesComponentWithoutLineages
+                          <TablesComponent
                             :rowsTable="rowsTable[index]"
                             :singleInfo = expansionPanelsSingleInfo[index]
                             :nameHeatmap="'heatmapWithLineage' + index"
@@ -149,7 +149,7 @@
                             :withLineages="true"
                             :tableIndex="'w_l_' + index"
                             v-if="rowsTable[index].length > 0">
-                          </TablesComponentWithoutLineages>
+                          </TablesComponent>
                           <div v-else style="text-align: center; margin-top: 20px">
                             <h2 style="color: white"> Not enough data for this location </h2>
                           </div>
@@ -163,12 +163,12 @@
         </v-row>
     </v-card>
 
-    <v-overlay :value="overlay">
+    <!--<v-overlay :value="overlay">
       <v-progress-circular
         indeterminate
         size="64"
       ></v-progress-circular>
-    </v-overlay>
+    </v-overlay>-->
 
   </div>
 </template>
@@ -177,19 +177,18 @@
 
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import axios from "axios";
-import TablesComponent from "@/components/TablesComponent";
-import TablesComponentWithoutLineages from "./TablesComponentWithoutLineages";
+import TablesComponent from "./TablesComponent";
 
 export default {
   name: "MainPageWithLineages",
-  components: {TablesComponentWithoutLineages, TablesComponent},
+  components: {TablesComponent},
   data() {
     return {
       menu: false,
       overlay: false,
       allGeo: null,
-      selectedGeo: 'world',
-      possibleGeo: ['world', 'continent', 'country', 'region'],
+      selectedGeo: null,
+      possibleGeo: [/*'world',*/ 'continent', 'country', 'region'],
       selectedSpecificGeo: null,
       possibleSpecificGeo: [],
       selectedDate: null,
@@ -206,7 +205,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['background_card_color', 'menu_color', 'toolbar_color', 'all_geo', 'all_lineages']),
+    ...mapState(['background_card_color', 'menu_color', 'toolbar_color', 'all_locations', 'all_lineages']),
     ...mapGetters({}),
   },
   methods: {
@@ -228,19 +227,17 @@ export default {
     loadTables(){
       this.overlay = true;
       let countNumAnalysis = this.rowsTable.length;
+      // let url = `http://localhost:5001/variant_hunter/api/analyse_mutations/getStatistics`; // TODO development env
       let url = `/analyse_mutations/getStatistics`;
-      // let url = `/automatic_analysis/getStatistics`;
       let to_send = {
         'value': this.selectedSpecificGeo,
         'lineage': this.selectedLineage,
         'date': this.selectedDate};
-
       axios.post(url, to_send)
         .then((res) => {
           return res.data;
         })
         .then((res) => {
-
           this.expansionPanelsSingleInfo[countNumAnalysis] = {
             'weekNum': this.selectedWeekNum,
             'date': this.selectedDate,
@@ -262,6 +259,7 @@ export default {
     },
     getAvailableLineages(){
     if (!(this.selectedSpecificGeo == null || this.selectedDate == null)){
+      // let url = `http://localhost:5001/variant_hunter/api/analyse_mutations/getGeoLineages`; // TODO development env
       let url = `/analyse_mutations/getGeoLineages`;
       let to_send = {
         'geo': this.selectedSpecificGeo,
@@ -278,7 +276,7 @@ export default {
       this.selectedDate = null;//new Date().toISOString().slice(0, 10);
       this.selectedSpecificGeo = null;
       this.possibleSpecificGeo = [];
-      this.allGeo = this.all_geo;
+      this.allGeo = this.all_locations;
       this.possibleLineage = this.all_lineages;
 
       // //DEFAULT VALUES
@@ -292,8 +290,8 @@ export default {
       // //DEFAULT VALUES
   },
   watch: {
-    all_geo(){
-      this.allGeo = this.all_geo;
+    all_locations(){
+      this.allGeo = this.all_locations();
     },
     all_lineages(){
       this.possibleLineage = this.all_lineages;

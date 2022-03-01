@@ -1,276 +1,424 @@
+<!--
+  Component:    MainPageWithoutLineages
+  Description:  Tab to perform lineage independent analyses.
+-->
+
 <template>
   <div>
-    <v-card width="100%" color="white" style="padding: 50px; min-height: 90.5vh">
-        <v-row justify="center" align="center">
-          <v-card width="95%" style="padding: 50px; margin-top: 50px; margin-bottom: 50px" :color="background_card_color">
-             <v-card-text>
-               <v-layout row wrap justify-center style="padding: 30px;">
-                 <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
-                   <v-card width="95%" :color="menu_color">
-                     <v-layout row wrap justify-center style="padding: 30px;">
-                       <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; margin-top: 10px">
-                       <h2 style="color: white">DEFINE ANALYSIS:</h2>
-                      </v-flex>
-                      <v-flex class="no-horizontal-padding xs12 md4 d-flex" style="justify-content: center;">
-                        <v-layout row wrap justify-center>
-                          <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <span style="color: white">Granularity:</span>
-                          </v-flex>
-                          <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <v-select
-                              v-model="selectedGeo"
-                              :items="possibleGeo"
-                              label="Granularity"
-                              solo
-                              hide-details
-                            ></v-select>
-                          </v-flex>
-                        </v-layout>
-                      </v-flex>
-                      <v-flex class="no-horizontal-padding xs12 md4 d-flex" style="justify-content: center;">
-                        <v-layout row wrap justify-center>
-                          <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <span style="color: white">Location:</span>
-                          </v-flex>
-                          <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <v-autocomplete
-                              v-model="selectedSpecificGeo"
-                              :items="possibleSpecificGeo"
-                              label="Place"
-                              solo
-                              hide-details
-                              :disabled="selectedGeo === null || selectedGeo === 'world'"
-                            >
-                              <template slot="item" slot-scope="data">
-                                  <span>{{getFieldText(data.item)}}</span>
-                              </template>
-                            </v-autocomplete>
-                          </v-flex>
-                        </v-layout>
-                      </v-flex>
-                       <v-flex class="no-horizontal-padding xs12 md4 d-flex" style="justify-content: center;">
-                         <v-layout row wrap justify-center>
-                          <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                            <span style="color: white">Date:</span>
-                          </v-flex>
-                           <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; padding-top: 0; padding-bottom: 0">
-                             <v-menu
-                                v-model="menu"
-                                :close-on-content-click="false"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field
-                                    v-model="selectedDate"
-                                    label="Choose a date"
-                                    readonly
-                                    solo
-                                    hide-details
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    append-icon="mdi-calendar"
-                                    @click:append="menu=true"
-                                  ></v-text-field>
-                                </template>
-                                <v-date-picker
-                                  v-model="selectedDate"
-                                  first-day-of-week="1"
-                                  no-title
-                                  scrollable
-                                  @input="menu = false"
-                                >
-                                </v-date-picker>
-                              </v-menu>
-                           </v-flex>
-                         </v-layout>
-                       </v-flex>
-                       <v-flex class="no-horizontal-padding xs12 md4 d-flex" style="justify-content: center;">
-                         <v-layout row wrap justify-center>
-                         </v-layout>
-                       </v-flex>
-                       <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
-                       <v-btn
-                               @click="doAnalysis();"
-                               color="#011936"
-                               class="white--text"
-                               :disabled="selectedGeo !== 'world' && (selectedGeo === null || selectedSpecificGeo === null)"
-                        >
-                            START ANALYSIS
-                        </v-btn>
-                     </v-flex>
-                     </v-layout>
-                   </v-card>
-                 </v-flex>
 
-                 <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center; margin-top: 50px" v-if="rowsTable.length > 0">
-                   <h2 style="color: white">RESULTS: </h2>
+    <!-- Analysis definition form -->
+    <v-container class="root-container">
+      <v-container class="child-container">
+        <div class="card-container">
+
+          <v-card :color="secondary_color">
+            <v-layout class="card-content" justify-center row wrap>
+
+              <!-- Form header -->
+              <v-flex class="xs12 d-flex form-header">
+                <h2>DEFINE ANALYSIS</h2>
+              </v-flex>
+
+              <!-- Form fields -->
+              <!---- Granularity -->
+              <v-flex class="xs12 sm6 md4 d-flex">
+                <v-layout row wrap>
+                  <v-flex class="xs12 d-flex field-label">
+                    <span>Granularity</span>
                   </v-flex>
-                 <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
-                   <v-expansion-panels
-                    v-model="expansionPanels"
-                    :value="expansionPanels"
-                    multiple focusable>
-                      <v-expansion-panel style="margin-bottom: 10px" v-for="(array_rows, index) in rowsTable" v-bind:key="index">
-                        <v-expansion-panel-header :color="menu_color">
-                            <span style="width: 80%; color: black;">{{expansionPanelsSingleInfo[index]['location']}} /
-                                              {{expansionPanelsSingleInfo[index]['date']}}
-<!--                              /
-                                              {{expansionPanelsSingleInfo[index]['weekNum']}} weeks-->
-                            </span>
-                        </v-expansion-panel-header>
-                        <v-expansion-panel-content :color="menu_color">
-                          <TablesComponentWithoutLineages
-                            :rowsTable="rowsTable[index]"
-                            :singleInfo = expansionPanelsSingleInfo[index]
-                            :nameHeatmap="'heatmapWithoutLineage' + index"
-                            :timeName="'timeDistributionWithoutLineage'+index"
-                            :withLineages="false"
-                            :tableIndex="'wo_l_' + index"
-                            v-if="rowsTable[index].length > 0">
-                          </TablesComponentWithoutLineages>
-                          <div v-else style="text-align: center; margin-top: 20px">
-                            <h2 style="color: white"> Not enough data for this location </h2>
-                          </div>
-                        </v-expansion-panel-content>
-                      </v-expansion-panel>
-                   </v-expansion-panels>
-                 </v-flex>
-               </v-layout>
-             </v-card-text>
-          </v-card>
-        </v-row>
-    </v-card>
 
-    <v-overlay :value="overlay">
+                  <v-flex class="xs12 d-flex field-element">
+                    <v-select v-model="selectedGranularity"
+                              :items="possibleGranularity"
+                              hide-details
+                              label="Granularity"
+                              solo/>
+                  </v-flex>
+                </v-layout>
+              </v-flex>
+
+              <!---- Location -->
+              <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm6 md4 d-flex">
+                <v-layout row wrap>
+                  <v-flex class="xs12 d-flex field-label">
+                    <span>Location:</span>
+                  </v-flex>
+
+                  <v-flex class="xs12 d-flex field-element">
+                    <v-autocomplete v-model="selectedLocation"
+                                    :disabled="selectedGranularity === null || selectedGranularity === 'world'"
+                                    :items="possibleLocations"
+                                    hide-details
+                                    label="Location"
+                                    solo>
+                      <template slot="item" slot-scope="data">
+                        <span>{{ getFieldText(data.item) }}</span>
+                      </template>
+                    </v-autocomplete>
+                  </v-flex>
+                </v-layout>
+              </v-flex>
+
+              <!---- Date -->
+              <v-flex class="xs12 sm6 md4 d-flex">
+                <v-layout justify-center row wrap>
+                  <v-flex class="xs12 d-flex field-label">
+                    <span>Date:</span>
+                  </v-flex>
+
+                  <v-flex class="xs12 d-flex field-element">
+                    <v-menu v-model="menuVisibility"
+                            :close-on-content-click="false"
+                            min-width="auto"
+                            offset-y
+                            transition="scale-transition">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field v-model="selectedDate"
+                                      append-icon="mdi-calendar"
+                                      hide-details
+                                      label="Date"
+                                      readonly
+                                      solo
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      @click:append="menuVisibility=true"
+                        />
+                      </template>
+                      <v-date-picker v-model="selectedDate"
+                                     :max="today"
+                                     first-day-of-week="1"
+                                     no-title
+                                     scrollable
+                                     @input="menuVisibility = false"
+                      />
+                    </v-menu>
+                  </v-flex>
+                </v-layout>
+              </v-flex>
+
+              <!-- Send button -->
+              <v-flex class="xs12 sm6 md12 d-flex form-controls">
+                <v-btn :disabled="formError"
+                       class="white--text"
+                       color="#011936"
+                       @click="doAnalysis();"
+                >
+                  START ANALYSIS
+                </v-btn>
+              </v-flex>
+            </v-layout>
+          </v-card>
+        </div>
+
+      </v-container>
+    </v-container>
+
+    <!-- Analysis results -->
+    <v-container ref="result" class="root-container">
+      <v-container v-if="rowsTable.length > 0" class="child-container">
+        <div class="card-container">
+
+          <!-- Heading -->
+          <div class="result-header">
+            <h2>RESULTS</h2>
+          </div>
+
+          <!-- Panels list -->
+          <v-expansion-panels
+              v-model="expansionPanels"
+              :value="expansionPanels"
+              focusable multiple>
+            <v-expansion-panel v-for="(array_rows, index) in rowsTable" v-bind:key="index" class="result-list">
+
+              <!-- Panel header -->
+              <v-expansion-panel-header :color="secondary_color">
+                <span>
+                  <b>Results for:</b>
+                  {{ expansionPanelsSingleInfo[index]['granularity'] }} /
+                  {{ expansionPanelsSingleInfo[index]['location'] }} /
+                  {{ expansionPanelsSingleInfo[index]['date'] }}
+                </span>
+              </v-expansion-panel-header>
+
+              <!-- Panel content -->
+              <v-expansion-panel-content :color="secondary_color">
+                <TablesComponent
+                    v-if="rowsTable[index].length > 0"
+                    :nameHeatmap="'heatmapWithoutLineage' + index"
+                    :rowsTable="rowsTable[index]"
+                    :singleInfo=expansionPanelsSingleInfo[index]
+                    :tableIndex="'wo_l_' + index"
+                    :timeName="'timeDistributionWithoutLineage'+index"
+                    :withLineages="false">
+                </TablesComponent>
+                <div v-else class="empty-result-alert">
+                  <h4>
+                    <v-icon color="white" left>mdi-alert-circle-outline</v-icon>
+                    Insufficient data to perform the analysis
+                  </h4>
+                </div>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+          </v-expansion-panels>
+
+        </div>
+      </v-container>
+    </v-container>
+
+
+    <!-- Progress circle -->
+    <v-overlay :value="isLoading">
       <v-progress-circular
-        indeterminate
-        size="64"
+          indeterminate
+          size="64"
       ></v-progress-circular>
     </v-overlay>
 
+    <!-- Error message -->
+    <v-overlay :value="errorOccurred">
+      <v-container>
+        <v-alert dismissible elevation="24" type="error" @input="errorOccurred=false; isLoading=false">
+          <b>The server is temporarily unreachable</b><br/>
+          An error occurred while contacting the server. Please try again later.
+        </v-alert>
+      </v-container>
+    </v-overlay>
   </div>
 </template>
 
 <script>
 
-import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
+import {mapState} from "vuex";
 import axios from "axios";
-import TablesComponentWithoutLineages from "@/components/TablesComponentWithoutLineages";
+import TablesComponent from "@/components/TablesComponent";
 
 export default {
   name: "MainPageWithoutLineages",
-  components: {TablesComponentWithoutLineages},
+  components: {TablesComponent},
   data() {
     return {
-      menu: false,
-      overlay: false,
-      allGeo: null,
-      selectedGeo: 'world',
-      possibleGeo: ['world', 'continent', 'country', 'region'],
-      selectedSpecificGeo: null,
-      possibleSpecificGeo: [],
-      selectedDate: null,
+      /** Visibility flag of date picker menu */
+      menuVisibility: false,
 
+      /** Progress circe flag: true if the progress circle is displayed */
+      isLoading: false,
+
+      /** Server error flag */
+      errorOccurred: false,
+
+      /** Granularity: available options */
+      possibleGranularity: [/*'world',*/ 'continent', 'country', 'region'],
+      /** Granularity: selected option */
+      selectedGranularity: null,
+
+      /** Location: all options */
+      allLocations: [],
+      /** Location: available options (wrt to other params)*/
+      possibleLocations: [],
+      /** Location: selected option */
+      selectedLocation: null,
+
+      /** Date: selected date (by default the current date) */
+      selectedDate: new Date().toISOString().slice(0, 10),
+
+      /** Today date */
+      today: new Date().toISOString().slice(0, 10),
+
+      /** Panel expansion status array */
       expansionPanels: [],
+
+      /** Panel search parameters array */
       expansionPanelsSingleInfo: [],
 
+      /** Panel data array */
       rowsTable: [],
     }
   },
   computed: {
-    ...mapState(['background_card_color', 'menu_color', 'toolbar_color', 'all_geo']),
-    ...mapGetters({}),
+    ...mapState(['secondary_color', 'all_locations']),
+
+    /** Form error flag: true if the form cannot be sent */
+    formError() {
+      return !((this.selectedGranularity === 'world' && this.selectedDate != null) ||
+          (this.selectedGranularity !== null && this.selectedLocation !== null && this.selectedDate !== null)
+      )
+    },
   },
   methods: {
-    ...mapMutations([]),
-    ...mapActions([]),
-    getFieldText(item){
+    /** Returns the hint for the field completion */
+    getFieldText(item) {
       let name;
-      if (item === null){
+      if (item === null) {
         name = 'N/D'
-      }
-      else{
+      } else {
         name = item;
       }
       return name;
     },
-    doAnalysis(){
-      this.loadTables();
-    },
-    loadTables(){
-      this.overlay = true;
+
+    /** Triggers the analysis request to the server */
+    doAnalysis() {
+      this.isLoading = true;
       let countNumAnalysis = this.rowsTable.length;
+      // let url = `http://localhost:5001/variant_hunter/api/analyse_mutations_without_lineages/getStatistics`; // TODO development env
       let url = `/analyse_mutations_without_lineages/getStatistics`;
       let to_send = {
-        'granularity': this.selectedGeo,
-        'value': this.selectedSpecificGeo,
-        'date': this.selectedDate,
-        'numWeek': this.selectedWeekNum};
-
+        'granularity': this.selectedGranularity,
+        'value': this.selectedLocation,
+        'date': this.selectedDate
+      };
       axios.post(url, to_send)
-        .then((res) => {
-          return res.data;
-        })
-        .then((res) => {
+          .then((res) => {
+            return res.data;
+          })
+          .then((res) => {
+            // Save the search parameters
+            this.expansionPanelsSingleInfo[countNumAnalysis] = {
+              'granularity': to_send.granularity,
+              'location': to_send.value,
+              'date': to_send.date,
+            };
 
-          this.expansionPanelsSingleInfo[countNumAnalysis] = {
-            'weekNum': this.selectedWeekNum,
-            'date': this.selectedDate,
-            'granularity': this.selectedGeo,
-            'location': this.selectedSpecificGeo,
-          };
+            // Save the result data
+            this.rowsTable[countNumAnalysis] = JSON.parse(JSON.stringify(res));
 
-          this.rowsTable[countNumAnalysis] = JSON.parse(JSON.stringify(res));
+            this.isLoading = false;
 
-          // this.selectedWeekNum = 4;
-          // this.selectedDate = new Date().toISOString().slice(0, 10);
-          // this.selectedGeo = 'world';
-          // this.selectedSpecificGeo = null;
-          this.overlay = false;
-          this.expansionPanels = [countNumAnalysis];
-        });
+            // Open the new panel and jump to the result container
+            this.expansionPanels = [countNumAnalysis];
+            this.$refs.result.scrollIntoView();
+          })
+          .catch(() => {
+            this.errorOccurred = true
+          });
     },
-  },
-  mounted() {
-      this.selectedDate = new Date().toISOString().slice(0, 10);
-      this.selectedSpecificGeo = null;
-      this.possibleSpecificGeo = [];
-      this.allGeo = this.all_geo;
 
-      // //DEFAULT VALUES
-      // setTimeout(() => {
-      //   this.selectedGeo = 'country';
-      //   this.selectedDate = '2022-02-01';
-      //   this.selectedSpecificGeo = 'Italy';
-      //   this.doAnalysis();
-      // }, 1000);
-      // //DEFAULT VALUES
-  },
-  watch: {
-    all_geo(){
-      this.allGeo = this.all_geo;
-    },
-    selectedGeo(){
-      this.possibleSpecificGeo = [];
+    /** Compute the possible locations based on the other parameters of the form*/
+    computePossibleLocations() {
+      this.possibleLocations = [];
+      this.selectedLocation = null;
       let i = 0;
-      if (this.selectedGeo !== 'world') {
-        while (i < this.allGeo[this.selectedGeo].length) {
-          if (this.allGeo[this.selectedGeo][i] != null) {
-            this.possibleSpecificGeo.push(this.allGeo[this.selectedGeo][i]);
+      if (this.selectedGranularity !== 'world') {
+        while (i < this.allLocations[this.selectedGranularity].length) {
+          if (this.allLocations[this.selectedGranularity][i] != null) {
+            this.possibleLocations.push(this.allLocations[this.selectedGranularity][i]);
           } else {
-            this.possibleSpecificGeo.push('N/D');
+            this.possibleLocations.push('N/D');
           }
           i = i + 1;
         }
+      } else {
+        this.selectedLocation = 'all'
       }
-      this.possibleSpecificGeo.sort();
+      this.possibleLocations.sort();
+    }
+  },
+  mounted() {
+    // Default values (test purposes only)
+    // setTimeout(() => {
+    //  this.selectedGranularity = 'country';
+    //  this.selectedDate = '2022-02-01';
+    //  this.selectedLocation = 'Italy';
+    //  this.doAnalysis();
+    // }, 1000);
+  },
+  watch: {
+    /** Fetch the locations from the state */
+    all_locations() {
+      this.allLocations = this.all_locations;
+    },
+
+    /** Adjust the location according to the selected granularity */
+    selectedGranularity() {
+      this.computePossibleLocations()
     },
   },
 }
 </script>
 
 <style scoped>
+.root-container {
+  margin: 0 auto auto auto;
+  min-width: 96vw;
+  height: 100%;
+}
+
+.child-container {
+  background-color: #014878;
+  border-radius: 8px;
+  margin-top: 25px;
+  margin-bottom: 0;
+  min-width: 92vw;
+}
+
+.card-container {
+  margin: 25px auto;
+  justify-content: center;
+  padding: 20px 3vw 20px 3vw;
+}
+
+.card-content {
+  padding: 30px;
+  margin: auto;
+}
+
+.form-header, .result-header {
+  color: white;
+  justify-content: center;
+  text-align: center;
+}
+
+.result-header {
+  margin-bottom: 20px;
+}
+
+.field-label {
+  justify-content: center;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  color: white;
+}
+
+.field-element {
+  padding-top: 0 !important;
+  padding-bottom: 4px !important;
+  text-transform: capitalize;
+}
+
+.form-controls {
+  margin-top: 26px !important;
+  justify-content: center !important;
+}
+
+.result-list {
+  margin-bottom: 20px;
+}
+
+.result-list span {
+  text-transform: capitalize;
+  font-size: 17px;
+  color: white;
+  letter-spacing: 1px;
+}
+
+.result-list span b {
+  text-transform: none;
+}
+
+v-expansion-panel-header {
+  border-radius: 4px;
+}
+
+.empty-result-alert {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-size: 17px;
+  color: white !important;
+  letter-spacing: 1px;
+  line-height: 10px;
+}
+
 
 </style>
