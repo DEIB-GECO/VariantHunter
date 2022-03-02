@@ -1,76 +1,114 @@
+<!--
+  Component:    TablesComponent
+  Description:  Container of the raw data table, heatmap and a barchart
+
+  Props:
+  ├──
+  └──
+-->
+
 <template>
-  <v-layout justify-center row style="padding-top: 30px;" wrap>
-    <!--    <v-flex class="no-horizontal-padding xs12 md4 lg2 d-flex" style="justify-content: center;" v-if="withLineages">-->
-    <!--      <v-autocomplete-->
-    <!--        v-model="selectedLineage"-->
-    <!--        :items="possibleLineage"-->
-    <!--        label="Lineage"-->
-    <!--        solo-->
-    <!--        hide-details-->
-    <!--        clearable-->
-    <!--      ></v-autocomplete>-->
-    <!--    </v-flex>-->
-    <v-flex class="no-horizontal-padding xs12 md4 lg2 d-flex" style="justify-content: center;">
-      <v-autocomplete
-          v-model="selectedProtein"
-          :items="possibleProtein"
-          clearable
-          hide-details
-          label="Filter by Protein"
-          solo
-      ></v-autocomplete>
+  <v-layout justify-center row class="panel-container" wrap>
+
+    <!-- Filtering options -->
+    <v-flex class=" xs12 d-flex filter-container" justify-center>
+      <v-container>
+        <v-layout justify-center row wrap>
+
+          <v-flex justify-center class="xs12 sm6 d-flex filter-heading">
+            <h3>
+              <v-icon color="white" left>mdi-filter-outline</v-icon>
+              FILTERING OPTIONS
+            </h3>
+          </v-flex>
+
+          <!-- Protein filter -->
+          <v-flex justify-center class="xs12 sm6 d-flex ">
+            <v-layout row wrap>
+              <v-flex class="xs12 d-flex field-label">
+                <span>Protein</span>
+              </v-flex>
+
+              <v-flex class="xs12 d-flex field-element">
+                <v-autocomplete v-model="selectedProtein"
+                                :items="possibleProteins"
+                                clearable
+                                hide-details
+                                label="All"
+                                solo
+                />
+              </v-flex>
+            </v-layout>
+          </v-flex>
+
+        </v-layout>
+      </v-container>
     </v-flex>
 
-    <v-flex class="no-horizontal-padding xs12 md12 lg12 d-flex" style="justify-content: center;">
-      <v-layout justify-center row style="padding-top: 30px;" wrap>
-
-      </v-layout>
-    </v-flex>
-
-    <v-flex class="no-horizontal-padding xs12 md4 lg4 d-flex" style="justify-content: center;">
-      <v-switch
-          v-model="switch_show_p_values"
-      >
-        <template v-slot:label>
-          <span style="color: white">Show P-values</span>
-        </template>
-      </v-switch>
-    </v-flex>
-    <v-flex class="no-horizontal-padding xs12 md4 lg4 d-flex" style="justify-content: center;">
-    </v-flex>
-    <v-flex class="no-horizontal-padding xs12 md4 lg4 d-flex" style="justify-content: center;">
-      <v-btn color="primary" @click="dialogTableHeaders = true">
-        INFO TABLE'S HEADERS
-      </v-btn>
-    </v-flex>
-
-    <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center">
-      <h2 style="color: white">TABLE
-        <v-btn icon style="margin-left: 20px; margin-bottom: 5px; color: white" x-small
-               @click="downloadTable()">
-          <v-icon size="23">
-            mdi-download-circle-outline
-          </v-icon>
-        </v-btn>
+    <!-- MUTATIONS TABLE SECTION -->
+    <!---- Heading ---->
+    <v-flex class="xs12 d-flex" justify-center>
+      <h2 class="result-heading">
+        <v-icon left color="white">mdi-table-multiple</v-icon>
+        MUTATIONS TABLE
+        <hr/>
       </h2>
     </v-flex>
 
-    <v-flex class="no-horizontal-padding xs12 md12 lg12 d-flex" style="justify-content: center;">
-      <v-data-table
-          :id="nameHeatmap + 'table'"
-          v-model="selectedRows"
-          :custom-sort="customSort"
-          :headers="headerTable"
-          :items="filteredResults"
-          :sort-by.sync="sortByTable"
-          :sort-desc.sync="sortDescTable"
-          :footer-props="{'items-per-page-options': [5, 10, 20, 50, 100, -1]}"
-          class="data-table table_prov_reg mytable"
-          item-key="mut"
-          multi-sort
-          show-select
-          style="width: 98%; border: grey solid 1px"
-      />
+    <!---- Table ---->
+    <v-flex justify-center class="xs12 d-flex">
+      <v-data-table :id="nameHeatmap + 'table'"
+                    v-model="selectedRows"
+                    :custom-sort="customSort"
+                    :headers="headerTable"
+                    :items="filteredResults"
+                    :sort-by.sync="sortByTable"
+                    :sort-desc.sync="sortDescTable"
+                    :footer-props="footerProps"
+                    class="table-element"
+                    item-key="mut"
+                    multi-sort
+                    show-select
+      >
+
+        <!---- Table controls ---->
+        <template v-slot:top>
+          <v-container class="table-controls">
+            <v-layout justify-center row wrap >
+
+              <!---- Show/hide p-values info button ---->
+              <v-flex justify-center class="xs12 sm6 md4 d-flex">
+                <v-btn v-if="!showP_values" outlined depressed rounded small color="primary" @click="showP_values=true">
+                  <v-icon left>mdi-plus-circle-outline</v-icon>
+                  Show p-values
+                </v-btn>
+                <v-btn v-else depressed rounded small color="primary" @click="showP_values=false">
+                  <v-icon left>mdi-minus-circle-outline</v-icon>
+                  Hide p-values
+                </v-btn>
+              </v-flex>
+
+              <!---- Show/hide columns descriptions button ---->
+              <v-flex justify-center class="xs12 sm6 md4 d-flex">
+                <v-btn outlined depressed rounded small color="primary" @click="dialogTableHeaders = true">
+                  <v-icon left>mdi-help-circle-outline</v-icon>
+                  Columns description
+                </v-btn>
+              </v-flex>
+
+              <!---- Download data button ---->
+              <v-flex justify-center class="xs12 sm6 md4 d-flex">
+                <v-btn outlined depressed rounded small color="primary" @click="downloadTable()">
+                  <v-icon left>mdi-download-circle-outline</v-icon>
+                  Download data
+                </v-btn>
+              </v-flex>
+            </v-layout>
+
+          </v-container>
+        </template>
+
+      </v-data-table>
     </v-flex>
 
     <v-dialog
@@ -121,63 +159,29 @@
     </v-dialog>
 
 
-    <v-dialog
-        v-model="dialogSelectedItem"
-        persistent
-        width="1300"
-    >
-      <v-card>
-        <v-card-title class="white--text" v-bind:style="{ backgroundColor: 'grey' }">
-          MORE INFO
-          <v-spacer></v-spacer>
-          <v-btn
-              slot="activator"
-              color="white"
-              icon
-              small
-              style="background-color: red"
-              @click="closeDialogSelectedItem()"
-          >
-            X
-          </v-btn>
-        </v-card-title>
-
-        <v-card-text class="text-xs-center">
-          <div v-if="selectedItem !== null">
-              <span v-for="(item, key, index) in selectedItem['important_info']" v-bind:key="key + index">
-                <b>{{ key }}:</b> {{ item }} <br>
-              </span>
-
-            <br><br>
-
-            <span v-for="(item, key, index) in selectedItem['dates_info']" v-bind:key="key + index">
-                <b>{{ key }}:</b> {{ item }} <br>
-              </span>
-          </div>
-        </v-card-text>
-
-      </v-card>
-    </v-dialog>
-
-
-    <v-flex v-if="showCharts" class="no-horizontal-padding xs12 d-flex" style="justify-content: center">
-      <h2 style="color: white; margin-top: 80px;">
+    <v-flex class="xs12 d-flex" justify-center>
+      <h2 class="result-heading">
+        <v-icon left color="white">mdi-chart-gantt</v-icon>
         HEATMAP (Diffusion)
+        <hr/>
       </h2>
     </v-flex>
+
     <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center;">
       <HeatMap :plotlyId="tableIndex"
                :referenceDate="singleInfo.date"
                :tableForHeatMap="tableForLinePlot"
-               :title="plotlyTitle"
+               :title="plotsTitles"
                style="justify-content: center;"
       />
     </v-flex>
 
 
-    <v-flex class="no-horizontal-padding xs12 d-flex" style="justify-content: center">
-      <h2 style="color: white; margin-top: 80px;">
+    <v-flex class="xs12 d-flex" justify-center>
+      <h2 class="result-heading">
+        <v-icon left color="white">mdi-chart-line</v-icon>
         DIFFUSION TREND CHART
+        <hr/>
       </h2>
     </v-flex>
 
@@ -185,7 +189,7 @@
       <BarChart :plotlyId="tableIndex"
                 :referenceDate="singleInfo.date"
                 :tableForLinePlot="tableForLinePlot"
-                :title="plotlyTitle"
+                :title="plotsTitles"
                 style="justify-content: center;"
       />
     </v-flex>
@@ -194,58 +198,79 @@
 </template>
 
 <script>
-import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
-// import DialogAnalyseSelectedMuts from "@/components/DialogAnalyseSelectedMuts";
 import BarChart from "./BarChart";
 import HeatMap from "./HeatMap";
+import {mapState} from "vuex";
 
 export default {
   name: "TablesComponent",
-  components: {HeatMap, /*DialogAnalyseSelectedMuts,*/ BarChart},
+  components: {HeatMap, BarChart},
   props: {
+    /** Array of objects, each of which represents a row as follows:
+     *  [{location, protein, [lineage,] mut, polyfit_slope, polifit_intercept,
+     *  w4,w3,w2,w1,f1,f2,f3,f4,p_value_with_mut_total,p_value_without_mut_total,
+     *  p_value_comparative_mut_total}]
+     */
     rowsTable: {required: true,},
+
+    /** Object containing all the query parameters {granularity, location, date, [lineage]} */
     singleInfo: {required: true},
-    nameHeatmap: {required: true},
-    timeName: {required: true},
+
+    /** Heatmap name used as id. Required. */
+    nameHeatmap: {required: true}, //TODO: remove, it's useless.
+
+    /** Heatmap name used as id. Required. */
+    timeName: {required: true}, //TODO: remove, it's useless
+
+    /** Lineages flag. True if the data refers to a lineage specific analysis. Required.*/
     withLineages: {required: true},
-    tableIndex: {required: true},
+
+    /** Analysis index. */
+    tableIndex: {required: true}, //TODO: change usage
   },
   data() {
     return {
-      plotlyTitle: 'Top 5 decreasing + Top 5 increasing mutations',
-      switch_alert: false,
-      switch_show_p_values: false,
-      filteredResults: [],
-      showCharts: true,
-      maxNumberSelectedMuts: 20,
+      /** Title for the plots */
+      plotsTitles: 'Top 5 decreasing + Top 5 increasing mutations',
 
+      /** Flag to show the p_values in the table */
+      showP_values: false,
+
+      /** Flag to show table header descriptions */
+      dialogTableHeaders: false,
+
+      /** Array of data to display in the table */
+      filteredResults: [],
+
+      /** Array of data to be plotted */
       tableForLinePlot: [],
+
+      /** Array of selected rows */
       selectedRows: [],
 
+      /** Array of objects describing header columns */
       headerTable: [],
-      headerTableSubPlaces: [],
+
+      /** Array of columns selected for sorting data */
       sortByTable: [],
+
+      /** Array defining asc(true)/desc(false) order for each column selected for sorting in sortByTable */
       sortDescTable: [],
-      sortByTableSubPlaces: [],
-      sortDescTableSubPlaces: [],
 
-      selectedLineage: null,
-      possibleLineage: [],
+      /** Footer options for the data table */
+      footerProps: {'items-per-page-options': [5, 10, 20, 50, 100, -1]},
+
+      /** Selected protein to further filter the data */
       selectedProtein: null,
-      possibleProtein: [],
-      selectedLocation: null,
-      possibleLocation: [],
-      selectedLocationFirstTable: null,
-      possibleLocationFirstTable: [],
 
-      dialogSelectedItem: false,
-      selectedItem: null,
-      dialogTableHeaders: false,
+      /** Possible proteins values */
+      possibleProteins: []
     }
   },
+  computed: {
+    ...mapState(['primary_color', 'secondary_color']),
+  },
   methods: {
-    ...mapMutations([]),
-    ...mapActions([]),
     downloadTable() {
       let result_sorted = this.customSort(this.filteredResults, this.sortByTable, this.sortDescTable);
       let text = this.json2csv(result_sorted, this.headerTable);
@@ -539,120 +564,32 @@ export default {
       }
 
     },
-    handleClickRow(item) {
-      let new_obj = {'important_info': {}, 'dates_info': {}};
-      let array_important_info = [];
-      if (this.withLineages) {
-        array_important_info = [
-          'location',
-          'lineage',
-          'protein',
-          'mut',
-        ]
-      } else {
-        array_important_info = [
-          'location',
-          'protein',
-          'mut',
-        ]
-      }
-      let array_dates_info = [
-        'p_value_comparative_mut',
-        'p_value_without_mut',
-        //diff_perc_without_mut',
-        'perc_without_mut_this_week',
-        'perc_without_mut_prev_week',
-        'count_without_mut_this_week',
-        'count_without_mut_prev_week',
-        'p_value_with_mut',
-        //'diff_perc',
-        // 'diff_perc_with_mut',
-        'perc_with_mut_this_week',
-        'perc_with_mut_prev_week',
-        'count_with_mut_this_week',
-        'count_with_mut_prev_week',
-        'total_seq_lineage_this_week',
-        'total_seq_lineage_prev_week',
-        'total_seq_pop_this_week',
-        'total_seq_pop_prev_week'
-      ]
-
-      Object.keys(item).forEach(elem => {
-        array_important_info.find(element => {
-          if (elem === element) {
-            new_obj['important_info'][elem] = item[elem];
-          }
-        });
-        array_dates_info.find(element => {
-          if (elem.includes(element)) {
-            new_obj['dates_info'][elem] = item[elem];
-          }
-        });
-      })
-
-      this.selectedItem = new_obj;
-      this.dialogSelectedItem = true;
-    },
-    closeDialogSelectedItem() {
-      this.selectedItem = null;
-      this.dialogSelectedItem = false;
-    },
     loadTables() {
       console.log("loadTables");
       let predefined_headers = [];
       if (this.withLineages) {
         predefined_headers = [
-          // {text: 'Info', value: 'info', sortable: false, show: true, align: 'center', width: '3vh'},
-          {text: 'Location', value: 'location', sortable: true, show: true, align: 'center', width: '13vh'},
-          {text: 'Lineage', value: 'lineage', sortable: true, show: true, align: 'center', width: '13vh'},
-          {text: 'Protein', value: 'protein', sortable: true, show: true, align: 'center', width: '13vh'},
-          {text: 'Mut', value: 'mut', sortable: true, show: true, align: 'center', width: '13vh'},
-          {text: 'Slope', value: 'polyfit_slope', sortable: true, show: true, align: 'center', width: '13vh'},
-          {
-            text: this.computeDateLabel(28, 22),
-            value: 'w1',
-            sortable: true,
-            show: true,
-            align: 'center',
-            width: '13vh'
-          }, //'28-22 days before'
-          {
-            text: this.computeDateLabel(21, 15),
-            value: 'w2',
-            sortable: true,
-            show: true,
-            align: 'center',
-            width: '13vh'
-          }, // '21-15 days before'
-          {text: this.computeDateLabel(14, 8), value: 'w3', sortable: true, show: true, align: 'center', width: '13vh'}, // '14-8 days before'
-          {text: this.computeDateLabel(7, 0), value: 'w4', sortable: true, show: true, align: 'center', width: '13vh'} // '7-0 days before'
+          {text: 'Location', value: 'location', sortable: true, show: true, align: 'center'},
+          {text: 'Lineage', value: 'lineage', sortable: true, show: true, align: 'center'},
+          {text: 'Protein', value: 'protein', sortable: true, show: true, align: 'center'},
+          {text: 'Mut', value: 'mut', sortable: true, show: true, align: 'center'},
+          {text: 'Slope', value: 'polyfit_slope', sortable: true, show: true, align: 'center'},
+          {text: this.computeDateLabel(28, 22), value: 'w1', sortable: true, show: true, align: 'center'}, //'28-22 days before'
+          {text: this.computeDateLabel(21, 15), value: 'w2', sortable: true, show: true, align: 'center'}, // '21-15 days before'
+          {text: this.computeDateLabel(14, 8), value: 'w3', sortable: true, show: true, align: 'center'}, // '14-8 days before'
+          {text: this.computeDateLabel(7, 0), value: 'w4', sortable: true, show: true, align: 'center'} // '7-0 days before'
         ]
       } else {
 
         predefined_headers = [
-          // {text: 'Info', value: 'info', sortable: false, show: true, align: 'center', width: '3vh'},
-          {text: 'Location', value: 'location', sortable: true, show: true, align: 'center', width: '13vh'},
-          {text: 'Protein', value: 'protein', sortable: true, show: true, align: 'center', width: '13vh'},
-          {text: 'Mut', value: 'mut', sortable: true, show: true, align: 'center', width: '13vh'},
-          {text: 'Slope', value: 'polyfit_slope', sortable: true, show: true, align: 'center', width: '13vh'},
-          {
-            text: this.computeDateLabel(28, 22),
-            value: 'w1',
-            sortable: true,
-            show: true,
-            align: 'center',
-            width: '13vh'
-          }, //'28-22 days before'
-          {
-            text: this.computeDateLabel(21, 15),
-            value: 'w2',
-            sortable: true,
-            show: true,
-            align: 'center',
-            width: '13vh'
-          }, // '21-15 days before'
-          {text: this.computeDateLabel(14, 8), value: 'w3', sortable: true, show: true, align: 'center', width: '13vh'}, // '14-8 days before'
-          {text: this.computeDateLabel(7, 0), value: 'w4', sortable: true, show: true, align: 'center', width: '13vh'} // '7-0 days before'
+          {text: 'Location', value: 'location', sortable: true, show: true, align: 'center'},
+          {text: 'Protein', value: 'protein', sortable: true, show: true, align: 'center'},
+          {text: 'Mut', value: 'mut', sortable: true, show: true, align: 'center'},
+          {text: 'Slope', value: 'polyfit_slope', sortable: true, show: true, align: 'center'},
+          {text: this.computeDateLabel(28, 22), value: 'w1', sortable: true, show: true, align: 'center'}, //'28-22 days before'
+          {text: this.computeDateLabel(21, 15), value: 'w2', sortable: true, show: true, align: 'center'}, // '21-15 days before'
+          {text: this.computeDateLabel(14, 8), value: 'w3', sortable: true, show: true, align: 'center'}, // '14-8 days before'
+          {text: this.computeDateLabel(7, 0), value: 'w4', sortable: true, show: true, align: 'center'} // '7-0 days before'
         ]
       }
 
@@ -665,7 +602,7 @@ export default {
         array_possible_header.unshift('perc_with_absolute_number');
       }
 
-      if (this.switch_show_p_values) {
+      if (this.showP_values) {
         let total_p_value_headers = [
           {
             text: 'P-value with mut',
@@ -673,56 +610,58 @@ export default {
             sortable: true,
             show: true,
             align: 'center',
-            width: '13vh'
+
+
           },
           {
             text: 'P-value without mut',
             value: 'p_value_without_mut_total',
             sortable: true,
             show: true,
-            align: 'center',
-            width: '13vh'
+            align: 'center'
           },
           {
             text: 'P-value comparative',
             value: 'p_value_comparative_mut_total',
             sortable: true,
             show: true,
-            align: 'center',
-            width: '13vh'
+            align: 'center'
           },
         ]
         predefined_headers = predefined_headers.concat(total_p_value_headers);
       }
       this.headerTable = predefined_headers;
-      this.headerTableSubPlaces = predefined_headers;
       // let i = 0;
       this.filteredResults.forEach(elem => {
-        if (this.withLineages) {
-          let lineage = elem['lineage'];
-          if (!this.possibleLineage.includes(lineage)) {
-            this.possibleLineage.push(lineage);
-          }
-          this.possibleLineage.sort();
-        }
+        // PROBABLY USELESS CODE
+        // if (this.withLineages) {
+        //   let lineage = elem['lineage'];
+        //   if (!this.possibleLineage.includes(lineage)) {
+        //     this.possibleLineage.push(lineage);
+        //   }
+        //   this.possibleLineage.sort();
+        // }
+        // END PROBABLY USELESS CODE
+
         let protein = elem.protein;
-
-        if (!this.possibleProtein.includes(protein)) {
-          this.possibleProtein.push(protein);
+        if (!this.possibleProteins.includes(protein)) {
+          this.possibleProteins.push(protein);
         }
-        this.possibleProtein.sort();
+        this.possibleProteins.sort();
 
+        // PROBABLY USELESS CODE
         // eslint-disable-next-line no-prototype-builtins
-        if (elem.hasOwnProperty(elem['granularity'])) {
-          let location = elem[elem['granularity']];
-          if (!this.possibleLocationFirstTable.includes(location)) {
-            if (location !== null) {
-              this.possibleLocationFirstTable.push(location);
-            }
-          }
-
-        }
-        this.possibleLocationFirstTable.sort();
+        // if (elem.hasOwnProperty(elem['granularity'])) {
+        //   let location = elem[elem['granularity']];
+        //   if (!this.possibleLocationFirstTable.includes(location)) {
+        //     if (location !== null) {
+        //       this.possibleLocationFirstTable.push(location);
+        //     }
+        //   }
+        //
+        // }
+        // this.possibleLocationFirstTable.sort();
+        // END PROBABLY USELESS CODE
 
       });
 
@@ -740,10 +679,10 @@ export default {
 
       let selected;
       if (this.selectedRows.length > 0) {
-        this.plotlyTitle = `Selected mutations (${this.selectedRows.length})`;
+        this.plotsTitles = `Selected mutations (${this.selectedRows.length})`;
         selected = [...this.selectedRows];
       } else {
-        this.plotlyTitle = 'Top 5 decreasing + Top 5 increasing mutations';
+        this.plotsTitles = 'Top 5 decreasing + Top 5 increasing mutations';
         let sorted = [...this.filteredResults].sort(function (b, a) {
           return a.polyfit_slope - b.polyfit_slope
         });
@@ -777,24 +716,9 @@ export default {
     selectedRows(newVal, oldVal) {
       this.doTableForLinePlot();
     },
-    switch_alert() {
-      this.doFilterOnResults();
-    },
-    selectedLineage() {
-      this.doFilterOnResults();
-    },
     selectedProtein() {
       this.doFilterOnResults();
       this.selectedRows = []
-    },
-    selectedLocation() {
-      this.doFilterOnResults();
-    },
-    selectedLocationFirstTable() {
-      this.doFilterOnResults();
-    },
-    maxNumberOfImportantMuts() {
-      this.doFilterOnResults();
     },
     filteredResults(newVal, oldVal) {
       // if nothing has been changed, then not run the code below.
@@ -806,7 +730,7 @@ export default {
         }
       }
     },
-    switch_show_p_values() {
+    showP_values() {
       if (this.filteredResults.length > 0) {
         this.loadTables();
       }
@@ -817,5 +741,83 @@ export default {
 
 <style scoped>
 
+/* Panel container styling */
+.panel-container {
+  padding-top: 30px;
+  margin: 0;
+}
 
+/* Filter container styling */
+.filter-container {
+  border: #014878 solid 1px;
+  border-radius: 4px;
+  justify-content: center;
+  margin: 0 12px;
+  padding: 30px;
+}
+
+/* Filter heading styling */
+.filter-heading {
+  text-align: center;
+  margin: auto;
+  color: white;
+}
+
+/* Form labels styling */
+.field-label {
+  justify-content: center;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  color: white;
+}
+
+/* Form elements styling */
+.field-element {
+  padding-top: 0 !important;
+  padding-bottom: 4px !important;
+  text-transform: capitalize;
+}
+
+/* Heading of table and graphs */
+.result-heading {
+  color: white;
+  font-weight: 800;
+  margin-top: 30px;
+}
+
+/* Table options */
+.table-controls{
+  padding-top: 25px;
+  padding-bottom: 18px;
+}
+
+.table-controlsXX{
+  background: rgba(53, 177, 236, 0.21) !important;
+}
+.table-controls .d-flex{
+  padding-bottom:7px !important;
+  padding-top: 0 !important;
+}
+
+
+
+.table-element {
+  width: 100%;
+}
+
+</style>
+<style>
+/* Additional global rules to overwrite the vuetify styling fot table*/
+.v-data-table-header th{
+  border-top: #1976D2FF solid 1px !important;
+  border-bottom: #1976D2FF solid 1px !important;
+  padding-top:8px !important;
+  padding-bottom: 8px !important;
+}
+.v-data-table,.v-data-table-header{
+  background: #D2ECF8FF !important;
+}
+table{
+  background: white !important;
+}
 </style>

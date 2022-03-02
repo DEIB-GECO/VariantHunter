@@ -152,7 +152,6 @@ export default {
 /* Global styling */
 
 .main-svg {
-  border: 1px solid grey;
   border-radius: 4px;
 }
 

@@ -1,6 +1,10 @@
 <!--
   Component:    TabWithLineages
   Description:  Tab to perform lineage specific analyses.
+
+  Props:
+  ├── allLocations: list of all the possible locations. Required.
+  └── allLineages: list of all the possible lineages. Required.
 -->
 
 <template>
@@ -140,11 +144,6 @@
       <v-container v-if="rowsTable.length > 0" class="child-container">
         <div class="card-container">
 
-          <!-- Heading -->
-          <div class="result-header">
-            <h2>RESULTS</h2>
-          </div>
-
           <!-- Panels list -->
           <v-expansion-panels
               v-model="expansionPanels"
@@ -221,10 +220,10 @@ export default {
   name: "TabWithLineages",
   components: {TablesComponent},
   props: {
-    /** Location: all options */
+    /** List of all the possible locations. Required. */
     allLocations: {required: true},
 
-    /** Lineages: all options */
+    /** List of all the possible lineages. Required. */
     allLineages: {required: true}
   },
   data() {
@@ -295,7 +294,6 @@ export default {
     doAnalysis() {
       this.isLoading = true;
       let countNumAnalysis = this.rowsTable.length;
-      //let url = `http://localhost:5001/variant_hunter/api/analyse_mutations/getStatistics`; // TODO development env
       let url = `/analyse_mutations/getStatistics`;
       let to_send = {
         'granularity': this.selectedGranularity,
@@ -356,7 +354,6 @@ export default {
     /** Fetch all possible values for lineages (given the other params) */
     getPossibleLineages() {
       if (this.selectedLocation !== null && this.selectedDate !== null) {
-        //let url = `http://localhost:5001/variant_hunter/api/analyse_mutations/getGeoLineages`; // TODO development env
         let url = `/analyse_mutations/getGeoLineages`;
         let to_send = {
           'geo': this.selectedLocation,

@@ -96,7 +96,6 @@ export default {
   },
   mounted() {
     /** Fetch all possible values for locations (continents, countries, regions) */
-    //let locationsAPI = `http://localhost:5001/variant_hunter/api/analyse_mutations/getAllGeo`; //TODO development env
     let locationsAPI = `/analyse_mutations/getAllGeo`;
     axios.get(locationsAPI)
         .then((res) => {
@@ -105,14 +104,12 @@ export default {
         .then((res) => {
           this.progressStatus = this.progressStatus + 50;
           this.allLocations=res;
-          //this.setAllLocations(res);
         })
         .catch(() => {
           this.errorOccurred = true
         });
 
     /** Fetch all possible values for lineages */
-    //let lineageAPI = `http://0.0.0.0:5001/variant_hunter/api/analyse_mutations/getAllLineage`; //TODO development env
     let lineageAPI = `/analyse_mutations/getAllLineage`;
     axios.get(lineageAPI)
         .then((res) => {
@@ -121,7 +118,6 @@ export default {
         .then((res) => {
           this.progressStatus = this.progressStatus + 50;
           this.allLineages = res;
-          //this.setAllLineages(res);
         })
         .catch(() => {
           this.errorOccurred = true

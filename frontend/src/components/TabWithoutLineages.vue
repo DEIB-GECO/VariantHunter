@@ -1,6 +1,9 @@
 <!--
   Component:    TabWithoutLineages
   Description:  Tab to perform lineage independent analyses.
+
+  Props:
+  └── allLocations: list of all the possible locations. Required.
 -->
 
 <template>
@@ -118,10 +121,7 @@
       <v-container v-if="rowsTable.length > 0" class="child-container">
         <div class="card-container">
 
-          <!-- Heading -->
-          <div class="result-header">
-            <h2>RESULTS</h2>
-          </div>
+
 
           <!-- Panels list -->
           <v-expansion-panels
@@ -197,7 +197,7 @@ export default {
   name: "TabWithoutLineages",
   components: {TablesComponent},
   props: {
-    /** Location: all options */
+    /** List of all the possible locations. Required. */
     allLocations: {required: true}
   },
   data() {
@@ -263,7 +263,6 @@ export default {
     doAnalysis() {
       this.isLoading = true;
       let countNumAnalysis = this.rowsTable.length;
-      //let url = `http://localhost:5001/variant_hunter/api/analyse_mutations_without_lineages/getStatistics`; // TODO development env
       let url = `/analyse_mutations_without_lineages/getStatistics`;
       let to_send = {
         'granularity': this.selectedGranularity,
