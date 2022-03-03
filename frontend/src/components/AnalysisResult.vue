@@ -172,7 +172,7 @@
     <!---- Heatmap ---->
     <v-flex class="xs12 d-flex" justify-center>
       <HeatMap
-          :dateLabel="computeDateLabels"
+          :dateLabel="computeDateLabels()"
           :plotData="plotsInfo.data"
           :plotTitle="plotsInfo.title"
       />
@@ -190,7 +190,7 @@
 
     <!---- Chart ---->
     <v-flex class="xs12 d-flex" justify-center>
-      <BarChart :dateLabel="computeDateLabels"
+      <BarChart :dateLabel="computeDateLabels()"
                 :plotData="plotsInfo.data"
                 :plotTitle="plotsInfo.title"
       />
@@ -354,8 +354,6 @@ export default {
         fieldsHeaders.push(headerInfo.text);
         fieldsNames.push(headerInfo.value);
       });
-      console.log(fieldsNames)
-      console.log(fieldsHeaders)
 
       const csv = jsonData.map(function (jsonRow) {
         return fieldsNames.map(function (fieldName) {
@@ -375,9 +373,6 @@ export default {
      * @returns {Array} Array of sorted items
      */
     customSort(items, sortingIndexes, isDescSorting) {
-      console.log(sortingIndexes)
-      console.log(isDescSorting)
-      console.log(items)
       // Num of index selected
       const len = sortingIndexes.length;
 
@@ -427,6 +422,8 @@ export default {
       dateLabels[2] = this.computeDateLabel(21, 15)
       dateLabels[1] = this.computeDateLabel(14, 8)
       dateLabels[0] = this.computeDateLabel(7, 0)
+       console.log("dateLabels")
+      console.log(dateLabels)
       return dateLabels;
     },
 

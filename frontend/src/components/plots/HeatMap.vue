@@ -38,17 +38,17 @@ export default {
 
     /** Data processed for the plot */
     data() {
-      return this.plotData.map((element) => {
-        return {
-          x: [this.dateLabel[3], this.dateLabel[2], this.dateLabel[1], this.dateLabel[0]],
-          y: element['protein'] + "_" + element['mut'],
-          z: [element['f1'], element['f2'], element['f3'], element['f4']],
-          zmax: 100,
-          zmin: 0,
-          type: 'heatmap',
-          hoverongaps: false
-        }
-      })
+      return [
+         {
+           x: [this.dateLabel[3], this.dateLabel[2], this.dateLabel[1], this.dateLabel[0]],
+           y: this.plotData.map((element) => element['protein'] + "_" + element['mut']),
+           z: this.plotData.map((element) => [element['f1'], element['f2'], element['f3'], element['f4']]),
+           zmax: 100,
+           zmin: 0,
+           type: 'heatmap',
+           hoverongaps: false
+         }
+       ]
     },
 
     /** Layout data for the plot */

@@ -217,8 +217,8 @@ export default {
       /** Location: selected option */
       selectedLocation: null,
 
-      /** Date: selected date (by default the current date) */
-      selectedDate: new Date().toISOString().slice(0, 10),
+      /** Date: selected date */
+      selectedDate: null,
 
       /** Today date */
       today: new Date().toISOString().slice(0, 10),
@@ -316,12 +316,12 @@ export default {
   },
   mounted() {
     // Default values (test purposes only)
-    setTimeout(() => {
-      this.selectedGranularity = 'country';
-      this.selectedDate = '2022-02-01';
-      this.selectedLocation = 'Italy';
-      this.doAnalysis();
-    }, 1000);
+    // setTimeout(() => {
+    //   this.selectedGranularity = 'country';
+    //   this.selectedDate = '2022-02-01';
+    //   this.selectedLocation = 'Italy';
+    //   this.doAnalysis();
+    // }, 1000);
   },
   watch: {
     /** Adjust the possible locations according to the selected granularity */

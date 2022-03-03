@@ -244,8 +244,8 @@ export default {
       /** Location: selected option */
       selectedLocation: null,
 
-      /** Date: selected date (by default the current date) */
-      selectedDate: new Date().toISOString().slice(0, 10),
+      /** Date: selected date */
+      selectedDate: null,
 
       /** Lineage: available options (wrt to other params) */
       possibleLineages: this.allLineages,
