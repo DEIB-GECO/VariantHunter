@@ -1,0 +1,555 @@
+<!--
+  Component:    AnalysisResult
+  Description:  Container of the raw data table, heatmap and a barchart
+
+  Props:
+  ├── queryResult:  Array of objects, each of which represents a row
+  ├── queryParams:  Object containing all the query parameters {granularity, location, date, [lineage]}
+  └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis. Required.
+
+-->
+
+<template>
+  <v-layout justify-center row class="panel-container" wrap>
+
+    <!-- Filtering options -->
+    <v-flex class=" xs12 d-flex filter-container" justify-center>
+      <v-container>
+        <v-layout justify-center row wrap>
+
+          <v-flex justify-center class="xs12 sm6 d-flex filter-heading">
+            <h3>
+              <v-icon color="white" left>mdi-filter-outline</v-icon>
+              FILTERING OPTIONS
+            </h3>
+          </v-flex>
+
+          <!-- Protein filter -->
+          <v-flex justify-center class="xs12 sm6 d-flex ">
+            <v-layout row wrap>
+              <v-flex class="xs12 d-flex field-label">
+                <span>Protein</span>
+              </v-flex>
+
+              <v-flex class="xs12 d-flex field-element">
+                <v-autocomplete v-model="selectedProtein"
+                                :items="possibleProteins"
+                                clearable
+                                hide-details
+                                label="All"
+                                solo
+                />
+              </v-flex>
+            </v-layout>
+          </v-flex>
+
+        </v-layout>
+      </v-container>
+    </v-flex>
+
+    <!-- MUTATIONS TABLE SECTION -->
+    <!---- Heading ---->
+    <v-flex class="xs12 d-flex" justify-center>
+      <h2 class="result-heading">
+        <v-icon left color="white">mdi-table-multiple</v-icon>
+        MUTATIONS TABLE
+        <hr/>
+      </h2>
+    </v-flex>
+
+    <!---- Table ---->
+    <v-flex justify-center class="xs12 d-flex table-container">
+      <v-data-table v-model="selectedRows"
+                    :custom-sort="customSort"
+                    :headers="tableHeaders"
+                    :items="filteredQueryResult"
+                    :sort-by.sync="sortingIndexes"
+                    :sort-desc.sync="isDescSorting"
+                    :footer-props="footerProps"
+                    class="table-element"
+                    item-key="mut"
+                    multi-sort
+                    show-select
+      >
+
+        <!---- Table controls ---->
+        <template v-slot:top>
+          <v-container class="table-controls">
+            <v-layout justify-center row wrap>
+
+              <!---- Show/hide p-values info button ---->
+              <v-flex justify-center class="xs12 sm6 md4 d-flex">
+                <v-btn v-if="!showPValues" outlined depressed rounded small color="primary" @click="showPValues=true">
+                  <v-icon left>mdi-plus-circle-outline</v-icon>
+                  Show p-values
+                </v-btn>
+                <v-btn v-else depressed rounded small color="primary" @click="showPValues=false">
+                  <v-icon left>mdi-minus-circle-outline</v-icon>
+                  Hide p-values
+                </v-btn>
+              </v-flex>
+
+              <!---- Show/hide columns descriptions button ---->
+              <v-flex justify-center class="xs12 sm6 md4 d-flex">
+                <v-btn outlined depressed rounded small color="primary" @click="showTableHeadersDialog = true">
+                  <v-icon left>mdi-help-circle-outline</v-icon>
+                  Columns description
+                </v-btn>
+              </v-flex>
+
+              <!---- Download data button ---->
+              <v-flex justify-center class="xs12 sm6 md4 d-flex">
+                <v-btn outlined depressed rounded small color="primary" @click="downloadTable()">
+                  <v-icon left>mdi-download-circle-outline</v-icon>
+                  Download data
+                </v-btn>
+              </v-flex>
+            </v-layout>
+
+          </v-container>
+        </template>
+
+      </v-data-table>
+    </v-flex>
+
+    <!---- Columns descriptions dialog ---->
+    <v-dialog v-model="showTableHeadersDialog" transition="dialog-bottom-transition" max-width="850">
+      <v-card>
+
+        <!-- Dialog title -->
+        <v-toolbar :color="primary_color" class="dialog-title" dark flat>
+          <v-icon left>mdi-help-circle-outline</v-icon>
+          Columns description
+        </v-toolbar>
+
+        <!-- Dialog content -->
+        <v-card-text class="text-s-center">
+          <ul>
+            <li>
+              <b>P value with mut: </b>
+              shows if the population «with mutation» is growing differently compared to everything.
+            </li>
+            <li>
+              <b>P value without mut: </b>
+              shows if the population «without mutation» is growing differently compared to everything.
+            </li>
+            <li>
+              <b>P value comparative: </b>
+              shows if the population «with mutation» is growing differently compared to the population «without
+              mutation».
+            </li>
+            <li>
+              <b>Slope: </b>
+              is calculated through a linear interpolation of the diffusion (percentage). (y=<b>m</b>x + q)
+            </li>
+            <li>
+              <b>Y-intercept: </b>
+              is calculated through a linear interpolation of the diffusion (percentage). (y=mx +<b>q</b>)
+            </li>
+          </ul>
+        </v-card-text>
+
+        <!-- Dialog actions -->
+        <v-card-actions class="justify-end">
+          <v-btn text @click="showTableHeadersDialog = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+
+      </v-card>
+    </v-dialog>
+
+    <!-- HEATMAP SECTION -->
+    <!---- Heading ---->
+    <v-flex class="xs12 d-flex" justify-center>
+      <h2 class="result-heading">
+        <v-icon left color="white">mdi-chart-gantt</v-icon>
+        HEATMAP (Diffusion)
+        <hr/>
+      </h2>
+    </v-flex>
+
+    <!---- Heatmap ---->
+    <v-flex class="xs12 d-flex" justify-center>
+      <HeatMap
+          :dateLabel="computeDateLabels"
+          :plotData="plotsInfo.data"
+          :plotTitle="plotsInfo.title"
+      />
+    </v-flex>
+
+    <!-- CHART SECTION -->
+    <!---- Heading ---->
+    <v-flex class="xs12 d-flex" justify-center>
+      <h2 class="result-heading">
+        <v-icon left color="white">mdi-chart-line</v-icon>
+        DIFFUSION TREND CHART
+        <hr/>
+      </h2>
+    </v-flex>
+
+    <!---- Chart ---->
+    <v-flex class="xs12 d-flex" justify-center>
+      <BarChart :dateLabel="computeDateLabels"
+                :plotData="plotsInfo.data"
+                :plotTitle="plotsInfo.title"
+      />
+    </v-flex>
+
+  </v-layout>
+</template>
+
+<script>
+import BarChart from "./plots/BarChart";
+import HeatMap from "./plots/HeatMap";
+import {mapState} from "vuex";
+
+export default {
+  name: "AnalysisResult",
+  components: {HeatMap, BarChart},
+  props: {
+    /** Array of objects, each of which represents a row as follows:
+     *  [{location, protein, [lineage,] mut, polyfit_slope, polifit_intercept,
+     *  w4,w3,w2,w1,f1,f2,f3,f4,p_value_with_mut_total,p_value_without_mut_total,
+     *  p_value_comparative_mut_total}]
+     */
+    queryResult: {required: true,},
+
+    /** Object containing all the query parameters {granularity, location, date, [lineage]} */
+    queryParams: {required: true},
+
+    /** Lineages flag. True if the data refers to a lineage specific analysis. Required.*/
+    withLineages: {required: true}
+  },
+  data() {
+    return {
+
+      /** Flag to show the p_values in the table */
+      showPValues: false,
+
+      /** Flag to show table header descriptions */
+      showTableHeadersDialog: false,
+
+      /** Array of selected rows */
+      selectedRows: [],
+
+      /** Array of columns selected for sorting data */
+      sortingIndexes: [],
+
+      /** Array defining asc(true)/desc(false) order for each column selected for sorting in sortingIndexes */
+      isDescSorting: [],
+
+      /** Default sorting options */
+      defaultSorting: {indexes: ['polyfit_slope'], isDescSorting: [true]},
+
+      /** Footer options for the data table */
+      footerProps: {'items-per-page-options': [-1, 5, 10, 20, 50, 100, 150, 200, 500]},
+
+      /** Selected protein to further filter the data */
+      selectedProtein: null
+    }
+  },
+  computed: {
+    ...mapState(['primary_color', 'secondary_color']),
+
+    /** Array of objects describing header columns */
+    tableHeaders() {
+      let headers =
+          [
+            {text: 'Location', value: 'location', divider: true, align: 'center'},
+            {text: 'Protein', value: 'protein', divider: true, align: 'center'},
+            {text: 'Mut', value: 'mut', divider: true, align: 'center'},
+            {text: 'Slope', value: 'polyfit_slope', divider: true, align: 'center'},
+            {text: this.computeDateLabel(28, 22), value: 'w1', divider: true, align: 'center'}, //'28-22 days before'
+            {text: this.computeDateLabel(21, 15), value: 'w2', divider: true, align: 'center'}, //'21-15 days before'
+            {text: this.computeDateLabel(14, 8), value: 'w3', divider: true, align: 'center'},  //'14-8  days before'
+            {text: this.computeDateLabel(7, 0), value: 'w4', divider: true, align: 'center'}    //'7-0   days before'
+          ]
+
+      if (this.showPValues) {
+        const extendedHeaders =
+            [
+              {text: 'P-value with mut', value: 'p_value_with_mut_total', divider: true, align: 'center'},
+              {text: 'P-value without mut', value: 'p_value_without_mut_total', divider: true, align: 'center'},
+              {text: 'P-value comparative', value: 'p_value_comparative_mut_total', divider: false, align: 'center'}
+            ]
+        headers = headers.concat(extendedHeaders);
+      }
+
+      return headers;
+    },
+
+    /** Array of data to display in the table (filtered by protein, if set) */
+    filteredQueryResult() {
+      if (this.selectedProtein !== null)
+        return this.queryResult.filter((row) => row.protein === this.selectedProtein)
+      else
+        return this.queryResult
+    },
+
+    /** Possible proteins values computed based on data results */
+    possibleProteins() {
+      const set = new Set(this.queryResult.map(row => row["protein"]));
+      return [...set].sort();
+    },
+
+    /** Array of data to be plotted */
+    plotsInfo() {
+      let plotsTitle;
+      let plotsData;
+
+      if (this.selectedRows.length > 0) {
+        plotsTitle = `Selected mutations (${this.selectedRows.length})`;
+        plotsData = this.customSort([...this.selectedRows], this.sortingIndexes, this.isDescSorting).reverse();
+      } else {
+        plotsTitle = "Top 5 decreasing + Top 5 increasing mutations";
+        const sortedData = [...this.filteredQueryResult].sort(function (a, b) {
+          return a['polyfit_slope'].localeCompare(b['polyfit_slope']) // Notice: polyfit_slope is a string
+        });
+        // Get first 5 and last 5 and sort again
+        plotsData = sortedData.slice(0, 5).concat(sortedData.slice(-5));
+      }
+
+      return {title: plotsTitle, data: plotsData};
+    },
+  },
+  methods: {
+
+    /**
+     * Downloads the data of the table
+     */
+    downloadTable() {
+      const sortedData = this.customSort(this.filteredQueryResult, this.sortingIndexes, this.isDescSorting);
+      const csv = this.json2csv(sortedData, this.tableHeaders);
+
+      // File name of the form:  Lin[<LINEAGE>|"Indep"]_<GRANULARITY>_[<LOCATION>]_<DATE>.csv
+      const filename = "Lin" + (this.withLineages ? this.queryParams["lineage"] : "Indep") + "_" + this.queryParams['granularity'] + "_" + (this.queryParams['granularity'] !== 'world' ? this.queryParams['location'] : "") + "_" + this.queryParams['date'] + ".csv"
+
+      // Anchor element to download the file
+      const anchorElement = document.createElement('a');
+      anchorElement.setAttribute('download', filename);
+      const data = new Blob([csv]);
+      anchorElement.href = URL.createObjectURL(data);
+      document.body.appendChild(anchorElement);
+
+      // Simulate click and remove element
+      anchorElement.click();
+      document.body.removeChild(anchorElement);
+    },
+
+
+    /**
+     * Converter utility json to csv
+     * @param jsonData    The json data to be converted
+     * @param headersInfo The headers info for the file to be generated
+     * @returns {String}  A string representing the csv file
+     */
+    json2csv(jsonData, headersInfo) {
+      // Names for the headers of the csv file (es. "Location","Slope",..)
+      const fieldsHeaders = [];
+      // Names of the fields of the jsonData element (es. "location","polyfit_slope",..)
+      const fieldsNames = [];
+
+      headersInfo.forEach(function (headerInfo) {
+        fieldsHeaders.push(headerInfo.text);
+        fieldsNames.push(headerInfo.value);
+      });
+      console.log(fieldsNames)
+      console.log(fieldsHeaders)
+
+      const csv = jsonData.map(function (jsonRow) {
+        return fieldsNames.map(function (fieldName) {
+          return JSON.stringify(String(jsonRow[fieldName]));
+        }).join(',')
+      });
+      csv.unshift(fieldsHeaders.join(','));
+      return csv.join('\r\n')
+    },
+
+
+    /**
+     * Custom sort function for data table
+     * @param items     Array of rows to be sorted
+     * @param sortingIndexes     Array of field names selected for sorting
+     * @param isDescSorting    Array of boolean values. Element i is true iff index[i] needs to be desc ordered
+     * @returns {Array} Array of sorted items
+     */
+    customSort(items, sortingIndexes, isDescSorting) {
+      console.log(sortingIndexes)
+      console.log(isDescSorting)
+      console.log(items)
+      // Num of index selected
+      const len = sortingIndexes.length;
+
+      // No elements to be sorted? Nothing to do
+      if (items.length === 0)
+        return items;
+
+      // No indexes selected to be sort on? Apply default ones
+      if (len === 0)
+        return this.customSort(items, this.defaultSorting.indexes, this.defaultSorting.isDescSorting);
+
+      let i = 0;
+      let positionOfLastIndex = len - 1;
+
+      // Sort via custom cmp function (it returns 0 if they are equal; 1 if A must appear before B; -1 otherwise)
+      items.sort(function (a, b) {
+        let i_local = i;
+        while (i_local <= positionOfLastIndex) {
+          // res is computed as follows: 0 if a==b; 1 if A<B; -1 if A>B
+          let res = String(a[sortingIndexes[i_local]]).localeCompare(b[sortingIndexes[i_local]])
+
+          // A<B on the current attribute? No need to check the others.
+          if (res === 1)
+            return (isDescSorting[i_local]) ? -1 : 1;
+
+          // A>B on the current attribute. No need to check the others.
+          if (res === -1)
+            return (isDescSorting[i_local]) ? 1 : -1
+
+          // A==B on the current attribute. Decide on the basis of the other indexes.
+          i_local++;
+        }
+        // No other indexes selected to be sort on? Then, A==B
+        if (i_local === positionOfLastIndex)
+          return 0;
+      })
+      return items;
+    },
+
+    /**
+     * Compute all the table labels for the week
+     * @returns {Array} List of all the table labels for the week
+     */
+    computeDateLabels() {
+      const dateLabels = [];
+      dateLabels[3] = this.computeDateLabel(28, 22)
+      dateLabels[2] = this.computeDateLabel(21, 15)
+      dateLabels[1] = this.computeDateLabel(14, 8)
+      dateLabels[0] = this.computeDateLabel(7, 0)
+      return dateLabels;
+    },
+
+    /**
+     * Compute the table label for the week based on the day difference from the reference date
+     * @param from        Difference from the reference date for the start date of the label
+     * @param to          Difference from the reference date for the ending date of the label
+     * @returns {string}  A string of the form "YYYY/mm/dd - YYYY/mm/dd"
+     */
+    computeDateLabel(from, to) {
+      const referenceDate = new Date(this.queryParams.date);
+      const fromDate = new Date(referenceDate);
+      const toDate = new Date(referenceDate);
+
+      fromDate.setDate(referenceDate.getDate() - from);
+      toDate.setDate(referenceDate.getDate() - to);
+      return fromDate.toISOString().slice(0, 10).replaceAll('-', '/') + " - " + toDate.toISOString().slice(0, 10).replaceAll('-', '/');
+    },
+  }
+}
+</script>
+
+<style scoped>
+
+/* Panel container styling */
+.panel-container {
+  padding-top: 30px;
+  margin: 0;
+}
+
+/* Filter container styling */
+.filter-container {
+  border: #014878 solid 1px;
+  border-radius: 4px;
+  justify-content: center;
+  margin: 0 12px;
+  padding: 30px;
+}
+
+/* Filter heading styling */
+.filter-heading {
+  text-align: center;
+  margin: auto;
+  color: white;
+}
+
+/* Form labels styling */
+.field-label {
+  justify-content: center;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  color: white;
+}
+
+/* Form elements styling */
+.field-element {
+  padding-top: 0 !important;
+  padding-bottom: 4px !important;
+  text-transform: capitalize;
+}
+
+/* Heading of table and graphs */
+.result-heading {
+  color: white;
+  font-weight: 800;
+  margin-top: 30px;
+}
+
+/* Table options */
+.table-controls {
+  padding-top: 25px;
+  padding-bottom: 18px;
+}
+
+.table-controls .d-flex {
+  padding-bottom: 7px !important;
+  padding-top: 0 !important;
+}
+
+.table-element {
+  width: 100%;
+}
+
+/* Header info dialog styling*/
+.dialog-title {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+ul {
+  margin-top: 40px;
+}
+
+li {
+  font-size: 16px;
+  padding-bottom: 10px;
+}
+
+
+</style>
+<style>
+/* Additional global rules to overwrite the vuetify styling fot table*/
+.table-container .v-data-table-header th {
+  border-top: #1976D2FF solid 1px !important;
+  border-bottom: #1976D2FF solid 1px !important;
+  padding-top: 18px !important;
+  padding-bottom: 3px !important;
+}
+
+.table-container .v-data-table-header th:first-child {
+  padding-bottom: 10px !important;
+}
+
+.table-container .v-data-table, .table-container .v-data-table-header {
+  background: #D2ECF8FF !important;
+}
+
+.table-container table {
+  background: white !important;
+}
+
+.table-container th span:first-child {
+  display: block !important;
+}
+</style>
