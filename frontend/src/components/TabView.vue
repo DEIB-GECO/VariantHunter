@@ -57,7 +57,7 @@
 
 <script>
 import axios from "axios";
-import {mapMutations, mapState} from "vuex";
+import {mapState} from "vuex";
 import TabWithLineages from "@/components/TabWithLineages";
 import TabWithoutLineages from "@/components/TabWithoutLineages";
 
@@ -103,7 +103,7 @@ export default {
         })
         .then((res) => {
           this.progressStatus = this.progressStatus + 50;
-          this.allLocations=res;
+          this.allLocations = res;
         })
         .catch(() => {
           this.errorOccurred = true
@@ -132,6 +132,7 @@ export default {
   justify-content: center;
   padding: 0;
 }
+
 .tab-content {
   height: 84vh;
   width: 100%;

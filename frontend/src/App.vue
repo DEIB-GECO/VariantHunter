@@ -156,7 +156,7 @@ export default {
 }
 
 .v-application {
-  font-family: "Inter" !important;
+  font-family: "Inter",serif !important;
 }
 
 </style>

@@ -164,13 +164,10 @@
 
               <!-- Panel content -->
               <v-expansion-panel-content :color="secondary_color">
-                <TablesComponent
+                <AnalysisResult
                     v-if="rowsTable[index].length > 0"
-                    :nameHeatmap="'heatmapWithLineage' + index"
-                    :rowsTable="rowsTable[index]"
-                    :singleInfo=expansionPanelsSingleInfo[index]
-                    :tableIndex="'w_l_' + index"
-                    :timeName="'timeDistributionWithLineage'+index"
+                    :queryResult="rowsTable[index]"
+                    :queryParams=expansionPanelsSingleInfo[index]
                     :withLineages="true"
                 />
                 <div v-else class="empty-result-alert">
@@ -214,11 +211,11 @@
 
 import {mapState} from "vuex";
 import axios from "axios";
-import TablesComponent from "./TablesComponent";
+import AnalysisResult from "./AnalysisResult";
 
 export default {
   name: "TabWithLineages",
-  components: {TablesComponent},
+  components: {AnalysisResult},
   props: {
     /** List of all the possible locations. Required. */
     allLocations: {required: true},

@@ -122,7 +122,6 @@
         <div class="card-container">
 
 
-
           <!-- Panels list -->
           <v-expansion-panels
               v-model="expansionPanels"
@@ -142,13 +141,10 @@
 
               <!-- Panel content -->
               <v-expansion-panel-content :color="secondary_color">
-                <TablesComponent
+                <AnalysisResult
                     v-if="rowsTable[index].length > 0"
-                    :nameHeatmap="'heatmapWithoutLineage' + index"
-                    :rowsTable="rowsTable[index]"
-                    :singleInfo=expansionPanelsSingleInfo[index]
-                    :tableIndex="'wo_l_' + index"
-                    :timeName="'timeDistributionWithoutLineage'+index"
+                    :queryResult="rowsTable[index]"
+                    :queryParams=expansionPanelsSingleInfo[index]
                     :withLineages="false"
                 />
                 <div v-else class="empty-result-alert">
@@ -191,11 +187,11 @@
 
 import {mapState} from "vuex";
 import axios from "axios";
-import TablesComponent from "@/components/TablesComponent";
+import AnalysisResult from "@/components/AnalysisResult";
 
 export default {
   name: "TabWithoutLineages",
-  components: {TablesComponent},
+  components: {AnalysisResult},
   props: {
     /** List of all the possible locations. Required. */
     allLocations: {required: true}
@@ -320,12 +316,12 @@ export default {
   },
   mounted() {
     // Default values (test purposes only)
-    // setTimeout(() => {
-    //  this.selectedGranularity = 'country';
-    //  this.selectedDate = '2022-02-01';
-    //  this.selectedLocation = 'Italy';
-    //  this.doAnalysis();
-    // }, 1000);
+    setTimeout(() => {
+      this.selectedGranularity = 'country';
+      this.selectedDate = '2022-02-01';
+      this.selectedLocation = 'Italy';
+      this.doAnalysis();
+    }, 1000);
   },
   watch: {
     /** Adjust the possible locations according to the selected granularity */
