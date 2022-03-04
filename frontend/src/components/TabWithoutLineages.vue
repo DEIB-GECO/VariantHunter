@@ -106,7 +106,7 @@
                        color="#011936"
                        @click="doAnalysis();"
                 >
-                  START ANALYSIS
+                  <v-icon left>mdi-magnify</v-icon> START ANALYSIS
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -255,6 +255,13 @@ export default {
       return name;
     },
 
+    /** Clears the form */
+    clearForm(){
+      this.selectedDate=null;
+      this.selectedLocation=null;
+      this.selectedGranularity=null;
+    },
+
     /** Triggers the analysis request to the server */
     doAnalysis() {
       this.isLoading = true;
@@ -265,6 +272,7 @@ export default {
         'value': this.selectedLocation,
         'date': this.selectedDate
       };
+      this.clearForm();
 
       axios.post(url, to_send)
           .then((res) => {

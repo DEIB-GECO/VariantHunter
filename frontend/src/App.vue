@@ -2,7 +2,7 @@
   <v-app>
 
     <!-- Navbar -->
-    <v-toolbar :color="primary_color" class="navbar" dark flat>
+    <v-toolbar :color="primary_color" class="navbar" short dark flat>
 
       <!-- Logo -->
       <v-img :src="websiteLogo" contain max-height="39px" max-width="39px"/>
@@ -10,7 +10,14 @@
         <span class="emphasis">Variant</span>
         <span>Hunter</span>
       </v-toolbar-title>
+
       <v-spacer></v-spacer>
+
+      <!-- Scroll to top button -->
+      <v-btn v-if="showSearchShortcut" class="hidden-xs-only" small outlined href="#newSearch">
+        <v-icon left>mdi-plus</v-icon>
+        New analysis
+      </v-btn>
 
 
       <!-- Navbar links to the other tools -->
@@ -56,10 +63,9 @@
       <!--          </div>-->
       <!--        </v-menu>-->
       <!--      </div>-->
-
     </v-toolbar>
 
-    <v-main>
+    <v-main class="main-body" @scroll.native="scrollHandler">
       <TabView></TabView>
     </v-main>
 
@@ -80,21 +86,24 @@ export default {
     return {
       /** VariantHunter logo */
       websiteLogo: require('./assets/virusurf_logo.png'),
+
+      /** Flag to show the new search shortcut */
+      showSearchShortcut: false,
     }
   },
   computed: {
     ...mapState(['primary_color']),
+  },
+  methods: {
+    scrollHandler(e) {
+      this.showSearchShortcut = e.target.scrollTop > 440
+    }
   }
 };
 
 </script>
 
 <style scoped>
-
-.navbar {
-  width: 100%;
-  max-height: 65px;
-}
 
 .site-title {
   font-size: 33px;
@@ -147,16 +156,33 @@ export default {
   height: fit-content !important;
 }
 
+/* Styling for the website body */
+.main-body {
+  height: calc(100vh - 57px);
+  width: 100%;
+  overflow-y: auto;
+  float: left;
+  position: relative;
+}
+
 </style>
 <style>
-/* Global styling */
 
+/* Global styling rules */
+
+/* Body background color */
+body {
+  background: #014878;
+}
+
+/* Border radius for the graph plots*/
 .main-svg {
   border-radius: 4px;
 }
 
+/* Overwrite default Vuetify font */
 .v-application {
-  font-family: "Inter",serif !important;
+  font-family: "Inter", serif !important;
 }
 
 </style>

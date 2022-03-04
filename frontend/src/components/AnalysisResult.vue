@@ -70,6 +70,7 @@
                     item-key="mut"
                     multi-sort
                     show-select
+                    mobile-breakpoint="0"
       >
 
         <!---- Table controls ---->
@@ -109,6 +110,20 @@
           </v-container>
         </template>
 
+        <!---- Table top headers ---->
+        <template v-slot:header>
+          <thead class="main-headers">
+          <tr>
+            <th colspan="2" class="empty-main-header"/>
+            <th colspan="1" class="empty-main-header"/>
+            <th colspan="1" class="empty-main-header"/>
+            <th colspan="1" class="empty-main-header"/>
+            <th colspan="4">Mutation diffusion in % &nbsp;&nbsp; (num of collected sequences)</th>
+            <th v-if="showPValues" colspan="3" class="empty-main-header"/>
+          </tr>
+          </thead>
+        </template>
+
       </v-data-table>
     </v-flex>
 
@@ -142,10 +157,6 @@
               <b>Slope: </b>
               is calculated through a linear interpolation of the diffusion (percentage). (y=<b>m</b>x + q)
             </li>
-            <li>
-              <b>Y-intercept: </b>
-              is calculated through a linear interpolation of the diffusion (percentage). (y=mx +<b>q</b>)
-            </li>
           </ul>
         </v-card-text>
 
@@ -164,7 +175,7 @@
     <v-flex class="xs12 d-flex" justify-center>
       <h2 class="result-heading">
         <v-icon left color="white">mdi-chart-gantt</v-icon>
-        HEATMAP (Diffusion)
+        DIFFUSION HEATMAP
         <hr/>
       </h2>
     </v-flex>
@@ -422,8 +433,6 @@ export default {
       dateLabels[2] = this.computeDateLabel(21, 15)
       dateLabels[1] = this.computeDateLabel(14, 8)
       dateLabels[0] = this.computeDateLabel(7, 0)
-       console.log("dateLabels")
-      console.log(dateLabels)
       return dateLabels;
     },
 
@@ -454,14 +463,15 @@ export default {
   margin: 0;
 }
 
+
 /* Filter container styling */
 .filter-container {
-  border: #014878 solid 1px;
   border-radius: 4px;
   justify-content: center;
   margin: 0 12px;
   padding: 30px;
 }
+
 
 /* Filter heading styling */
 .filter-heading {
@@ -469,6 +479,7 @@ export default {
   margin: auto;
   color: white;
 }
+
 
 /* Form labels styling */
 .field-label {
@@ -478,6 +489,7 @@ export default {
   color: white;
 }
 
+
 /* Form elements styling */
 .field-element {
   padding-top: 0 !important;
@@ -485,12 +497,15 @@ export default {
   text-transform: capitalize;
 }
 
+
 /* Heading of table and graphs */
 .result-heading {
   color: white;
   font-weight: 800;
+  word-spacing: 5px;
   margin-top: 30px;
 }
+
 
 /* Table options */
 .table-controls {
@@ -501,6 +516,31 @@ export default {
 .table-controls .d-flex {
   padding-bottom: 7px !important;
   padding-top: 0 !important;
+}
+
+
+/* Custom main headers styling*/
+.main-headers {
+  background: #D2ECF8FF;
+}
+
+.main-headers th {
+  letter-spacing: 0.05em;
+  word-spacing: 0.1em;
+  text-align: center !important;
+  border-top: #1976D2FF solid 1px !important;
+  padding-top: 7px !important;
+  padding-bottom: 7px !important;
+  height: fit-content !important;
+}
+
+.main-headers th:not(:last-child) {
+  border-right: thin solid rgba(0, 0, 0, 0.12) !important;
+
+}
+
+.empty-main-header {
+  border-bottom: none !important;
 }
 
 .table-element {
@@ -525,17 +565,19 @@ li {
 
 
 </style>
+
 <style>
+
 /* Additional global rules to overwrite the vuetify styling fot table*/
 .table-container .v-data-table-header th {
-  border-top: #1976D2FF solid 1px !important;
+  border-top: none !important;
   border-bottom: #1976D2FF solid 1px !important;
-  padding-top: 18px !important;
+  padding-top: 17px !important;
   padding-bottom: 3px !important;
 }
 
 .table-container .v-data-table-header th:first-child {
-  padding-bottom: 10px !important;
+  padding-bottom: 15px !important;
 }
 
 .table-container .v-data-table, .table-container .v-data-table-header {

@@ -5,7 +5,7 @@
 -->
 
 <template>
-  <v-container class="tabs-container " fluid grid-list-xl>
+  <v-container id="newSearch" class="tabs-container " fluid grid-list-xl>
     <v-tabs v-model="selectedTab"
             :background-color="secondary_color" :slider-color="primary_color"
             active-class="active-tab"
@@ -134,11 +134,7 @@ export default {
 }
 
 .tab-content {
-  height: 84vh;
   width: 100%;
-  overflow-y: auto;
-  float: left;
-  position: relative;
 }
 
 /* Styling for (inactive) tabs */
