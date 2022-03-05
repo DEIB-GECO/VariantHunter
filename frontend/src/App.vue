@@ -75,7 +75,7 @@
 <script>
 
 import {mapState} from "vuex";
-import TabView from "@/components/TabView";
+import TabView from "@/components/TabsView";
 
 export default {
   components: {
@@ -168,11 +168,17 @@ export default {
 </style>
 <style>
 
-/* Global styling rules */
+/* Global color palette */
+:root {
+  --primary-color: #014878; /*014878*/
+  --secondary-color: #35B1ECFF; /*35B1ECFF*/
+  --tertiary-color-light: #D2ECF8FF;
+  --tertiary-color-dark: #1976D2FF  ;
+}
 
 /* Body background color */
 body {
-  background: #014878;
+  background: var(--primary-color);
 }
 
 /* Border radius for the graph plots*/

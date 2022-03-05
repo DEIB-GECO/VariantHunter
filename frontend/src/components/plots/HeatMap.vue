@@ -36,17 +36,17 @@ export default {
   },
   computed: {
 
-    /** Values for the x axis of the heatmap */
+    /** Values for the x axis of the heatmap: dates periods */
     x() {
       return [this.dateLabel[3], this.dateLabel[2], this.dateLabel[1], this.dateLabel[0]]
     },
 
-    /** Values for the y axis of the heatmap */
+    /** Values for the y axis of the heatmap: protein_mut */
     y() {
       return this.plotData.map((element) => element['protein'] + "_" + element['mut'])
     },
 
-    /** Values for the z axis of the heatmap */
+    /** Values for the z axis of the heatmap: mutation frequencies in % */
     z() {
       return this.plotData.map((element) => [element['f1'], element['f2'], element['f3'], element['f4']])
     },
@@ -89,7 +89,7 @@ export default {
             yref: 'y1',
             x: this.x[j],
             y: this.y[i],
-            text: this.z[i][j].toFixed(3),
+            text: this.z[i][j].toPrecision(3)+"%",
             font: {
               color: 'white'
             },

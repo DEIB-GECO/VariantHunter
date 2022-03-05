@@ -44,6 +44,7 @@ export default {
           x: [1, 2, 3, 4],
           y: [element['f1'], element['f2'], element['f3'], element['f4']],
           name: element['protein'] + "_" + element['mut'],
+          /*marker: { size: 10, symbol: "x"},*/
           showlegend: true,
           type: 'scatter'
         }

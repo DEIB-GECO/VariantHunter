@@ -58,8 +58,8 @@
 <script>
 import axios from "axios";
 import {mapState} from "vuex";
-import TabWithLineages from "@/components/TabWithLineages";
-import TabWithoutLineages from "@/components/TabWithoutLineages";
+import TabWithLineages from "@/components/tabs/TabWithLineages";
+import TabWithoutLineages from "@/components/tabs/TabWithoutLineages";
 
 export default {
   name: "TabView",
@@ -142,7 +142,7 @@ export default {
   font-size: 16px;
   font-weight: normal;
   width: 33%;
-  border-bottom: #014878 solid 1px;
+  border-bottom: var(--primary-color) solid 1px;
 }
 
 /* Styling for active tabs */
