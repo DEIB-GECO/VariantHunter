@@ -10,7 +10,7 @@
 -->
 
 <template>
-  <v-layout justify-center row class="panel-container" wrap>
+  <v-layout :ref="fileName" justify-center row class="panel-container" wrap>
 
     <!-- Filtering options -->
     <v-flex class=" xs12 d-flex filter-container" justify-center>
@@ -62,12 +62,13 @@
       <v-data-table v-model="selectedRows"
                     :custom-sort="customSort"
                     :headers="tableHeaders"
-                    :items="filteredQueryResult"
+                    :items="processedQueryResult"
                     :sort-by.sync="sortingIndexes"
                     :sort-desc.sync="isDescSorting"
                     :footer-props="footerProps"
                     class="table-element"
                     item-key="mut"
+
                     multi-sort
                     show-select
                     mobile-breakpoint="0"
@@ -79,7 +80,7 @@
             <v-layout justify-center row wrap>
 
               <!---- Show/hide p-values info button ---->
-              <v-flex justify-center class="xs12 sm6 md4 d-flex">
+              <v-flex justify-center class="xs12 sm6 md3 d-flex">
                 <v-btn v-if="!showPValues" outlined depressed rounded small color="primary" @click="showPValues=true">
                   <v-icon left>mdi-plus-circle-outline</v-icon>
                   Show p-values
@@ -91,7 +92,7 @@
               </v-flex>
 
               <!---- Show/hide columns descriptions button ---->
-              <v-flex justify-center class="xs12 sm6 md4 d-flex">
+              <v-flex justify-center class="xs12 sm6 md3 d-flex">
                 <v-btn outlined depressed rounded small color="primary" @click="showTableHeadersDialog = true">
                   <v-icon left>mdi-help-circle-outline</v-icon>
                   Columns description
@@ -99,10 +100,20 @@
               </v-flex>
 
               <!---- Download data button ---->
-              <v-flex justify-center class="xs12 sm6 md4 d-flex">
-                <v-btn outlined depressed rounded small color="primary" @click="downloadTable()">
+              <v-flex justify-center class="xs12 sm6 md3 d-flex">
+                <v-btn :loading="downloadLoading" outlined depressed rounded small color="primary"
+                       @click="downloadData()">
                   <v-icon left>mdi-download-circle-outline</v-icon>
                   Download data
+                </v-btn>
+              </v-flex>
+
+              <!---- Print result button ---->
+              <v-flex justify-center class="xs12 sm6 md3 d-flex">
+                <v-btn :loading="downloadLoading" outlined depressed rounded small color="primary"
+                       @click="downloadAll()">
+                  <v-icon left>mdi-printer</v-icon>
+                  Download all
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -119,7 +130,7 @@
             <th colspan="1" class="empty-main-header"/>
             <th colspan="1" class="empty-main-header"/>
             <th colspan="4">Mutation diffusion in % &nbsp;&nbsp; (num of collected sequences)</th>
-            <th v-if="showPValues" colspan="3" class="empty-main-header"/>
+            <th v-if="showPValues" colspan="3">P-values</th>
           </tr>
           </thead>
         </template>
@@ -214,15 +225,15 @@
 import BarChart from "./plots/BarChart";
 import HeatMap from "./plots/HeatMap";
 import {mapState} from "vuex";
+import html2canvas from "html2canvas";
 
 export default {
   name: "AnalysisResult",
   components: {HeatMap, BarChart},
   props: {
-    /** Array of objects, each of which represents a row as follows:
-     *  [{location, protein, [lineage,] mut, polyfit_slope, polifit_intercept,
-     *  w4,w3,w2,w1,f1,f2,f3,f4,p_value_with_mut_total,p_value_without_mut_total,
-     *  p_value_comparative_mut_total}]
+    /** Array of raw data, of the form:
+     *  [{location, protein, [lineage,] mut, polyfit_slope,w4,w3,w2,w1,f1,f2,f3,f4,
+     *  p_value_with_mut_total, p_value_without_mut_total, p_value_comparative_mut_total}]
      */
     queryResult: {required: true,},
 
@@ -257,7 +268,10 @@ export default {
       footerProps: {'items-per-page-options': [-1, 5, 10, 20, 50, 100, 150, 200, 500]},
 
       /** Selected protein to further filter the data */
-      selectedProtein: null
+      selectedProtein: null,
+
+      /* Download flag: true if a file download is in progress */
+      downloadLoading: false
     }
   },
   computed: {
@@ -271,18 +285,18 @@ export default {
             {text: 'Protein', value: 'protein', divider: true, align: 'center'},
             {text: 'Mut', value: 'mut', divider: true, align: 'center'},
             {text: 'Slope', value: 'polyfit_slope', divider: true, align: 'center'},
-            {text: this.computeDateLabel(28, 22), value: 'w1', divider: true, align: 'center'}, //'28-22 days before'
-            {text: this.computeDateLabel(21, 15), value: 'w2', divider: true, align: 'center'}, //'21-15 days before'
-            {text: this.computeDateLabel(14, 8), value: 'w3', divider: true, align: 'center'},  //'14-8  days before'
-            {text: this.computeDateLabel(7, 0), value: 'w4', divider: true, align: 'center'}    //'7-0   days before'
+            {text: this.computeDateLabel(28, 22), value: 'f_w1', divider: true, align: 'center'}, //'28-22 days before'
+            {text: this.computeDateLabel(21, 15), value: 'f_w2', divider: true, align: 'center'}, //'21-15 days before'
+            {text: this.computeDateLabel(14, 8), value: 'f_w3', divider: true, align: 'center'},  //'14-8  days before'
+            {text: this.computeDateLabel(7, 0), value: 'f_w4', divider: true, align: 'center'}    //'7-0   days before'
           ]
 
       if (this.showPValues) {
         const extendedHeaders =
             [
-              {text: 'P-value with mut', value: 'p_value_with_mut_total', divider: true, align: 'center'},
-              {text: 'P-value without mut', value: 'p_value_without_mut_total', divider: true, align: 'center'},
-              {text: 'P-value comparative', value: 'p_value_comparative_mut_total', divider: false, align: 'center'}
+              {text: 'P-value with mut', value: 'p_value_with_mut', divider: true, align: 'center'},
+              {text: 'P-value without mut', value: 'p_value_without_mut', divider: true, align: 'center'},
+              {text: 'P-value comparative', value: 'p_value_comparative', divider: false, align: 'center'}
             ]
         headers = headers.concat(extendedHeaders);
       }
@@ -290,12 +304,37 @@ export default {
       return headers;
     },
 
-    /** Array of data to display in the table (filtered by protein, if set) */
+    /** Array of (raw) data to display in the table (filtered by protein, if set) */
     filteredQueryResult() {
       if (this.selectedProtein !== null)
         return this.queryResult.filter((row) => row.protein === this.selectedProtein)
       else
         return this.queryResult
+    },
+
+    /** Array of (formatted) data actually displayed  */
+    processedQueryResult() {
+      const labelledRows = []
+      this.filteredQueryResult.forEach((row) => {
+        const labelledRow = {};
+        // Notice: all the numeric values are converted into string
+        labelledRow["location"] = row["location"];
+        labelledRow["protein"] = row["protein"];
+        labelledRow["mut"] = row["mut"];
+        labelledRow["polyfit_slope"] = row["polyfit_slope"].toPrecision(4);
+        if(!isNaN(row["p_value_with_mut_total"]))
+          labelledRow["p_value_with_mut"] = row["p_value_with_mut_total"].toExponential(3);
+        if(!isNaN(row["p_value_without_mut_total"]))
+          labelledRow["p_value_without_mut"] = row["p_value_without_mut_total"].toExponential(3);
+        if(!isNaN(row["p_value_comparative_mut_total"]))
+          labelledRow["p_value_comparative"] = row["p_value_comparative_mut_total"].toExponential(3);
+        for (let i = 1; i <= 4; i++) {
+          labelledRow["f_w" + i] = row["f" + i].toPrecision(3) + "% (" + row["w" + i] + ")"
+          labelledRow["f" + i] = row["f" + i]; // numeric value for sorting and plots
+        }
+        labelledRows.push(labelledRow)
+      })
+      return labelledRows;
     },
 
     /** Possible proteins values computed based on data results */
@@ -314,31 +353,32 @@ export default {
         plotsData = this.customSort([...this.selectedRows], this.sortingIndexes, this.isDescSorting).reverse();
       } else {
         plotsTitle = "Top 5 decreasing + Top 5 increasing mutations";
-        const sortedData = [...this.filteredQueryResult].sort(function (a, b) {
-          return a['polyfit_slope'].localeCompare(b['polyfit_slope']) // Notice: polyfit_slope is a string
-        });
-        // Get first 5 and last 5 and sort again
+        const sortedData = this.customSort([...this.processedQueryResult], ['polyfit_slope'], [false])
+        // Get first 5 and last 5
         plotsData = sortedData.slice(0, 5).concat(sortedData.slice(-5));
       }
 
       return {title: plotsTitle, data: plotsData};
     },
+
+    /** Name for downloaded files:  Lin[<LINEAGE>|"Indep"]_<GRANULARITY>_[<LOCATION>]_<DATE> */
+    fileName() {
+      return "Lin" + (this.withLineages ? this.queryParams["lineage"] : "Indep") + "_" + this.queryParams['granularity'] + "_" + (this.queryParams['granularity'] !== 'world' ? this.queryParams['location'] : "") + "_" + this.queryParams['date'];
+    }
   },
   methods: {
 
     /**
      * Downloads the data of the table
      */
-    downloadTable() {
-      const sortedData = this.customSort(this.filteredQueryResult, this.sortingIndexes, this.isDescSorting);
+    downloadData() {
+      this.downloadLoading = true;
+      const sortedData = this.customSort(this.processedQueryResult, this.sortingIndexes, this.isDescSorting);
       const csv = this.json2csv(sortedData, this.tableHeaders);
-
-      // File name of the form:  Lin[<LINEAGE>|"Indep"]_<GRANULARITY>_[<LOCATION>]_<DATE>.csv
-      const filename = "Lin" + (this.withLineages ? this.queryParams["lineage"] : "Indep") + "_" + this.queryParams['granularity'] + "_" + (this.queryParams['granularity'] !== 'world' ? this.queryParams['location'] : "") + "_" + this.queryParams['date'] + ".csv"
 
       // Anchor element to download the file
       const anchorElement = document.createElement('a');
-      anchorElement.setAttribute('download', filename);
+      anchorElement.setAttribute('download', this.fileName + ".csv");
       const data = new Blob([csv]);
       anchorElement.href = URL.createObjectURL(data);
       document.body.appendChild(anchorElement);
@@ -346,6 +386,36 @@ export default {
       // Simulate click and remove element
       anchorElement.click();
       document.body.removeChild(anchorElement);
+      this.downloadLoading = false;
+    },
+
+
+    /**
+     * Downloads a screenshot of the table, heatmap and line chart
+     */
+    downloadAll() {
+      this.downloadLoading = true;
+      // Ref value of the section to be printed
+      const sectionToPrint = this.$refs[this.fileName];
+
+      const that = this
+
+      async function downloadImage() {
+        (await html2canvas(sectionToPrint)).toBlob((data) => {
+          // Anchor element to download the file
+          const anchorElement = document.createElement('a');
+          anchorElement.setAttribute('download', that.fileName + ".png");
+          anchorElement.href = URL.createObjectURL(data);
+          document.body.appendChild(anchorElement);
+
+          // Simulate click and remove element
+          anchorElement.click();
+          document.body.removeChild(anchorElement);
+          that.downloadLoading = false;
+        });
+      }
+
+      downloadImage();
     },
 
 
@@ -378,10 +448,10 @@ export default {
 
     /**
      * Custom sort function for data table
-     * @param items     Array of rows to be sorted
-     * @param sortingIndexes     Array of field names selected for sorting
-     * @param isDescSorting    Array of boolean values. Element i is true iff index[i] needs to be desc ordered
-     * @returns {Array} Array of sorted items
+     * @param items           Array of (processed) rows to be sorted
+     * @param sortingIndexes  Array of field names selected for sorting
+     * @param isDescSorting   Array of boolean values. Element i is true iff index[i] needs to be desc ordered
+     * @returns {Array}       Array of sorted items
      */
     customSort(items, sortingIndexes, isDescSorting) {
       // Num of index selected
@@ -398,19 +468,37 @@ export default {
       let i = 0;
       let positionOfLastIndex = len - 1;
 
-      // Sort via custom cmp function (it returns 0 if they are equal; 1 if A must appear before B; -1 otherwise)
+      // Sort via custom cmp fn (returning 0 if A==B equal; 1 if A must appear before B; -1 otherwise)
       items.sort(function (a, b) {
         let i_local = i;
+        let consideredIndex=sortingIndexes[i_local];
         while (i_local <= positionOfLastIndex) {
-          // res is computed as follows: 0 if a==b; 1 if A<B; -1 if A>B
-          let res = String(a[sortingIndexes[i_local]]).localeCompare(b[sortingIndexes[i_local]])
+          // res is computed as follows: 0 if A==B, 1 if A<B, -1 if A>B
+          let res;
+
+          if (consideredIndex.startsWith("f_w")) {
+            // Mutation diffusion data must consider only the percentage value
+            let weekNum = consideredIndex[3];
+            res = a["f" + weekNum] - b["f" + weekNum]
+          } else {
+            if (consideredIndex.startsWith("p_value") || consideredIndex.startsWith("polyfit_slope")) {
+              // P_values (possibly NaN valued) and slope must be converted back into numbers to sort them
+              if(!isNaN(a[consideredIndex]) && !isNaN(b[consideredIndex]))
+                res= Number(a[consideredIndex])-Number(b[consideredIndex])
+              else
+                res= isNaN(a[consideredIndex])? 1 : -1
+            } else {
+              // String are compared as usual
+              res = String(a[consideredIndex]).localeCompare(b[consideredIndex]);
+            }
+          }
 
           // A<B on the current attribute? No need to check the others.
-          if (res === 1)
+          if (res > 0)
             return (isDescSorting[i_local]) ? -1 : 1;
 
           // A>B on the current attribute. No need to check the others.
-          if (res === -1)
+          if (res < 0)
             return (isDescSorting[i_local]) ? 1 : -1
 
           // A==B on the current attribute. Decide on the basis of the other indexes.
@@ -459,6 +547,7 @@ export default {
 
 /* Panel container styling */
 .panel-container {
+  background: var(--secondary-color); /* to ensure readable downloadable images */
   padding-top: 30px;
   margin: 0;
 }
@@ -521,14 +610,14 @@ export default {
 
 /* Custom main headers styling*/
 .main-headers {
-  background: #D2ECF8FF;
+  background: var(--tertiary-color-light);
 }
 
 .main-headers th {
   letter-spacing: 0.05em;
   word-spacing: 0.1em;
   text-align: center !important;
-  border-top: #1976D2FF solid 1px !important;
+  border-top: var(--tertiary-color-dark) solid 1px !important;
   padding-top: 7px !important;
   padding-bottom: 7px !important;
   height: fit-content !important;
@@ -543,6 +632,7 @@ export default {
   border-bottom: none !important;
 }
 
+/* Table size */
 .table-element {
   width: 100%;
 }
@@ -563,7 +653,6 @@ li {
   padding-bottom: 10px;
 }
 
-
 </style>
 
 <style>
@@ -571,7 +660,7 @@ li {
 /* Additional global rules to overwrite the vuetify styling fot table*/
 .table-container .v-data-table-header th {
   border-top: none !important;
-  border-bottom: #1976D2FF solid 1px !important;
+  border-bottom: var(--tertiary-color-dark) solid 1px !important;
   padding-top: 17px !important;
   padding-bottom: 3px !important;
 }
@@ -581,7 +670,7 @@ li {
 }
 
 .table-container .v-data-table, .table-container .v-data-table-header {
-  background: #D2ECF8FF !important;
+  background: var(--tertiary-color-light) !important;
 }
 
 .table-container table {
@@ -590,5 +679,15 @@ li {
 
 .table-container th span:first-child {
   display: block !important;
+}
+
+/* Avoid breaking table content across multiple lines */
+.table-container tbody {
+  white-space: nowrap !important;
+}
+
+/* Overwrite the default ordering icon with a more intuitive one */
+.v-data-table-header__icon::before{
+  content: "\F04BC" !important;
 }
 </style>

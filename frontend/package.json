@@ -12,7 +12,7 @@
     "core-js": "^3.6.5",
     "echarts": "^5.1.1",
     "fetch": "^1.1.0",
-    "html2canvas": "^1.0.0-rc.7",
+    "html2canvas": "^1.4.1",
     "jspdf": "^2.3.1",
     "vue": "^2.6.11",
     "vue-plotly": "^1.1.0",
