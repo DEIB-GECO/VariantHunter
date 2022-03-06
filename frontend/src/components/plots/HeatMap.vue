@@ -10,7 +10,7 @@
 
 <template>
   <div style="width: 100%;">
-    <Plotly :data="data" :layout="layout"/>
+    <Plotly :data="data" :layout="layout" :displaylogo="false"/>
   </div>
 </template>
 
@@ -51,6 +51,11 @@ export default {
       return this.plotData.map((element) => [element['f1'], element['f2'], element['f3'], element['f4']])
     },
 
+    /** Absolute value for the z axis of the heatmap */
+    absValue(){
+      return this.plotData.map((element) => [element['w1'], element['w2'], element['w3'], element['w4']])
+    },
+
     /** Data processed for the plot */
     data() {
       return [
@@ -58,6 +63,8 @@ export default {
           x: this.x,
           y: this.y,
           z: this.z,
+          customdata: this.absValue,
+          hovertemplate: 'Period:     %{x}<br>Mutation:  %{y}<br>Diffusion:  %{z:.1f}%  (%{customdata})<extra></extra>',
           zmax: 100,
           zmin: 0,
           type: 'heatmap',
@@ -69,10 +76,11 @@ export default {
     /** Layout data for the plot */
     layout() {
       return {
+        height: 510,
         title: this.plotTitle,
         annotations: this.annotations,
         yaxis: {
-          tickfont: {size: 14, color: 'rgb(68, 68, 68)'},
+          tickfont: {size: 14 },
           automargin: true
         },
         xaxis: {automargin: true}

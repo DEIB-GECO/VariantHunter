@@ -144,6 +144,7 @@
                 v-if="rowsTable[index].length > 0"
                 :queryResult="rowsTable[index]"
                 :queryParams=expansionPanelsSingleInfo[index]
+                :weekSeq="weekSeq[index]"
                 :withLineages="true"
             />
             <div v-else class="empty-result-alert">
@@ -218,6 +219,9 @@ export default {
 
       /** Panel data array */
       rowsTable: [],
+
+      /** Array of total number of sequences collected per week for each tab */
+      weekSeq: []
     }
   },
   computed: {
@@ -277,7 +281,8 @@ export default {
             };
 
             // Save the result data
-            this.rowsTable[countNumAnalysis] = JSON.parse(JSON.stringify(res));
+            this.rowsTable[countNumAnalysis] = JSON.parse(JSON.stringify(res))['rows'];
+            this.weekSeq[countNumAnalysis] = JSON.parse(JSON.stringify(res))['tot_seq'];
             this.isLoading = false;
 
             // Open the new panel

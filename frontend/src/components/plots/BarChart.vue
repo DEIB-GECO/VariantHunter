@@ -11,7 +11,8 @@
 <template>
   <div style="width: 100%;">
     <!-- BarChart plot -->
-    <Plotly :data="data" :layout="layout"/>
+    <Plotly :data="data" :layout="layout" :displaylogo="false"
+            :modeBarButtonsToRemove="['lasso2d','select2d','toggleSpikelines']"/>
   </div>
 </template>
 
@@ -33,7 +34,10 @@ export default {
     plotData: {required: true},
 
     /** Array of data labels for the periods */
-    dateLabel: {required: true}
+    dateLabel: {required: true},
+
+    /** Total number of sequences collected per week */
+    weekSeq: {required: true}
   },
   computed: {
 
@@ -44,7 +48,21 @@ export default {
           x: [1, 2, 3, 4],
           y: [element['f1'], element['f2'], element['f3'], element['f4']],
           name: element['protein'] + "_" + element['mut'],
-          /*marker: { size: 10, symbol: "x"},*/
+          customdata: [element['w1'], element['w2'], element['w3'], element['w4']],
+          meta: element['protein'] + "_" + element['mut'],
+          hovertemplate: '%{meta}, %{customdata}, %{y:.1f}% <extra></extra>',
+          hoverlabel: {
+            bordercolor: 'transparent',
+            font: {
+              color: "rgb(68,68,68)"
+            }
+          },
+          marker: {
+            size: 10,
+            symbol: this.computeMarkerSymbol(element),
+            line: {width: 0}
+          },
+          line: this.computeLineStyle(element),
           showlegend: true,
           type: 'scatter'
         }
@@ -54,49 +72,104 @@ export default {
     /** Layout data for the plot */
     layout() {
       return {
+        height: 510,
         colorway:
-            ['#e6194B', '#3cb44b', '#ffe119', '#4363d8',
-              '#f58231', '#911eb4', '#42d4f4', '#f032e6',
-              '#bfef45', '#fabed4', '#469990', '#dcbeff',
-              '#9A6324', '#fffac8', '#800000', '#aaffc3',
-              '#808000', '#ffd8b1', '#000075', '#a9a9a9'],
+            ['#ef5378', '#5ee171', '#f3df67', '#6685f1',
+              '#fda05f', '#d46ff5', '#71daf1', '#f37fed',
+              '#cfee82', '#fcb0ca', '#7ed7cd', '#dac4f8',
+              '#efc69a', '#fffac8', '#d24f32', '#aaffc3',
+              '#808000', '#ffd8b1', '#575793', '#a9a9a9'],
         title: this.plotTitle,
         xaxis:
             {
               tickmode: "array", // If "array", the placement of the ticks is set via "tickvals" and the tick text is "ticktext"
               tickvals: [1, 2, 3, 4],
-              ticktext: [this.dateLabel[3], this.dateLabel[2], this.dateLabel[1], this.dateLabel[0]],
-              automargin: true
+              ticktext: this.computeEnrichedLabels(),
+              tickfont:
+                  {
+                    size: 11,
+                  },
+              automargin: true,
+              showline: false,
+              zeroline: false
             },
         yaxis:
             {
-              title: 'Frequency',
+              title: 'Frequency in %',
               titlefont:
                   {
                     size: 16,
-                    color: 'rgb(107, 107, 107)'
                   },
               tickfont:
                   {
                     size: 14,
-                    color: 'rgb(107, 107, 107)'
                   },
+
+              dtick: 10,
+              zeroline: false,
+              showline: false,
               automargin: true
             },
         legend:
             {
               x: 1.0,
-              y: 1.0,
-              bgcolor: 'rgba(255, 255, 255, 0)',
-              bordercolor: 'rgba(255, 255, 255, 0)',
+              y: 0.7,
+              bgcolor: 'trasparent',
+              bordercolor: 'trasparent',
               yanchor: "top",
               ticks: "outside"
             },
         barmode: 'group',
         bargap: 0.15,
-        bargroupgap: 0.1
+        bargroupgap: 0.1,
       }
+    },
+  },
+  methods: {
+
+    /**
+     * Compute enriched labels for the x-axis containing period and total period samples
+     * @returns {Array} An array containing the 4 labels
+     */
+    computeEnrichedLabels() {
+      const labels = [];
+      for (let i = 3; i >= 0; i--) {
+        labels.push(this.dateLabel[i] + "<br>Tot. seq.: " + this.weekSeq[i])
+      }
+      return labels
+    },
+
+    /**
+     * Compute the markers' symbol for a given row based on the number of observations
+     * @param element   The row to be considered
+     * @returns {Array} An array of markers' symbols ('X' if #observations<6, otherwise 'O')
+     */
+    computeMarkerSymbol(element) {
+      const symbols = []
+      for (let i = 1; i <= 4; i++)
+        symbols.push((element["w" + i] < 6) ? "x" : "circle")
+      return symbols
+    },
+
+    /**
+     * Compute the line style for a given row based on the number of observations
+     * @param element   The row to be considered
+     * @returns {Array} Dashed style if all the 4 points have less than 6 observations
+     */
+    computeLineStyle(element) {
+      let style = {width: 3};
+      if (element["w1"] < 6 && element["w2"] < 6 && element["w3"] < 6 && element["w4"] < 6)
+        style = {width: 3, dash: 'dash'}
+      return style;
     }
   }
 }
 </script>
+<style>
+
+/* Overwite plotly rules to hide legend markers */
+.legendsymbols {
+  display: none !important;
+}
+
+</style>

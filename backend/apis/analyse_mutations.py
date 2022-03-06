@@ -212,4 +212,4 @@ class FieldList(Resource):
                 'p_value_comparative_mut_total': 0,
             })
 
-        return array_to_return
+        return {'rows': array_to_return, 'tot_seq': [tot_seq_w1, tot_seq_w2,tot_seq_w3, tot_seq_w4]}

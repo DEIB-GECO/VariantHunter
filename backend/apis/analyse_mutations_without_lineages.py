@@ -748,7 +748,7 @@ class FieldList(Resource):
                                                                 [tot_seq_w1-c1, tot_seq_w2-c2, tot_seq_w3-c3, tot_seq_w4-c4]),
             })
 
-        return array_to_return
+        return {'rows': array_to_return, 'tot_seq': [tot_seq_w1, tot_seq_w2,tot_seq_w3, tot_seq_w4]}
 
 
 @api.route('/analyzePeriodSelectedMuts')

@@ -129,7 +129,7 @@
             <th colspan="1" class="empty-main-header"/>
             <th colspan="1" class="empty-main-header"/>
             <th colspan="1" class="empty-main-header"/>
-            <th colspan="4">Mutation diffusion in % &nbsp;&nbsp; (num of collected sequences)</th>
+            <th colspan="4">Mutation diffusion in % &nbsp;&nbsp; (num of affected sequences)</th>
             <th v-if="showPValues" colspan="3">P-values</th>
           </tr>
           </thead>
@@ -215,6 +215,7 @@
       <BarChart :dateLabel="computeDateLabels()"
                 :plotData="plotsInfo.data"
                 :plotTitle="plotsInfo.title"
+                :weekSeq="plotsInfo.weekSeq"
       />
     </v-flex>
 
@@ -239,6 +240,9 @@ export default {
 
     /** Object containing all the query parameters {granularity, location, date, [lineage]} */
     queryParams: {required: true},
+
+    /** Total number of sequences collected per week */
+    weekSeq: {required: true},
 
     /** Lineages flag. True if the data refers to a lineage specific analysis. Required.*/
     withLineages: {required: true}
@@ -322,15 +326,16 @@ export default {
         labelledRow["protein"] = row["protein"];
         labelledRow["mut"] = row["mut"];
         labelledRow["polyfit_slope"] = row["polyfit_slope"].toPrecision(4);
-        if(!isNaN(row["p_value_with_mut_total"]))
+        if (!isNaN(row["p_value_with_mut_total"]))
           labelledRow["p_value_with_mut"] = row["p_value_with_mut_total"].toExponential(3);
-        if(!isNaN(row["p_value_without_mut_total"]))
+        if (!isNaN(row["p_value_without_mut_total"]))
           labelledRow["p_value_without_mut"] = row["p_value_without_mut_total"].toExponential(3);
-        if(!isNaN(row["p_value_comparative_mut_total"]))
+        if (!isNaN(row["p_value_comparative_mut_total"]))
           labelledRow["p_value_comparative"] = row["p_value_comparative_mut_total"].toExponential(3);
         for (let i = 1; i <= 4; i++) {
           labelledRow["f_w" + i] = row["f" + i].toPrecision(3) + "% (" + row["w" + i] + ")"
           labelledRow["f" + i] = row["f" + i]; // numeric value for sorting and plots
+          labelledRow["w" + i] = row["w" + i]; // numeric value for plots
         }
         labelledRows.push(labelledRow)
       })
@@ -358,7 +363,7 @@ export default {
         plotsData = sortedData.slice(0, 5).concat(sortedData.slice(-5));
       }
 
-      return {title: plotsTitle, data: plotsData};
+      return {title: plotsTitle, data: plotsData, weekSeq: this.weekSeq};
     },
 
     /** Name for downloaded files:  Lin[<LINEAGE>|"Indep"]_<GRANULARITY>_[<LOCATION>]_<DATE> */
@@ -471,7 +476,7 @@ export default {
       // Sort via custom cmp fn (returning 0 if A==B equal; 1 if A must appear before B; -1 otherwise)
       items.sort(function (a, b) {
         let i_local = i;
-        let consideredIndex=sortingIndexes[i_local];
+        let consideredIndex = sortingIndexes[i_local];
         while (i_local <= positionOfLastIndex) {
           // res is computed as follows: 0 if A==B, 1 if A<B, -1 if A>B
           let res;
@@ -483,10 +488,10 @@ export default {
           } else {
             if (consideredIndex.startsWith("p_value") || consideredIndex.startsWith("polyfit_slope")) {
               // P_values (possibly NaN valued) and slope must be converted back into numbers to sort them
-              if(!isNaN(a[consideredIndex]) && !isNaN(b[consideredIndex]))
-                res= Number(a[consideredIndex])-Number(b[consideredIndex])
+              if (!isNaN(a[consideredIndex]) && !isNaN(b[consideredIndex]))
+                res = Number(a[consideredIndex]) - Number(b[consideredIndex])
               else
-                res= isNaN(a[consideredIndex])? 1 : -1
+                res = isNaN(a[consideredIndex]) ? 1 : -1
             } else {
               // String are compared as usual
               res = String(a[consideredIndex]).localeCompare(b[consideredIndex]);
@@ -687,7 +692,7 @@ li {
 }
 
 /* Overwrite the default ordering icon with a more intuitive one */
-.v-data-table-header__icon::before{
+.v-data-table-header__icon::before {
   content: "\F04BC" !important;
 }
 </style>
