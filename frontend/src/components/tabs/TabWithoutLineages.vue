@@ -37,61 +37,12 @@
 
       <!---- Location -->
       <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm6 md4 d-flex">
-        <v-layout row wrap>
-          <v-flex class="xs12 d-flex field-label">
-            <span>Location</span>
-          </v-flex>
-
-          <v-flex class="xs12 d-flex field-element">
-            <v-autocomplete v-model="selectedLocation"
-                            :disabled="selectedGranularity === null || selectedGranularity === 'world'"
-                            :items="possibleLocations"
-                            hide-details
-                            label="Location"
-                            solo>
-              <template slot="item" slot-scope="data">
-                <span>{{ getFieldText(data.item) }}</span>
-              </template>
-            </v-autocomplete>
-          </v-flex>
-        </v-layout>
+        <LocationSelector :allLocations="allLocations" :selectedGranularity="selectedGranularity" v-model="selectedLocation"/>
       </v-flex>
 
       <!---- Date -->
       <v-flex class="xs12 sm6 md4 d-flex">
-        <v-layout justify-center row wrap>
-          <v-flex class="xs12 d-flex field-label">
-            <span>Date</span>
-          </v-flex>
-
-          <v-flex class="xs12 d-flex field-element">
-            <v-menu v-model="menuVisibility"
-                    :close-on-content-click="false"
-                    min-width="auto"
-                    offset-y
-                    transition="scale-transition">
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field v-model="selectedDate"
-                              append-icon="mdi-calendar"
-                              hide-details
-                              label="Date"
-                              readonly
-                              solo
-                              v-bind="attrs"
-                              v-on="on"
-                              @click:append="menuVisibility=true"
-                />
-              </template>
-              <v-date-picker v-model="selectedDate"
-                             :max="today"
-                             first-day-of-week="1"
-                             no-title
-                             scrollable
-                             @input="menuVisibility = false"
-              />
-            </v-menu>
-          </v-flex>
-        </v-layout>
+        <DatePicker v-model="selectedDate"/>
       </v-flex>
 
     </template>
@@ -145,19 +96,18 @@ import {mapState} from "vuex";
 import axios from "axios";
 import AnalysisResult from "@/components/ResultView";
 import Tab from "@/components/tabs/Tab";
+import DatePicker from "@/components/form/DatePicker";
+import LocationSelector from "@/components/form/LocationSelector";
 
 export default {
   name: "TabWithoutLineages",
-  components: {Tab, AnalysisResult},
+  components: {LocationSelector, DatePicker, Tab, AnalysisResult},
   props: {
     /** List of all the possible locations. Required. */
     allLocations: {required: true}
   },
   data() {
     return {
-      /** Visibility flag of date picker menu */
-      menuVisibility: false,
-
       /** Progress circe flag: true if the progress circle is displayed */
       isLoading: false,
 
@@ -169,16 +119,11 @@ export default {
       /** Granularity: selected option */
       selectedGranularity: null,
 
-      /** Location: available options (wrt to other params) */
-      possibleLocations: [],
       /** Location: selected option */
       selectedLocation: null,
 
       /** Date: selected date */
       selectedDate: null,
-
-      /** Today date */
-      today: new Date().toISOString().slice(0, 10),
 
       /** Panel expansion status array */
       expansionPanels: [],
@@ -204,16 +149,6 @@ export default {
     },
   },
   methods: {
-    /** Returns the hint for the field completion */
-    getFieldText(item) {
-      let name;
-      if (item === null) {
-        name = 'N/D'
-      } else {
-        name = item;
-      }
-      return name;
-    },
 
     /** Clears the form */
     clearForm(){
@@ -242,7 +177,7 @@ export default {
             // Save the search parameters
             this.expansionPanelsSingleInfo[countNumAnalysis] = {
               'granularity': to_send.granularity,
-              'location': to_send.value,
+              'location': to_send.value? to_send.value : 'all' ,
               'date': to_send.date,
             };
 
@@ -259,28 +194,6 @@ export default {
           });
     },
 
-    /** Compute the possible locations based on the other parameters of the form*/
-    computePossibleLocations() {
-      this.possibleLocations = [];
-      this.selectedLocation = null;
-      let i = 0;
-      if (this.allLocations !== null && this.selectedGranularity!=null) {
-        if (this.selectedGranularity !== 'world') {
-          while (i < this.allLocations[this.selectedGranularity].length) {
-            if (this.allLocations[this.selectedGranularity][i] != null) {
-              this.possibleLocations.push(this.allLocations[this.selectedGranularity][i]);
-            } else {
-              this.possibleLocations.push('N/D');
-            }
-            i = i + 1;
-          }
-        } else {
-          this.selectedLocation = 'all'
-        }
-      }
-      this.possibleLocations.sort();
-    },
-
     /** Handle error alert close */
     onCloseErrorAlert(){
       this.errorOccurred=false;
@@ -289,18 +202,12 @@ export default {
   },
   mounted() {
     // Default values (test purposes only)
-    setTimeout(() => {
-      this.selectedGranularity = 'country';
-      this.selectedDate = '2022-02-01';
-      this.selectedLocation = 'Italy';
-      this.doAnalysis();
-    }, 1000);
-  },
-  watch: {
-    /** Adjust the possible locations according to the selected granularity */
-    selectedGranularity() {
-      this.computePossibleLocations()
-    },
+    // setTimeout(() => {
+    //   this.selectedGranularity = 'country';
+    //   this.selectedDate = '2022-02-01';
+    //   this.selectedLocation = 'Italy';
+    //   this.doAnalysis();
+    // }, 1000);
   },
 }
 </script>

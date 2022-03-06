@@ -14,7 +14,7 @@
       <v-spacer></v-spacer>
 
       <!-- Scroll to top button -->
-      <v-btn v-if="showSearchShortcut" class="hidden-xs-only" small outlined href="#newSearch">
+      <v-btn v-if="showSearchShortcut" class="hidden-xs-only" small outlined href="#top">
         <v-icon left>mdi-plus</v-icon>
         New analysis
       </v-btn>
@@ -95,6 +95,8 @@ export default {
     ...mapState(['primary_color']),
   },
   methods: {
+
+    /** Scroll event handler to hide/show the search shortcut */
     scrollHandler(e) {
       this.showSearchShortcut = e.target.scrollTop > 440
     }
@@ -105,6 +107,7 @@ export default {
 
 <style scoped>
 
+/* Site title styles*/
 .site-title {
   font-size: 33px;
   margin-left: 20px;

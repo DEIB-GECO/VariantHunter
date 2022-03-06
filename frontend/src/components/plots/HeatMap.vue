@@ -38,7 +38,7 @@ export default {
 
     /** Values for the x axis of the heatmap: dates periods */
     x() {
-      return [this.dateLabel[3], this.dateLabel[2], this.dateLabel[1], this.dateLabel[0]]
+      return [this.dateLabel['w1'], this.dateLabel['w2'], this.dateLabel['w3'], this.dateLabel['w4']]
     },
 
     /** Values for the y axis of the heatmap: protein_mut */

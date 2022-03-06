@@ -133,8 +133,8 @@ export default {
      */
     computeEnrichedLabels() {
       const labels = [];
-      for (let i = 3; i >= 0; i--) {
-        labels.push(this.dateLabel[i] + "<br>Tot. seq.: " + this.weekSeq[i])
+      for (let i = 1; i <= 4; i++) {
+        labels.push(this.dateLabel['w'+i] + "<br>Tot. seq.: " + this.weekSeq[i-1])
       }
       return labels
     },

@@ -1,11 +1,11 @@
 <!--
   Component:    TabView
   Description:  Component to switch between the analysis tabs.
-                It also fetches all possible locations and lineages values saving them in the store.
+                It also fetches all possible locations and lineages values.
 -->
 
 <template>
-  <v-container id="newSearch" class="tabs-container " fluid grid-list-xl>
+  <v-container id="top" class="tabs-container " fluid grid-list-xl>
     <v-tabs v-model="selectedTab"
             :background-color="secondary_color" :slider-color="primary_color"
             active-class="active-tab"
@@ -106,7 +106,8 @@ export default {
           this.allLocations = res;
         })
         .catch(() => {
-          this.errorOccurred = true
+          if(!this.errorOccurred)
+            this.errorOccurred = true
         });
 
     /** Fetch all possible values for lineages */
@@ -120,7 +121,8 @@ export default {
           this.allLineages = res;
         })
         .catch(() => {
-          this.errorOccurred = true
+          if(!this.errorOccurred)
+            this.errorOccurred = true
         });
   }
 }

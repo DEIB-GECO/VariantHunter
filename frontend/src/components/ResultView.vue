@@ -223,7 +223,7 @@
 </template>
 
 <script>
-import BarChart from "./plots/BarChart";
+import BarChart from "./plots/LineChart";
 import HeatMap from "./plots/HeatMap";
 import {mapState} from "vuex";
 import html2canvas from "html2canvas";
@@ -522,10 +522,10 @@ export default {
      */
     computeDateLabels() {
       const dateLabels = [];
-      dateLabels[3] = this.computeDateLabel(28, 22)
-      dateLabels[2] = this.computeDateLabel(21, 15)
-      dateLabels[1] = this.computeDateLabel(14, 8)
-      dateLabels[0] = this.computeDateLabel(7, 0)
+      dateLabels['w1'] = this.computeDateLabel(28, 22)
+      dateLabels['w2'] = this.computeDateLabel(21, 15)
+      dateLabels['w3'] = this.computeDateLabel(14, 8)
+      dateLabels['w4'] = this.computeDateLabel(7, 0)
       return dateLabels;
     },
 
