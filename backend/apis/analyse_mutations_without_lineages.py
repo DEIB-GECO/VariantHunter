@@ -6,14 +6,13 @@ import time
 
 import numpy as np
 import scipy.stats
-from scipy.stats import fisher_exact, chi2_contingency, kstest
 from threading import Timer
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
 from pymongo import MongoClient
 import sqlite3
 
-from .analyse_mutations import collection_db, database_name
+from .analyse_mutations import collection_db, compute_pvalue
 
 api = Namespace('analyse_mutations_without_lineages', description='analyse_mutations_without_lineages')
 
@@ -278,16 +277,16 @@ def get_all_mutation_for_each_geo_previous_week(date, granularity, real_location
 
                 table_with_mutation = [[results_with_mut_prev_week, results_with_mut_this_week],
                                        [denominator_prev_week_with_mut, denominator_this_week_with_mut]]
-                odds_with_mut, p_with_mut = fisher_exact(table_with_mutation)
+                #odds_with_mut, p_with_mut = fisher_exact(table_with_mutation)
 
                 table_without_mutation = [[results_without_mut_prev_week, results_without_mut_this_week],
                                           [denominator_prev_week_without_mut, denominator_this_week_without_mut]]
-                odds_without_mut, p_without_mut = fisher_exact(table_without_mutation)
+                #odds_without_mut, p_without_mut = fisher_exact(table_without_mutation)
 
                 table_comparative_mutation = [
                     [results_with_mut_prev_week, results_with_mut_this_week],
                     [results_without_mut_prev_week, results_without_mut_this_week]]
-                odds_comparative_mut, p_comparative_mut = fisher_exact(table_comparative_mutation)
+                #odds_comparative_mut, p_comparative_mut = fisher_exact(table_comparative_mutation)
 
                 to_float = perc_with_mut_this_week
                 format_float = "{:.2f}".format(to_float)
@@ -305,14 +304,14 @@ def get_all_mutation_for_each_geo_previous_week(date, granularity, real_location
                                'perc_with_mut_prev_week': perc_with_mut_prev_week,
                                'perc_with_mut_this_week': perc_with_mut_this_week,
                                'diff_perc_with_mut': diff_perc_with_mut,
-                               'p_value_with_mut': p_with_mut,
+                               #'p_value_with_mut': p_with_mut,
                                'count_without_mut_prev_week': results_without_mut_prev_week,
                                'count_without_mut_this_week': results_without_mut_this_week,
                                'perc_without_mut_prev_week': perc_without_mut_prev_week,
                                'perc_without_mut_this_week': perc_without_mut_this_week,
                                'diff_perc_without_mut': diff_perc_without_mut,
-                               'p_value_without_mut': p_without_mut,
-                               'p_value_comparative_mut': p_comparative_mut,
+                               #'p_value_without_mut': p_without_mut,
+                               #'p_value_comparative_mut': p_comparative_mut,
                                'analysis_date': date.strftime("%Y-%m-%d"),
                                'granularity': granularity,
                                'location': location,
@@ -588,17 +587,18 @@ def create_unique_array_results(array_results, today_date, array_date, function)
 
             min_count = (len(array_date) / 2) + 1
             if count >= min_count:
-                stat, p_with_mut, dof, expected = chi2_contingency(table_with_mut_chi2)
-                stat, p_without_mut, dof, expected = chi2_contingency(table_without_mutation_chi2)
-                stat, p_comparative_mut, dof, expected = chi2_contingency(table_comparative_mutation_chi2)
+                pass
+                #stat, p_with_mut, dof, expected = chi2_contingency(table_with_mut_chi2)
+                #stat, p_without_mut, dof, expected = chi2_contingency(table_without_mutation_chi2)
+                #stat, p_comparative_mut, dof, expected = chi2_contingency(table_comparative_mutation_chi2)
 
                 # stat1, p_with_mut = kstest(table_with_mutation[0], table_with_mutation[1])
                 # stat2, p_without_mut = kstest(table_without_mutation[0], table_without_mutation[1])
                 # stat3, p_comparative_mut = kstest(table_comparative_mutation[0], table_comparative_mutation_chi2[1])
 
-                json_obj['p_value_with_mut_total'] = p_with_mut
-                json_obj['p_value_without_mut_total'] = p_without_mut
-                json_obj['p_value_comparative_mut_total'] = p_comparative_mut
+                #json_obj['p_value_with_mut_total'] = p_with_mut
+                #json_obj['p_value_without_mut_total'] = p_without_mut
+                #json_obj['p_value_comparative_mut_total'] = p_comparative_mut
 
             array_x_polyfit = []
             j = 0
@@ -674,12 +674,6 @@ def extract_mutation_data(location, w1_begin, w1_end, w2_begin, w2_end, w3_begin
     week_mut_data = [muts_w1, muts_w2, muts_w3, muts_w4]
     print(f'done in {time.time() - startex:.5f} seconds.')
     return week_mut_data
-
-def compute_pvalue(freq1, freq2):
-    try:
-        return scipy.stats.chi2_contingency([freq1, freq2])[1]
-    except:
-        return "NaN"
 
 ##############################################################################################################
 

@@ -1,7 +1,7 @@
 from __future__ import print_function
 import time
 import numpy as np
-from scipy.stats import fisher_exact, chi2_contingency, kstest
+import scipy.stats
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
 from pymongo import MongoClient
@@ -69,6 +69,13 @@ def get_geo_lineages(geo, date):
 
 get_all_geo()
 get_all_lineage()
+
+
+def compute_pvalue(freq1, freq2):
+    try:
+        return scipy.stats.chi2_contingency([freq1, freq2])[1]
+    except:
+        return "NaN"
 
 ##############################################################################################################
 
@@ -207,9 +214,11 @@ class FieldList(Resource):
                 'f2': f2,
                 'f3': f3,
                 'f4': f4,
-                'p_value_with_mut_total': 0,
-                'p_value_without_mut_total': 0,
-                'p_value_comparative_mut_total': 0,
+                'p_value_with_mut_total' : compute_pvalue([c1,c2,c3,c4], week_sequence_counts),
+                'p_value_without_mut_total': compute_pvalue([tot_seq_w1-c1, tot_seq_w2-c2, tot_seq_w3-c3, tot_seq_w4-c4],
+                                                            week_sequence_counts),
+                'p_value_comparative_mut_total': compute_pvalue([c1, c2, c3, c4],
+                                                                [tot_seq_w1-c1, tot_seq_w2-c2, tot_seq_w3-c3, tot_seq_w4-c4]),
             })
 
         return {'rows': array_to_return, 'tot_seq': [tot_seq_w1, tot_seq_w2,tot_seq_w3, tot_seq_w4]}
