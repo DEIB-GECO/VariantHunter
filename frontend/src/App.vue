@@ -14,7 +14,7 @@
       <v-spacer></v-spacer>
 
       <!-- Scroll to top button -->
-      <v-btn v-if="showSearchShortcut" class="hidden-xs-only" small outlined href="#top">
+      <v-btn v-if="showSearchShortcut" class="hidden-xs-only" href="#top" outlined rounded small>
         <v-icon left>mdi-plus</v-icon>
         New analysis
       </v-btn>

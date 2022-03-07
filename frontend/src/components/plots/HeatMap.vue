@@ -52,7 +52,7 @@ export default {
     },
 
     /** Absolute value for the z axis of the heatmap */
-    absValue(){
+    absValue() {
       return this.plotData.map((element) => [element['w1'], element['w2'], element['w3'], element['w4']])
     },
 
@@ -76,14 +76,15 @@ export default {
     /** Layout data for the plot */
     layout() {
       return {
-        height: 510,
+        height: (this.plotData.length * 25 + 250),
         title: this.plotTitle,
         annotations: this.annotations,
         yaxis: {
-          tickfont: {size: 14 },
+          tickfont: {size: 14},
           automargin: true
         },
-        xaxis: {automargin: true}
+        xaxis: {automargin: true},
+        hovermode: "closest"
       }
     },
 
@@ -97,7 +98,7 @@ export default {
             yref: 'y1',
             x: this.x[j],
             y: this.y[i],
-            text: this.z[i][j].toPrecision(3)+"%",
+            text: this.z[i][j].toPrecision(3) + "%",
             font: {
               color: 'white'
             },

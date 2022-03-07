@@ -7,10 +7,10 @@
 -->
 
 <template>
-  <Tab :is-loading="isLoading"
-       :error-occurred="errorOccurred"
-       :result-length="rowsTable.length"
+  <Tab :error-occurred="errorOccurred"
        :form-error="formError"
+       :is-loading="isLoading"
+       :result-length="rowsTable.length"
        @send="doAnalysis()"
        @close-error-alert="onCloseErrorAlert()"
   >
@@ -37,7 +37,8 @@
 
       <!---- Location -->
       <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm6 md4 d-flex">
-        <LocationSelector :allLocations="allLocations" :selectedGranularity="selectedGranularity" v-model="selectedLocation"/>
+        <LocationSelector v-model="selectedLocation" :allLocations="allLocations"
+                          :selectedGranularity="selectedGranularity"/>
       </v-flex>
 
       <!---- Date -->
@@ -64,14 +65,30 @@
               {{ expansionPanelsSingleInfo[index]['location'] }} /
               {{ expansionPanelsSingleInfo[index]['date'] }}
             </span>
+            <v-spacer></v-spacer>
+
+            <!-- Panel delete action -->
+            <span class="delete-action">
+              <v-btn outlined rounded small @click.native.stop="deleteQuery(index)">
+                 <v-icon small>mdi-trash-can-outline</v-icon>
+                <div class="hidden-md-and-down">Delete</div>
+              </v-btn>
+            </span>
+
+            <!-- Panel collapse/expand action -->
+            <template v-slot:actions>
+              <v-btn icon outlined small>
+                <v-icon small>mdi-chevron-down</v-icon>
+              </v-btn>
+            </template>
           </v-expansion-panel-header>
 
           <!-- Panel content -->
           <v-expansion-panel-content :color="secondary_color">
             <AnalysisResult
                 v-if="rowsTable[index].length > 0"
-                :queryResult="rowsTable[index]"
                 :queryParams="expansionPanelsSingleInfo[index]"
+                :queryResult="rowsTable[index]"
                 :weekSeq="weekSeq[index]"
                 :withLineages="false"
             />
@@ -139,7 +156,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['secondary_color']),
+    ...mapState(['secondary_color', 'debug_mode']),
 
     /** Form error flag: true if the form cannot be sent */
     formError() {
@@ -151,10 +168,10 @@ export default {
   methods: {
 
     /** Clears the form */
-    clearForm(){
-      this.selectedDate=null;
-      this.selectedLocation=null;
-      this.selectedGranularity=null;
+    clearForm() {
+      this.selectedDate = null;
+      this.selectedLocation = null;
+      this.selectedGranularity = null;
     },
 
     /** Triggers the analysis request to the server */
@@ -177,7 +194,7 @@ export default {
             // Save the search parameters
             this.expansionPanelsSingleInfo[countNumAnalysis] = {
               'granularity': to_send.granularity,
-              'location': to_send.value? to_send.value : 'all' ,
+              'location': to_send.value ? to_send.value : 'all',
               'date': to_send.date,
             };
 
@@ -195,19 +212,30 @@ export default {
     },
 
     /** Handle error alert close */
-    onCloseErrorAlert(){
-      this.errorOccurred=false;
-      this.isLoading=false;
+    onCloseErrorAlert() {
+      this.errorOccurred = false;
+      this.isLoading = false;
+    },
+
+    /**
+     * Removes the query from the result list
+     * @param queryIndex  The index of the expansion panel to be removed
+     */
+    deleteQuery(queryIndex) {
+      this.expansionPanelsSingleInfo.splice(queryIndex, 1)
+      this.rowsTable.splice(queryIndex, 1)
+      this.weekSeq.splice(queryIndex, 1)
     }
   },
   mounted() {
     // Default values (test purposes only)
-    // setTimeout(() => {
-    //   this.selectedGranularity = 'country';
-    //   this.selectedDate = '2022-02-01';
-    //   this.selectedLocation = 'Italy';
-    //   this.doAnalysis();
-    // }, 1000);
+    if (this.debug_mode)
+      setTimeout(() => {
+        this.selectedGranularity = 'country';
+        this.selectedDate = '2022-02-01';
+        this.selectedLocation = 'Italy';
+        this.doAnalysis();
+      }, 1000);
   },
 }
 </script>
@@ -306,5 +334,16 @@ v-expansion-panel-header {
   line-height: 10px;
 }
 
+/* Panel action styling*/
+.delete-action > * {
+  float: right;
+  margin-right: 5px;
+  color: rgba(0, 0, 0, 0.54) !important;
+}
+
+.delete-action button:hover {
+  background: #da3f3f !important;
+  color: white !important;
+}
 
 </style>

@@ -72,7 +72,7 @@ export default {
     /** Layout data for the plot */
     layout() {
       return {
-        height: 510,
+        height: this.plotData.length >= 20 ? 550 : 510,
         colorway:
             ['#ef5378', '#5ee171', '#f3df67', '#6685f1',
               '#fda05f', '#d46ff5', '#71daf1', '#f37fed',
@@ -113,15 +113,17 @@ export default {
         legend:
             {
               x: 1.0,
-              y: 0.7,
+              y: 1.0,
               bgcolor: 'trasparent',
               bordercolor: 'trasparent',
               yanchor: "top",
-              ticks: "outside"
+              ticks: "outside",
+              itemsizing: 'constant'
             },
         barmode: 'group',
         bargap: 0.15,
         bargroupgap: 0.1,
+        hovermode: "closest"
       }
     },
   },

@@ -70,6 +70,22 @@
               {{ expansionPanelsSingleInfo[index]['date'] }} /
               {{ expansionPanelsSingleInfo[index]['lineage'] }}
             </span>
+            <v-spacer></v-spacer>
+
+            <!-- Panel delete action -->
+            <span class="delete-action">
+              <v-btn outlined rounded small @click.native.stop="deleteQuery(index)">
+                 <v-icon small>mdi-trash-can-outline</v-icon>
+                <div class="hidden-md-and-down">Delete</div>
+              </v-btn>
+            </span>
+
+            <!-- Panel collapse/expand action -->
+            <template v-slot:actions>
+              <v-btn icon outlined small>
+                <v-icon small>mdi-chevron-down</v-icon>
+              </v-btn>
+            </template>
           </v-expansion-panel-header>
 
           <!-- Panel content -->
@@ -152,7 +168,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['secondary_color']),
+    ...mapState(['secondary_color', 'debug_mode']),
 
     /** Form error flag: true if the form cannot be sent */
     formError() {
@@ -192,7 +208,7 @@ export default {
             // Save the search parameters
             this.expansionPanelsSingleInfo[countNumAnalysis] = {
               'granularity': to_send.granularity,
-              'location': to_send.value,
+              'location': to_send.value ? to_send.value : 'all',
               'date': to_send.date,
               'lineage': to_send.lineage
             };
@@ -211,20 +227,31 @@ export default {
     },
 
     /** Handle error alert close */
-    onCloseErrorAlert(){
-      this.errorOccurred=false;
-      this.isLoading=false;
+    onCloseErrorAlert() {
+      this.errorOccurred = false;
+      this.isLoading = false;
+    },
+
+    /**
+     * Removes the query from the result list
+     * @param queryIndex  The index of the expansion panel to be removed
+     */
+    deleteQuery(queryIndex) {
+      this.expansionPanelsSingleInfo.splice(queryIndex, 1)
+      this.rowsTable.splice(queryIndex, 1)
+      this.weekSeq.splice(queryIndex, 1)
     }
   },
   mounted() {
     // Default values (test purposes only)
-    // setTimeout(() => {
-    //   this.selectedGranularity = 'country';
-    //   this.selectedDate = '2022-02-01';
-    //   this.selectedLocation = 'Italy';
-    //   this.selectedLineage = 'BA.1';
-    //   this.doAnalysis();
-    // }, 1000);
+    if (this.debug_mode)
+      setTimeout(() => {
+        this.selectedGranularity = 'country';
+        this.selectedDate = '2022-02-01';
+        this.selectedLocation = 'Italy';
+        this.selectedLineage = 'BA.1';
+        this.doAnalysis();
+      }, 1000);
   }
 }
 </script>
@@ -281,6 +308,18 @@ v-expansion-panel-header {
   color: white !important;
   letter-spacing: 1px;
   line-height: 10px;
+}
+
+/* Panel action styling*/
+.delete-action > * {
+  float: right;
+  margin-right: 5px;
+  color: rgba(0, 0, 0, 0.54) !important;
+}
+
+.delete-action button:hover {
+  background: #da3f3f !important;
+  color: white !important;
 }
 
 </style>

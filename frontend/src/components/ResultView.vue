@@ -360,7 +360,10 @@ export default {
         plotsTitle = "Top 5 decreasing + Top 5 increasing mutations";
         const sortedData = this.customSort([...this.processedQueryResult], ['polyfit_slope'], [false])
         // Get first 5 and last 5
-        plotsData = sortedData.slice(0, 5).concat(sortedData.slice(-5));
+        if (sortedData.length >= 10)
+          plotsData = sortedData.slice(0, 5).concat(sortedData.slice(-5));
+        else
+          plotsData = sortedData;
       }
 
       return {title: plotsTitle, data: plotsData, weekSeq: this.weekSeq};

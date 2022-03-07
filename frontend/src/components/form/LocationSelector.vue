@@ -31,6 +31,8 @@
 
 <script>
 
+import axios from "axios";
+
 export default {
   name: "LocationSelector",
   props: {
@@ -84,6 +86,23 @@ export default {
         name = item;
       }
       return name;
+    },
+
+    /** Fetch all possible values for locations (continents, countries, regions) */
+    fetchLocations() {
+      let locationsAPI = `/analyse_mutations/getAllGeo`;
+      axios.get(locationsAPI)
+          .then((res) => {
+            return res.data;
+          })
+          .then((res) => {
+            this.progressStatus = this.progressStatus + 50;
+            this.allLocations = res;
+          })
+          .catch(() => {
+            if (!this.errorOccurred)
+              this.errorOccurred = true
+          });
     },
 
     /** Compute the possible locations based on the other parameters of the form*/

@@ -6,6 +6,7 @@ Vue.use(Vuex);
 const state = {
     primary_color: '#014878',
     secondary_color: '#35B1ECFF',
+    debug_mode: false, // If true, it automatically performs search with standard parameters
 };
 
 const getters = {

@@ -41,9 +41,6 @@ export default {
   name: "LineageSelector",
   props: {
 
-    /** List of all the possible locations. */
-    allLocations: {required: true},
-
     /** Value of the selected granularity */
     selectedGranularity: {required: true},
 
