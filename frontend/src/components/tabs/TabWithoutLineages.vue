@@ -320,7 +320,7 @@ export default {
 }
 
 v-expansion-panel-header {
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 /* No result message styling */

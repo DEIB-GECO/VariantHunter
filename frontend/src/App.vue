@@ -171,12 +171,13 @@ export default {
 </style>
 <style>
 
-/* Global color palette */
+/* Global variables for color palette and border radius */
 :root {
-  --primary-color: #014878; /*014878*/
-  --secondary-color: #35B1ECFF; /*35B1ECFF*/
+  --primary-color: #014878;
+  --secondary-color: #35B1ECFF;
   --tertiary-color-light: #D2ECF8FF;
-  --tertiary-color-dark: #1976D2FF  ;
+  --tertiary-color-dark: #1976D2FF;
+  --border-radius: 4px;
 }
 
 /* Body background color */

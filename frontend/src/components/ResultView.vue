@@ -92,12 +92,27 @@
               </v-flex>
 
               <!---- Show/hide columns descriptions button ---->
-              <v-flex justify-center class="xs12 sm6 md3 d-flex">
-                <v-btn outlined depressed rounded small color="primary" @click="showTableHeadersDialog = true">
-                  <v-icon left>mdi-help-circle-outline</v-icon>
-                  Columns description
-                </v-btn>
-              </v-flex>
+              <DialogOpener :button-prefix="false" title="Columns description">
+                <ul>
+                  <li>
+                    <b>P value with mut: </b>
+                    shows if the population «with mutation» is growing differently compared to everything.
+                  </li>
+                  <li>
+                    <b>P value without mut: </b>
+                    shows if the population «without mutation» is growing differently compared to everything.
+                  </li>
+                  <li>
+                    <b>P value comparative: </b>
+                    shows if the population «with mutation» is growing differently compared to the population «without
+                    mutation».
+                  </li>
+                  <li>
+                    <b>Slope: </b>
+                    is calculated through a linear interpolation of the diffusion (percentage). (y=<b>m</b>x + q)
+                  </li>
+                </ul>
+              </DialogOpener>
 
               <!---- Download data button ---->
               <v-flex justify-center class="xs12 sm6 md3 d-flex">
@@ -137,49 +152,6 @@
 
       </v-data-table>
     </v-flex>
-
-    <!---- Columns descriptions dialog ---->
-    <v-dialog v-model="showTableHeadersDialog" transition="dialog-bottom-transition" max-width="850">
-      <v-card>
-
-        <!-- Dialog title -->
-        <v-toolbar :color="primary_color" class="dialog-title" dark flat>
-          <v-icon left>mdi-help-circle-outline</v-icon>
-          Columns description
-        </v-toolbar>
-
-        <!-- Dialog content -->
-        <v-card-text class="text-s-center">
-          <ul>
-            <li>
-              <b>P value with mut: </b>
-              shows if the population «with mutation» is growing differently compared to everything.
-            </li>
-            <li>
-              <b>P value without mut: </b>
-              shows if the population «without mutation» is growing differently compared to everything.
-            </li>
-            <li>
-              <b>P value comparative: </b>
-              shows if the population «with mutation» is growing differently compared to the population «without
-              mutation».
-            </li>
-            <li>
-              <b>Slope: </b>
-              is calculated through a linear interpolation of the diffusion (percentage). (y=<b>m</b>x + q)
-            </li>
-          </ul>
-        </v-card-text>
-
-        <!-- Dialog actions -->
-        <v-card-actions class="justify-end">
-          <v-btn text @click="showTableHeadersDialog = false">
-            Close
-          </v-btn>
-        </v-card-actions>
-
-      </v-card>
-    </v-dialog>
 
     <!-- HEATMAP SECTION -->
     <!---- Heading ---->
@@ -227,10 +199,11 @@ import BarChart from "./plots/LineChart";
 import HeatMap from "./plots/HeatMap";
 import {mapState} from "vuex";
 import html2canvas from "html2canvas";
+import DialogOpener from "@/components/general/DialogOpener";
 
 export default {
   name: "AnalysisResult",
-  components: {HeatMap, BarChart},
+  components: {DialogOpener, HeatMap, BarChart},
   props: {
     /** Array of raw data, of the form:
      *  [{location, protein, [lineage,] mut, polyfit_slope,w4,w3,w2,w1,f1,f2,f3,f4,
@@ -252,9 +225,6 @@ export default {
 
       /** Flag to show the p_values in the table */
       showPValues: false,
-
-      /** Flag to show table header descriptions */
-      showTableHeadersDialog: false,
 
       /** Array of selected rows */
       selectedRows: [],
@@ -563,7 +533,7 @@ export default {
 
 /* Filter container styling */
 .filter-container {
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   justify-content: center;
   margin: 0 12px;
   padding: 30px;
@@ -643,22 +613,6 @@ export default {
 /* Table size */
 .table-element {
   width: 100%;
-}
-
-/* Header info dialog styling*/
-.dialog-title {
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 20px;
-}
-
-ul {
-  margin-top: 40px;
-}
-
-li {
-  font-size: 16px;
-  padding-bottom: 10px;
 }
 
 </style>

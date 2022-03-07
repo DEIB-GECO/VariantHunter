@@ -9,20 +9,53 @@
 -->
 
 <template>
-  <div style="width: 100%;">
+  <div class="plotly-container">
     <!-- BarChart plot -->
     <Plotly :data="data" :layout="layout" :displaylogo="false"
             :modeBarButtonsToRemove="['lasso2d','select2d','toggleSpikelines']"/>
+
+    <!-- Markers/lines Dialog -->
+    <v-container class="plot-controls">
+      <v-layout justify-center row wrap>
+        <DialogOpener title="markers/lines meaning">
+          <ul>
+            <li>
+              <v-icon left>mdi-close-thick</v-icon>
+              <br><b>Cross markers </b>
+              are used to represent points supported by 5 or fewer observations.
+            </li>
+            <li>
+              <v-icon left>mdi-circle</v-icon>
+              <br><b>Circle markers </b>
+              are used to represent points supported by more than 5 observations.
+            </li>
+            <li>
+              <v-icon left>mdi-minus-thick</v-icon>
+              <br><b>Solid lines </b>
+              are used to represent mutations such that for at least one week the observations are greater than 5.
+            </li>
+            <li>
+              <v-icon left>mdi-dots-horizontal</v-icon>
+              <br><b>Dotted lines </b>
+              are used to represent mutations such that for all the 4 weeks the observations are 5 or less.
+            </li>
+          </ul>
+        </DialogOpener>
+      </v-layout>
+    </v-container>
   </div>
+
 </template>
 
 <script>
 
 import {Plotly} from 'vue-plotly'
+import DialogOpener from "@/components/general/DialogOpener";
 
 export default {
   name: "BarChart",
   components: {
+    DialogOpener,
     Plotly
   },
   props: {
@@ -136,7 +169,7 @@ export default {
     computeEnrichedLabels() {
       const labels = [];
       for (let i = 1; i <= 4; i++) {
-        labels.push(this.dateLabel['w'+i] + "<br>Tot. seq.: " + this.weekSeq[i-1])
+        labels.push(this.dateLabel['w' + i] + "<br>Tot. seq.: " + this.weekSeq[i - 1])
       }
       return labels
     },
@@ -167,6 +200,27 @@ export default {
   }
 }
 </script>
+<style scoped>
+
+/* Plotly container */
+.plotly-container {
+  border-radius: var(--border-radius);
+  width: 100%;
+  background: white;
+}
+
+/* Custom style for the list in the dialog */
+li {
+  padding-bottom: 25px;
+}
+
+/* Button spacing options */
+.plot-controls {
+  padding-bottom: 15px;
+}
+
+</style>
+
 <style>
 
 /* Overwite plotly rules to hide legend markers */
