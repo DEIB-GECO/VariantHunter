@@ -14,9 +14,6 @@ api = Namespace('create_database', description='create_database')
 
 startex = time.time()
 print("Starting database creation...")
-file_len = None
-with open(input_file_name) as f:
-    file_len = len(f.readlines())
 
 
 with open(input_file_name) as f:
@@ -57,11 +54,13 @@ with open(input_file_name) as f:
     cur.execute('''CREATE TABLE lineage_table (lineage text)''')
     con.commit()
 
+    print("Table creation completed...")
+
     header = f.readline()
     i = 0
     batch = []
     batch_timeloclin = []
-    for line in tqdm.tqdm(f, total=file_len):
+    for line in tqdm.tqdm(f):
         s = line.split("\t")
 
         locs = s[4].split('/')
