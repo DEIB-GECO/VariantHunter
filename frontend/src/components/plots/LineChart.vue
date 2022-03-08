@@ -214,6 +214,10 @@ li {
   padding-bottom: 25px;
 }
 
+ul {
+  list-style-type: none;
+}
+
 /* Button spacing options */
 .plot-controls {
   padding-bottom: 15px;

@@ -11,7 +11,6 @@
 -->
 
 <template>
-  <v-layout row wrap>
     <v-layout row wrap>
       <v-flex class="xs12 d-flex field-label">
         <span>Lineage</span>
@@ -30,7 +29,6 @@
         </v-autocomplete>
       </v-flex>
     </v-layout>
-  </v-layout>
 </template>
 
 <script>
@@ -121,7 +119,7 @@ export default {
 /* Form labels styling */
 .field-label {
   justify-content: center;
-  padding-top: 5px !important;
+  padding-top: 8px !important;
   padding-bottom: 5px !important;
   color: white;
 }

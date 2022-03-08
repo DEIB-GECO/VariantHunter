@@ -17,7 +17,8 @@
     <!-- Dialog opener -->
     <v-btn color="primary" depressed outlined rounded small @click="showDialog=true">
       <v-icon left>{{ icon }}</v-icon>
-      Show {{ title }}
+      <div v-if="buttonPrefix">Show&nbsp;</div>
+      {{ title }}
     </v-btn>
 
     <!-- Dialog element-->
@@ -63,9 +64,10 @@ export default {
     },
 
     /** Icon for the dialog. */
-    icon: {
-      default: "mdi-help-circle-outline"
-    }
+    icon: {default: "mdi-help-circle-outline"},
+
+    /* FLag to add the prefix "show" on the button */
+    buttonPrefix: {default: true}
 
   },
   data() {

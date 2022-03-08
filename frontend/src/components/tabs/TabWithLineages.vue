@@ -3,7 +3,6 @@
   Description:  Tab to perform lineage specific analyses.
 
   Props:
-  ├── allLocations: list of all the possible locations. Required.
   └── allLineages: list of all the possible lineages. Required.
 -->
 
@@ -20,7 +19,7 @@
     <template v-slot:form>
 
       <!---- Granularity -->
-      <v-flex class="xs12 sm6 md3 d-flex">
+      <v-flex class="xs12 sm4 md3 d-flex">
         <v-layout row wrap>
           <v-flex class="xs12 d-flex field-label">
             <span>Granularity</span>
@@ -37,18 +36,19 @@
       </v-flex>
 
       <!---- Location -->
-      <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm6 md3 d-flex">
-        <LocationSelector :allLocations="allLocations" :selectedGranularity="selectedGranularity" v-model="selectedLocation"/>
+      <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm8 md7 d-flex">
+        <LocationSelector v-model="selectedLocation" :selectedGranularity="selectedGranularity"/>
       </v-flex>
 
       <!---- Date -->
-      <v-flex class="xs12 sm6 md3 d-flex">
+      <v-flex class="xs12 sm6 md5 d-flex">
         <DatePicker v-model="selectedDate"/>
       </v-flex>
 
       <!---- Lineage -->
-      <v-flex class="xs12 sm6 md3 d-flex">
-        <LineageSelector :allLineages="allLineages" :selectedGranularity="selectedGranularity" :selectedLocation="selectedLocation" :selectedDate="selectedDate" v-model="selectedLineage"/>
+      <v-flex class="xs12 sm6 md5 d-flex">
+        <LineageSelector :allLineages="allLineages" :selectedGranularity="selectedGranularity"
+                         :selectedLocation="selectedLocation" :selectedDate="selectedDate" v-model="selectedLineage"/>
       </v-flex>
     </template>
 
@@ -126,11 +126,10 @@ export default {
   name: "TabWithLineages",
   components: {LineageSelector, LocationSelector, DatePicker, Tab, AnalysisResult},
   props: {
-    /** List of all the possible locations. Required. */
-    allLocations: {required: true},
 
     /** List of all the possible lineages. Required. */
     allLineages: {required: true}
+
   },
   data() {
     return {
@@ -261,7 +260,7 @@ export default {
 /* Form labels styling */
 .field-label {
   justify-content: center;
-  padding-top: 5px !important;
+  padding-top: 8px !important;
   padding-bottom: 5px !important;
   color: white;
 }

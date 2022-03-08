@@ -3,7 +3,6 @@
   Description:  Standard tab layout
 
   Props:
-  ├── allLocations: list of all the possible locations. Required.
   └── allLineages: list of all the possible lineages. Required.
 -->
 
@@ -20,7 +19,9 @@
 
               <!-- Form header -->
               <v-flex class="xs12 d-flex form-header">
-                <h2>DEFINE ANALYSIS</h2>
+                <h2>DEFINE ANALYSIS
+                  <hr>
+                </h2>
               </v-flex>
 
               <!-- Form fields -->
@@ -143,6 +144,12 @@ export default {
   color: white;
   justify-content: center;
   text-align: center;
+  margin-bottom: 15px;
+}
+
+.form-header h2 {
+  font-weight: 800;
+  word-spacing: 5px;
 }
 
 /* Form controls styling */

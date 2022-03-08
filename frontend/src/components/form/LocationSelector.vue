@@ -3,7 +3,6 @@
   Description:  Select input element for location
 
   Props:
-  ├── allLocations: List of all the possible locations.
   ├── selectedGranularity: Value of the selected granularity
   └── value: Value variable for binding of the date
 -->
@@ -15,16 +14,53 @@
     </v-flex>
 
     <v-flex class="xs12 d-flex field-element">
-      <v-autocomplete v-model="selectedLocation"
-                      :disabled="selectedGranularity === null || selectedGranularity === 'world'"
-                      :items="possibleLocations"
-                      hide-details
-                      label="Location"
-                      solo>
-        <template slot="item" slot-scope="data">
-          <span>{{ getFieldText(data.item) }}</span>
-        </template>
-      </v-autocomplete>
+      <v-row dense>
+        <!-- Continent selector -->
+        <v-col class="complex-field-element">
+          <v-autocomplete v-model="selectedContinent"
+                          :disabled="disableContinentSelection"
+                          :items="possibleContinents"
+                          :loading="isLoading"
+                          hide-details
+                          label="Continent"
+                          solo>
+            <template v-slot:item="data">
+              <span>{{ getFieldText(data.item) }}</span>
+            </template>
+          </v-autocomplete>
+        </v-col>
+
+        <!-- Country selector-->
+        <v-col v-if="showCountrySelector" class="complex-field-element">
+          <v-autocomplete v-model="selectedCountry"
+                          :disabled="disableCountrySelection"
+                          :items="possibleCountries"
+                          :loading="isLoading"
+                          hide-details
+                          label="Country"
+                          solo>
+            <template v-slot:item="data">
+              <span>{{ getFieldText(data.item) }}</span>
+            </template>
+          </v-autocomplete>
+        </v-col>
+
+        <!-- Region selector -->
+        <v-col v-if="showRegionSelector" class="complex-field-element">
+          <v-autocomplete v-model="selectedRegion"
+                          :disabled="disableRegionSelection"
+                          :items="possibleRegions"
+                          :loading="isLoading"
+                          hide-details
+                          label="Region"
+                          solo>
+            <template v-slot:item="data">
+              <span>{{ getFieldText(data.item) }}</span>
+            </template>
+          </v-autocomplete>
+        </v-col>
+
+      </v-row>
     </v-flex>
   </v-layout>
 </template>
@@ -37,9 +73,6 @@ export default {
   name: "LocationSelector",
   props: {
 
-    /** List of all the possible locations. */
-    allLocations: {required: true},
-
     /** Value of the selected granularity */
     selectedGranularity: {required: true},
 
@@ -49,8 +82,26 @@ export default {
   data() {
     return {
 
-      /** Location: available options (wrt to other params) */
-      possibleLocations: [],
+      /** Selectable continents */
+      possibleContinents: [],
+
+      /** Selectable countries */
+      possibleCountries: [],
+
+      /** Selectable regions */
+      possibleRegions: [],
+
+      /** Selected continent */
+      selectedContinent: null,
+
+      /** Selected country */
+      selectedCountry: null,
+
+      /** Selected region */
+      selectedRegion: null,
+
+      /** Loading progress */
+      isLoading: false,
 
     }
   },
@@ -63,7 +114,16 @@ export default {
        * @returns {string}  The selected location
        */
       get() {
-        return this.value
+        switch (this.selectedGranularity) {
+          case 'continent':
+            return this.selectedContinent;
+          case 'country':
+            return this.selectedCountry;
+          case 'region':
+            return this.selectedRegion;
+          default:
+            return null;
+        }
       },
 
       /**
@@ -73,7 +133,33 @@ export default {
       set(val) {
         this.$emit('input', val)
       }
-    }
+    },
+
+    /** Condition to disable the continent selection. If true is disabled */
+    disableContinentSelection() {
+      return this.selectedGranularity === null || this.selectedGranularity === 'world'
+    },
+
+    /** Condition to disable the country selection. If true is disabled */
+    disableCountrySelection() {
+      return this.disableContinentSelection || this.selectedContinent === null
+    },
+
+    /** Condition to disable the region selection. If true is disabled */
+    disableRegionSelection() {
+      return this.disableCountrySelection || this.selectedCountry === null
+    },
+
+    /** Condition to show the country selector. If true is shown */
+    showCountrySelector() {
+      return this.selectedGranularity === 'region' || this.selectedGranularity === 'country'
+    },
+
+    /** Condition to show the region selector. If true is shown */
+    showRegionSelector() {
+      return this.selectedGranularity === 'region'
+    },
+
   },
   methods: {
 
@@ -88,52 +174,93 @@ export default {
       return name;
     },
 
-    /** Fetch all possible values for locations (continents, countries, regions) */
-    fetchLocations() {
-      let locationsAPI = `/analyse_mutations/getAllGeo`;
-      axios.get(locationsAPI)
-          .then((res) => {
-            return res.data;
-          })
-          .then((res) => {
-            this.progressStatus = this.progressStatus + 50;
-            this.allLocations = res;
-          })
-          .catch(() => {
-            if (!this.errorOccurred)
-              this.errorOccurred = true
-          });
+    /** Fetch all possible values for continents */
+    fetchContinents() {
+      if (!this.disableContinentSelection) {
+        this.selectedContinent = null;
+        this.isLoading = true;
+        let locationsAPI = `/locations/getContinents`;
+        axios.get(locationsAPI)
+            .then((res) => {
+              return res.data;
+            })
+            .then((res) => {
+              this.isLoading = false;
+              this.possibleContinents = res;
+            });
+      }
     },
 
-    /** Compute the possible locations based on the other parameters of the form*/
-    computePossibleLocations() {
-      this.possibleLocations = [];
-      this.selectedLocation = null;
-      let i = 0;
-      if (this.allLocations !== null && this.selectedGranularity != null) {
-        if (this.selectedGranularity !== 'world') {
-          while (i < this.allLocations[this.selectedGranularity].length) {
-            if (this.allLocations[this.selectedGranularity][i] != null) {
-              this.possibleLocations.push(this.allLocations[this.selectedGranularity][i]);
-            } else {
-              this.possibleLocations.push('N/D');
-            }
-            i = i + 1;
-          }
-        } else {
-          this.selectedLocation = 'all'
-        }
+    /** Fetch all possible values for countries */
+    fetchCountries() {
+      if (!this.disableCountrySelection && this.showCountrySelector) {
+        this.selectedCountry = null;
+        this.isLoading = true;
+        let locationsAPI = `/locations/getCountries`;
+        let to_send = {
+          'continent': this.selectedContinent,
+        };
+        axios.post(locationsAPI, to_send)
+            .then((res) => {
+              return res.data;
+            })
+            .then((res) => {
+              this.isLoading = false;
+              this.possibleCountries = res;
+            });
       }
-      this.possibleLocations.sort();
+    },
+
+    /** Fetch all possible values for regions */
+    fetchRegions() {
+      if (!this.disableRegionSelection && this.showRegionSelector) {
+        this.selectedRegion = null;
+        this.isLoading = true;
+        let locationsAPI = `/locations/getRegions`;
+        let to_send = {
+          'country': this.selectedCountry,
+        };
+        axios.post(locationsAPI, to_send)
+            .then((res) => {
+              return res.data;
+            })
+            .then((res) => {
+              this.isLoading = false;
+              this.possibleRegions = res;
+            });
+      }
     },
 
   },
   watch: {
 
-    /** Adjust the possible locations according to the selected granularity */
-    selectedGranularity() {
-      this.computePossibleLocations()
+    /** Adjust the possible continents according to the selected granularity */
+    selectedGranularity(newVal) {
+      this.possibleCountries = []
+      this.possibleRegions = []
+      if (newVal != null)
+        this.fetchContinents();
     },
+
+    /** Adjust the possible countries and the binding according to the selected continent */
+    selectedContinent(newVal) {
+      this.possibleRegions = []
+      this.selectedLocation = newVal
+      if (newVal != null)
+        this.fetchCountries();
+    },
+
+    /** Adjust the possible countries and the binding according to the selected continent  */
+    selectedCountry(newVal) {
+      this.selectedLocation = newVal
+      if (newVal != null)
+        this.fetchRegions();
+    },
+
+    /** Adjust the binding */
+    selectedRegion(newVal) {
+      this.selectedLocation = newVal
+    }
 
   },
 }
@@ -144,7 +271,7 @@ export default {
 /* Form labels styling */
 .field-label {
   justify-content: center;
-  padding-top: 5px !important;
+  padding-top: 8px !important;
   padding-bottom: 5px !important;
   color: white;
 }
@@ -153,6 +280,12 @@ export default {
 .field-element {
   padding-top: 0 !important;
   padding-bottom: 4px !important;
+  text-transform: capitalize;
+}
+
+.complex-field-element {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
   text-transform: capitalize;
 }
 

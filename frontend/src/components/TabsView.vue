@@ -24,11 +24,11 @@
       </v-tab>
 
       <v-tab-item class="tab-content">
-        <TabWithoutLineages :allLocations="allLocations"/>
+        <TabWithoutLineages/>
       </v-tab-item>
 
       <v-tab-item class="tab-content">
-        <TabWithLineages :allLocations="allLocations" :allLineages="allLineages"/>
+        <TabWithLineages :allLineages="allLineages"/>
       </v-tab-item>
 
     </v-tabs>
@@ -79,10 +79,7 @@ export default {
       errorOccurred: false,
 
       /** Lineages fetched from server*/
-      allLineages: [],
-
-      /** Locations fetched from server*/
-      allLocations: []
+      allLineages: []
     }
   },
   computed: {
@@ -95,20 +92,6 @@ export default {
     }
   },
   mounted() {
-    /** Fetch all possible values for locations (continents, countries, regions) */
-    let locationsAPI = `/analyse_mutations/getAllGeo`;
-    axios.get(locationsAPI)
-        .then((res) => {
-          return res.data;
-        })
-        .then((res) => {
-          this.progressStatus = this.progressStatus + 50;
-          this.allLocations = res;
-        })
-        .catch(() => {
-          if(!this.errorOccurred)
-            this.errorOccurred = true
-        });
 
     /** Fetch all possible values for lineages */
     let lineageAPI = `/analyse_mutations/getAllLineage`;
@@ -117,7 +100,7 @@ export default {
           return res.data;
         })
         .then((res) => {
-          this.progressStatus = this.progressStatus + 50;
+          this.progressStatus = this.progressStatus + 100;
           this.allLineages = res;
         })
         .catch(() => {

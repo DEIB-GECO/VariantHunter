@@ -1,11 +1,13 @@
 from __future__ import print_function
+
+import sqlite3
 import time
+from datetime import datetime
+
 import numpy as np
 import scipy.stats
-from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
 from pymongo import MongoClient
-import sqlite3
 
 api = Namespace('analyse_mutations', description='analyse_mutations')
 
@@ -22,7 +24,6 @@ database_name = 'viruclust_db_0'
 ##############################################################################################################
 
 all_lineage_dict = {}
-all_geo_dict = {}
 
 def get_all_lineage():
     print("Start lineage request...", end="")
@@ -37,23 +38,6 @@ def get_all_lineage():
     con.close()
     print(f"...done in {time.time() - startx:.5f} seconds.")
 
-def get_all_geo():
-    print("Start geo request...", end="")
-    startx = time.time()
-    con = sqlite3.connect(sqlite_db_name)
-    cur = con.cursor()
-    array_continent = [x[0] for x in
-                       cur.execute("select * from continent_table where continent is not null;").fetchall()]
-
-    array_country = [x[0] for x in
-                     cur.execute("select * from country_table where country is not null;").fetchall()]
-    array_region = [x[0] for x in
-                    cur.execute("select * from region_table where region is not null;").fetchall()]
-    con.close()
-    list_geo_dict = {'continent': array_continent, 'country': array_country, 'region': array_region}
-    all_geo_dict['all_geo'] = list_geo_dict
-
-    print(f"...done in {time.time() - startx:.5f} seconds.")
 
 def get_geo_lineages(geo, date):
     stop = (datetime.strptime(date, "%Y-%m-%d") - startdate).days
@@ -67,7 +51,6 @@ def get_geo_lineages(geo, date):
     return [x[0] for x in cur.fetchall()]
 
 
-get_all_geo()
 get_all_lineage()
 
 
@@ -130,14 +113,6 @@ def extract_cumulative_data(location, lineage, w1_begin, w1_end, w2_begin, w2_en
 
 
 ##############################################################################################################
-
-
-@api.route('/getAllGeo')
-class FieldList(Resource):
-    @api.doc('get_all_geo')
-    def get(self):
-        all_geo = all_geo_dict['all_geo']
-        return all_geo
 
 
 @api.route('/getGeoLineages')

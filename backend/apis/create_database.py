@@ -1,11 +1,12 @@
 from __future__ import print_function
 
-from flask_restplus import Namespace
-import tqdm
 import datetime as dtime
 import sqlite3
-import time
 import sys
+import time
+
+import tqdm
+from flask_restplus import Namespace
 
 input_file_name = sys.argv[1]
 select_country = set([x.lower() for x in sys.argv[2].strip().split(',') if x])
@@ -45,10 +46,10 @@ with open(input_file_name) as f:
     cur.execute('''CREATE TABLE continent_table (continent text)''')
     con.commit()
 
-    cur.execute('''CREATE TABLE country_table (country text)''')
+    cur.execute('''CREATE TABLE country_table (country text, continent text)''')
     con.commit()
 
-    cur.execute('''CREATE TABLE region_table (region text)''')
+    cur.execute('''CREATE TABLE region_table (region text, country text)''')
     con.commit()
 
     cur.execute('''CREATE TABLE lineage_table (lineage text)''')
@@ -143,11 +144,11 @@ with open(input_file_name) as f:
                        from timeloclin''')
     con.commit()
 
-    cur.execute('''insert into country_table select distinct country 
+    cur.execute('''insert into country_table select distinct country, continent 
                        from timeloclin''')
     con.commit()
 
-    cur.execute('''insert into region_table select distinct region 
+    cur.execute('''insert into region_table select distinct region, country
                        from timeloclin''')
     con.commit()
 

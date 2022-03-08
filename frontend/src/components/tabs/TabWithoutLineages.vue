@@ -1,9 +1,6 @@
 <!--
   Component:    TabWithoutLineages
   Description:  Tab to perform lineage independent analyses.
-
-  Props:
-  └── allLocations: list of all the possible locations. Required.
 -->
 
 <template>
@@ -19,7 +16,7 @@
     <template v-slot:form>
 
       <!---- Granularity -->
-      <v-flex class="xs12 sm6 md4 d-flex">
+      <v-flex class="xs12 sm4 md3 d-flex">
         <v-layout row wrap>
           <v-flex class="xs12 d-flex field-label">
             <span>Granularity</span>
@@ -36,13 +33,12 @@
       </v-flex>
 
       <!---- Location -->
-      <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm6 md4 d-flex">
-        <LocationSelector v-model="selectedLocation" :allLocations="allLocations"
-                          :selectedGranularity="selectedGranularity"/>
+      <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm8 md5 d-flex">
+        <LocationSelector v-model="selectedLocation" :selectedGranularity="selectedGranularity"/>
       </v-flex>
 
       <!---- Date -->
-      <v-flex class="xs12 sm6 md4 d-flex">
+      <v-flex class="xs12 sm6 md3 d-flex">
         <DatePicker v-model="selectedDate"/>
       </v-flex>
 
@@ -119,10 +115,6 @@ import LocationSelector from "@/components/form/LocationSelector";
 export default {
   name: "TabWithoutLineages",
   components: {LocationSelector, DatePicker, Tab, AnalysisResult},
-  props: {
-    /** List of all the possible locations. Required. */
-    allLocations: {required: true}
-  },
   data() {
     return {
       /** Progress circe flag: true if the progress circle is displayed */
@@ -242,50 +234,10 @@ export default {
 
 <style scoped>
 
-/* Root tab container styling */
-.root-container {
-  margin: 0 auto auto auto;
-  min-width: 97vw;
-  height: 100%;
-}
-
-/* Child tab container styling */
-.child-container {
-  background-color: var(--primary-color);
-  border-radius: 8px;
-  margin-top: 15px;
-  margin-bottom: 0;
-  min-width: 96vw;
-}
-
-/* Form container styling */
-.card-container {
-  margin: 15px auto;
-  justify-content: center;
-  padding: 15px 1vw 15px 1vw;
-}
-
-/* Form content styling */
-.card-content {
-  padding: 30px;
-  margin: auto;
-}
-
-/* Headings */
-.form-header, .result-header {
-  color: white;
-  justify-content: center;
-  text-align: center;
-}
-
-.result-header {
-  margin-bottom: 20px;
-}
-
 /* Form labels styling */
 .field-label {
   justify-content: center;
-  padding-top: 5px !important;
+  padding-top: 8px !important;
   padding-bottom: 5px !important;
   color: white;
 }
