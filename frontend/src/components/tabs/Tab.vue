@@ -28,13 +28,14 @@
               <slot name="form"></slot>
 
               <!-- Send button -->
-              <v-flex class="xs12 sm6 md12 d-flex form-controls">
+              <v-flex class="xs12 sm6 md3 d-flex form-controls">
                 <v-btn :disabled="formError"
                        class="white--text"
                        color="#011936"
                        @click="$emit('send')"
                 >
-                  <v-icon left>mdi-magnify</v-icon>  START ANALYSIS
+                  <v-icon left>mdi-magnify</v-icon>
+                  START ANALYSIS
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -154,7 +155,7 @@ export default {
 
 /* Form controls styling */
 .form-controls {
-  margin-top: 26px !important;
+  margin-top: 29px !important;
   justify-content: center !important;
 }
 

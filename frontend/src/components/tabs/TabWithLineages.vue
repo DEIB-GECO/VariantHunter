@@ -46,7 +46,7 @@
       </v-flex>
 
       <!---- Lineage -->
-      <v-flex class="xs12 sm6 md5 d-flex">
+      <v-flex :class="selectedGranularity==='world'? 'xs12 sm4 md5 d-flex' : 'xs12 sm6 md5 d-flex'">
         <LineageSelector :allLineages="allLineages" :selectedGranularity="selectedGranularity"
                          :selectedLocation="selectedLocation" :selectedDate="selectedDate" v-model="selectedLineage"/>
       </v-flex>
@@ -163,7 +163,10 @@ export default {
       rowsTable: [],
 
       /** Array of total number of sequences collected per week for each tab */
-      weekSeq: []
+      weekSeq: [],
+
+      /** Automatically clear the form after submit */
+      autoclear: false
     }
   },
   computed: {
@@ -179,11 +182,13 @@ export default {
   methods: {
 
     /** Clears the form */
-    clearForm(){
-      this.selectedLineage=null;
-      this.selectedDate=null;
-      this.selectedLocation=null;
-      this.selectedGranularity=null;
+    clearForm() {
+      if (this.autoclear) {
+        this.selectedLineage = null;
+        this.selectedDate = null;
+        this.selectedLocation = null;
+        this.selectedGranularity = null;
+      }
     },
 
     /** Triggers the analysis request to the server */

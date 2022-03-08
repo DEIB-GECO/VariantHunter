@@ -207,7 +207,7 @@ export default {
   props: {
     /** Array of raw data, of the form:
      *  [{location, protein, [lineage,] mut, polyfit_slope,w4,w3,w2,w1,f1,f2,f3,f4,
-     *  p_value_with_mut_total, p_value_without_mut_total, p_value_comparative_mut_total}]
+     *  p_value_with_mut, p_value_without_mut, p_value_comparative_mut}]
      */
     queryResult: {required: true,},
 
@@ -296,12 +296,12 @@ export default {
         labelledRow["protein"] = row["protein"];
         labelledRow["mut"] = row["mut"];
         labelledRow["polyfit_slope"] = row["polyfit_slope"].toPrecision(4);
-        if (!isNaN(row["p_value_with_mut_total"]))
-          labelledRow["p_value_with_mut"] = row["p_value_with_mut_total"].toExponential(3);
-        if (!isNaN(row["p_value_without_mut_total"]))
-          labelledRow["p_value_without_mut"] = row["p_value_without_mut_total"].toExponential(3);
-        if (!isNaN(row["p_value_comparative_mut_total"]))
-          labelledRow["p_value_comparative"] = row["p_value_comparative_mut_total"].toExponential(3);
+        if (!isNaN(row["p_value_with_mut"]))
+          labelledRow["p_value_with_mut"] = row["p_value_with_mut"].toExponential(3);
+        if (!isNaN(row["p_value_without_mut"]))
+          labelledRow["p_value_without_mut"] = row["p_value_without_mut"].toExponential(3);
+        if (!isNaN(row["p_value_comparative_mut"]))
+          labelledRow["p_value_comparative"] = row["p_value_comparative_mut"].toExponential(3);
         for (let i = 1; i <= 4; i++) {
           labelledRow["f_w" + i] = row["f" + i].toPrecision(3) + "% (" + row["w" + i] + ")"
           labelledRow["f" + i] = row["f" + i]; // numeric value for sorting and plots

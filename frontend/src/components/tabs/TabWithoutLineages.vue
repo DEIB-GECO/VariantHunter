@@ -144,7 +144,10 @@ export default {
       rowsTable: [],
 
       /** Array of total number of sequences collected per week for each tab */
-      weekSeq: []
+      weekSeq: [],
+
+      /** Automatically clear the form after submit */
+      autoclear: false
     }
   },
   computed: {
@@ -161,9 +164,11 @@ export default {
 
     /** Clears the form */
     clearForm() {
-      this.selectedDate = null;
-      this.selectedLocation = null;
-      this.selectedGranularity = null;
+      if (this.autoclear) {
+        this.selectedDate = null;
+        this.selectedLocation = null;
+        this.selectedGranularity = null;
+      }
     },
 
     /** Triggers the analysis request to the server */

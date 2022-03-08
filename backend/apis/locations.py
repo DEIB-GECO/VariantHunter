@@ -1,5 +1,5 @@
 """
-    API to retrieve the locations data
+    API to retrieve locations data
 
     Endpoints:
     ├── getContinents
@@ -8,9 +8,7 @@
 """
 
 from __future__ import print_function
-
 import sqlite3
-
 from flask_restplus import Namespace, Resource
 
 api = Namespace('locations', description='locations')
@@ -24,8 +22,8 @@ def get_continents():
     """
     con = sqlite3.connect(sqlite_db_name)
     cur = con.cursor()
-    continents = [x[0] for x in
-                  cur.execute("select continent from continent_table where continent is not null;").fetchall()]
+    query = "select continent from continent_table where continent is not null;"
+    continents = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return continents
 
@@ -38,9 +36,8 @@ def get_countries(continent):
     """
     con = sqlite3.connect(sqlite_db_name)
     cur = con.cursor()
-    countries = [x[0] for x in
-                 cur.execute(
-                     f'''select country from country_table where country is not null and continent='{continent}';''').fetchall()]
+    query = f'''select country from country_table where country is not null and continent='{continent}';'''
+    countries = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return countries
 
@@ -53,18 +50,16 @@ def get_regions(country):
     """
     con = sqlite3.connect(sqlite_db_name)
     cur = con.cursor()
-    regions = [x[0] for x in
-               cur.execute(
-                   f'''select region from region_table where region is not null and country='{country}';''').fetchall()]
+    query = f'''select region from region_table where region is not null and country='{country}';'''
+    regions = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return regions
 
 
-###########################################################################
-"""                             ENDPOINTS                               """
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""                             ENDPOINTS                               """""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-
-###########################################################################
 
 @api.route('/getContinents')
 class FieldList(Resource):

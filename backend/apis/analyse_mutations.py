@@ -1,29 +1,30 @@
+"""
+    API to perform lineage dependent analysis
+
+    Endpoints:
+    ├── getGeoLineages
+    ├── getAllLineage
+    └── getStatistics
+"""
+
 from __future__ import print_function
 
 import sqlite3
 import time
 from datetime import datetime
-
 import numpy as np
 import scipy.stats
 from flask_restplus import Namespace, Resource
-from pymongo import MongoClient
 
 api = Namespace('analyse_mutations', description='analyse_mutations')
-
-uri = "mongodb://localhost:27017/gcm_gisaid"
-client = MongoClient(uri)
-db = client.gcm_gisaid
-collection_db = db.database_2022_01_07
-
-startdate = datetime.strptime("2020-01-01", "%Y-%m-%d")
 sqlite_db_name = 'varianthunter.db'
+start_date = datetime.strptime("2020-01-01", "%Y-%m-%d")
 
-database_name = 'viruclust_db_0'
 
 ##############################################################################################################
 
 all_lineage_dict = {}
+
 
 def get_all_lineage():
     print("Start lineage request...", end="")
@@ -40,7 +41,7 @@ def get_all_lineage():
 
 
 def get_geo_lineages(geo, date):
-    stop = (datetime.strptime(date, "%Y-%m-%d") - startdate).days
+    stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
     start = stop - 7
     con = sqlite3.connect(sqlite_db_name)
     cur = con.cursor()
@@ -112,7 +113,9 @@ def extract_cumulative_data(location, lineage, w1_begin, w1_end, w2_begin, w2_en
     return week_sequence_counts
 
 
-##############################################################################################################
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""                             ENDPOINTS                               """""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 @api.route('/getGeoLineages')
@@ -139,8 +142,7 @@ class FieldList(Resource):
         lineage = payload['lineage']
         date = payload['date']
 
-
-        w4_end = (datetime.strptime(date, "%Y-%m-%d") - startdate).days
+        w4_end = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
         w4_begin = w4_end - 7
         w3_end = w4_begin - 1
         w3_begin = w3_end - 7
@@ -189,11 +191,13 @@ class FieldList(Resource):
                 'f2': f2,
                 'f3': f3,
                 'f4': f4,
-                'p_value_with_mut_total' : compute_pvalue([c1,c2,c3,c4], week_sequence_counts),
-                'p_value_without_mut_total': compute_pvalue([tot_seq_w1-c1, tot_seq_w2-c2, tot_seq_w3-c3, tot_seq_w4-c4],
-                                                            week_sequence_counts),
-                'p_value_comparative_mut_total': compute_pvalue([c1, c2, c3, c4],
-                                                                [tot_seq_w1-c1, tot_seq_w2-c2, tot_seq_w3-c3, tot_seq_w4-c4]),
+                'p_value_with_mut': compute_pvalue([c1, c2, c3, c4], week_sequence_counts),
+                'p_value_without_mut': compute_pvalue(
+                    [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4],
+                    week_sequence_counts),
+                'p_value_comparative_mut': compute_pvalue([c1, c2, c3, c4],
+                                                          [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3,
+                                                           tot_seq_w4 - c4]),
             })
 
         return {'rows': array_to_return, 'tot_seq': [tot_seq_w1, tot_seq_w2,tot_seq_w3, tot_seq_w4]}
