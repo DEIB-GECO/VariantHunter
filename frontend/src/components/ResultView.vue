@@ -17,7 +17,7 @@
       <v-container>
         <v-layout justify-center row wrap>
 
-          <v-flex justify-center class="xs12 sm6 d-flex filter-heading">
+          <v-flex justify-center class="xs12 sm12 md5 d-flex filter-heading">
             <h3>
               <v-icon color="white" left>mdi-filter-outline</v-icon>
               FILTERING OPTIONS
@@ -25,7 +25,7 @@
           </v-flex>
 
           <!-- Protein filter -->
-          <v-flex justify-center class="xs12 sm6 d-flex ">
+          <v-flex justify-center class="xs12 sm4 md2 d-flex ">
             <v-layout row wrap>
               <v-flex class="xs12 d-flex field-label">
                 <span>Protein</span>
@@ -35,6 +35,27 @@
                 <v-autocomplete v-model="selectedProtein"
                                 :items="possibleProteins"
                                 clearable
+                                hide-details
+                                label="All"
+                                solo
+                />
+              </v-flex>
+            </v-layout>
+          </v-flex>
+
+          <!-- Mutation filter -->
+          <v-flex justify-center class="xs12 sm7 md5 d-flex ">
+            <v-layout row wrap>
+              <v-flex class="xs12 d-flex field-label">
+                <span>Mutation</span>
+              </v-flex>
+
+              <v-flex class="xs12 d-flex field-element">
+                <v-autocomplete v-model="selectedMutation"
+                                :items="possibleMutations"
+                                clearable
+                                multiple
+                                small-chips
                                 hide-details
                                 label="All"
                                 solo
@@ -259,6 +280,9 @@ export default {
       /** Selected protein to further filter the data */
       selectedProtein: null,
 
+      /** Selected mutation to further filter the data. Takes the form <PROTEIN>_<MUT> */
+      selectedMutation: null,
+
       /* Download flag: true if a file download is in progress */
       downloadLoading: false
     }
@@ -293,12 +317,15 @@ export default {
       return headers;
     },
 
-    /** Array of (raw) data to display in the table (filtered by protein, if set) */
+    /** Array of (raw) data to display in the table (filtered by protein and mut, if set) */
     filteredQueryResult() {
-      if (this.selectedProtein !== null)
-        return this.queryResult.filter((row) => row.protein === this.selectedProtein)
-      else
-        return this.queryResult
+      const that = this;
+      console.log(that.selectedMutation)
+      return this.queryResult.filter(function (row) {
+        const proteinCheck = that.selectedProtein === null || row.protein === that.selectedProtein;
+        const mutationCheck = that.selectedMutation === null || that.selectedMutation.length === 0 || that.selectedMutation.includes(row.protein + "_" + row.mut);
+        return proteinCheck && mutationCheck;
+      })
     },
 
     /** Array of (formatted) data actually displayed  */
@@ -330,6 +357,12 @@ export default {
     /** Possible proteins values computed based on data results */
     possibleProteins() {
       const set = new Set(this.queryResult.map(row => row["protein"]));
+      return [...set].sort();
+    },
+
+    /** Possible mutations values computed based on data results */
+    possibleMutations() {
+      const set = new Set(this.queryResult.map(row => row["protein"] + "_" + row["mut"]));
       return [...set].sort();
     },
 
