@@ -53,7 +53,7 @@ import {Plotly} from 'vue-plotly'
 import DialogOpener from "@/components/general/DialogOpener";
 
 export default {
-  name: "BarChart",
+  name: "LineChart",
   components: {
     DialogOpener,
     Plotly

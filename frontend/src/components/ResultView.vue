@@ -1,5 +1,5 @@
 <!--
-  Component:    AnalysisResult
+  Component:    ResultView
   Description:  Container of the raw data table, heatmap and a barchart
 
   Props:
@@ -184,26 +184,41 @@
 
     <!---- Chart ---->
     <v-flex class="xs12 d-flex" justify-center>
-      <BarChart :dateLabel="computeDateLabels()"
-                :plotData="plotsInfo.data"
-                :plotTitle="plotsInfo.title"
-                :weekSeq="plotsInfo.weekSeq"
+      <LineChart :dateLabel="computeDateLabels()"
+                 :plotData="plotsInfo.data"
+                 :plotTitle="plotsInfo.title"
+                 :weekSeq="plotsInfo.weekSeq"
       />
+    </v-flex>
+
+    <!-- Next/prev week button -->
+    <v-flex class="xs12 d-flex">
+
+      <v-btn class="white--text" color="#011936" @click="$emit('askAnalysis',-7);">
+        <v-icon left>mdi-chevron-left</v-icon>
+        PREV WEEK
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn class="white--text" color="#011936" @click="$emit('askAnalysis',+7);">
+        NEXT WEEK
+        <v-icon right>mdi-chevron-right</v-icon>
+      </v-btn>
+
     </v-flex>
 
   </v-layout>
 </template>
 
 <script>
-import BarChart from "./plots/LineChart";
+import LineChart from "./plots/LineChart";
 import HeatMap from "./plots/HeatMap";
 import {mapState} from "vuex";
 import html2canvas from "html2canvas";
 import DialogOpener from "@/components/general/DialogOpener";
 
 export default {
-  name: "AnalysisResult",
-  components: {DialogOpener, HeatMap, BarChart},
+  name: "ResultView",
+  components: {DialogOpener, HeatMap, LineChart},
   props: {
     /** Array of raw data, of the form:
      *  [{location, protein, [lineage,] mut, polyfit_slope,w4,w3,w2,w1,f1,f2,f3,f4,

@@ -32,12 +32,30 @@
                 <v-btn :disabled="formError"
                        class="white--text"
                        color="#011936"
-                       @click="$emit('send')"
+                       @click="$emit('send'); showExplorer=false"
                 >
                   <v-icon left>mdi-magnify</v-icon>
                   START ANALYSIS
                 </v-btn>
               </v-flex>
+
+              <!-- Show/hide Explorer controls -->
+              <v-flex v-if="false" justify-center class="xs12 d-flex">
+                <v-btn v-if="!showExplorer" outlined depressed rounded small color="white"
+                       @click="showExplorer=!showExplorer">
+                  <v-icon left>mdi-compass</v-icon>
+                  Show dataset explorer
+                </v-btn>
+                <v-btn v-if="showExplorer" outlined depressed rounded small color="white"
+                       @click="showExplorer=!showExplorer">
+                  <v-icon left>mdi-close-circle-outline</v-icon>
+                  Hide dataset explorer
+                </v-btn>
+              </v-flex>
+
+              <!-- Explorer -->
+              <slot v-if="showExplorer" name="explorer"></slot>
+
             </v-layout>
           </v-card>
         </div>
@@ -95,14 +113,21 @@ export default {
     /** Result length */
     resultLength: {required: true},
   },
+  data() {
+    return {
+
+      /** Flag to show/hide the explorer */
+      showExplorer: false,
+    }
+  },
   computed: {
     ...mapState(['secondary_color']),
   },
-  watch:{
+  watch: {
 
     /** Whenever a new result is produced, scroll to make it visible */
-    resultLength(newLength,oldLength){
-      if(newLength>oldLength && this.$refs.result!==undefined)
+    resultLength(newLength, oldLength) {
+      if (newLength > oldLength && this.$refs.result !== undefined)
         this.$refs.result.scrollIntoView();
     }
   }

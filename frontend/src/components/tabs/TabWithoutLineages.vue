@@ -44,6 +44,13 @@
 
     </template>
 
+    <!-- Dataset Explorer-->
+    <template v-slot:explorer>
+      <v-flex class="xs12 d-flex">
+        <DatasetExplorer :granularity="selectedGranularity" :location="selectedLocation" :date="selectedDate"/>
+      </v-flex>
+    </template>
+
     <!-- Panels list -->
     <template v-slot:results>
 
@@ -81,12 +88,13 @@
 
           <!-- Panel content -->
           <v-expansion-panel-content :color="secondary_color">
-            <AnalysisResult
+            <ResultView
                 v-if="rowsTable[index].length > 0"
                 :queryParams="expansionPanelsSingleInfo[index]"
                 :queryResult="rowsTable[index]"
                 :weekSeq="weekSeq[index]"
                 :withLineages="false"
+                @askAnalysis="(delay) => handleAnalysisRequest(index,delay)"
             />
             <div v-else class="empty-result-alert">
               <h4>
@@ -107,14 +115,15 @@
 
 import {mapState} from "vuex";
 import axios from "axios";
-import AnalysisResult from "@/components/ResultView";
+import ResultView from "@/components/ResultView";
 import Tab from "@/components/tabs/Tab";
 import DatePicker from "@/components/form/DatePicker";
 import LocationSelector from "@/components/form/LocationSelector";
+import DatasetExplorer from "@/components/DatasetExplorer";
 
 export default {
   name: "TabWithoutLineages",
-  components: {LocationSelector, DatePicker, Tab, AnalysisResult},
+  components: {DatasetExplorer, LocationSelector, DatePicker, Tab, ResultView},
   data() {
     return {
       /** Progress circe flag: true if the progress circle is displayed */
@@ -206,6 +215,21 @@ export default {
           .catch(() => {
             this.errorOccurred = true
           });
+    },
+
+    /**
+     * Handle next/prev analysis requests
+     * @param index         Reference search
+     * @param requestDelay  Delay for the new analysis
+     */
+    handleAnalysisRequest(index, requestDelay) {
+      this.selectedGranularity = this.expansionPanelsSingleInfo[index].granularity;
+      this.selectedLocation = this.expansionPanelsSingleInfo[index].location;
+      const referenceDate = new Date(this.expansionPanelsSingleInfo[index].date);
+      referenceDate.setDate(referenceDate.getDate() + requestDelay);
+      this.selectedDate = referenceDate.toISOString().slice(0, 10);
+
+      this.doAnalysis();
     },
 
     /** Handle error alert close */

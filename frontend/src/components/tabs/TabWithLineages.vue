@@ -90,12 +90,13 @@
 
           <!-- Panel content -->
           <v-expansion-panel-content :color="secondary_color">
-            <AnalysisResult
+            <ResultView
                 v-if="rowsTable[index].length > 0"
                 :queryResult="rowsTable[index]"
                 :queryParams=expansionPanelsSingleInfo[index]
                 :weekSeq="weekSeq[index]"
                 :withLineages="true"
+                @askAnalysis="(delay) => handleAnalysisRequest(index,delay)"
             />
             <div v-else class="empty-result-alert">
               <h4>
@@ -116,7 +117,7 @@
 
 import {mapState} from "vuex";
 import axios from "axios";
-import AnalysisResult from "../ResultView";
+import ResultView from "../ResultView";
 import Tab from "@/components/tabs/Tab";
 import DatePicker from "@/components/form/DatePicker";
 import LocationSelector from "@/components/form/LocationSelector";
@@ -124,7 +125,7 @@ import LineageSelector from "@/components/form/LineageSelector";
 
 export default {
   name: "TabWithLineages",
-  components: {LineageSelector, LocationSelector, DatePicker, Tab, AnalysisResult},
+  components: {LineageSelector, LocationSelector, DatePicker, Tab, ResultView},
   props: {
 
     /** List of all the possible lineages. Required. */
@@ -228,6 +229,22 @@ export default {
           .catch(() => {
             this.errorOccurred = true
           });
+    },
+
+    /**
+     * Handle next/prev analysis requests
+     * @param index         Reference search
+     * @param requestDelay  Delay for the new analysis
+     */
+    handleAnalysisRequest(index, requestDelay) {
+      this.selectedGranularity = this.expansionPanelsSingleInfo[index].granularity;
+      this.selectedLocation = this.expansionPanelsSingleInfo[index].location;
+      this.selectedLineage = this.expansionPanelsSingleInfo[index].lineage;
+      const referenceDate = new Date(this.expansionPanelsSingleInfo[index].date);
+      referenceDate.setDate(referenceDate.getDate() + requestDelay);
+      this.selectedDate = referenceDate.toISOString().slice(0, 10);
+
+      this.doAnalysis();
     },
 
     /** Handle error alert close */
