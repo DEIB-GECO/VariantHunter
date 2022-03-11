@@ -36,7 +36,7 @@
       </v-flex>
 
       <!---- Location -->
-      <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm8 md7 d-flex">
+      <v-flex v-if="selectedGranularity!=='world'" class="xs12 sm8 md8 d-flex">
         <LocationSelector v-model="selectedLocation" :selectedGranularity="selectedGranularity"/>
       </v-flex>
 
@@ -46,7 +46,7 @@
       </v-flex>
 
       <!---- Lineage -->
-      <v-flex :class="selectedGranularity==='world'? 'xs12 sm4 md5 d-flex' : 'xs12 sm6 md5 d-flex'">
+      <v-flex :class="selectedGranularity==='world'? 'xs12 sm4 md5 d-flex' : 'xs12 sm6 md6 d-flex'">
         <LineageSelector :allLineages="allLineages" :selectedGranularity="selectedGranularity"
                          :selectedLocation="selectedLocation" :selectedDate="selectedDate" v-model="selectedLineage"/>
       </v-flex>
@@ -204,7 +204,7 @@ export default {
     doAnalysis() {
       this.isLoading = true;
       let countNumAnalysis = this.rowsTable.length;
-      let url = `/analyse_mutations/getStatistics`;
+      let url = `/lineage_specific/getStatistics`;
       let to_send = {
         'granularity': this.selectedGranularity,
         'value': this.selectedLocation,

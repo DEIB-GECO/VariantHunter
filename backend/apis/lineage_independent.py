@@ -12,9 +12,9 @@ from datetime import datetime
 from flask_restplus import Namespace, Resource
 import sqlite3
 
-from .analyse_mutations import compute_pvalue
+from .lineage_specific import compute_pvalue
 
-api = Namespace('analyse_mutations_without_lineages', description='analyse_mutations_without_lineages')
+api = Namespace('lineage_independent', description='lineage_independent')
 sqlite_db_name = 'varianthunter.db'
 start_date = datetime.strptime("2020-01-01", "%Y-%m-%d")
 
@@ -72,6 +72,60 @@ def extract_mutation_data(location, w1_begin, w1_end, w2_begin, w2_end, w3_begin
     return week_mut_data
 
 
+def extract_lineages_data(location, mut, w1_begin, w1_end, w2_begin, w2_end, w3_begin, w3_end, w4_begin, w4_end):
+    print("Extract lineages data in the four weeks for mutation " + mut + "...", end="")
+    startex = time.time()
+    con = sqlite3.connect(sqlite_db_name)
+    cur = con.cursor()
+
+    week_sequence_counts = extract_cumulative_data(location,
+                                                   w1_begin, w1_end,
+                                                   w2_begin, w2_end,
+                                                   w3_begin, w3_end,
+                                                   w4_begin, w4_end)
+
+    tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4 = week_sequence_counts
+
+    def extract_lineages(start, stop):
+        query = f'''    select distinct lineage 
+                        from    mutsg
+                        where   date > {start} and date <= {stop} and 
+                                location = '{location}' and mut = '{mut}';'''
+        lineages = cur.execute(query).fetchall()
+        return [x[0] for x in lineages]
+
+    def execute_query(lineage, start, stop):
+        query = f'''select sum(count) 
+                        from mutsg 
+                        where date > {start} and date <= {stop} and location = '{location}' and lineage = '{lineage}'  and mut='{mut}'
+                        group by date,location,mut,lineage;'''
+        seqs = cur.execute(query).fetchall()
+        return sum([x[0] for x in seqs])
+
+    lineages = extract_lineages(w1_begin, w4_end)
+    lineagesData = []
+    for lineage in lineages:
+        lin_w4 = execute_query(lineage, w4_begin, w4_end)
+        lin_w3 = execute_query(lineage, w3_begin, w3_end)
+        lin_w2 = execute_query(lineage, w2_begin, w2_end)
+        lin_w1 = execute_query(lineage, w1_begin, w1_end)
+        lineagesData.append({
+            'name': lineage,
+            'f1': lin_w1 / tot_seq_w1 * 100,
+            'f2': lin_w2 / tot_seq_w1 * 100,
+            'f3': lin_w3 / tot_seq_w1 * 100,
+            'f4': lin_w4 / tot_seq_w1 * 100,
+            'w1': lin_w1,
+            'w2': lin_w2,
+            'w3': lin_w3,
+            'w4': lin_w4
+        })
+
+    con.close()
+    print(f'done in {time.time() - startex:.5f} seconds.')
+    return lineagesData
+
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"                             ENDPOINTS                               """""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -97,16 +151,18 @@ class FieldList(Resource):
         w1_begin = w1_end - 7
 
         week_sequence_counts = extract_cumulative_data(location,
-                                                       w1_begin,w1_end,
-                                                       w2_begin,w2_end,
-                                                       w3_begin,w3_end,
-                                                       w4_begin,w4_end)
+                                                       w1_begin, w1_end,
+                                                       w2_begin, w2_end,
+                                                       w3_begin, w3_end,
+                                                       w4_begin, w4_end)
+        print("********** week seq count")
+        print(week_sequence_counts)
         mutation_data = extract_mutation_data(location,
                                               w1_begin, w1_end,
                                               w2_begin, w2_end,
                                               w3_begin, w3_end,
                                               w4_begin, w4_end,
-                                              min_sequences=int(week_sequence_counts[-1]*0.005 +1))
+                                              min_sequences=int(week_sequence_counts[-1] * 0.005 + 1))
 
         tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4 = week_sequence_counts
         mut_w1, mut_w2, mut_w3, mut_w4 = mutation_data
@@ -143,4 +199,27 @@ class FieldList(Resource):
                                                            tot_seq_w4 - c4]),
             })
 
-        return {'rows': array_to_return, 'tot_seq': [tot_seq_w1, tot_seq_w2,tot_seq_w3, tot_seq_w4]}
+        return {'rows': array_to_return, 'tot_seq': [tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4]}
+
+
+@api.route('/getLineages')
+class FieldList(Resource):
+    @api.doc('get_lineages')
+    def post(self):
+        print("inside get lineages")
+        payload = api.payload
+        location = payload['location']
+        date = payload['date']
+        mut = payload['prot_mut']
+
+        w4_end = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
+        w4_begin = w4_end - 7
+        w3_end = w4_begin - 1
+        w3_begin = w3_end - 7
+        w2_end = w3_begin - 1
+        w2_begin = w2_end - 7
+        w1_end = w2_begin - 1
+        w1_begin = w1_end - 7
+
+        return extract_lineages_data(location, mut, w1_begin, w1_end, w2_begin, w2_end, w3_begin, w3_end, w4_begin,
+                                     w4_end)

@@ -94,7 +94,7 @@ export default {
   mounted() {
 
     /** Fetch all possible values for lineages */
-    let lineageAPI = `/analyse_mutations/getAllLineage`;
+    let lineageAPI = `/lineage_specific/getAllLineage`;
     axios.get(lineageAPI)
         .then((res) => {
           return res.data;

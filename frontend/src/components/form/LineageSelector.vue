@@ -88,7 +88,7 @@ export default {
     /** Fetch all possible values for lineages (given the other params) */
     getPossibleLineages() {
       if (this.selectedLocation !== null && this.selectedLocation !== 'world' && this.selectedDate !== null) {
-        let url = `/analyse_mutations/getGeoLineages`;
+        let url = `/lineage_specific/getGeoLineages`;
         let to_send = {
           'geo': this.selectedLocation,
           'date': this.selectedDate

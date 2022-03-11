@@ -87,9 +87,12 @@
                     :sort-by.sync="sortingIndexes"
                     :sort-desc.sync="isDescSorting"
                     :footer-props="footerProps"
+                    :show-expand="!withLineages"
+                    @item-expanded="loadLineageDetails"
+                    :loading="isLoadingDetails"
+                    :single-expand="true"
                     class="table-element"
                     item-key="mut"
-
                     multi-sort
                     show-select
                     mobile-breakpoint="0"
@@ -161,7 +164,7 @@
         <template v-slot:header>
           <thead class="main-headers">
           <tr>
-            <th colspan="2" class="empty-main-header"/>
+            <th :colspan="withLineages? 2 : 3" class="empty-main-header"/>
             <th colspan="1" class="empty-main-header"/>
             <th colspan="1" class="empty-main-header"/>
             <th colspan="1" class="empty-main-header"/>
@@ -169,6 +172,31 @@
             <th v-if="showPValues" colspan="3">P-values</th>
           </tr>
           </thead>
+        </template>
+
+        <!---- Expanded table element ---->
+        <template v-if="!withLineages" v-slot:expanded-item="{ headers, item }">
+          <td :colspan="5" class="expanded-item-title">
+            <div>Lineages</div>
+          </td>
+          <td class="expanded-td">
+            <v-simple-table>
+              <tbody>
+              <tr v-for="(lineage,lineage_index) in item.lineages" v-bind:key="lineage_index">
+                <td>{{ lineage.name }}</td>
+              </tr>
+              </tbody>
+            </v-simple-table>
+          </td>
+          <td class="expanded-td" v-for="(week) in [1,2,3,4]" v-bind:key="week">
+            <v-simple-table>
+              <tbody>
+              <tr v-for="(lineage,lineage_index) in item.lineages" v-bind:key="lineage_index">
+                <td>{{ lineage['f' + week].toPrecision(3) + "% (" + lineage['w' + week] + ")" }}</td>
+              </tr>
+              </tbody>
+            </v-simple-table>
+          </td>
         </template>
 
       </v-data-table>
@@ -236,6 +264,7 @@ import HeatMap from "./plots/HeatMap";
 import {mapState} from "vuex";
 import html2canvas from "html2canvas";
 import DialogOpener from "@/components/general/DialogOpener";
+import axios from "axios";
 
 export default {
   name: "ResultView",
@@ -258,6 +287,9 @@ export default {
   },
   data() {
     return {
+
+      /** Loading flag for the table */
+      isLoadingDetails: false,
 
       /** Flag to show the p_values in the table */
       showPValues: false,
@@ -337,17 +369,20 @@ export default {
         labelledRow["protein"] = row["protein"];
         labelledRow["mut"] = row["mut"];
         labelledRow["polyfit_slope"] = row["polyfit_slope"].toPrecision(4);
+
         if (!isNaN(row["p_value_with_mut"]))
           labelledRow["p_value_with_mut"] = row["p_value_with_mut"].toExponential(3);
         if (!isNaN(row["p_value_without_mut"]))
           labelledRow["p_value_without_mut"] = row["p_value_without_mut"].toExponential(3);
         if (!isNaN(row["p_value_comparative_mut"]))
           labelledRow["p_value_comparative"] = row["p_value_comparative_mut"].toExponential(3);
+
         for (let i = 1; i <= 4; i++) {
           labelledRow["f_w" + i] = row["f" + i].toPrecision(3) + "% (" + row["w" + i] + ")"
           labelledRow["f" + i] = row["f" + i]; // numeric value for sorting and plots
           labelledRow["w" + i] = row["w" + i]; // numeric value for plots
         }
+
         labelledRows.push(labelledRow)
       })
       return labelledRows;
@@ -564,6 +599,37 @@ export default {
       toDate.setDate(referenceDate.getDate() - to);
       return fromDate.toISOString().slice(0, 10).replaceAll('-', '/') + " - " + toDate.toISOString().slice(0, 10).replaceAll('-', '/');
     },
+
+    /**
+     * Fetch lineages data when a row of the table is expanded. Lineage independent search only.
+     * @param item
+     */
+    loadLineageDetails(item) {
+      if (!item.value)
+        return
+
+      console.log("EXPAND")
+      console.log(item)
+      this.isLoadingDetails = true;
+      let url = `/lineage_independent/getLineages`;
+      let to_send = {
+        'location': item.item.location,
+        'date': this.queryParams.date,
+        'prot_mut': item.item.protein + "_" + item.item.mut
+      };
+
+      axios.post(url, to_send)
+          .then((res) => {
+            return res.data;
+          })
+          .then((res) => {
+            item.item.lineages = res
+            this.isLoadingDetails = false;
+          })
+          .catch(() => {
+            this.errorOccurred = true
+          });
+    }
   }
 }
 </script>
@@ -662,6 +728,31 @@ export default {
   width: 100%;
 }
 
+/* Expanded element style */
+td.expanded-td {
+  text-align: center;
+  border-right: thin solid rgba(0, 0, 0, 0.12);
+}
+
+td.expanded-td tr:hover {
+  background: none !important;
+}
+
+.expanded-item-title {
+  text-align: -webkit-right;
+  background: var(--tertiary-color-light);
+  border-right: thin solid var(--tertiary-color-dark);
+}
+
+.expanded-item-title div {
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: 0.019em;
+  display: inherit;
+}
+
+
 </style>
 
 <style>
@@ -699,4 +790,16 @@ export default {
 .v-data-table-header__icon::before {
   content: "\F04BC" !important;
 }
+
+/* Avoid box shadow for expanded table element */
+tr.v-data-table__expanded__content {
+  box-shadow: none !important;
+}
+
+/* Reduce excessive padding to the right icons of the tables*/
+.v-application .text-start {
+  padding-left: 11px !important;
+  padding-right: 2px !important;
+}
+
 </style>

@@ -184,7 +184,7 @@ export default {
     doAnalysis() {
       this.isLoading = true;
       let countNumAnalysis = this.rowsTable.length;
-      let url = `/analyse_mutations_without_lineages/getStatistics`;
+      let url = `/lineage_independent/getStatistics`;
       let to_send = {
         'granularity': this.selectedGranularity,
         'value': this.selectedLocation,

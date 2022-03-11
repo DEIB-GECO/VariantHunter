@@ -69,7 +69,6 @@ export default {
           hoverformat: '%Y-%m-%d' // prevent hours info
         },
         yaxis: {
-          dtick: 500, // scale ticks
           autorange: true,
           fixedrange: false,
           automargin: true,
@@ -89,30 +88,12 @@ export default {
         x: 0.5,
         y: -0.8,
         buttons: [
-          {
-            step: 'all',
-            label: 'ALL'
-          }, {
-            step: 'month',
-            stepmode: 'backward',
-            count: 1,
-            label: '1 MONTH'
-          }, {
-            step: 'month',
-            stepmode: 'backward',
-            count: 6,
-            label: '6 MONTHS'
-          }, {
-            step: 'year',
-            stepmode: 'todate',
-            count: 1,
-            label: 'YEAR TO DATE'
-          }, {
-            step: 'year',
-            stepmode: 'backward',
-            count: 1,
-            label: '1 YEAR'
-          }]
+          {step: 'all', label: 'ALL'},
+          {step: 'day', stepmode: 'backward', count: 28, label: '4 WEEKS'},
+          {step: 'month', stepmode: 'backward', count: 1, label: '1 MONTH'},
+          {step: 'month', stepmode: 'backward', count: 6, label: '6 MONTHS'},
+          {step: 'year', stepmode: 'backward', count: 1, label: '1 YEAR'}
+        ]
       }
     },
   }

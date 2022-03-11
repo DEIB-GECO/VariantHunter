@@ -16,7 +16,7 @@ import numpy as np
 import scipy.stats
 from flask_restplus import Namespace, Resource
 
-api = Namespace('analyse_mutations', description='analyse_mutations')
+api = Namespace('lineage_specific', description='lineage_specific')
 sqlite_db_name = 'varianthunter.db'
 start_date = datetime.strptime("2020-01-01", "%Y-%m-%d")
 

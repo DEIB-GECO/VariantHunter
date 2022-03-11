@@ -1,9 +1,9 @@
 from flask import Blueprint
 from flask_restplus import Api
 
-from .create_database import api as create_database
-from .analyse_mutations import api as analyse_mutations
-from .analyse_mutations_without_lineages import api as analyse_mutations_without_lineages
+# from .create_database import api as create_database
+from .lineage_specific import api as lineage_specific
+from .lineage_independent import api as lineage_independent
 from .locations import api as locations
 from .explorer import api as explorer
 
