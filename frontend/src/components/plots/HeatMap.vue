@@ -28,7 +28,7 @@ export default {
     /** Title for the plot. Required. */
     plotTitle: {required: true},
 
-    /** Data for the plot. Required. */
+    /** Raw data for the plot. Required. */
     plotData: {required: true},
 
     /** Array of data labels for the periods */
@@ -36,22 +36,22 @@ export default {
   },
   computed: {
 
-    /** Values for the x axis of the heatmap: dates periods */
+    /** Values for the x-axis of the heatmap: dates periods */
     x() {
       return [this.dateLabel['w1'], this.dateLabel['w2'], this.dateLabel['w3'], this.dateLabel['w4']]
     },
 
-    /** Values for the y axis of the heatmap: protein_mut */
+    /** Values for the y-axis of the heatmap: protein_mut */
     y() {
       return this.plotData.map((element) => element['protein'] + "_" + element['mut'])
     },
 
-    /** Values for the z axis of the heatmap: mutation frequencies in % */
+    /** Values for the z-axis of the heatmap: mutation frequencies in % */
     z() {
       return this.plotData.map((element) => [element['f1'], element['f2'], element['f3'], element['f4']])
     },
 
-    /** Absolute value for the z axis of the heatmap */
+    /** Absolute value for the z-axis of the heatmap */
     absValue() {
       return this.plotData.map((element) => [element['w1'], element['w2'], element['w3'], element['w4']])
     },

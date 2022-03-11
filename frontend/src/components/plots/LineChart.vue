@@ -63,7 +63,7 @@ export default {
     /** Title for the plot. Required. */
     plotTitle: {required: true},
 
-    /** Data for the plot. Required. */
+    /** Raw data for the plot. Required. */
     plotData: {required: true},
 
     /** Array of data labels for the periods */

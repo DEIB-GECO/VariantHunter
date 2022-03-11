@@ -320,7 +320,6 @@ export default {
     /** Array of (raw) data to display in the table (filtered by protein and mut, if set) */
     filteredQueryResult() {
       const that = this;
-      console.log(that.selectedMutation)
       return this.queryResult.filter(function (row) {
         const proteinCheck = that.selectedProtein === null || row.protein === that.selectedProtein;
         const mutationCheck = that.selectedMutation === null || that.selectedMutation.length === 0 || that.selectedMutation.includes(row.protein + "_" + row.mut);

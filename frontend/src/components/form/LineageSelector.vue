@@ -19,7 +19,7 @@
       <v-flex class="xs12 d-flex field-element">
         <v-autocomplete
             v-model="selectedLineage"
-            :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world') || selectedDate === null"
+            :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world')"
             :items="possibleLineages"
             clearable
             hide-details
@@ -47,6 +47,9 @@ export default {
 
     /** Value of the selected date */
     selectedDate: {required: true},
+
+    /** All values of lineages */
+    allLineages: {reduired: true}, // TODO move fetch inside the component
 
     /** Value variable for binding of the location */
     value: {}
@@ -93,6 +96,8 @@ export default {
         axios.post(url, to_send)
             .then((res) => {
               this.possibleLineages = res.data;
+              if (!this.possibleLineages.includes(this.selectedLineage))
+                this.selectedLineage = null;
             })
       }
     },
@@ -102,12 +107,18 @@ export default {
 
     /** Adjust the possible lineages according to the selected location */
     selectedLocation() {
-      this.getPossibleLineages()
+      if (this.selectedDate)
+        this.getPossibleLineages()
+      else
+        this.possibleLineages = this.allLineages
     },
 
     /** Adjust the possible lineages according to the selected date */
     selectedDate() {
-      this.getPossibleLineages()
+      if (this.selectedDate)
+        this.getPossibleLineages()
+      else
+        this.possibleLineages = this.allLineages
     },
 
   },

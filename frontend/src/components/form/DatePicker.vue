@@ -27,6 +27,7 @@
                         hide-details
                         label="Date"
                         readonly
+                        clearable
                         solo
                         v-bind="attrs"
                         v-on="on"

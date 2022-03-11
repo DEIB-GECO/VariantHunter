@@ -21,6 +21,7 @@
                           :disabled="disableContinentSelection"
                           :items="possibleContinents"
                           :loading="isLoading"
+                          @input="updateSelectedLocation('continent')"
                           hide-details
                           label="Continent"
                           solo>
@@ -36,6 +37,7 @@
                           :disabled="disableCountrySelection"
                           :items="possibleCountries"
                           :loading="isLoading"
+                          @input="updateSelectedLocation('country')"
                           hide-details
                           label="Country"
                           solo>
@@ -51,6 +53,7 @@
                           :disabled="disableRegionSelection"
                           :items="possibleRegions"
                           :loading="isLoading"
+                          @input="updateSelectedLocation('region')"
                           hide-details
                           label="Region"
                           solo>
@@ -114,16 +117,7 @@ export default {
        * @returns {string}  The selected location
        */
       get() {
-        switch (this.selectedGranularity) {
-          case 'continent':
-            return this.selectedContinent;
-          case 'country':
-            return this.selectedCountry;
-          case 'region':
-            return this.selectedRegion;
-          default:
-            return null;
-        }
+        return this.value;
       },
 
       /**
@@ -163,6 +157,20 @@ export default {
   },
   methods: {
 
+    updateSelectedLocation(source) {
+      switch (source) {
+        case 'continent':
+          this.selectedLocation = (this.selectedGranularity === 'continent') ? this.selectedContinent : null
+          break;
+        case 'country':
+          this.selectedLocation = (this.selectedGranularity === 'country') ? this.selectedCountry : null
+          break;
+        case 'region':
+          this.selectedLocation = (this.selectedGranularity === 'region') ? this.selectedRegion : null
+      }
+      this.clearFormFrom(source)
+    },
+
     /** Returns the hint for the field completion */
     getFieldText(item) {
       let name;
@@ -177,7 +185,6 @@ export default {
     /** Fetch all possible values for continents */
     fetchContinents() {
       if (!this.disableContinentSelection) {
-        this.selectedContinent = null;
         this.isLoading = true;
         let locationsAPI = `/locations/getContinents`;
         axios.get(locationsAPI)
@@ -194,7 +201,6 @@ export default {
     /** Fetch all possible values for countries */
     fetchCountries() {
       if (!this.disableCountrySelection && this.showCountrySelector) {
-        this.selectedCountry = null;
         this.isLoading = true;
         let locationsAPI = `/locations/getCountries`;
         let to_send = {
@@ -214,7 +220,6 @@ export default {
     /** Fetch all possible values for regions */
     fetchRegions() {
       if (!this.disableRegionSelection && this.showRegionSelector) {
-        this.selectedRegion = null;
         this.isLoading = true;
         let locationsAPI = `/locations/getRegions`;
         let to_send = {
@@ -231,35 +236,44 @@ export default {
       }
     },
 
+    clearFormFrom(from) {
+      switch (from) {
+        case 'granularity':
+          this.selectedLocation = null
+          this.selectedContinent = null
+          this.selectedCountry = null
+          this.selectedRegion = null
+          this.possibleCountries = []
+          this.possibleRegions = []
+          break
+        case 'continent':
+          this.selectedCountry = null
+          this.selectedRegion = null
+          this.possibleRegions = []
+          break;
+        case 'country':
+          this.selectedRegion = null
+          break
+      }
+    }
+
   },
   watch: {
 
     /** Adjust the possible continents according to the selected granularity */
-    selectedGranularity(newVal) {
-      this.possibleCountries = []
-      this.possibleRegions = []
-      if (newVal != null)
-        this.fetchContinents();
+    selectedGranularity() {
+      this.fetchContinents();
+      this.clearFormFrom('granularity')
     },
 
     /** Adjust the possible countries and the binding according to the selected continent */
-    selectedContinent(newVal) {
-      this.possibleRegions = []
-      this.selectedLocation = newVal
-      if (newVal != null)
-        this.fetchCountries();
+    selectedContinent() {
+      this.fetchCountries();
     },
 
     /** Adjust the possible countries and the binding according to the selected continent  */
-    selectedCountry(newVal) {
-      this.selectedLocation = newVal
-      if (newVal != null)
-        this.fetchRegions();
-    },
-
-    /** Adjust the binding */
-    selectedRegion(newVal) {
-      this.selectedLocation = newVal
+    selectedCountry() {
+      this.fetchRegions();
     }
 
   },
