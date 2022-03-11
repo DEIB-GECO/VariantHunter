@@ -47,7 +47,7 @@
     <!-- Dataset Explorer-->
     <template v-slot:explorer>
       <v-flex class="xs12 d-flex">
-        <DatasetExplorer :granularity="selectedGranularity" :location="selectedLocation" :date="selectedDate"/>
+        <DatasetExplorer :granularity="selectedGranularity" :location="selectedLocation"/>
       </v-flex>
     </template>
 

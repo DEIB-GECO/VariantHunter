@@ -52,6 +52,13 @@
       </v-flex>
     </template>
 
+    <!-- Dataset Explorer-->
+    <template v-slot:explorer>
+      <v-flex class="xs12 d-flex">
+        <DatasetExplorer :granularity="selectedGranularity" :location="selectedLocation" :lineage="selectedLineage"/>
+      </v-flex>
+    </template>
+
     <!-- Panels list -->
     <template v-slot:results>
       <v-expansion-panels
@@ -122,10 +129,11 @@ import Tab from "@/components/tabs/Tab";
 import DatePicker from "@/components/form/DatePicker";
 import LocationSelector from "@/components/form/LocationSelector";
 import LineageSelector from "@/components/form/LineageSelector";
+import DatasetExplorer from "@/components/DatasetExplorer";
 
 export default {
   name: "TabWithLineages",
-  components: {LineageSelector, LocationSelector, DatePicker, Tab, ResultView},
+  components: {DatasetExplorer, LineageSelector, LocationSelector, DatePicker, Tab, ResultView},
   props: {
 
     /** List of all the possible lineages. Required. */

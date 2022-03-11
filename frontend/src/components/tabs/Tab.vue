@@ -39,8 +39,11 @@
                 </v-btn>
               </v-flex>
 
+              <!-- Explorer -->
+              <slot v-if="showExplorer" name="explorer"></slot>
+
               <!-- Show/hide Explorer controls -->
-              <v-flex v-if="false" justify-center class="xs12 d-flex">
+              <v-flex justify-center class="xs12 d-flex">
                 <v-btn v-if="!showExplorer" outlined depressed rounded small color="white"
                        @click="showExplorer=!showExplorer">
                   <v-icon left>mdi-compass</v-icon>
@@ -49,12 +52,9 @@
                 <v-btn v-if="showExplorer" outlined depressed rounded small color="white"
                        @click="showExplorer=!showExplorer">
                   <v-icon left>mdi-close-circle-outline</v-icon>
-                  Hide dataset explorer
+                  Hide
                 </v-btn>
               </v-flex>
-
-              <!-- Explorer -->
-              <slot v-if="showExplorer" name="explorer"></slot>
 
             </v-layout>
           </v-card>

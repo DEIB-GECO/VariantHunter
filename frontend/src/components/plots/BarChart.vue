@@ -3,16 +3,13 @@
   Description:  Barchart plot. Implemented using vue-plotly.
 
   Props:
-  ├── plotTitle:  Title for the plot. Required.
-  ├── plotData:   Data for the plot. Required.
-  └── dateLabel:  Array of data labels for the periods
+  └── plotData:   Data for the plot. Required.
 -->
 
 <template>
   <div style="width: 100%;">
     <!-- BarChart plot -->
-    <Plotly :data="data" :layout="layout" :displaylogo="false"
-            :modeBarButtonsToRemove="['lasso2d','select2d','toggleSpikelines']"/>
+    <Plotly :data="data" :layout="layout" :displaylogo="false" :displayModeBar="false"/>
   </div>
 
 </template>
@@ -28,92 +25,96 @@ export default {
   },
   props: {
 
-    /** Data for the plot. Required. */
+    /** Raw data for the plot. Required. */
     plotData: {required: true},
 
   },
   computed: {
 
+    /** Values for the x-axis of the barchart: dates */
+    x() {
+      const startDate = new Date("2020-01-01")
+      return this.plotData.map((element) => {
+        const date = new Date(startDate)
+        // Dates from the server are relative and must be added to the start date
+        date.setDate(startDate.getDate() + element['date']);
+        return date
+      })
+    },
+
+    /** Values for the y-axis of the barchart: seq_count */
+    y() {
+      return this.plotData.map((element) => element['seq_count'])
+    },
+
     /** Data processed for the plot */
     data() {
-      return this.plotData.map((element) => {
-        return {
-          x: [1, 2, 3, 4],
-          y: [100, 200, 300, 400],
-          hovertemplate: 'y',
-          hoverlabel: {
-            bordercolor: 'transparent',
-            font: {
-              color: "rgb(68,68,68)"
-            }
-          },
-          showlegend: true,
-          type: 'bar'
-        }
-      })
+      return [{
+        x: this.x,
+        y: this.y,
+        mode: 'lines',
+        type: 'bar',
+        hovertemplate: '%{y} sequences<extra></extra>'
+      }];
     },
 
     /** Layout data for the plot */
     layout() {
       return {
-        title: "Available sequences",
-        xaxis:
-            {
-              tickmode: "array", // If "array", the placement of the ticks is set via "tickvals" and the tick text is "ticktext"
-              tickvals: [1, 2, 3, 4],
-              // ticktext: [],
-              tickfont:
-                  {
-                    size: 11,
-                  },
-              automargin: true,
-              showline: false,
-              zeroline: false
-            },
-        yaxis:
-            {
-              title: 'Frequency in %',
-              titlefont:
-                  {
-                    size: 16,
-                  },
-              tickfont:
-                  {
-                    size: 14,
-                  },
-
-              dtick: 10,
-              zeroline: false,
-              showline: false,
-              automargin: true
-            },
-        legend:
-            {
-              x: 1.0,
-              y: 1.0,
-              bgcolor: 'trasparent',
-              bordercolor: 'trasparent',
-              yanchor: "top",
-              ticks: "outside",
-              itemsizing: 'constant'
-            },
-        barmode: 'group',
-        bargap: 0.15,
-        bargroupgap: 0.1,
-        hovermode: "closest"
+        height: 355,
+        xaxis: {
+          rangeselector: this.selectorOptions,
+          rangeslider: {},
+          automargin: true,
+          hoverformat: '%Y-%m-%d' // prevent hours info
+        },
+        yaxis: {
+          dtick: 500, // scale ticks
+          autorange: true,
+          fixedrange: false,
+          automargin: true,
+        },
+        margin: {
+          b: 55,
+          t: 30,
+          pad: 4
+        },
       }
     },
-  },
-  methods: {}
+
+    /** Selector options for the plot */
+    selectorOptions() {
+      return {
+        xanchor: "center",
+        x: 0.5,
+        y: -0.8,
+        buttons: [
+          {
+            step: 'all',
+            label: 'ALL'
+          }, {
+            step: 'month',
+            stepmode: 'backward',
+            count: 1,
+            label: '1 MONTH'
+          }, {
+            step: 'month',
+            stepmode: 'backward',
+            count: 6,
+            label: '6 MONTHS'
+          }, {
+            step: 'year',
+            stepmode: 'todate',
+            count: 1,
+            label: 'YEAR TO DATE'
+          }, {
+            step: 'year',
+            stepmode: 'backward',
+            count: 1,
+            label: '1 YEAR'
+          }]
+      }
+    },
+  }
 }
 </script>
-<style scoped>
-
-/* Plotly container */
-.plotly-container {
-  border-radius: var(--border-radius);
-  width: 100%;
-  background: white;
-}
-
-</style>
