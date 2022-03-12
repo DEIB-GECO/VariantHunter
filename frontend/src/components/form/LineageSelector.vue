@@ -3,74 +3,61 @@
   Description:  Select input element for lineage
 
   Props:
-  ├── allLineages: List of all the possible lineages.
   ├── selectedGranularity: Value of the selected granularity
   ├── selectedLocation: Value of the selected location
   ├── selectedDate: Value of the selected date
   └── value: Value variable for binding of the date
+
+  Events:
+  └── error:    Emitted on server errors
 -->
 
 <template>
-    <v-layout row wrap>
-      <v-flex class="xs12 d-flex field-label">
-        <span>Lineage</span>
-      </v-flex>
+  <v-layout row wrap>
+    <v-flex class='xs12 d-flex field-label'>
+      <span>Lineage</span>
+    </v-flex>
 
-      <v-flex class="xs12 d-flex field-element">
-        <v-autocomplete
-            v-model="selectedLineage"
-            :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world')"
-            :items="possibleLineages"
-            clearable
-            hide-details
-            label="Lineage"
-            solo
-        >
-        </v-autocomplete>
-      </v-flex>
-    </v-layout>
+    <v-flex class='xs12 d-flex field-element'>
+      <v-autocomplete v-model='selectedLineage'
+                      :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world')"
+                      :items='possibleLineages' clearable hide-details label='Lineage' solo />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
-
-import axios from "axios";
+import axios from 'axios'
 
 export default {
-  name: "LineageSelector",
+  name: 'LineageSelector',
   props: {
-
     /** Value of the selected granularity */
-    selectedGranularity: {required: true},
+    selectedGranularity: { required: true },
 
     /** Value of the selected location */
-    selectedLocation: {required: true},
+    selectedLocation: { required: true },
 
     /** Value of the selected date */
-    selectedDate: {required: true},
-
-    /** All values of lineages */
-    allLineages: {reduired: true}, // TODO move fetch inside the component
+    selectedDate: { required: true },
 
     /** Value variable for binding of the location */
     value: {}
   },
-  data() {
+  data () {
     return {
-
       /** Lineage: available options (wrt to other params) */
-      possibleLineages: this.allLineages,
-
+      possibleLineages: this.allLineages
     }
   },
   computed: {
-
     /** Selected lineage */
     selectedLineage: {
       /**
        * Getter for the string representing the selected lineage
        * @returns {string}  The selected lineage
        */
-      get() {
+      get () {
         return this.value
       },
 
@@ -78,55 +65,76 @@ export default {
        * Setter for the lineage
        * @param val The new value
        */
-      set(val) {
+      set (val) {
         this.$emit('input', val)
       }
     }
   },
   methods: {
-
     /** Fetch all possible values for lineages (given the other params) */
-    getPossibleLineages() {
+    getPossibleLineages () {
       if (this.selectedLocation !== null && this.selectedLocation !== 'world' && this.selectedDate !== null) {
-        let url = `/lineage_specific/getGeoLineages`;
-        let to_send = {
-          'geo': this.selectedLocation,
-          'date': this.selectedDate
-        };
-        axios.post(url, to_send)
-            .then((res) => {
-              this.possibleLineages = res.data;
-              if (!this.possibleLineages.includes(this.selectedLineage))
-                this.selectedLineage = null;
-            })
+        const url = `/lineage_specific/getLineages`
+        const toSend = {
+          location: this.selectedLocation,
+          date: this.selectedDate
+        }
+        axios
+          .post(url, toSend)
+          .then(res => {
+            this.possibleLineages = res.data
+            if (!this.possibleLineages.includes(this.selectedLineage)) {
+              this.selectedLineage = null
+            }
+          })
+          .catch((e) => {
+            this.$emit('error', e)
+          })
       }
     },
 
+    /** Fetch all possible values for lineages */
+    getAllLineages () {
+      const lineageAPI = `/lineage_specific/getAllLineages`
+      axios
+        .get(lineageAPI)
+        .then(res => {
+          return res.data
+        })
+        .then(res => {
+          this.allLineages = res
+        })
+        .catch((e) => {
+          this.$emit('error', e)
+        })
+    }
+  },
+  mounted () {
+    this.getAllLineages()
   },
   watch: {
-
     /** Adjust the possible lineages according to the selected location */
-    selectedLocation() {
-      if (this.selectedDate)
+    selectedLocation () {
+      if (this.selectedDate) {
         this.getPossibleLineages()
-      else
+      } else {
         this.possibleLineages = this.allLineages
+      }
     },
 
     /** Adjust the possible lineages according to the selected date */
-    selectedDate() {
-      if (this.selectedDate)
+    selectedDate () {
+      if (this.selectedDate) {
         this.getPossibleLineages()
-      else
+      } else {
         this.possibleLineages = this.allLineages
-    },
-
-  },
+      }
+    }
+  }
 }
 </script>
 
 <style scoped>
-
 /* Form labels styling */
 .field-label {
   justify-content: center;
@@ -141,5 +149,4 @@ export default {
   padding-bottom: 4px !important;
   text-transform: capitalize;
 }
-
 </style>

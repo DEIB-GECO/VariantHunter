@@ -1,24 +1,22 @@
 <template>
   <v-app>
-
     <!-- Navbar -->
-    <v-toolbar :color="primary_color" class="navbar" short dark flat>
+    <v-toolbar :color='primary_color' class='navbar' short dark flat>
 
       <!-- Logo -->
-      <v-img :src="websiteLogo" contain max-height="39px" max-width="39px"/>
-      <v-toolbar-title class="site-title">
-        <span class="emphasis">Variant</span>
+      <v-img :src='websiteLogo' contain max-height='39px' max-width='39px' />
+      <v-toolbar-title class='site-title'>
+        <span class='emphasis'>Variant</span>
         <span>Hunter</span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
       <!-- Scroll to top button -->
-      <v-btn v-if="showSearchShortcut" class="hidden-xs-only" href="#top" outlined rounded small>
+      <v-btn v-if='showSearchShortcut' class='hidden-xs-only' href='#top' outlined rounded small>
         <v-icon left>mdi-plus</v-icon>
         New analysis
       </v-btn>
-
 
       <!-- Navbar links to the other tools -->
       <!--      <v-toolbar-items class="hidden-lg-and-down navbar-links">-->
@@ -30,7 +28,6 @@
       <!--            <span>ABOUT</span>-->
       <!--        </v-btn>-->
       <!--      </v-toolbar-items>-->
-
 
       <!-- Menu links to the other tools -->
       <!--      <div class="hidden-xl-only">-->
@@ -65,48 +62,43 @@
       <!--      </div>-->
     </v-toolbar>
 
-    <v-main class="main-body" @scroll.native="scrollHandler">
+    <v-main class='main-body' @scroll.native='scrollHandler'>
       <TabView></TabView>
     </v-main>
-
   </v-app>
 </template>
 
 <script>
-
-import {mapState} from "vuex";
-import TabView from "@/components/TabsView";
+import { mapState } from 'vuex'
+import TabView from '@/components/TabsView'
 
 export default {
   components: {
     TabView
   },
 
-  data() {
+  data () {
     return {
       /** VariantHunter logo */
       websiteLogo: require('./assets/virusurf_logo.png'),
 
       /** Flag to show the new search shortcut */
-      showSearchShortcut: false,
+      showSearchShortcut: false
     }
   },
   computed: {
-    ...mapState(['primary_color']),
+    ...mapState(['primary_color'])
   },
   methods: {
-
     /** Scroll event handler to hide/show the search shortcut */
-    scrollHandler(e) {
+    scrollHandler (e) {
       this.showSearchShortcut = e.target.scrollTop > 440
     }
   }
-};
-
+}
 </script>
 
 <style scoped>
-
 /* Site title styles*/
 .site-title {
   font-size: 33px;
@@ -123,7 +115,8 @@ export default {
 }
 
 /* Navbar links styling */
-.navbar-links, .navbar-links > * {
+.navbar-links,
+.navbar-links > * {
   background: transparent;
 }
 
@@ -135,7 +128,8 @@ export default {
   width: 200px !important;
 }
 
-.navbar-link-large img, .menu-link-large img {
+.navbar-link-large img,
+.menu-link-large img {
   vertical-align: middle;
   justify-content: left;
   margin: 4px 0 2px 8px;
@@ -167,16 +161,15 @@ export default {
   float: left;
   position: relative;
 }
-
 </style>
-<style>
 
+<style>
 /* Global variables for color palette and border radius */
 :root {
   --primary-color: #014878;
-  --secondary-color: #35B1ECFF;
-  --tertiary-color-light: #D2ECF8FF;
-  --tertiary-color-dark: #1976D2FF;
+  --secondary-color: #35b1ecff;
+  --tertiary-color-light: #d2ecf8ff;
+  --tertiary-color-dark: #1976d2ff;
   --border-radius: 4px;
 }
 
@@ -192,7 +185,6 @@ body {
 
 /* Overwrite default Vuetify font */
 .v-application {
-  font-family: "Inter", serif !important;
+  font-family: 'Inter', serif !important;
 }
-
 </style>

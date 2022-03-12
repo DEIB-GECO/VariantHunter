@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restplus import Api
 
-# from .create_database import api as create_database
+from .create_database import api as create_database
 from .lineage_specific import api as lineage_specific
 from .lineage_independent import api as lineage_independent
 from .locations import api as locations

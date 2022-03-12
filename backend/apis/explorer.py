@@ -1,6 +1,5 @@
 """
-    API to retrieve sequences data
-
+    API to retrieve daily sequences counts
     Endpoints:
     └── getSequenceInfo
 """
@@ -11,7 +10,10 @@ import time
 from flask_restplus import Namespace, Resource
 
 api = Namespace('explorer', description='explorer')
-sqlite_db_name = 'varianthunter.db'
+db_name = 'varianthunter.db'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 def extract_seq_num(granularity, location, lineage):
@@ -26,19 +28,17 @@ def extract_seq_num(granularity, location, lineage):
 
     """
     print("Extract number of sequences ...", end="")
-    startex = time.time()
-    con = sqlite3.connect(sqlite_db_name)
+    exec_start = time.time()
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
 
     def execute_query():
         if lineage is not None:
-            print("IF: lineage is " + lineage)
             query = f'''    select date,sum(count) 
                             from timelocling 
                             where location = '{location}' and lineage = '{lineage}'
                             group by date,location,lineage;'''
         else:
-            print("ELSE: lineage is none")
             query = f'''    select date,sum(count) 
                             from timelocling 
                             where location = '{location}' 
@@ -48,7 +48,7 @@ def extract_seq_num(granularity, location, lineage):
 
     daily_sequence_counts = execute_query()
     con.close()
-    print(f'done in {time.time() - startex:.5f} seconds.')
+    print(f'done in {time.time() - exec_start:.5f} seconds.')
     return daily_sequence_counts
 
 
@@ -63,7 +63,7 @@ class FieldList(Resource):
     def post(self):
         """
         Endpoint to get the sequence counts for each day
-        @return:    An array of sequence (date,seq_count)
+        @return:    An array of (date,seq_count) pairs
         """
         granularity = api.payload['granularity']
         location = api.payload['location']

@@ -1,6 +1,5 @@
 """
     API to retrieve locations data
-
     Endpoints:
     ├── getContinents
     ├── getCountries
@@ -12,7 +11,10 @@ import sqlite3
 from flask_restplus import Namespace, Resource
 
 api = Namespace('locations', description='locations')
-sqlite_db_name = 'varianthunter.db'
+db_name = 'varianthunter.db'
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 def get_continents():
@@ -20,7 +22,7 @@ def get_continents():
     Fetch all the continents form the database
     @return:    An array of continents
     """
-    con = sqlite3.connect(sqlite_db_name)
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     query = "select continent from continent_table where continent is not null;"
     continents = [x[0] for x in cur.execute(query).fetchall()]
@@ -34,7 +36,7 @@ def get_countries(continent):
     @param continent:   The continent to be considered
     @return:            An array of countries
     """
-    con = sqlite3.connect(sqlite_db_name)
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     query = f'''select country from country_table where country is not null and continent='{continent}';'''
     countries = [x[0] for x in cur.execute(query).fetchall()]
@@ -48,7 +50,7 @@ def get_regions(country):
     @param country: The country to be considered
     @return:        An array of regions
     """
-    con = sqlite3.connect(sqlite_db_name)
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     query = f'''select region from region_table where region is not null and country='{country}';'''
     regions = [x[0] for x in cur.execute(query).fetchall()]

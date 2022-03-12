@@ -5,86 +5,70 @@
   Props:
   ├── selectedGranularity: Value of the selected granularity
   └── value: Value variable for binding of the date
+
+  Events:
+  └── error:    Emitted on server errors
 -->
 
 <template>
   <v-layout row wrap>
-    <v-flex class="xs12 d-flex field-label">
+    <v-flex class='xs12 d-flex field-label'>
       <span>Location</span>
     </v-flex>
 
-    <v-flex class="xs12 d-flex field-element">
+    <v-flex class='xs12 d-flex field-element'>
       <v-row dense>
         <!-- Continent selector -->
-        <v-col class="complex-field-element">
-          <v-autocomplete v-model="selectedContinent"
-                          :disabled="disableContinentSelection"
-                          :items="possibleContinents"
-                          :loading="isLoading"
-                          @input="updateSelectedLocation('continent')"
-                          hide-details
-                          label="Continent"
-                          solo>
-            <template v-slot:item="data">
+        <v-col class='complex-field-element'>
+          <v-autocomplete v-model='selectedContinent' :disabled='disableContinentSelection' :items='possibleContinents'
+                          :loading='isLoading' hide-details label='Continent' solo
+                          @input="updateSelectedLocation('continent')">
+            <template v-slot:item='data'>
               <span>{{ getFieldText(data.item) }}</span>
             </template>
           </v-autocomplete>
         </v-col>
 
         <!-- Country selector-->
-        <v-col v-if="showCountrySelector" class="complex-field-element">
-          <v-autocomplete v-model="selectedCountry"
-                          :disabled="disableCountrySelection"
-                          :items="possibleCountries"
-                          :loading="isLoading"
-                          @input="updateSelectedLocation('country')"
-                          hide-details
-                          label="Country"
-                          solo>
-            <template v-slot:item="data">
+        <v-col v-if='showCountrySelector' class='complex-field-element'>
+          <v-autocomplete v-model='selectedCountry' :disabled='disableCountrySelection' :items='possibleCountries'
+                          :loading='isLoading' hide-details label='Country' solo
+                          @input="updateSelectedLocation('country')">
+            <template v-slot:item='data'>
               <span>{{ getFieldText(data.item) }}</span>
             </template>
           </v-autocomplete>
         </v-col>
 
         <!-- Region selector -->
-        <v-col v-if="showRegionSelector" class="complex-field-element">
-          <v-autocomplete v-model="selectedRegion"
-                          :disabled="disableRegionSelection"
-                          :items="possibleRegions"
-                          :loading="isLoading"
-                          @input="updateSelectedLocation('region')"
-                          hide-details
-                          label="Region"
-                          solo>
-            <template v-slot:item="data">
+        <v-col v-if='showRegionSelector' class='complex-field-element'>
+          <v-autocomplete v-model='selectedRegion' :disabled='disableRegionSelection' :items='possibleRegions'
+                          :loading='isLoading' hide-details label='Region' solo
+                          @input="updateSelectedLocation('region')">
+            <template v-slot:item='data'>
               <span>{{ getFieldText(data.item) }}</span>
             </template>
           </v-autocomplete>
         </v-col>
-
       </v-row>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
-
-import axios from "axios";
+import axios from 'axios'
 
 export default {
-  name: "LocationSelector",
+  name: 'LocationSelector',
   props: {
-
     /** Value of the selected granularity */
-    selectedGranularity: {required: true},
+    selectedGranularity: { required: true },
 
     /** Value variable for binding of the location */
     value: {}
   },
-  data() {
+  data () {
     return {
-
       /** Selectable continents */
       possibleContinents: [],
 
@@ -104,139 +88,153 @@ export default {
       selectedRegion: null,
 
       /** Loading progress */
-      isLoading: false,
-
+      isLoading: false
     }
   },
   computed: {
-
     /** Selected location */
     selectedLocation: {
       /**
        * Getter for the string representing the selected location
        * @returns {string}  The selected location
        */
-      get() {
-        return this.value;
+      get () {
+        return this.value
       },
 
       /**
        * Setter for the location
        * @param val The new value
        */
-      set(val) {
+      set (val) {
         this.$emit('input', val)
       }
     },
 
     /** Condition to disable the continent selection. If true is disabled */
-    disableContinentSelection() {
-      return this.selectedGranularity === null || this.selectedGranularity === 'world'
+    disableContinentSelection () {
+      return (
+        this.selectedGranularity === null || this.selectedGranularity === 'world'
+      )
     },
 
     /** Condition to disable the country selection. If true is disabled */
-    disableCountrySelection() {
+    disableCountrySelection () {
       return this.disableContinentSelection || this.selectedContinent === null
     },
 
     /** Condition to disable the region selection. If true is disabled */
-    disableRegionSelection() {
+    disableRegionSelection () {
       return this.disableCountrySelection || this.selectedCountry === null
     },
 
     /** Condition to show the country selector. If true is shown */
-    showCountrySelector() {
+    showCountrySelector () {
       return this.selectedGranularity === 'region' || this.selectedGranularity === 'country'
     },
 
     /** Condition to show the region selector. If true is shown */
-    showRegionSelector() {
+    showRegionSelector () {
       return this.selectedGranularity === 'region'
-    },
-
+    }
   },
   methods: {
-
-    updateSelectedLocation(source) {
+    /** Update the selected location whenever a new field is filled in
+     * @param source  The field that has been filled in
+     */
+    updateSelectedLocation (source) {
       switch (source) {
         case 'continent':
-          this.selectedLocation = (this.selectedGranularity === 'continent') ? this.selectedContinent : null
-          break;
+          this.selectedLocation = this.selectedGranularity === 'continent' ? this.selectedContinent : null
+          break
         case 'country':
-          this.selectedLocation = (this.selectedGranularity === 'country') ? this.selectedCountry : null
-          break;
+          this.selectedLocation = this.selectedGranularity === 'country' ? this.selectedCountry : null
+          break
         case 'region':
-          this.selectedLocation = (this.selectedGranularity === 'region') ? this.selectedRegion : null
+          this.selectedLocation = this.selectedGranularity === 'region' ? this.selectedRegion : null
       }
       this.clearFormFrom(source)
     },
 
     /** Returns the hint for the field completion */
-    getFieldText(item) {
-      let name;
+    getFieldText (item) {
+      let name
       if (item === null) {
         name = 'N/D'
       } else {
-        name = item;
+        name = item
       }
-      return name;
+      return name
     },
 
     /** Fetch all possible values for continents */
-    fetchContinents() {
+    fetchContinents () {
       if (!this.disableContinentSelection) {
-        this.isLoading = true;
-        let locationsAPI = `/locations/getContinents`;
-        axios.get(locationsAPI)
-            .then((res) => {
-              return res.data;
-            })
-            .then((res) => {
-              this.isLoading = false;
-              this.possibleContinents = res;
-            });
+        this.isLoading = true
+        const locationsAPI = `/locations/getContinents`
+        axios
+          .get(locationsAPI)
+          .then(res => {
+            return res.data
+          })
+          .then(res => {
+            this.isLoading = false
+            this.possibleContinents = res
+          }).catch((e) => {
+            this.$emit('error', e)
+          })
       }
     },
 
     /** Fetch all possible values for countries */
-    fetchCountries() {
+    fetchCountries () {
       if (!this.disableCountrySelection && this.showCountrySelector) {
-        this.isLoading = true;
-        let locationsAPI = `/locations/getCountries`;
-        let to_send = {
-          'continent': this.selectedContinent,
-        };
-        axios.post(locationsAPI, to_send)
-            .then((res) => {
-              return res.data;
-            })
-            .then((res) => {
-              this.isLoading = false;
-              this.possibleCountries = res;
-            });
+        this.isLoading = true
+        const locationsAPI = `/locations/getCountries`
+        const toSend = {
+          continent: this.selectedContinent
+        }
+        axios
+          .post(locationsAPI, toSend)
+          .then(res => {
+            return res.data
+          })
+          .then(res => {
+            this.isLoading = false
+            this.possibleCountries = res
+          }).catch((e) => {
+            this.$emit('error', e)
+          })
       }
     },
 
     /** Fetch all possible values for regions */
-    fetchRegions() {
+    fetchRegions () {
       if (!this.disableRegionSelection && this.showRegionSelector) {
-        this.isLoading = true;
-        let locationsAPI = `/locations/getRegions`;
-        let to_send = {
-          'country': this.selectedCountry,
-        };
-        axios.post(locationsAPI, to_send)
-            .then((res) => {
-              return res.data;
-            })
-            .then((res) => {
-              this.isLoading = false;
-              this.possibleRegions = res;
-            });
+        this.isLoading = true
+        const locationsAPI = `/locations/getRegions`
+        const toSend = {
+          country: this.selectedCountry
+        }
+        axios
+          .post(locationsAPI, toSend)
+          .then(res => {
+            return res.data
+          })
+          .then(res => {
+            this.isLoading = false
+            this.possibleRegions = res
+          }).catch((e) => {
+            this.$emit('error', e)
+          })
       }
     },
 
-    clearFormFrom(from) {
+    /**
+     * Clear the form from a field on
+     * @param from  Starting point for the cleaning action
+     */
+    clearFormFrom (from) {
       switch (from) {
         case 'granularity':
           this.selectedLocation = null
@@ -250,38 +248,34 @@ export default {
           this.selectedCountry = null
           this.selectedRegion = null
           this.possibleRegions = []
-          break;
+          break
         case 'country':
           this.selectedRegion = null
           break
       }
     }
-
   },
   watch: {
-
     /** Adjust the possible continents according to the selected granularity */
-    selectedGranularity() {
-      this.fetchContinents();
+    selectedGranularity () {
+      this.fetchContinents()
       this.clearFormFrom('granularity')
     },
 
-    /** Adjust the possible countries and the binding according to the selected continent */
-    selectedContinent() {
-      this.fetchCountries();
+    /** Adjust the possible countries according to the selected continent */
+    selectedContinent () {
+      this.fetchCountries()
     },
 
-    /** Adjust the possible countries and the binding according to the selected continent  */
-    selectedCountry() {
-      this.fetchRegions();
+    /** Adjust the possible countries according to the selected continent  */
+    selectedCountry () {
+      this.fetchRegions()
     }
-
-  },
+  }
 }
 </script>
 
 <style scoped>
-
 /* Form labels styling */
 .field-label {
   justify-content: center;
@@ -302,5 +296,4 @@ export default {
   padding-bottom: 0 !important;
   text-transform: capitalize;
 }
-
 </style>

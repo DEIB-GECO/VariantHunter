@@ -4,22 +4,20 @@ import datetime as dtime
 import sqlite3
 import sys
 import time
-
 import tqdm
 from flask_restplus import Namespace
+from .utils.utils import start_date
 
 input_file_name = sys.argv[1]
 select_country = set([x.lower() for x in sys.argv[2].strip().split(',') if x])
-db_name = 'varianthunter.db'
-api = Namespace('create_database', description='create_database')
 
-startex = time.time()
+api = Namespace('create_database', description='create_database')
+db_name = 'varianthunter.db'
+
+exec_start = time.time()
 print("Starting database creation...")
 
-
 with open(input_file_name) as f:
-    startdate = dtime.datetime.strptime("2020-01-01", "%Y-%m-%d")
-
     con = sqlite3.connect(db_name)
     # con.execute("begin exclusive")
     con.execute("pragma journal_mode=off;")
@@ -85,7 +83,7 @@ with open(input_file_name) as f:
         lin = s[11]
 
         try:
-            date = (dtime.datetime.strptime(s[3], "%Y-%m-%d") - startdate).days
+            date = (dtime.datetime.strptime(s[3], "%Y-%m-%d") - start_date).days
         except:
             continue
 
@@ -174,4 +172,4 @@ with open(input_file_name) as f:
 
     con.close()
 
-print(f'Database creation completed in {time.time() - startex} seconds')
+print(f'Database creation completed in {time.time() - exec_start} seconds')

@@ -3,139 +3,118 @@
   Description:  Standard tab layout
 
   Props:
-  └── allLineages: list of all the possible lineages. Required.
+  ├── isLoading:    Progress circe flag: true if the progress circle is displayed
+  ├── formError:    Form error flag: true if the form cannot be sent
+  └── resultLength: Result length
+
+  Events:
+  └── send:    Emitted on form send
 -->
 
 <template>
   <div>
 
     <!-- Analysis definition form -->
-    <v-container class="root-container">
-      <v-container class="child-container">
-        <div class="card-container">
-
-          <v-card :color="secondary_color">
-            <v-layout class="card-content" justify-center row wrap>
+    <v-container class='root-container'>
+      <v-container class='child-container'>
+        <div class='card-container'>
+          <v-card :color='secondary_color'>
+            <v-layout class='card-content' justify-center row wrap>
 
               <!-- Form header -->
-              <v-flex class="xs12 d-flex form-header">
-                <h2>DEFINE ANALYSIS
-                  <hr>
+              <v-flex class='xs12 d-flex form-header'>
+                <h2>
+                  DEFINE ANALYSIS
+                  <hr />
                 </h2>
               </v-flex>
 
               <!-- Form fields -->
-              <slot name="form"></slot>
+              <slot name='form'></slot>
 
               <!-- Send button -->
-              <v-flex class="xs12 sm6 md3 d-flex form-controls">
-                <v-btn :disabled="formError"
-                       class="white--text"
-                       color="#011936"
-                       @click="$emit('send'); showExplorer=false"
-                >
+              <v-flex class='xs12 sm6 md3 d-flex form-controls'>
+                <v-btn :disabled='formError' class='white--text' color='#011936'
+                       @click="$emit('send'); showExplorer = false">
                   <v-icon left>mdi-magnify</v-icon>
                   START ANALYSIS
                 </v-btn>
               </v-flex>
 
-              <!-- Explorer -->
-              <slot v-if="showExplorer" name="explorer"></slot>
+              <!-- Explorer slot-->
+              <slot v-if='showExplorer' name='explorer'></slot>
 
               <!-- Show/hide Explorer controls -->
-              <v-flex justify-center class="xs12 d-flex">
-                <v-btn v-if="!showExplorer" outlined depressed rounded small color="white"
-                       @click="showExplorer=!showExplorer">
+              <v-flex justify-center class='xs12 d-flex'>
+                <v-btn v-if='!showExplorer' outlined depressed rounded small color='white'
+                       @click='showExplorer = !showExplorer'>
                   <v-icon left>mdi-compass</v-icon>
                   Show dataset explorer
                 </v-btn>
-                <v-btn v-if="showExplorer" outlined depressed rounded small color="white"
-                       @click="showExplorer=!showExplorer">
+                <v-btn v-if='showExplorer' outlined depressed rounded small color='white'
+                       @click='showExplorer = !showExplorer'>
                   <v-icon left>mdi-close-circle-outline</v-icon>
                   Hide
                 </v-btn>
               </v-flex>
-
             </v-layout>
           </v-card>
         </div>
-
       </v-container>
     </v-container>
 
     <!-- Analysis results -->
-    <v-container class="root-container">
-      <v-container v-if="resultLength > 0" class="child-container">
-        <div ref="result" class="card-container">
-          <slot name="results"></slot>
+    <v-container class='root-container'>
+      <v-container v-if='resultLength > 0' class='child-container'>
+        <div ref='result' class='card-container'>
+          <slot name='results'></slot>
         </div>
       </v-container>
     </v-container>
 
-
     <!-- Progress circle -->
-    <v-overlay :value="isLoading">
-      <v-progress-circular
-          indeterminate
-          size="64"
-      ></v-progress-circular>
+    <v-overlay :value='isLoading'>
+      <v-progress-circular indeterminate size='64'></v-progress-circular>
     </v-overlay>
-
-    <!-- Error message -->
-    <v-overlay :value="errorOccurred">
-      <v-container>
-        <v-alert dismissible elevation="24" type="error" @input="$emit('closeErrorAlert')">
-          <b>The server is temporarily unreachable</b><br/>
-          An error occurred while contacting the server. Please try again later.
-        </v-alert>
-      </v-container>
-    </v-overlay>
-
   </div>
 </template>
 
 <script>
-
-import {mapState} from "vuex";
+import { mapState } from 'vuex'
 
 export default {
-  name: "Tab",
+  name: 'Tab',
   props: {
     /** Progress circe flag: true if the progress circle is displayed */
-    isLoading: {required: true},
-
-    /** Server error flag */
-    errorOccurred: {required: true},
+    isLoading: { required: true },
 
     /** Form error flag: true if the form cannot be sent */
-    formError: {required: true},
+    formError: { required: true },
 
     /** Result length */
-    resultLength: {required: true},
+    resultLength: { required: true }
   },
-  data() {
+  data () {
     return {
-
       /** Flag to show/hide the explorer */
-      showExplorer: false,
+      showExplorer: false
     }
   },
   computed: {
-    ...mapState(['secondary_color']),
+    ...mapState(['secondary_color'])
   },
   watch: {
-
     /** Whenever a new result is produced, scroll to make it visible */
-    resultLength(newLength, oldLength) {
-      if (newLength > oldLength && this.$refs.result !== undefined)
-        this.$refs.result.scrollIntoView();
+    resultLength (newLength, oldLength) {
+      if (newLength > oldLength && this.$refs.result !== undefined) {
+        this.$refs.result.scrollIntoView()
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-
 /* Root tab container styling */
 .root-container {
   margin: 0 auto auto auto;
@@ -183,5 +162,4 @@ export default {
   margin-top: 29px !important;
   justify-content: center !important;
 }
-
 </style>
