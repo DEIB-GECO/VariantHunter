@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 const state = {
     primary_color: '#014878',
@@ -11,15 +11,11 @@ const state = {
 
 const getters = {
 
-};
+const getters = {}
 
-const mutations = {
+const mutations = {}
 
-};
-
-const actions = {
-
-};
+const actions = {}
 
 export default new Vuex.Store({
     state,

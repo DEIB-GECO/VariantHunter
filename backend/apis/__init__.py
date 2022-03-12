@@ -12,7 +12,7 @@ api = Api(title='UFL API', version='1.0', description='Available APIs for the Va
 api.init_app(api_blueprint, add_specs=True)
 
 api.add_namespace(create_database)
-api.add_namespace(analyse_mutations)
-api.add_namespace(analyse_mutations_without_lineages)
+api.add_namespace(lineage_specific)
+api.add_namespace(lineage_independent)
 api.add_namespace(locations)
 api.add_namespace(explorer)
