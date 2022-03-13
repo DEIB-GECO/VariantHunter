@@ -58,7 +58,7 @@
       <v-data-table v-model='selectedRows' :custom-sort='customSort' :headers='tableHeaders'
                     :items='processedQueryResult' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :show-expand='!withLineages' @item-expanded='loadLineageDetails'
-                    :loading='isLoadingDetails' :single-expand='true' class='table-element' item-key='mut' multi-sort
+                    :loading='isLoadingDetails' :single-expand='true' class='table-element' item-key='item_key' multi-sort
                     show-select mobile-breakpoint='0'>
 
         <!---- Table controls ---->
@@ -257,6 +257,7 @@ export default {
       this.filteredQueryResult.forEach(rawRow => {
         const row = {}
 
+        row['item-key'] = rawRow['protein'] + '_' + rawRow['mut']
         row['location'] = rawRow['location']
         row['protein'] = rawRow['protein']
         row['mut'] = rawRow['mut']

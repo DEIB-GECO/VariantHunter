@@ -71,7 +71,7 @@ def extract_mutation_data(location, w, min_sequences=0):
         having_clause = f"having sum(count) >= {min_sequences}"
         query = f'''    select mut, sum(count) 
                         from mutsg 
-                        where date > {start} and date <= {stop} and location = '{location}'
+                        where date > {start} and date <= {stop} and location = '{location}' and mut !=''
                         group by mut 
                         {having_clause if is_target else ""};'''
         return {k: v for k, v in cur.execute(query).fetchall()}
