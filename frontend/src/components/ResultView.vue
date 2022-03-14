@@ -257,7 +257,7 @@ export default {
       this.filteredQueryResult.forEach(rawRow => {
         const row = {}
 
-        row['item-key'] = rawRow['protein'] + '_' + rawRow['mut']
+        row['item_key'] = rawRow['protein'] + '_' + rawRow['mut']
         row['location'] = rawRow['location']
         row['protein'] = rawRow['protein']
         row['mut'] = rawRow['mut']

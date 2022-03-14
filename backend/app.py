@@ -62,25 +62,30 @@ graph_pages = Blueprint('static', __name__,
 @simple_page.route('/')
 def index():
     flask.current_app.logger.info("serve index")
+    redirect(base_url)
     return render_template('index.html')
+
+
 
 
 # base url defined in apis init
-@simple_page.route('/epitope/')
-def index_epitope():
-    flask.current_app.logger.info("serve index")
-    return render_template('index.html')
+# @simple_page.route('/epitope/')
+# def index_epitope():
+#     flask.current_app.logger.info("serve index")
+#     print("____________________________EPITOPE_______________")
+#     return render_template('index.html')
 
 
 # Make a "catch all route" so all requests match our index.html file.
 # This lets us use the new history APIs in the browser.
-@simple_page.route('/', defaults={'path': ''})
-@simple_page.route('/<path:path>')
-def redirect_all(path):
-    if path.startswith("epi"):
-        return redirect(url_for('.index_epitope'))
-    else:
-        return redirect(url_for('.index'))
+#@simple_page.route('/', defaults={'path': ''})
+#@simple_page.route('/<path:path>')
+#def redirect_all(path):
+#    print(">>>>>>>>>>>>>>>>> REDIRECT ALL <<<<<<<<<<<<<<<")
+#    if path.startswith("epi"):
+#        return redirect(url_for('.index_epitope'))
+#    else:
+#        return redirect(url_for('.index'))
 
 
 # register blueprints
@@ -111,6 +116,7 @@ def add_header(r):
     Add headers to both force latest IE rendering engine or Chrome Frame,
     and also to cache the rendered page for 10 minutes.
     """
+    #r.cache_control.max_age = 600
     if "Cache-Control" not in r.headers:
         r.cache_control.max_age = 1  # 1 seconds # 5 min
         # r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"

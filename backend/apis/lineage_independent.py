@@ -129,7 +129,7 @@ def extract_lineages_data(location, mut, w):
         lin_w2 = extract_week_info(lineage_name, w['w2_begin'], w['w2_end'])
         lin_w1 = extract_week_info(lineage_name, w['w1_begin'], w['w1_end'])
         lineages_data.append({
-            'name': lineage_name,
+            'name': 'Unknown' if lineage_name=='' else lineage_name,
             'f1': (lin_w1 / tot_seq_w1) * 100,
             'f2': (lin_w2 / tot_seq_w1) * 100,
             'f3': (lin_w3 / tot_seq_w1) * 100,
