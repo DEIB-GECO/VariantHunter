@@ -7,7 +7,8 @@
 -->
 
 <template>
-  <Tab :is-loading='isLoading' :result-length='queriesResults.length' :form-error='formError' @send='startAnalysis()'>
+  <Tab :is-loading='isLoading' :result-length='queriesResults.length' :form-error='formError'
+       @send='startAnalysis(null)'>
 
     <!-- Form fields -->
     <template v-slot:form>
@@ -61,7 +62,7 @@
 
             <!-- Panel delete action -->
             <span class='delete-action'>
-              <v-btn outlined rounded small @click.native.stop='deleteQuery(index)'>
+              <v-btn outlined rounded small :loading='isDeleting' @click.native.stop='deleteQuery(index)'>
                 <v-icon small>mdi-trash-can-outline</v-icon>
                 <div class='hidden-md-and-down'>Delete</div>
               </v-btn>
@@ -78,8 +79,10 @@
           <!-- Panel content -->
           <v-expansion-panel-content :color='secondary_color'>
             <ResultView v-if='queriesResults[index].length > 0' :queryResult='queriesResults[index]'
-                        :queryParams='queriesParams[index]' :querySupport='queriesSupport[index]' :withLineages='true'
-                        @askAnalysis='delay => requestStartAnalysis(index, delay)' @error='e => $emit("error",e)' />
+                        :queryParams='queriesParams[index]' :querySupport='queriesSupport[index]'
+                        :queryCustOpt='queriesCustomOptions[index]' :withLineages='true'
+                        @askAnalysis='(delay,status) => requestStartAnalysis(index, delay, status)'
+                        @error='e => $emit("error",e)' />
 
             <div v-else class='empty-result-alert'>
               <h4>
@@ -140,17 +143,23 @@ export default {
       /** Panel expansion status array */
       expandedPanels: [],
 
-      /** Array storing the search parameters for all the queries */
+      /** Array storing the search parameters for each query */
       queriesParams: [],
 
-      /** Array storing the search results for all the queries */
+      /** Array storing the search results for each query */
       queriesResults: [],
 
-      /** Array storing the total number of sequences collected per week for all the queries */
+      /** Array storing the total number of sequences collected per week for each query */
       queriesSupport: [],
 
+      /** Array storing the customization options (filter values, selections) for each query */
+      queriesCustomOptions: [],
+
       /** Flag to automatically clear the form after submit */
-      autoclear: false
+      autoclear: false,
+
+      /** Deleting processing flag. If true a delete request is being processed */
+      isDeleting: false
     }
   },
   computed: {
@@ -175,10 +184,13 @@ export default {
       }
     },
 
-    /** Triggers the analysis request to the server */
-    startAnalysis () {
+    /**
+     * Triggers the analysis request to the server
+     * @param customOptions   The customization options (filter values, selections) for the new tab
+     */
+    startAnalysis (customOptions) {
       this.isLoading = true
-      const analysisNumber = this.queriesResults.length
+      // const analysisNumber = this.queriesResults.length
       const url = `/lineage_specific/getStatistics`
       const toSend = {
         granularity: this.selectedGranularity,
@@ -195,20 +207,20 @@ export default {
         })
         .then(res => {
           // Save the search parameters
-          this.queriesParams[analysisNumber] = {
+          this.queriesParams.unshift({
             granularity: toSend.granularity,
             location: toSend.location ? toSend.location : 'all',
             date: toSend.date,
             lineage: toSend.lineage
-          }
+          })
 
           // Save the result data
-          this.queriesResults[analysisNumber] = JSON.parse(JSON.stringify(res))['rows']
-          this.queriesSupport[analysisNumber] = JSON.parse(JSON.stringify(res))['tot_seq']
+          this.queriesResults.unshift(JSON.parse(JSON.stringify(res))['rows'])
+          this.queriesSupport.unshift(JSON.parse(JSON.stringify(res))['tot_seq'])
           this.isLoading = false
 
           // Open the new panel
-          this.expandedPanels = [analysisNumber]
+          this.expandedPanels = [0]
         })
         .catch((e) => {
           this.isLoading = false
@@ -220,8 +232,9 @@ export default {
      * Handle next/prev analysis requests
      * @param index         Reference search
      * @param requestDelay  Delay in days for the new analysis
+     * @param customOptions The customization options (filter values, selections)
      */
-    requestStartAnalysis (index, requestDelay) {
+    requestStartAnalysis (index, requestDelay, customOptions) {
       this.selectedGranularity = this.queriesParams[index].granularity
       this.selectedLocation = this.queriesParams[index].location
       this.selectedLineage = this.queriesParams[index].lineage
@@ -229,7 +242,7 @@ export default {
       referenceDate.setDate(referenceDate.getDate() + requestDelay)
       this.selectedDate = referenceDate.toISOString().slice(0, 10)
 
-      this.startAnalysis()
+      this.startAnalysis(customOptions)
     },
 
     /**
@@ -237,9 +250,11 @@ export default {
      * @param queryIndex  The index of the expansion panel to be removed
      */
     deleteQuery (queryIndex) {
+      this.isDeleting = true
       this.queriesParams.splice(queryIndex, 1)
       this.queriesResults.splice(queryIndex, 1)
       this.queriesSupport.splice(queryIndex, 1)
+      this.isDeleting = false
     }
   },
   mounted () {
@@ -250,7 +265,7 @@ export default {
         this.selectedDate = '2022-02-01'
         this.selectedLocation = 'Italy'
         this.selectedLineage = 'BA.1'
-        this.startAnalysis()
+        this.startAnalysis(null)
       }, 1000)
     }
   }

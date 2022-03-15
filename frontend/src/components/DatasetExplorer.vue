@@ -31,19 +31,19 @@
 
       <!-- Plot -->
       <v-flex v-if="hasResult" class="xs12 sm12 md11 d-flex explorer-element">
-        <BarChart :plot-data='sequenceData' />
+        <ExplorerHistogram :plot-data='sequenceData' />
       </v-flex>
     </template>
   </v-layout>
 </template>
 
 <script>
-import BarChart from '@/components/plots/BarChart'
+import ExplorerHistogram from '@/components/plots/ExplorerHistogram'
 import axios from 'axios'
 
 export default {
   name: 'DatasetExplorer',
-  components: { BarChart },
+  components: { ExplorerHistogram },
   props: {
     /** Granularity to be explored */
     granularity: { required: true },
@@ -93,13 +93,13 @@ export default {
       if (this.granularity === 'world' || this.location !== null) {
         this.isLoading = true
         const sequenceAPI = `/explorer/getSequenceInfo`
-        const to_send = {
+        const toSend = {
           granularity: this.granularity,
           location: this.location, // possibly it has no value
           lineage: this.lineage // possibly it has no value
         }
         axios
-          .post(sequenceAPI, to_send)
+          .post(sequenceAPI, toSend)
           .then(res => {
             return res.data
           })

@@ -29,6 +29,11 @@
     <!-- Global error alert -->
     <ErrorAlert v-model='errorOccurred' :errorMessage='errorMessage' />
 
+    <!-- Last update snackbar -->
+    <v-snackbar v-model='showSnackbar' timeout='8000' color='green' transition='scroll-y-transition'>
+      <v-icon left>mdi-clock</v-icon>
+      <span><b>Last dataset update: &nbsp;</b>{{ lastUpdate }}</span>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -37,6 +42,7 @@ import { mapState } from 'vuex'
 import TabWithLineages from '@/components/tabs/TabWithLineages'
 import TabWithoutLineages from '@/components/tabs/TabWithoutLineages'
 import ErrorAlert from '@/components/general/ErrorAlert'
+import axios from 'axios'
 
 export default {
   name: 'TabView',
@@ -50,11 +56,21 @@ export default {
       errorOccurred: false,
 
       /** Error message */
-      errorMessage: null
+      errorMessage: null,
+
+      /** Last update snackbar visibility flag */
+      showSnackbar: false,
+
+      /** Last update date */
+      lastUpdate: null
     }
   },
   computed: {
     ...mapState(['primary_color', 'secondary_color'])
+  },
+  mounted () {
+    // Fetch the last update date on page load
+    this.fetchLastUpdate()
   },
   methods: {
     /**
@@ -64,6 +80,24 @@ export default {
     handleError (e) {
       this.errorOccurred = true
       this.errorMessage = e
+    },
+
+    /** Fetch the last update date of the dataset */
+    fetchLastUpdate () {
+      const urlAPI = `/explorer/getLastUpdate`
+
+      axios
+        .get(urlAPI)
+        .then(res => {
+          return res.data
+        })
+        .then(res => {
+          this.lastUpdate = res
+          this.showSnackbar = true
+        })
+        .catch((e) => {
+          this.handleError(e)
+        })
     }
   }
 }
@@ -93,5 +127,18 @@ export default {
 /* Active tab style */
 .active-tab {
   font-weight: bold;
+}
+
+</style>
+<style>
+
+/* Overwrite default styling for v-snackbars */
+.v-snack__wrapper {
+  border-radius: 28px 28px 0 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.v-snack__content {
+  text-align: center !important;
 }
 </style>

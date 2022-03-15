@@ -10,7 +10,7 @@
 
 <template>
   <div style="width: 100%;">
-    <Plotly :data='data' :layout='layout' :displaylogo='false' />
+    <Plotly :data='data' :layout='layout' :displaylogo='false'/>
   </div>
 </template>
 
@@ -68,7 +68,7 @@ export default {
           z: this.z,
           customdata: this.absValue,
           hovertemplate:
-            'Period:     %{x}<br>Mutation:  %{y}<br>Diffusion:  %{z:.1f}%  (%{customdata})<extra></extra>',
+            'Period:     %{x}<br>Mutation:  %{y}<br>Diffusion:  %{z:.2f}%  (%{customdata})<extra></extra>',
           zmax: 100,
           zmin: 0,
           type: 'heatmap',
@@ -88,16 +88,22 @@ export default {
           automargin: true
         },
         xaxis: { automargin: true },
-        hovermode: 'closest'
+        hovermode: 'closest',
+        margin: {
+          b: 50,
+          t: 80,
+          pad: 10
+        },
+        autosize: true
       }
     },
 
     /** Produce the annotations for the heatmap: z values to be displayed as annotations */
     annotations () {
       const annotations = []
-      for (var i = 0; i < this.y.length; i++) {
-        for (var j = 0; j < this.x.length; j++) {
-          var annotation = {
+      for (let i = 0; i < this.y.length; i++) {
+        for (let j = 0; j < this.x.length; j++) {
+          const annotation = {
             xref: 'x1',
             yref: 'y1',
             x: this.x[j],

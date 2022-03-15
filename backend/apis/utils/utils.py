@@ -2,7 +2,7 @@
     Utilities
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 start_date = datetime.strptime("2020-01-01", "%Y-%m-%d")
 """ 
@@ -29,3 +29,16 @@ def compute_weeks_from_date(date):
     w['w1_end'] = w['w2_begin'] - 1
     w['w1_begin'] = w['w1_end'] - 7
     return w
+
+
+def compute_date_from_diff(diff):
+    """
+    Compute date value from diff from the start_date
+    Args:
+        diff: Difference from the start date
+
+    Returns: A string representing the date
+
+    """
+    date= start_date + timedelta(days=diff)
+    return date.strftime("%Y-%m-%d")

@@ -1,20 +1,20 @@
 <!--
-  Component:    BarChart
+  Component:    LineChart
   Description:  Barchart plot. Implemented using vue-plotly.
 
   Props:
   ├── plotTitle:  Title for the plot. Required.
   ├── plotData:   Data for the plot. Required.
   ├── dateLabel:  Array of data labels for the periods
-  └── weekSeq:    Total number of sequences collected per week
+  └──
 -->
 
 <template>
   <div class='plotly-container'>
 
-    <!-- BarChart plot -->
+    <!-- LineChart plot -->
     <Plotly :data='data' :layout='layout' :displaylogo='false'
-            :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']" />
+            :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']"  />
 
     <!-- Markers/lines Dialog -->
     <v-container class='plot-controls'>
@@ -106,7 +106,7 @@ export default {
     /** Layout data for the plot */
     layout () {
       return {
-        height: this.plotData.length >= 20 ? 550 : 510,
+        height: this.plotData.length >= 20 ? 540 : 500,
         colorway:
           [
             '#ef5378', '#5ee171', '#f3df67', '#6685f1',
@@ -135,7 +135,6 @@ export default {
           tickfont: {
             size: 14
           },
-
           dtick: 10,
           zeroline: false,
           showline: false,
@@ -153,7 +152,13 @@ export default {
         barmode: 'group',
         bargap: 0.15,
         bargroupgap: 0.1,
-        hovermode: 'closest'
+        hovermode: 'closest',
+        margin: {
+          b: 50,
+          t: 80,
+          pad: 10
+        },
+        autosize: true
       }
     }
   },
@@ -166,7 +171,7 @@ export default {
       const labels = []
       for (let i = 1; i <= 4; i++) {
         labels.push(
-          this.dateLabel['w' + i] + '<br>Tot. seq.: ' + this.weekSeq[i - 1]
+          '<br>' + this.dateLabel['w' + i] + '<br>Tot. seq.: ' + this.weekSeq[i - 1]
         )
       }
       return labels

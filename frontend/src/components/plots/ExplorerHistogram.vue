@@ -1,5 +1,5 @@
 <!--
-  Component:    BarChart
+  Component:    ExplorerHistogram
   Description:  Barchart plot. Implemented using vue-plotly.
 
   Props:
@@ -8,7 +8,7 @@
 
 <template>
   <div style="width: 100%;">
-    <!-- BarChart plot -->
+    <!-- ExplorerHistogram plot -->
     <Plotly :data='data' :layout='layout' :displaylogo='false' :displayModeBar='false' />
   </div>
 </template>
@@ -17,7 +17,7 @@
 import { Plotly } from 'vue-plotly'
 
 export default {
-  name: 'BarChart',
+  name: 'ExplorerHistogram',
   components: {
     Plotly
   },
@@ -74,7 +74,8 @@ export default {
           b: 55,
           t: 30,
           pad: 4
-        }
+        },
+        autosize: true
       }
     },
 

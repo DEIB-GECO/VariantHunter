@@ -4,7 +4,7 @@
     <v-toolbar :color='primary_color' class='navbar' short dark flat>
 
       <!-- Logo -->
-      <v-img :src='websiteLogo' contain max-height='39px' max-width='39px' />
+      <v-img :src='websiteLogo' class='logo' contain max-height='39px' max-width='39px' />
       <v-toolbar-title class='site-title'>
         <span class='emphasis'>Variant</span>
         <span>Hunter</span>
@@ -99,6 +99,14 @@ export default {
 </script>
 
 <style scoped>
+
+/* Site logo */
+.logo{
+  height: 35px;
+  border-radius: 11px;
+  margin-left: 17px;
+}
+
 /* Site title styles*/
 .site-title {
   font-size: 33px;
@@ -180,7 +188,7 @@ body {
 
 /* Border radius for the graph plots*/
 .main-svg {
-  border-radius: 4px;
+  border-radius: 4px 0 4px 4px;
 }
 
 /* Overwrite default Vuetify font */

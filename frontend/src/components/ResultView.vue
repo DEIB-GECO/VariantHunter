@@ -6,6 +6,7 @@
   ├── queryResult:  Array of raw data fetched from the server
   ├── queryParams:  Object storing the query parameters {granularity, location, date, [lineage]}
   ├── querySupport: Array storing the total number of sequences collected per week
+  ├── queryCustOpt: Object storing the custom preselection for the filtering/selection options
   └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis. Required.
 
   Events:
@@ -44,22 +45,12 @@
     </v-flex>
 
     <!-- MUTATIONS TABLE SECTION  --------------------------------------------->
-    <!---- Heading ---->
-    <v-flex class='xs12 d-flex' justify-center>
-      <h2 class='result-heading'>
-        <v-icon left color='white'>mdi-table-multiple</v-icon>
-        MUTATIONS TABLE
-        <hr />
-      </h2>
-    </v-flex>
-
-    <!---- Table ---->
-    <v-flex justify-center class='xs12 d-flex table-container'>
+    <SectionElement icon='mdi-table-multiple' title='MUTATIONS TABLE'>
       <v-data-table v-model='selectedRows' :custom-sort='customSort' :headers='tableHeaders'
                     :items='processedQueryResult' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :show-expand='!withLineages' @item-expanded='loadLineageDetails'
-                    :loading='isLoadingDetails' :single-expand='true' class='table-element' item-key='item_key' multi-sort
-                    show-select mobile-breakpoint='0'>
+                    :loading='isLoadingDetails' :single-expand='true' class='table-element' item-key='item_key'
+                    multi-sort show-select mobile-breakpoint='0'>
 
         <!---- Table controls ---->
         <template v-slot:top>
@@ -99,49 +90,33 @@
             </v-simple-table>
           </td>
         </template>
-
       </v-data-table>
-    </v-flex>
+    </SectionElement>
 
     <!-- HEATMAP SECTION  ----------------------------------------------------->
-    <!---- Heading ---->
-    <v-flex class='xs12 d-flex' justify-center>
-      <h2 class='result-heading'>
-        <v-icon left color='white'>mdi-chart-gantt</v-icon>
-        DIFFUSION HEATMAP
-        <hr />
-      </h2>
-    </v-flex>
-
-    <!---- Heatmap ---->
-    <v-flex class='xs12 d-flex' justify-center>
+    <SectionElement icon='mdi-chart-gantt' title='DIFFUSION HEATMAP'>
       <HeatMap :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title' />
-    </v-flex>
+    </SectionElement>
+
+    <!-- ODD RATIO SECTION  --------------------------------------------------->
+    <SectionElement icon='mdi-align-vertical-bottom' title='DIFFUSION ODD RATIO'>
+      <OddRatioChart :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title' />
+    </SectionElement>
 
     <!-- CHART SECTION  ------------------------------------------------------->
-    <!---- Heading ---->
-    <v-flex class='xs12 d-flex' justify-center>
-      <h2 class='result-heading'>
-        <v-icon left color='white'>mdi-chart-line</v-icon>
-        DIFFUSION TREND CHART
-        <hr />
-      </h2>
-    </v-flex>
-
-    <!---- Chart ---->
-    <v-flex class='xs12 d-flex' justify-center>
+    <SectionElement icon='mdi-chart-line' title='DIFFUSION TREND CHART'>
       <LineChart :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title'
                  :weekSeq='plotsInfo.support' />
-    </v-flex>
+    </SectionElement>
 
     <!-- Next/prev week button ------------------------------------------------>
     <v-flex class='xs12 d-flex'>
-      <v-btn class='white--text' color='#011936' @click="$emit('askAnalysis', -7)">
+      <v-btn class='white--text' color='#011936' @click="$emit('askAnalysis', -7,status)">
         <v-icon left>mdi-chevron-left</v-icon>
         PREV WEEK
       </v-btn>
       <v-spacer></v-spacer>
-      <v-btn class='white--text' color='#011936' @click="$emit('askAnalysis', +7)">
+      <v-btn class='white--text' color='#011936' @click="$emit('askAnalysis', +7,status)">
         NEXT WEEK
         <v-icon right>mdi-chevron-right</v-icon>
       </v-btn>
@@ -158,10 +133,12 @@ import axios from 'axios'
 import FieldSelector from '@/components/form/FieldSelector'
 import TableControls from '@/components/tables/TableControls'
 import TableSuperHeader from '@/components/tables/TableSuperHeader'
+import OddRatioChart from '@/components/plots/OddRatioChart'
+import SectionElement from '@/components/general/SectionElement'
 
 export default {
   name: 'ResultView',
-  components: { TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart },
+  components: { SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart },
   props: {
     /** Array of raw data fetched from the server of the form:
      *  [{  location, protein, [lineage,] mut, slope, w[1-4], f[1-4],
@@ -175,19 +152,22 @@ export default {
     /** Array storing the total number of sequences collected per week */
     querySupport: { required: true },
 
+    /** Object storing the custom preselection for the filtering/selection options */
+    queryCustOpt: { required: false },
+
     /** Lineages flag. True if the data refers to a lineage specific analysis. Required.*/
     withLineages: { required: true }
   },
   data () {
     return {
       /** Selected protein to further filter the data */
-      selectedProtein: null,
+      selectedProtein: this.queryCustOpt ? this.queryCustOpt.selectedProtein : null,
 
       /** Selected mutation to further filter the data. Takes the form <PROTEIN>_<MUT> */
-      selectedMutation: null,
+      selectedMutation: this.queryCustOpt ? this.queryCustOpt.selectedMutation : null,
 
       /** Array of selected rows */
-      selectedRows: [],
+      selectedRows: this.queryCustOpt ? this.queryCustOpt.selectedRows : [],
 
       /** Array of columns selected for sorting data */
       sortingIndexes: [],
@@ -200,7 +180,7 @@ export default {
 
       /** Footer options for the data table */
       footerProps: {
-        'items-per-page-options': [-1, 5, 10, 20, 50, 100, 150, 200, 500]
+        'items-per-page-options': [-1, 10, 20, 50, 100, 150, 200, 500]
       },
 
       /** Flag to show the p_values in the table */
@@ -215,6 +195,15 @@ export default {
   },
   computed: {
     ...mapState(['primary_color', 'secondary_color']),
+
+    /** The current customization status */
+    status () {
+      return {
+        'selectedRows': this.selectedRows,
+        'selectedProteins': this.selectedProteins,
+        'selectedMutations': this.selectedMutations
+      }
+    },
 
     /** Array of objects describing header columns */
     tableHeaders () {
@@ -308,12 +297,13 @@ export default {
         plotsTitle = `Selected mutations (${this.selectedRows.length})`
         plotsData = this.customSort([...this.selectedRows], this.sortingIndexes, this.isDescSorting).reverse()
       } else {
-        plotsTitle = 'Top 5 decreasing + Top 5 increasing mutations'
         const sortedData = this.customSort([...this.processedQueryResult], ['slope'], [false])
         // Get first 5 and last 5
         if (sortedData.length >= 10) {
+          plotsTitle = 'Top 5 decreasing + Top 5 increasing mutations'
           plotsData = sortedData.slice(0, 5).concat(sortedData.slice(-5))
         } else {
+          plotsTitle = `All mutations (${sortedData.length})`
           plotsData = sortedData
         }
       }
@@ -558,12 +548,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+
 /* Panel container styling */
 .panel-container {
-  background: var(
-    --secondary-color
-  ); /* to ensure readable downloadable images */
+  background: var(--secondary-color); /* to ensure readable downloadable images */
   padding-top: 30px;
   margin: 0;
 }
@@ -581,14 +570,6 @@ export default {
   text-align: center;
   margin: auto;
   color: white;
-}
-
-/* Heading of table and graphs */
-.result-heading {
-  color: white;
-  font-weight: 800;
-  word-spacing: 5px;
-  margin-top: 30px;
 }
 
 /* Table size */
@@ -619,12 +600,9 @@ td.expanded-td tr:hover {
   letter-spacing: 0.019em;
   display: inherit;
 }
-</style>
-
-<style>
 
 /* Additional global rules to overwrite the vuetify styling fot table*/
-.table-container .v-data-table-header th {
+.section-container .v-data-table-header th {
   border-top: none !important;
   border-bottom: var(--tertiary-color-dark) solid 1px !important;
   padding-top: 17px !important;
@@ -635,21 +613,22 @@ td.expanded-td tr:hover {
   padding-bottom: 15px !important;
 }
 
-.table-container .v-data-table,
-.table-container .v-data-table-header {
+.section-container .v-data-table,
+.section-container .v-data-table-header {
+  border-radius: 4px 0 4px 4px;
   background: var(--tertiary-color-light) !important;
 }
 
-.table-container table {
+.section-container table {
   background: white !important;
 }
 
-.table-container th span:first-child {
+.section-container th span:first-child {
   display: block !important;
 }
 
 /* Avoid breaking table content across multiple lines */
-.table-container tbody {
+.section-container tbody {
   white-space: nowrap !important;
 }
 

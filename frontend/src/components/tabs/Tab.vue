@@ -9,6 +9,10 @@
 
   Events:
   └── send:    Emitted on form send
+
+  Slots:
+  ├── form:       The tab form fields
+  └── explorer:   The explorer section
 -->
 
 <template>
@@ -29,7 +33,7 @@
                 </h2>
               </v-flex>
 
-              <!-- Form fields -->
+              <!-- Form fields slot -->
               <slot name='form'></slot>
 
               <!-- Send button -->
@@ -42,7 +46,9 @@
               </v-flex>
 
               <!-- Explorer slot-->
-              <slot v-if='showExplorer' name='explorer'></slot>
+              <v-expand-transition>
+                <slot v-if='showExplorer' name='explorer'></slot>
+              </v-expand-transition>
 
               <!-- Show/hide Explorer controls -->
               <v-flex justify-center class='xs12 d-flex'>
