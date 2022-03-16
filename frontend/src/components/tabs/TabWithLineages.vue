@@ -194,8 +194,8 @@ export default {
       const url = `/lineage_specific/getStatistics`
       const toSend = {
         granularity: this.selectedGranularity,
-        location: this.selectedLocation,
-        date: this.selectedDate,
+        location: this.selectedLocation ? this.selectedLocation : 'all',
+        date: this.selectedDate[1],
         lineage: this.selectedLineage
       }
       this.clearForm()
@@ -207,20 +207,15 @@ export default {
         })
         .then(res => {
           // Save the search parameters
-          this.queriesParams.unshift({
-            granularity: toSend.granularity,
-            location: toSend.location ? toSend.location : 'all',
-            date: toSend.date,
-            lineage: toSend.lineage
-          })
+          this.queriesParams.push(toSend)
 
           // Save the result data
-          this.queriesResults.unshift(JSON.parse(JSON.stringify(res))['rows'])
-          this.queriesSupport.unshift(JSON.parse(JSON.stringify(res))['tot_seq'])
+          this.queriesResults.push(res['rows'])
+          const nextIndex = this.queriesSupport.push(res['tot_seq'])
           this.isLoading = false
 
           // Open the new panel
-          this.expandedPanels = [0]
+          this.expandedPanels = [nextIndex - 1]
         })
         .catch((e) => {
           this.isLoading = false
@@ -240,7 +235,7 @@ export default {
       this.selectedLineage = this.queriesParams[index].lineage
       const referenceDate = new Date(this.queriesParams[index].date)
       referenceDate.setDate(referenceDate.getDate() + requestDelay)
-      this.selectedDate = referenceDate.toISOString().slice(0, 10)
+      this.selectedDate = [null, referenceDate.toISOString().slice(0, 10)]
 
       this.startAnalysis(customOptions)
     },
@@ -262,7 +257,7 @@ export default {
     if (this.debug_mode) {
       setTimeout(() => {
         this.selectedGranularity = 'country'
-        this.selectedDate = '2022-02-01'
+        this.selectedDate = [null, '2022-02-01']
         this.selectedLocation = 'Italy'
         this.selectedLineage = 'BA.1'
         this.startAnalysis(null)

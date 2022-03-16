@@ -10,23 +10,26 @@
   <v-layout justify-center row wrap>
     <!-- Label -->
     <v-flex class='xs12 d-flex field-label'>
-      <span>Date</span>
+      <span>Analysis period</span>
     </v-flex>
 
     <!-- Picker -->
+
     <v-flex class='xs12 d-flex field-element'>
       <v-menu v-model='menuVisibility' :close-on-content-click='false' min-width='auto' offset-y
-              transition='scale-transition'>
+              transition='scale-transition' content-class='menu-container'>
 
         <template v-slot:activator='{ on, attrs }'>
-          <v-text-field v-model='selectedDate' append-icon='mdi-calendar' hide-details label='Date' readonly clearable
+          <v-text-field v-model='selectedDateText' append-icon='mdi-calendar' hide-details label='Date' readonly
+                        clearable
                         solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true' />
         </template>
-
-        <v-date-picker v-model='selectedDate' :max='today' first-day-of-week='1' no-title scrollable
-                       @input='menuVisibility = false' />
+        <div class='hint'>Select the end date for the 4 weeks analysis period</div>
+        <v-date-picker v-model='selectedDate' :max='today' first-day-of-week='1' no-title range
+                       show-adjacent-months @input='menuVisibility = false' />
       </v-menu>
     </v-flex>
+
   </v-layout>
 </template>
 
@@ -35,7 +38,7 @@ export default {
   name: 'DatePicker',
   props: {
     /** Value variable for binding of the date */
-    value: { type: String }
+    value: { type: Array }
   },
   data () {
     return {
@@ -51,18 +54,34 @@ export default {
     selectedDate: {
       /**
        * Getter for the string representing the selected date
-       * @returns {string}  The selected date
+       * @returns {Array}  The selected date
        */
       get () {
         return this.value
       },
 
       /**
-       * Setter for the date
-       * @param val The new value
+       * Setter for the date. Automatically select the analysis period starting from the ending date selection
+       * @param endDate The new value
        */
-      set (val) {
-        this.$emit('input', val)
+      set ([endDate]) {
+        const startDate = new Date(new Date(endDate).setDate(new Date(endDate).getDate() - 28)).toISOString().slice(0, 10)
+        this.$emit('input', [startDate, endDate])
+      }
+    },
+
+    /** Selected analysis period label */
+    selectedDateText () {
+      return this.value ? this.value.join(' ⏐ ') : null
+    }
+
+  },
+  watch: {
+    /** Auto adjust the date range if not appropriately set*/
+    selectedDate (newRange) {
+      if (newRange && newRange[0] == null) {
+        const startDate = new Date(new Date(newRange[1]).setDate(new Date(newRange[1]).getDate() - 28)).toISOString().slice(0, 10)
+        this.$emit('input', [startDate, newRange[1]])
       }
     }
   }
@@ -83,6 +102,21 @@ export default {
   padding-top: 0 !important;
   padding-bottom: 4px !important;
   text-transform: capitalize;
+}
+
+/* Hint for date-picker */
+.hint{
+  background: white;
+  text-align: center;
+  max-width: fit-content;
+  padding: 10px 14px;
+  line-height: 17px;
+  line-break: loose;
+}
+
+/* Menu container style */
+.menu-container{
+  background: white !important;
 }
 
 </style>

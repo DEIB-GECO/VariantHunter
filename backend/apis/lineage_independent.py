@@ -20,12 +20,13 @@ db_name = 'varianthunter.db'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-def extract_week_seq_counts(location, w):
+def extract_week_seq_counts(location, w, mut=None):
     """
     Extract weekly sequence counts for the given location and weeks from the database
     Args:
         location:   String representing the location to be considered
         w:          Weeks to be considered
+        mut:        If set, the counts consider only the sequences with a given mutation
 
     Returns: An array of sequence counts
 
@@ -36,10 +37,18 @@ def extract_week_seq_counts(location, w):
     cur = con.cursor()
 
     def extract_week_count(start, stop):
-        query = f''' select sum(count)
-                    from timelocling 
-                    where date > {start} and date <= {stop} and location = '{location}' 
-                    group by date,location;'''
+        if mut is not None:
+            # count the seq collected for a given week and location having a given mutation
+            query = f'''    select sum(count)
+                            from  mutsg
+                            where date > {start} and date <= {stop} and location = '{location}' and mut='{mut}' 
+                            group by date,location;'''
+        else:
+            # count the seq collected for a given week and location
+            query = f'''    select sum(count)
+                            from  timelocling
+                            where date > {start} and date <= {stop} and location = '{location}' 
+                            group by date,location;'''
         return sum([x[0] for x in cur.execute(query).fetchall()])
 
     tot_seq_w4 = extract_week_count(w['w4_begin'], w['w4_end'])
@@ -101,8 +110,10 @@ def extract_lineages_data(location, mut, w):
     con = sqlite3.connect(db_name)
     cur = con.cursor()
 
-    week_sequence_counts = extract_week_seq_counts(location, w)
+    week_sequence_counts = extract_week_seq_counts(location, w, mut=mut)
     tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4 = week_sequence_counts
+    print(week_sequence_counts)
+    print(extract_week_seq_counts(location, w))
 
     def extract_all_lineages(start, stop):
         query = f'''    select distinct lineage 
@@ -122,6 +133,7 @@ def extract_lineages_data(location, mut, w):
         return sum([x[0] for x in seqs])
 
     lineages = extract_all_lineages(w['w1_begin'], w['w4_end'])
+    lineages.sort()
     lineages_data = []
     for lineage_name in lineages:
         lin_w4 = extract_week_info(lineage_name, w['w4_begin'], w['w4_end'])
@@ -129,11 +141,11 @@ def extract_lineages_data(location, mut, w):
         lin_w2 = extract_week_info(lineage_name, w['w2_begin'], w['w2_end'])
         lin_w1 = extract_week_info(lineage_name, w['w1_begin'], w['w1_end'])
         lineages_data.append({
-            'name': 'Unknown' if lineage_name=='' else lineage_name,
-            'f1': (lin_w1 / tot_seq_w1) * 100,
-            'f2': (lin_w2 / tot_seq_w1) * 100,
-            'f3': (lin_w3 / tot_seq_w1) * 100,
-            'f4': (lin_w4 / tot_seq_w1) * 100,
+            'name': lineage_name,
+            'f1': (lin_w1 / tot_seq_w1) * 100 if tot_seq_w1 > 0 else 0,
+            'f2': (lin_w2 / tot_seq_w2) * 100 if tot_seq_w2 > 0 else 0,
+            'f3': (lin_w3 / tot_seq_w3) * 100 if tot_seq_w3 > 0 else 0,
+            'f4': (lin_w4 / tot_seq_w4) * 100 if tot_seq_w4 > 0 else 0,
             'w1': lin_w1,
             'w2': lin_w2,
             'w3': lin_w3,

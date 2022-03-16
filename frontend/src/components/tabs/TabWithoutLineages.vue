@@ -13,7 +13,7 @@
     <!-- Form fields -->
     <template v-slot:form>
       <!---- Granularity ---->
-      <v-flex class='xs12 sm4 md3 d-flex'>
+      <v-flex class='xs12 sm4 md2 d-flex'>
         <FieldSelector v-model='selectedGranularity' label='Granularity' placeholder='Granularity'
                        :possible-values='possibleGranularity' />
       </v-flex>
@@ -25,7 +25,7 @@
       </v-flex>
 
       <!---- Date ---->
-      <v-flex class='xs12 sm6 md3 d-flex'>
+      <v-flex class='xs12 sm6 md4 d-flex'>
         <DatePicker v-model='selectedDate' />
       </v-flex>
     </template>
@@ -74,7 +74,8 @@
             <ResultView v-if='queriesResults[index].length > 0' :queryParams='queriesParams[index]'
                         :queryResult='queriesResults[index]' :querySupport='queriesSupport[index]'
                         :queryCustOpt='queriesCustomOptions[index]' :withLineages='false'
-                        @askAnalysis='(delay,status) => requestStartAnalysis(index, delay, status)' />
+                        @askAnalysis='(delay,status) => requestStartAnalysis(index, delay, status)'
+                        @error='e=> $emit("error",e)' />
 
             <div v-else class='empty-result-alert'>
               <h4>
@@ -179,8 +180,8 @@ export default {
       const url = `/lineage_independent/getStatistics`
       const toSend = {
         granularity: this.selectedGranularity,
-        location: this.selectedLocation,
-        date: this.selectedDate
+        location: this.selectedLocation ? this.selectedLocation : 'all',
+        date: this.selectedDate[1]
       }
       this.clearForm()
 
@@ -191,19 +192,16 @@ export default {
         })
         .then(res => {
           // Save the search parameters
-          this.queriesParams.unshift({
-            granularity: toSend.granularity,
-            location: toSend.location ? toSend.location : 'all',
-            date: toSend.date
-          })
+          this.queriesParams.push(toSend)
+          this.queriesCustomOptions.push(customOptions)
 
           // Save the result data
-          this.queriesResults.unshift(JSON.parse(JSON.stringify(res))['rows'])
-          this.queriesSupport.unshift(JSON.parse(JSON.stringify(res))['tot_seq'])
+          this.queriesResults.push(res['rows'])
+          const nextIndex = this.queriesSupport.push(res['tot_seq'])
           this.isLoading = false
 
           // Open the new panel and jump to the result container
-          this.expandedPanels = [0]
+          this.expandedPanels = [nextIndex - 1]
         })
         .catch((e) => {
           this.isLoading = false
@@ -222,7 +220,7 @@ export default {
       this.selectedLocation = this.queriesParams[index].location
       const referenceDate = new Date(this.queriesParams[index].date)
       referenceDate.setDate(referenceDate.getDate() + requestDelay)
-      this.selectedDate = referenceDate.toISOString().slice(0, 10)
+      this.selectedDate = [null, referenceDate.toISOString().slice(0, 10)]
 
       this.startAnalysis(customOptions)
     },
@@ -244,7 +242,7 @@ export default {
     if (this.debug_mode) {
       setTimeout(() => {
         this.selectedGranularity = 'continent'
-        this.selectedDate = '2022-02-01'
+        this.selectedDate = [null, '2022-02-01']
         this.selectedLocation = 'Europe'
         this.startAnalysis(null)
       }, 1000)

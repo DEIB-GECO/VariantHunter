@@ -161,13 +161,13 @@ export default {
   data () {
     return {
       /** Selected protein to further filter the data */
-      selectedProtein: this.queryCustOpt ? this.queryCustOpt.selectedProtein : null,
+      selectedProtein: null,
 
       /** Selected mutation to further filter the data. Takes the form <PROTEIN>_<MUT> */
-      selectedMutation: this.queryCustOpt ? this.queryCustOpt.selectedMutation : null,
+      selectedMutation: null,
 
       /** Array of selected rows */
-      selectedRows: this.queryCustOpt ? this.queryCustOpt.selectedRows : [],
+      selectedRows: [],
 
       /** Array of columns selected for sorting data */
       sortingIndexes: [],
@@ -199,9 +199,9 @@ export default {
     /** The current customization status */
     status () {
       return {
-        'selectedRows': this.selectedRows,
-        'selectedProteins': this.selectedProteins,
-        'selectedMutations': this.selectedMutations
+        'selectedRowsKeys': this.selectedRows.map(row => row.item_key),
+        'selectedProtein': this.selectedProtein,
+        'selectedMutation': this.selectedMutation
       }
     },
 
@@ -543,6 +543,24 @@ export default {
             this.$emit('error', e)
           })
       }
+    }
+  },
+  mounted () {
+    // Apply customization options: restore filters and selection but only if applicable
+    if (this.queryCustOpt) {
+      const presMut = this.queryCustOpt.selectedMutation
+      const presProt = this.queryCustOpt.selectedProtein
+      const presKeys = this.queryCustOpt.selectedRowsKeys
+
+      this.selectedProtein = this.possibleProteins.includes(presProt)
+        ? presProt
+        : null
+      this.selectedMutation = presMut
+        ? presMut.filter((m) => this.possibleMutations.includes(m))
+        : null
+      this.selectedRows = presKeys
+        ? this.processedQueryResult.filter(row => presKeys.includes(row.item_key))
+        : []
     }
   }
 }
