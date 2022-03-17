@@ -21,7 +21,7 @@
         <!-- Continent selector -->
         <v-col class='complex-field-element'>
           <v-autocomplete v-model='selectedContinent' :disabled='disableContinentSelection' :items='possibleContinents'
-                          :loading='isLoading' hide-details label='Continent' solo
+                          :loading='isLoading' hide-details label='Continent' attach solo
                           @input="updateSelectedLocation('continent')">
             <template v-slot:item='data'>
               <span>{{ getFieldText(data.item) }}</span>
@@ -32,7 +32,7 @@
         <!-- Country selector-->
         <v-col v-if='showCountrySelector' class='complex-field-element'>
           <v-autocomplete v-model='selectedCountry' :disabled='disableCountrySelection' :items='possibleCountries'
-                          :loading='isLoading' hide-details label='Country' solo
+                          :loading='isLoading' hide-details label='Country' attach solo
                           @input="updateSelectedLocation('country')">
             <template v-slot:item='data'>
               <span>{{ getFieldText(data.item) }}</span>
@@ -43,7 +43,7 @@
         <!-- Region selector -->
         <v-col v-if='showRegionSelector' class='complex-field-element'>
           <v-autocomplete v-model='selectedRegion' :disabled='disableRegionSelection' :items='possibleRegions'
-                          :loading='isLoading' hide-details label='Region' solo
+                          :loading='isLoading' hide-details label='Region' attach solo
                           @input="updateSelectedLocation('region')">
             <template v-slot:item='data'>
               <span>{{ getFieldText(data.item) }}</span>
@@ -296,4 +296,5 @@ export default {
   padding-bottom: 0 !important;
   text-transform: capitalize;
 }
+
 </style>

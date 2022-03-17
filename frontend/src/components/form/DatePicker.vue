@@ -17,7 +17,7 @@
 
     <v-flex class='xs12 d-flex field-element'>
       <v-menu v-model='menuVisibility' :close-on-content-click='false' min-width='auto' offset-y
-              transition='scale-transition' content-class='menu-container'>
+              transition='scale-transition' content-class='menu-container' attach>
 
         <template v-slot:activator='{ on, attrs }'>
           <v-text-field v-model='selectedDateText' append-icon='mdi-calendar' hide-details label='Date' readonly
@@ -71,10 +71,23 @@ export default {
     },
 
     /** Selected analysis period label */
-    selectedDateText () {
-      return this.value ? this.value.join(' ⏐ ') : null
-    }
+    selectedDateText: {
+      /**
+       * Getter for the label
+       * @returns {Array}  The label date
+       */
+      get () {
+        return this.value ? this.value.join(' ⏐ ') : null
+      },
 
+      /**
+       * Setter for the label.
+       * @param label The new label
+       */
+      set (label) {
+        // Ignore change requests
+      }
+    }
   },
   watch: {
     /** Auto adjust the date range if not appropriately set*/
@@ -105,17 +118,18 @@ export default {
 }
 
 /* Hint for date-picker */
-.hint{
+.hint {
   background: white;
   text-align: center;
   max-width: fit-content;
   padding: 10px 14px;
   line-height: 17px;
   line-break: loose;
+  text-transform: initial !important;
 }
 
 /* Menu container style */
-.menu-container{
+.menu-container {
   background: white !important;
 }
 

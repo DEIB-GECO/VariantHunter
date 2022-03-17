@@ -36,9 +36,7 @@
 
           <!-- Mutation filter -->
           <v-flex justify-center class='xs12 sm7 md4 d-flex '>
-            <FieldSelector v-model='selectedMutation' label='Mutation' placeholder='All'
-                           :possible-values='possibleMutations' :autocomplete='true' :small-chips='true'
-                           :multiple='true' />
+            <MutationSelector v-model='selectedMutation' :possible-values='possibleMutations'/>
           </v-flex>
         </v-layout>
       </v-container>
@@ -135,10 +133,11 @@ import TableControls from '@/components/tables/TableControls'
 import TableSuperHeader from '@/components/tables/TableSuperHeader'
 import OddRatioChart from '@/components/plots/OddRatioChart'
 import SectionElement from '@/components/general/SectionElement'
+import MutationSelector from '@/components/form/MutationSelector'
 
 export default {
   name: 'ResultView',
-  components: { SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart },
+  components: { MutationSelector, SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart },
   props: {
     /** Array of raw data fetched from the server of the form:
      *  [{  location, protein, [lineage,] mut, slope, w[1-4], f[1-4],

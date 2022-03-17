@@ -73,16 +73,14 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 /* Header info dialog styling*/
 .dialog-title {
   text-transform: uppercase;
   font-weight: 600;
   font-size: 20px;
 }
-</style>
 
-<style>
 /* Global style fot the content of the dialog */
 .dialog-text ul {
   margin-top: 40px;

@@ -21,7 +21,7 @@
     <v-flex class='xs12 d-flex field-element'>
       <v-autocomplete v-model='selectedLineage'
                       :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world')"
-                      :items='possibleLineages' clearable hide-details label='Lineage' solo />
+                      :items='possibleLineages' clearable hide-details label='Lineage' attach solo />
     </v-flex>
   </v-layout>
 </template>
@@ -77,7 +77,7 @@ export default {
         const url = `/lineage_specific/getLineages`
         const toSend = {
           location: this.selectedLocation,
-          date: this.selectedDate
+          date: this.selectedDate[1]
         }
         axios
           .post(url, toSend)
