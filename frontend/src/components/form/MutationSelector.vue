@@ -23,25 +23,39 @@
 
           <!-- Dialog content -->
           <v-card-text class='text-s-center dialog-text'>
-            <v-container v-if='false' fluid>
-              <v-row>
-                <v-col cols='12'>
-                  Please, paste here the list of mutation to be filtered. <br />
-                  The list will be automatically parsed to fill in the filter.
-                </v-col>
-                <v-col cols='12'>
-                  <v-text-field v-model='selectedSeparator' label='Separator' :rules='rules' hide-details='auto'
-                                outlined dense />
-                </v-col>
-                <v-col cols='12'>
-                  <v-textarea label='File content' auto-grow outlined rows='4' row-height='20' clearable dense @input='checkUploaded' />
-                </v-col>
-              </v-row>
-            </v-container>
             <v-container fluid>
               <v-row>
+
+                <!-- Help info -->
                 <v-col cols='12'>
-                  This feature is not yet available
+                  Please, paste here the list of mutations to be filtered and press enter.
+                  The list will be automatically parsed to fill in the filter.
+                </v-col>
+
+                <!-- Separator selector -->
+                <v-col cols='12'>
+                  <v-text-field v-model='selectedSeparator' label='Separator' :rules='rules' hide-details='auto'
+                                :loading='processing' outlined dense />
+                </v-col>
+
+                <!-- File uploader -->
+                <v-col cols='12'>
+                  <v-textarea v-model='uploadedFile' label='File content' auto-grow outlined rows='4' row-height='20'
+                              clearable dense :loading='processing' hide-details='auto' :error-messages='errorMessages'
+                              @input='parseFile' />
+                </v-col>
+
+                <!-- Example section -->
+                <v-col cols='12'>
+                  For example:
+                  <code>M_A63T {{selectedSeparator? selectedSeparator:';'}} M_D3G {{selectedSeparator? selectedSeparator:';'}} M_I76V</code>
+                </v-col>
+
+                <!-- Parsed result -->
+                <v-col v-if='parsedFile' cols='12'>
+
+                    <v-chip v-for="elem in parsedFile" :key="elem">{{ elem }}</v-chip>
+
                 </v-col>
               </v-row>
             </v-container>
@@ -79,12 +93,30 @@ export default {
       /** Uploader visibility */
       showUploader: false,
 
+      /** Processing flag. If true, the file is being parsed. */
+      processing: false,
+
+      /** Error messages for the parsing */
+      errorMessages: [],
+
+      /** Currently selected separator */
       selectedSeparator: ',',
 
+      /** Rules for the separators */
       rules: [
         value => !!value || 'Required.',
-        value => (value && value.length === 1) || 'The separator must be only one character long'
-      ]
+        value => (value && value.length === 1) || 'The separator must be only one character long',
+        value => (value && value[0] !== '_') || 'This separator is not allowed',
+        value => (value && !(value[0] <= 9 && value[0] >= 0)) || 'The separator cannot be a number',
+        value => (value && !(value[0] <= 'Z' && value[0] >= 'A')) || 'The separator cannot be a letter',
+        value => (value && !(value[0] <= 'z' && value[0] >= 'a')) || 'The separator cannot be a letter'
+      ],
+
+      /** Value for the uploaded file content*/
+      uploadedFile: '',
+
+      /** Array representing the parsed file content*/
+      parsedFile: []
     }
   },
   computed: {
@@ -110,8 +142,38 @@ export default {
     }
   },
   methods: {
-    checkUploaded () {
-
+    /**
+     * Perform the parsing of the uploadedFile
+     * @returns {number}  Number of elements correctly parsed
+     */
+    parseFile () {
+      let count = 0
+      if (this.selectedSeparator !== '' && this.uploadedFile != null) {
+        try {
+          this.processing = true
+          this.errorMessages = []
+          const values = this.uploadedFile.split(this.selectedSeparator).map(x => x.trim())
+          this.parsedFile = values.filter((x, index) => x !== '' && values.indexOf(x) === index)
+          count = this.parsedFile.length
+        } catch (e) {
+          this.errorMessages = ['Invalid input. (Details – ' + e.toString() + ')']
+        }
+        this.processing = false
+      } else {
+        this.parsedFile = []
+      }
+      return count
+    }
+  },
+  watch: {
+    /** On uploader close apply filter parsing */
+    showUploader (newVal) {
+      if (!newVal) {
+        const valCount = this.parseFile()
+        if (valCount > 0) {
+          this.$emit('input', this.parsedFile)
+        }
+      }
     }
   }
 }
