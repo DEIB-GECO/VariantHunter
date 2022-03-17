@@ -29,7 +29,7 @@ def get_all_lineages():
     Returns: An array of lineages
 
     """
-    print("Start lineage request...", end="")
+    print("Extract all lineages ...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
@@ -46,17 +46,17 @@ def get_all_lineages():
 all_lineages_dict = get_all_lineages()  # At server startup, fetch all the lineages
 
 
-def get_lineages(location, date):
+def get_lineages_from_loc_date(location, date):
     """
     Extract the lineages for a given location and week from the database
     Args:
         location:   String representing the location to be considered
-        date:       String representing the (weekend) date to be considered
+        date:       String representing the (week ending) date to be considered.
 
     Returns: An array of lineages
 
     """
-    print("Extract lineages data given week and date...", end="")
+    print("Extract lineages data given location and date...", end="")
     stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
     start = stop - 7
 
@@ -66,6 +66,56 @@ def get_lineages(location, date):
     query = f'''select distinct lineage 
                     from timelocling 
                     where location = '{location}' and date > {start} and date <= {stop};'''
+    extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
+    con.close()
+
+    print(f"...done in {time.time() - exec_start:.5f} seconds.")
+    return extracted_lineages
+
+
+def get_lineages_from_loc(location):
+    """
+    Extract the lineages for a given location from the database
+    Args:
+        location:   String representing the location to be considered
+
+    Returns: An array of lineages
+
+    """
+    print("Extract lineages data given location...", end="")
+    exec_start = time.time()
+    con = sqlite3.connect(db_name)
+    cur = con.cursor()
+
+    query = f'''    select distinct lineage 
+                    from timelocling 
+                    where location = '{location}';'''
+    extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
+    con.close()
+
+    print(f"...done in {time.time() - exec_start:.5f} seconds.")
+    return extracted_lineages
+
+
+def get_lineages_from_date(date):
+    """
+    Extract the lineages for a given week from the database
+    Args:
+        date:       String representing the (week ending) date to be considered.
+
+    Returns: An array of lineages
+
+    """
+    print("Extract lineages data given date...", end="")
+    stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
+    start = stop - 7
+
+    exec_start = time.time()
+    con = sqlite3.connect(db_name)
+    cur = con.cursor()
+    query = f'''select distinct lineage 
+                    from timelocling 
+                    where date > {start} and date <= {stop};'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
@@ -177,13 +227,21 @@ class FieldList(Resource):
     @api.doc('get_lineages')
     def post(self):
         """
-        Endpoint to obtain the lineages for a given location and week
+        Endpoint to obtain the lineages for a given location and week (if specified)
         @return:    An array of lineages
         """
         location = api.payload['location']
         date = api.payload['date']
 
-        return get_lineages(location, date)
+        if location is None and date is None:
+            lineages = all_lineages_dict
+        elif date is None:
+            lineages = get_lineages_from_loc(location)
+        elif location is None:
+            lineages = get_lineages_from_date(date)
+        else:
+            lineages = get_lineages_from_loc_date(location,date)
+        return lineages
 
 
 @api.route('/getStatistics')

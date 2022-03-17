@@ -28,7 +28,7 @@
 
                 <!-- Help info -->
                 <v-col cols='12'>
-                  Please, paste here the list of mutations to be filtered and press enter.
+                  Please, paste here the list of mutations to be filtered. <br />
                   The list will be automatically parsed to fill in the filter.
                 </v-col>
 
@@ -48,13 +48,14 @@
                 <!-- Example section -->
                 <v-col cols='12'>
                   For example:
-                  <code>M_A63T {{selectedSeparator? selectedSeparator:';'}} M_D3G {{selectedSeparator? selectedSeparator:';'}} M_I76V</code>
+                  <code>M_A63T {{ selectedSeparator ? selectedSeparator : ';' }} M_D3G
+                    {{ selectedSeparator ? selectedSeparator : ';' }} M_I76V</code>
                 </v-col>
 
                 <!-- Parsed result -->
                 <v-col v-if='parsedFile' cols='12'>
 
-                    <v-chip v-for="elem in parsedFile" :key="elem">{{ elem }}</v-chip>
+                  <v-chip v-for='elem in parsedFile' :key='elem'>{{ elem }}</v-chip>
 
                 </v-col>
               </v-row>

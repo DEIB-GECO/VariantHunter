@@ -21,8 +21,7 @@
 
         <template v-slot:activator='{ on, attrs }'>
           <v-text-field v-model='selectedDateText' append-icon='mdi-calendar' hide-details label='Date' readonly
-                        clearable
-                        solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true' />
+                        clearable solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true' />
         </template>
         <div class='hint'>Select the end date for the 4 weeks analysis period</div>
         <v-date-picker v-model='selectedDate' :max='today' first-day-of-week='1' no-title range
@@ -85,7 +84,7 @@ export default {
        * @param label The new label
        */
       set (label) {
-        // Ignore change requests
+        this.$emit('input', null)
       }
     }
   },

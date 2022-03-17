@@ -19,7 +19,7 @@
     </v-flex>
 
     <v-flex class='xs12 d-flex field-element'>
-      <v-autocomplete v-model='selectedLineage'
+      <v-autocomplete v-model='selectedLineage' :loading='isLoading'
                       :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world')"
                       :items='possibleLineages' clearable hide-details label='Lineage' attach solo />
     </v-flex>
@@ -47,7 +47,13 @@ export default {
   data () {
     return {
       /** Lineage: available options (wrt to other params) */
-      possibleLineages: this.allLineages
+      possibleLineages: [],
+
+      /** All possible values for lineage */
+      allLineages: null,
+
+      /** Loading flag  */
+      isLoading: false
     }
   },
   computed: {
@@ -73,62 +79,54 @@ export default {
   methods: {
     /** Fetch all possible values for lineages (given the other params) */
     getPossibleLineages () {
-      if (this.selectedLocation !== null && this.selectedLocation !== 'world' && this.selectedDate !== null) {
+      this.isLoading = true
+
+      // Avoid fetching all lineages if already cached
+      if (!this.allLineages || this.selectedLocation || this.selectedDate) {
         const url = `/lineage_specific/getLineages`
         const toSend = {
-          location: this.selectedLocation,
-          date: this.selectedDate[1]
+          location: this.selectedLocation ? this.selectedLocation : null,
+          date: this.selectedDate ? this.selectedDate[1] : null
         }
         axios
           .post(url, toSend)
           .then(res => {
             this.possibleLineages = res.data
-            if (!this.possibleLineages.includes(this.selectedLineage)) {
+
+            // Cache if all lineages and not already cached
+            if (!this.allLineages && !this.selectedLocation && !this.selectedDate) {
+              this.allLineages = res.data
+            }
+
+            // Keep selected lineage if included in the possible ones
+            if (this.selectedLineage && !this.possibleLineages.includes(this.selectedLineage)) {
               this.selectedLineage = null
             }
           })
           .catch((e) => {
             this.$emit('error', e)
           })
-      }
-    },
-
-    /** Fetch all possible values for lineages */
-    getAllLineages () {
-      const lineageAPI = `/lineage_specific/getAllLineages`
-      axios
-        .get(lineageAPI)
-        .then(res => {
-          return res.data
-        })
-        .then(res => {
-          this.allLineages = res
-        })
-        .catch((e) => {
-          this.$emit('error', e)
-        })
-    }
-  },
-  mounted () {
-    this.getAllLineages()
-  },
-  watch: {
-    /** Adjust the possible lineages according to the selected location */
-    selectedLocation () {
-      if (this.selectedDate) {
-        this.getPossibleLineages()
       } else {
         this.possibleLineages = this.allLineages
       }
+
+      this.isLoading = false
+    }
+  },
+  watch: {
+  /** Adjust the possible lineages according to the selected granularity */
+    selectedGranularity (newVal) {
+      if (newVal === 'world') { this.getPossibleLineages() }
+    },
+
+    /** Adjust the possible lineages according to the selected location */
+    selectedLocation (newVal) {
+      if (newVal) { this.getPossibleLineages() }
     },
 
     /** Adjust the possible lineages according to the selected date */
-    selectedDate () {
-      if (this.selectedDate) {
-        this.getPossibleLineages()
-      } else {
-        this.possibleLineages = this.allLineages
-      }
+    selectedDate (newVal) {
+      this.getPossibleLineages()
     }
   }
 }

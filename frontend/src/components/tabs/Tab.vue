@@ -16,7 +16,7 @@
 -->
 
 <template>
-  <div>
+  <div class='single-tab'>
 
     <!-- Analysis definition form -->
     <v-container class='root-container'>
@@ -126,6 +126,11 @@ export default {
   margin: 0 auto auto auto;
   min-width: 97vw;
   height: 100%;
+}
+
+/* Ensure datepicker menu visibility */
+.single-tab .root-container:first-child{
+  min-height: 750px;
 }
 
 /* Child tab container styling */
