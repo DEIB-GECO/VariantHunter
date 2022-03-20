@@ -40,12 +40,11 @@
     <!-- Panels list -->
     <template v-slot:results>
       <v-expansion-panels v-model='expandedPanels' :value='expandedPanels' focusable multiple>
-        <v-expansion-panel v-for='(element, index) in queriesResults' v-bind:key='index'
-                           class='expansion-panel-result'>
+        <v-expansion-panel v-for='(element, index) in queriesResults' v-bind:key='index' class='expansion-panel-result'>
 
           <!-- Panel header -->
           <v-expansion-panel-header :color='secondary_color'>
-            <span>
+            <span :ref='"WOL"+index' class='panel-header'>
               <b>Results for:</b>
               {{ queriesParams[index]['granularity'] }} /
               {{ queriesParams[index]['location'] }} /
@@ -73,9 +72,9 @@
           <v-expansion-panel-content :color='secondary_color'>
             <ResultView v-if='queriesResults[index].length > 0' :queryParams='queriesParams[index]'
                         :queryResult='queriesResults[index]' :querySupport='queriesSupport[index]'
-                        :queryCustOpt='queriesCustomOptions[index]' :withLineages='false'
+                        :queryCustOpt='queriesCustomOptions[index]'
                         @askAnalysis='(delay,status) => requestStartAnalysis(index, delay, status)'
-                        @error='e=> $emit("error",e)' />
+                        @error='e => $emit("error",e)' />
 
             <div v-else class='empty-result-alert'>
               <h4>
@@ -176,7 +175,6 @@ export default {
      */
     startAnalysis (customOptions) {
       this.isLoading = true
-      // const analysisNumber = this.queriesResults.length
       const url = `/lineage_independent/getStatistics`
       const toSend = {
         granularity: this.selectedGranularity,
@@ -191,21 +189,24 @@ export default {
           return res.data
         })
         .then(res => {
-          // Save the search parameters
+          // Save the search parameters and results
           this.queriesParams.push(toSend)
           this.queriesCustomOptions.push(customOptions)
-
-          // Save the result data
           this.queriesResults.push(res['rows'])
-          const nextIndex = this.queriesSupport.push(res['tot_seq'])
-          this.isLoading = false
+          const panelIndex = this.queriesSupport.push(res['tot_seq']) - 1
 
           // Open the new panel and jump to the result container
-          this.expandedPanels = [nextIndex - 1]
+          this.expandedPanels = [panelIndex]
+          const that = this
+          setTimeout(() => {
+            that.$refs['WOL' + (panelIndex)][0].scrollIntoView(true)
+          }, 1000)
         })
         .catch((e) => {
-          this.isLoading = false
           this.$emit('error', e)
+        })
+        .finally(() => {
+          this.isLoading = false
         })
     },
 
@@ -222,6 +223,7 @@ export default {
       referenceDate.setDate(referenceDate.getDate() + requestDelay)
       this.selectedDate = [null, referenceDate.toISOString().slice(0, 10)]
 
+      console.log(customOptions)
       this.startAnalysis(customOptions)
     },
 
@@ -290,5 +292,9 @@ export default {
 .expansion-panel-result .delete-action button:hover {
   background: #da3f3f !important;
   color: white !important;
+}
+
+.panel-header{
+  scroll-margin-top: 60px;
 }
 </style>

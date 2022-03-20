@@ -106,7 +106,7 @@ export default {
     /** Layout data for the plot */
     layout () {
       return {
-        height: this.plotData.length >= 20 ? 540 : 500,
+        height: this.plotData.length >= 20 ? 530 : 490,
         colorway:
           [
             '#ef5378', '#5ee171', '#f3df67', '#6685f1',
@@ -155,7 +155,7 @@ export default {
         hovermode: 'closest',
         margin: {
           b: 50,
-          t: 80,
+          t: 75,
           pad: 10
         },
         autosize: true
@@ -206,12 +206,6 @@ export default {
 }
 </script>
 <style scoped>
-/* Plotly container */
-.plotly-container {
-  border-radius: var(--border-radius);
-  width: 100%;
-  background: white;
-}
 
 /* Custom style for the list in the dialog */
 li {

@@ -35,14 +35,14 @@
                 <!-- Separator selector -->
                 <v-col cols='12'>
                   <v-text-field v-model='selectedSeparator' label='Separator' :rules='rules' hide-details='auto'
-                                :loading='processing' outlined dense />
+                                :loading='processing' outlined dense @input='parseFile' />
                 </v-col>
 
                 <!-- File uploader -->
                 <v-col cols='12'>
                   <v-textarea v-model='uploadedFile' label='File content' auto-grow outlined rows='4' row-height='20'
                               clearable dense :loading='processing' hide-details='auto' :error-messages='errorMessages'
-                              @input='parseFile' />
+                              :success-messages='successMessages' @input='parseFile' />
                 </v-col>
 
                 <!-- Example section -->
@@ -100,6 +100,9 @@ export default {
       /** Error messages for the parsing */
       errorMessages: [],
 
+      /** Success messages for the parsing */
+      successMessages: [],
+
       /** Currently selected separator */
       selectedSeparator: ',',
 
@@ -149,13 +152,21 @@ export default {
      */
     parseFile () {
       let count = 0
+      this.errorMessages = []
+      this.successMessages = []
+
       if (this.selectedSeparator !== '' && this.uploadedFile != null) {
         try {
           this.processing = true
-          this.errorMessages = []
-          const values = this.uploadedFile.split(this.selectedSeparator).map(x => x.trim())
-          this.parsedFile = values.filter((x, index) => x !== '' && values.indexOf(x) === index)
+
+          // Split, trim and remove duplicates
+          let values = this.uploadedFile.split(this.selectedSeparator).map(x => x.trim().toUpperCase())
+          values = values.filter((x, index) => x !== '' && values.indexOf(x) === index)
+
+          // Filter the possible ones only
+          this.parsedFile = values.filter((x) => this.possibleValues.includes(x))
           count = this.parsedFile.length
+          this.successMessages = ['Parsing completed. Detected ' + (count) + ' valid/allowed mutations.']
         } catch (e) {
           this.errorMessages = ['Invalid input. (Details – ' + e.toString() + ')']
         }

@@ -31,7 +31,7 @@ def extract_week_seq_counts(location, w, mut=None):
     Returns: An array of sequence counts
 
     """
-    print("Extract number of sequences in the four weeks...", end="")
+    print("\t Extract number of sequences in the four weeks...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
@@ -71,7 +71,7 @@ def extract_mutation_data(location, w, min_sequences=0):
     Returns: An array describing the mutations for each week
 
     """
-    print("Extract mutation data for the four weeks...", end="")
+    print("\t Extract mutation data for the four weeks...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
@@ -105,7 +105,7 @@ def extract_lineages_data(location, mut, w):
     Returns:
 
     """
-    print("Extract lineages data in the four weeks for mutation...", end="")
+    print("\t Extract lineages data in the four weeks for mutation...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()

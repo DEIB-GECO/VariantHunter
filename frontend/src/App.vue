@@ -200,4 +200,11 @@ body {
 .v-application {
   font-family: 'Inter', serif !important;
 }
+
+/* Plotly container */
+.plotly-container {
+  border-radius: var(--border-radius);
+  width: 100%;
+  background: white;
+}
 </style>

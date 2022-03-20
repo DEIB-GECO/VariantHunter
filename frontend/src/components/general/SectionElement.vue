@@ -54,12 +54,15 @@ export default {
     title: { required: true },
 
     /** Icon name for the title. MDI icon are used. */
-    icon: { required: true }
+    icon: { required: true },
+
+    /** Collapse the section by default */
+    collapsed: Boolean
   },
   data () {
     return {
       /** Flag for the visibility of the section body */
-      showSectionBody: true
+      showSectionBody: !this.collapsed
     }
   },
   methods: {

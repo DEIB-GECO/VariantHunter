@@ -21,7 +21,7 @@ def create_database():
 
     """
     exec_start = time.time()
-    print("Starting database creation...")
+    print("> Starting database setup ...")
 
     with open(input_file_name) as f:
         con = sqlite3.connect(db_name)
@@ -34,10 +34,11 @@ def create_database():
         # Check if tables already exist to skip database creation
         cur.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' ''')
         if cur.fetchone()[0] > 0:
-            print('> The database already exists. ')
+            print('\t SKIPPED: database already exists.')
             return
 
         # Create tables
+        print("\t STEP 1/2: Table creation...", end="")
         cur.execute(
             '''CREATE TABLE muts (date integer, lineage text, mut text, continent text, country text, region text )''')
 
@@ -65,13 +66,14 @@ def create_database():
         cur.execute('''CREATE TABLE lineage_table (lineage text)''')
         con.commit()
 
-        print("Table creation completed...")
+        print("done.")
+        print("\t STEP 2/2: Data processing...")
 
         header = f.readline()
         i = 0
         batch = []
         batch_timeloclin = []
-        for line in tqdm.tqdm(f):
+        for line in tqdm.tqdm(f,desc = '\t\t'):
             s = line.split("\t")
 
             locs = s[4].split('/')
@@ -181,10 +183,9 @@ def create_database():
         cur.execute("CREATE INDEX timelocling2 ON  timelocling(date, lineage);")
         con.commit()
 
-
         con.close()
 
-    print(f'Database creation completed in {time.time() - exec_start} seconds')
+    print(f'\t\tdone in {time.time() - exec_start} seconds.')
 
 
 create_database()

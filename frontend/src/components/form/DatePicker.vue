@@ -120,7 +120,7 @@ export default {
 .hint {
   background: white;
   text-align: center;
-  max-width: fit-content;
+  max-width: 290px;
   padding: 10px 14px;
   line-height: 17px;
   line-break: loose;

@@ -7,7 +7,7 @@
   ├── queryParams:  Object storing the query parameters {granularity, location, date, [lineage]}
   ├── querySupport: Array storing the total number of sequences collected per week
   ├── queryCustOpt: Object storing the custom preselection for the filtering/selection options
-  └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis. Required.
+  └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis.
 
   Events:
   ├── askAnalysis:  Emitted whenever a next/prev button is pressed
@@ -96,15 +96,15 @@
       <HeatMap :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title' />
     </SectionElement>
 
-    <!-- ODD RATIO SECTION  --------------------------------------------------->
-    <SectionElement icon='mdi-align-vertical-bottom' title='DIFFUSION ODD RATIO'>
-      <OddRatioChart :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title' />
-    </SectionElement>
-
     <!-- CHART SECTION  ------------------------------------------------------->
     <SectionElement icon='mdi-chart-line' title='DIFFUSION TREND CHART'>
       <LineChart :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title'
                  :weekSeq='plotsInfo.support' />
+    </SectionElement>
+
+    <!-- ODD RATIO SECTION  --------------------------------------------------->
+    <SectionElement icon='mdi-align-vertical-bottom' title='DIFFUSION ODD RATIO' collapsed>
+      <OddRatioChart :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title' advanced/>
     </SectionElement>
 
     <!-- Next/prev week button ------------------------------------------------>
@@ -154,8 +154,8 @@ export default {
     /** Object storing the custom preselection for the filtering/selection options */
     queryCustOpt: { required: false },
 
-    /** Lineages flag. True if the data refers to a lineage specific analysis. Required.*/
-    withLineages: { required: true }
+    /** Lineages flag. True if the data refers to a lineage specific analysis.*/
+    withLineages: Boolean
   },
   data () {
     return {

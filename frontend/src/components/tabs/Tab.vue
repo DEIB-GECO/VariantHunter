@@ -72,7 +72,7 @@
     <!-- Analysis results -->
     <v-container class='root-container'>
       <v-container v-if='resultLength > 0' class='child-container'>
-        <div ref='result' class='card-container'>
+        <div class='card-container'>
           <slot name='results'></slot>
         </div>
       </v-container>
@@ -108,14 +108,6 @@ export default {
   },
   computed: {
     ...mapState(['secondary_color'])
-  },
-  watch: {
-    /** Whenever a new result is produced, scroll to make it visible */
-    resultLength (newLength, oldLength) {
-      if (newLength > oldLength && this.$refs.result !== undefined) {
-        this.$refs.result.scrollIntoView()
-      }
-    }
   }
 }
 </script>
@@ -129,7 +121,7 @@ export default {
 }
 
 /* Ensure datepicker menu visibility */
-.single-tab .root-container:first-child{
+.single-tab{
   min-height: 750px;
 }
 

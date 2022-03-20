@@ -91,7 +91,7 @@ export default {
         hovermode: 'closest',
         margin: {
           b: 50,
-          t: 80,
+          t: 75,
           pad: 10
         },
         autosize: true

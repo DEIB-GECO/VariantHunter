@@ -29,7 +29,7 @@ def get_all_lineages():
     Returns: An array of lineages
 
     """
-    print("Extract all lineages ...", end="")
+    print("> Extract all lineages ...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
@@ -39,7 +39,7 @@ def get_all_lineages():
     con.close()
     extracted_lineages.sort()
 
-    print(f"...done in {time.time() - exec_start:.5f} seconds.")
+    print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
 
 
@@ -56,7 +56,7 @@ def get_lineages_from_loc_date(location, date):
     Returns: An array of lineages
 
     """
-    print("Extract lineages data given location and date...", end="")
+    print("\t Extract lineages data given location and date...", end="")
     stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
     start = stop - 7
 
@@ -69,7 +69,7 @@ def get_lineages_from_loc_date(location, date):
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
-    print(f"...done in {time.time() - exec_start:.5f} seconds.")
+    print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
 
 
@@ -82,7 +82,7 @@ def get_lineages_from_loc(location):
     Returns: An array of lineages
 
     """
-    print("Extract lineages data given location...", end="")
+    print("\t Extract lineages data given location...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
@@ -93,7 +93,7 @@ def get_lineages_from_loc(location):
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
-    print(f"...done in {time.time() - exec_start:.5f} seconds.")
+    print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
 
 
@@ -106,7 +106,7 @@ def get_lineages_from_date(date):
     Returns: An array of lineages
 
     """
-    print("Extract lineages data given date...", end="")
+    print("\t Extract lineages data given date...", end="")
     stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
     start = stop - 7
 
@@ -119,7 +119,7 @@ def get_lineages_from_date(date):
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
-    print(f"...done in {time.time() - exec_start:.5f} seconds.")
+    print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
 
 
@@ -150,7 +150,7 @@ def extract_week_seq_counts(location, lineage, w):
     Returns: An array of sequence counts
 
     """
-    print("Extract number of sequences in the four weeks...", end="")
+    print("\t Extract number of sequences in the four weeks...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
@@ -183,7 +183,7 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
         Returns: An array describing the mutations for each week
 
         """
-    print("Extract mutation data for the four weeks...", end="")
+    print("\t Extract mutation data for the four weeks...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()

@@ -28,7 +28,7 @@ def extract_seq_num(granularity, location, lineage):
     Returns: an array of (date, seq_count) pairs
 
     """
-    print("Extract number of sequences ...", end="")
+    print("\t Extract number of sequences ...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
@@ -60,7 +60,7 @@ def extract_last_update():
     Returns: tha date of the last update
 
     """
-    print("Extract last update date ...", end="")
+    print("> Extract last update date ...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
