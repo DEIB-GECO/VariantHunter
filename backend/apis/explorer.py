@@ -1,6 +1,7 @@
 """
     API to retrieve daily sequences counts
     Endpoints:
+    ├── getLineageBreakdown
     └── getSequenceInfo
 """
 
@@ -53,6 +54,50 @@ def extract_seq_num(granularity, location, lineage):
     return daily_sequence_counts
 
 
+def extract_lineage_breakdown(granularity, location):
+    """
+    Extract from the database the lineage breakdown info for the selected params
+    Args:
+        granularity:    the granularity
+        location:       the location
+
+    Returns: an array of (day,data about the lineage breakdown) pairs
+
+    """
+    print("\t Extract lineage breakdown of sequences ...", end="")
+    exec_start = time.time()
+    con = sqlite3.connect(db_name)
+    cur = con.cursor()
+
+    def extract_dates():
+        query = f'''    select distinct date
+                        from timelocling
+                        order by date;'''
+        dates = cur.execute(query).fetchall()
+        return [x[0] for x in dates]
+
+    def extract_lineages_from_date(date):
+        query = f'''    select lineage, sum(count)
+                        from timelocling
+                        where date='{date}'  and location='{location}' 
+                        group by location, lineage, date
+                        order by lineage;'''
+        lin_bd = cur.execute(query).fetchall()
+        return [{'name': lin, 'count': count} for lin,count in lin_bd]
+
+    days = extract_dates()
+    lineage_breakdown = []
+    for day in days:
+        lineage_breakdown.append({
+            'date': day,
+            'data': extract_lineages_from_date(day)
+        })
+
+    con.close()
+    print(f'done in {time.time() - exec_start:.5f} seconds.')
+    return lineage_breakdown
+
+
 def extract_last_update():
     """
     Extract from the database the date of the last sequence
@@ -95,6 +140,21 @@ class FieldList(Resource):
         lineage = api.payload['lineage']
 
         info = extract_seq_num(granularity, location, lineage)
+        return info
+
+
+@api.route('/getLineageBreakdown')
+class FieldList(Resource):
+    @api.doc('get_lineage_breakdown')
+    def post(self):
+        """
+        Endpoint to get the lineage breakdown info for each day
+        @return:    An array of describing the breakdown
+        """
+        granularity = api.payload['granularity']
+        location = api.payload['location']
+
+        info = extract_lineage_breakdown(granularity, location)
         return info
 
 

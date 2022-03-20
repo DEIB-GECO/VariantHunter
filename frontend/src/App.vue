@@ -196,8 +196,8 @@ body {
   text-transform: capitalize !important;
 }
 
-/* Overwrite default Vuetify font */
-.v-application {
+/* Overwrite default Vuetify and Plotly font */
+.v-application, body * {
   font-family: 'Inter', serif !important;
 }
 

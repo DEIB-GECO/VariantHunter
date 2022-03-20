@@ -6,6 +6,9 @@
   ├── granularity:  Granularity to be explored
   ├── location:     Location to be explored
   └── lineage:      Lineage to be explored
+
+  Events:
+  └── error:        Emitted on server errors
 -->
 
 <template>
@@ -31,7 +34,7 @@
 
       <!-- Plot -->
       <v-flex v-if="hasResult" class="xs12 sm12 md11 d-flex explorer-element">
-        <ExplorerHistogram :plot-data='sequenceData' />
+        <ExplorerHistogram :sequence-data='sequenceData' :lineages-data='lineagesData' />
       </v-flex>
     </template>
   </v-layout>
@@ -60,7 +63,10 @@ export default {
       isLoading: false,
 
       /** Array of sequence info  from the server */
-      sequenceData: []
+      sequenceData: [],
+
+      /** Array of lineages breakdown info  from the server */
+      lineagesData: []
     }
   },
   computed: {
@@ -90,7 +96,7 @@ export default {
   methods: {
     /** Fetches from the server the info on the available sequences for the selected parameters */
     fetchSequenceInfo () {
-      if (this.granularity === 'world' || this.location !== null) {
+      if (this.granularity === 'world' || this.location) {
         this.isLoading = true
         const sequenceAPI = `/explorer/getSequenceInfo`
         const toSend = {
@@ -101,33 +107,64 @@ export default {
         axios
           .post(sequenceAPI, toSend)
           .then(res => {
-            return res.data
+            this.sequenceData = res.data
           })
-          .then(res => {
+          .catch((e) => {
+            this.$emit('error', e)
+          })
+          .finally(() => {
             this.isLoading = false
-            this.sequenceData = res
           })
+      }
+    },
+
+    /** Fetches from the server the info on lineage breakdown for the selected parameters */
+    fetchLineageBreakdownInfo () {
+      if ((this.granularity === 'world' || this.location) && this.lineage === null) {
+        this.isLoading = true
+        const sequenceAPI = `/explorer/getLineageBreakdown`
+        const toSend = {
+          granularity: this.granularity,
+          location: this.location // possibly it has no value
+        }
+        axios
+          .post(sequenceAPI, toSend)
+          .then(res => {
+            this.lineagesData = res.data
+          })
+          .catch((e) => {
+            this.$emit('error', e)
+          })
+          .finally(() => {
+            this.isLoading = false
+          })
+      } else {
+        this.lineagesData = []
       }
     }
   },
   beforeMount () {
     // Fetch the sequence info on show/hide section
     this.fetchSequenceInfo()
+    this.fetchLineageBreakdownInfo()
   },
   watch: {
     /** Reset sequence info on granularity value changes */
     granularity () {
       this.sequenceData = []
+      this.lineagesData = []
     },
 
     /** Fetch sequence info on location value changes */
     location () {
       this.fetchSequenceInfo()
+      this.fetchLineageBreakdownInfo()
     },
 
     /** Fetch sequence info on lineage value changes */
     lineage () {
       this.fetchSequenceInfo()
+      this.fetchLineageBreakdownInfo()
     }
   }
 }

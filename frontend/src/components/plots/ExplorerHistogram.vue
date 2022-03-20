@@ -1,15 +1,16 @@
 <!--
   Component:    ExplorerHistogram
-  Description:  Barchart plot. Implemented using vue-plotly.
+  Description:  Lineage breakdown and sequence count plots. Implemented using vue-plotly.
 
   Props:
-  └── plotData:   Data for the plot. Required.
+  ├── sequenceData:   Raw sequence data for the seq count plot. Required.
+  └── lineagesData: Raw lineages' data for the lineage breakdown plot. Required.
 -->
 
 <template>
-  <div style='width: 100%;'>
+  <div style='width: 100%;' @mousemove='show'>
     <!-- ExplorerHistogram plot -->
-    <Plotly :data='data' :layout='layout' :displaylogo='false' :displayModeBar='true' />
+    <Plotly id='explorer' :data='data' :layout='layout' :displaylogo='false' :displayModeBar='true' />
   </div>
 </template>
 
@@ -22,12 +23,15 @@ export default {
     Plotly
   },
   props: {
-    /** Raw data for the plot. Required. */
-    plotData: { required: true }
+    /** Raw sequence data for the seq count plot. Required. */
+    sequenceData: { required: true },
+
+    /** Raw lineages' data for the lineage breakdown plot. Required. */
+    lineagesData: { required: true }
   },
   data () {
     return {
-      /** Currently selected time scale */
+      /** Currently selected timescale */
       timeScale: 'ALL'
     }
   },
@@ -35,7 +39,7 @@ export default {
     /** Values for the x-axis of the barchart: dates */
     x () {
       const startDate = new Date('2020-01-01')
-      return this.plotData.map(element => {
+      return this.sequenceData.map(element => {
         const date = new Date(startDate)
         // Dates from the server are relative and must be added to the start date
         date.setDate(startDate.getDate() + element['date'])
@@ -45,7 +49,7 @@ export default {
 
     /** Values for the y-axis of the barchart: seq_count */
     y () {
-      return this.plotData.map(element => element['seq_count'])
+      return this.sequenceData.map(element => element['seq_count'])
     },
 
     /** Data processed for the histogram plot */
@@ -61,20 +65,38 @@ export default {
 
     /** Data processed for the lineage breakdown plot */
     dataBreakdown () {
-      return {
-        x: this.x,
-        y: this.y,
-        xaxis: 'x',
-        yaxis: 'y2',
-        mode: 'lines',
-        type: 'bar',
-        hovertemplate: '%{y} sequences<extra></extra>'
-      }
+      return this.lineagesData.map(element => {
+        // const startDate = new Date('2020-01-01')
+        // const date = new Date(startDate)
+        // date.setDate(startDate.getDate() + element['date'])
+
+        return {
+
+        }
+      })
+      return [
+        { x: ['2022-01-01', '2022-01-02', '2022-01-03'], y: [2, 1, 4], stackgroup: 'one', groupnorm: 'percent', xaxis: 'x',
+          yaxis: 'y2' },
+        { x: ['2022-01-01', '2022-01-02', '2022-01-03'], y: [1, 1, 2], stackgroup: 'one', xaxis: 'x',
+          yaxis: 'y2' },
+        { x: ['2022-01-01', '2022-01-02', '2022-01-03'], y: [3, 0, 2], stackgroup: 'one', xaxis: 'x',
+          yaxis: 'y2' }
+      ]
+      // return {
+      //   x: this.x,
+      //   y: this.y,
+      //   xaxis: 'x',
+      //   yaxis: 'y2',
+      //   mode: 'lines',
+      //   type: 'bar',
+      //   hovertemplate: '%{y} sequences<extra></extra>'
+      // }
     },
 
     /** Data processed for the whole plot */
     data () {
-      return [this.dataHistogram, this.dataBreakdown]
+      const data = [this.dataHistogram]
+      return data.concat(this.dataBreakdown)
     },
 
     /** Layout data for the plot */
@@ -108,7 +130,7 @@ export default {
           autorange: true,
           fixedrange: false,
           automargin: true,
-          domain: [0.66, 1]
+          domain: [0.66, 0.97]
         },
         margin: {
           b: 55,
@@ -117,24 +139,20 @@ export default {
         },
         annotations: [
           {
-            text: 'First subplot',
-            font: {
-              size: 16
-            },
+            text: 'LINEAGES BREAKDOWN<br><b><sub>THIS FEATURE IS NOT YET AVAILABLE</sub></b>',
+            font: { size: 14 },
             showarrow: false,
             align: 'center',
-            y: 1.02,
+            y: 1.015,
             xref: 'paper',
             yref: 'paper'
           },
           {
-            text: 'Second subplot',
-            font: {
-              size: 16
-            },
+            text: 'SEQUENCE COUNTS',
+            font: { size: 14 },
             showarrow: false,
             align: 'center',
-            y: 0.485,
+            y: 0.575,
             xref: 'paper',
             yref: 'paper'
           }
@@ -160,6 +178,12 @@ export default {
       }
     }
   },
+  methods: {
+    show () {
+      // const gd = document.getElementById('explorer')
+      // console.log(gd.layout.xaxis.range)
+    }
+  },
   mounted () {
     /** Capture the change of the selector status to track the timeScale value
      const that = this
@@ -169,6 +193,7 @@ export default {
         that.timeScale = this.textContent
       })
     })*/
+
   }
 }
 </script>

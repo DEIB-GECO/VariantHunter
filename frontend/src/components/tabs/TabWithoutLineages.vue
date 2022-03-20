@@ -33,7 +33,8 @@
     <!-- Dataset Explorer-->
     <template v-slot:explorer>
       <v-flex class='xs12 d-flex'>
-        <DatasetExplorer :granularity='selectedGranularity' :location='selectedLocation' />
+        <DatasetExplorer :granularity='selectedGranularity' :location='selectedLocation'
+                         @error='e=> $emit("error",e)' />
       </v-flex>
     </template>
 
@@ -223,7 +224,6 @@ export default {
       referenceDate.setDate(referenceDate.getDate() + requestDelay)
       this.selectedDate = [null, referenceDate.toISOString().slice(0, 10)]
 
-      console.log(customOptions)
       this.startAnalysis(customOptions)
     },
 
@@ -294,7 +294,7 @@ export default {
   color: white !important;
 }
 
-.panel-header{
+.panel-header {
   scroll-margin-top: 60px;
 }
 </style>
