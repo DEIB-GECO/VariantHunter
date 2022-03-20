@@ -160,7 +160,7 @@ export default {
           this.processing = true
 
           // Split, trim and remove duplicates
-          let values = this.uploadedFile.split(this.selectedSeparator).map(x => x.trim().toUpperCase())
+          let values = this.uploadedFile.split(this.selectedSeparator).map(x => x.trim())
           values = values.filter((x, index) => x !== '' && values.indexOf(x) === index)
 
           // Filter the possible ones only
