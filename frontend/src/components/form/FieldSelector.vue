@@ -17,18 +17,18 @@
 
 <template>
   <v-layout row wrap>
-    <v-flex class='xs12 d-flex field-label'>
+    <v-flex v-if='label' class='xs12 d-flex field-label'>
       <span>{{ label }}</span>
     </v-flex>
 
     <v-flex class='xs12 d-flex field-element'>
       <!-- Manual selector -->
-      <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues' hide-details :label='placeholder'
-                attach solo />
+      <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues'
+                hide-details :label='placeholder' solo='solo' attach />
 
       <!-- Autocomplete selector -->
       <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable :multiple='multiple'
-                      :small-chips='smallChips' hide-details :label='placeholder' attach solo>
+                      :small-chips='smallChips' hide-details :label='placeholder' :solo='solo'  attach >
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
@@ -46,7 +46,7 @@ export default {
     value: {},
 
     /** Label for the field */
-    label: { required: true },
+    label: { required: false },
 
     /** Placeholder for the selector */
     placeholder: { required: true },
@@ -55,13 +55,16 @@ export default {
     possibleValues: { required: true },
 
     /** Autocomplete flag. If true, the selector is a v-autocomplete */
-    autocomplete: { default: false },
+    autocomplete: Boolean,
 
     /** Multiple selector flag. If true, the selector allows multiple selection */
-    multiple: { default: false },
+    multiple: Boolean,
+
+    /** Solo flag. If true, the selector has solo style */
+    solo: Boolean,
 
     /** smallChips flag. If true, the selector shows small chips for selected items */
-    smallChips: { default: false }
+    smallChips: Boolean
   },
   computed: {
     /** Selected value */

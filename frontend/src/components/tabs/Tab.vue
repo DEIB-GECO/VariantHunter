@@ -29,7 +29,6 @@
               <v-flex class='xs12 d-flex form-header'>
                 <h2>
                   DEFINE ANALYSIS
-                  <hr />
                 </h2>
               </v-flex>
 
@@ -157,6 +156,7 @@ export default {
 
 .form-header h2 {
   font-weight: 800;
+  border-bottom: solid 4px white;
   word-spacing: 5px;
 }
 

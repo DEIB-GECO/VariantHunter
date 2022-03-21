@@ -6,10 +6,13 @@
 """
 
 from __future__ import print_function
+
 import sqlite3
 import time
+
 from flask_restplus import Namespace, Resource
-from .utils.utils import compute_date_from_diff
+
+from .utils.utils import compute_date_from_diff, compute_weeks_from_date
 
 api = Namespace('explorer', description='explorer')
 db_name = 'varianthunter.db'
@@ -83,7 +86,7 @@ def extract_lineage_breakdown(granularity, location):
                         group by location, lineage, date
                         order by lineage;'''
         lin_bd = cur.execute(query).fetchall()
-        return [{'name': lin, 'count': count} for lin,count in lin_bd]
+        return [{'name': lin, 'count': count} for lin, count in lin_bd]
 
     days = extract_dates()
     lineage_breakdown = []
@@ -120,6 +123,44 @@ def extract_last_update():
 
 
 lastUpdate = extract_last_update()
+
+
+def get_lineages_mutations(mutations, location, date):
+    """
+    Extract from the database the lineages' classification info for the selected mutations
+    Args:
+        mutations:       an array of protein_mutation elements
+
+    Returns: an array of (lineage, mutations list) pairs
+
+    """
+    print("\t Extract lineage classification ...", end="")
+    exec_start = time.time()
+    con = sqlite3.connect(db_name)
+    cur = con.cursor()
+
+    w = compute_weeks_from_date(date)
+
+    def extract_lineages_from_mut(mut):
+        query = f'''    select distinct lineage
+                        from mutsg
+                        where mut = '{mut}' and location = '{location}' and 
+                        date > {w['w1_begin']} and date <= {w['w4_end']}
+                        order by lineage;'''
+        mut_classes = cur.execute(query).fetchall()
+        return [x[0] for x in mut_classes]
+
+    classification = {}
+    for m in mutations:
+        for lineage in extract_lineages_from_mut(m):
+            if lineage in classification.keys():
+                classification[lineage].append(m)
+            else:
+                classification[lineage] = [m]
+
+    con.close()
+    print(f'done in {time.time() - exec_start:.5f} seconds.')
+    return classification
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -167,3 +208,19 @@ class FieldList(Resource):
         @return:    The date of the last sequence collected
         """
         return lastUpdate
+
+
+@api.route('/getLineagesMutations')
+class FieldList(Resource):
+    @api.doc('get_lineages_mutations')
+    def post(self):
+        """
+        Endpoint to get the lineages' classification for the mutations
+        of a certain location and period
+        @return:    A list of (lineage, mutation list) pairs
+        """
+        location = api.payload['location']
+        date = api.payload['date']
+        mutations = api.payload['mutations']
+
+        return get_lineages_mutations(mutations, location, date)

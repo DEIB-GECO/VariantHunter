@@ -6,19 +6,18 @@
   ├── plotTitle:   Title for the plot. Required.
   ├── plotData:    Data for the plot. Required.
   ├── dateLabel:   Array of data labels for the periods
-  └── advanced:    If true the odd ratio is computed both for each week wrt to
-                   the first week and for each week wrt to the previous one
+  └── type:        Type of odd ratio to be displayed.
+                   0: week-by-week; 1: week-to-first-week; 2: all
 -->
 
 <template>
   <div class='plotly-container'>
-
     <!-- SUBSEQUENT WEEKS ODD RATIO -->
-    <Plotly :data='dataSubsWeeks' :layout='layoutSubsWeeks' :displaylogo='false'
+    <Plotly v-if='type!==1' :data='dataSubsWeeks' :layout='layoutSubsWeeks' :displaylogo='false'
             :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']" />
 
     <!-- WEEKS TO FIRST ODD RATIO -->
-    <Plotly v-if='advanced' :data='dataFirstWeekRef' :layout='layoutFirstWeekRef' :displaylogo='false'
+    <Plotly v-if='type>=1' :data='dataFirstWeekRef' :layout='layoutFirstWeekRef' :displaylogo='false'
             :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']" />
   </div>
 </template>
@@ -42,10 +41,10 @@ export default {
     dateLabel: { required: true },
 
     /**
-     * If true the odd ratio is computed both for each week wrt to the first
-     * week and for each week wrt to the previous one
+     * Type of odd ratio to be displayed.
+     * 0: week-by-week; 1: week-to-first-week; 2: all
      */
-    advanced: Boolean
+    type: { required: true }
   },
   computed: {
 
@@ -170,9 +169,9 @@ export default {
      */
     computeLayout (referToFirstWeek) {
       return {
-        title: referToFirstWeek
+        title: this.plotTitle + '<br>' + (referToFirstWeek
           ? '<sub>ODD RATIO WEEK-TO-FIRST-WEEK</sub>'
-          : this.plotTitle + '<br><sub>ODD RATIO WEEK-BY-WEEK</sub>',
+          : '<sub>ODD RATIO WEEK-BY-WEEK</sub>'),
 
         xaxis: {
           tickmode: 'array',
@@ -219,8 +218,8 @@ export default {
         height: this.plotData.length >= 20 ? 430 : 390,  // plot height
         autosize: true,
         margin: {
-          b: referToFirstWeek ? 50 : 40,
-          t: referToFirstWeek ? 55 : 75,
+          b: this.type === 2 && referToFirstWeek ? 50 : 40,
+          t: this.type === 2 && referToFirstWeek ? 55 : 75,
           pad: 10
         }
       }

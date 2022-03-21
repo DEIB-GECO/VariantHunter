@@ -30,10 +30,14 @@
     <ErrorAlert v-model='errorOccurred' :errorMessage='errorMessage' />
 
     <!-- Last update snackbar -->
-    <v-snackbar v-model='showSnackbar' timeout='8000' color='green' transition='scroll-y-transition'>
+    <v-snackbar v-model='showSnackbar' timeout='10000' height='10' color='green' transition='scroll-y-transition'>
       <v-icon left>mdi-clock</v-icon>
       <span><b>Last dataset update: &nbsp;</b>{{ lastUpdate }}</span>
     </v-snackbar>
+    <v-chip v-if='!showSnackbar' color='green' class='last-update' text-color='white'>
+      <v-icon left>mdi-clock</v-icon>
+      <span><b>Last dataset update: &nbsp;</b>{{ lastUpdate }}</span>
+    </v-chip>
   </v-container>
 </template>
 
@@ -108,6 +112,7 @@ export default {
 /* Container of the tabs */
 .tabs-container {
   justify-content: center;
+  text-align: center;
   padding: 0;
 }
 
@@ -136,6 +141,11 @@ export default {
 .v-snack__wrapper {
   border-radius: 28px 28px 0 0 !important;
   margin-bottom: 0 !important;
+}
+
+.last-update{
+  padding: 25px;
+  margin-bottom: 10px;
 }
 
 .v-snack__content {

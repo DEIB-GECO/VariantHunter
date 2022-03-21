@@ -1,24 +1,30 @@
 <template>
   <!-- Decorated Field Selector -->
   <FieldSelector v-model='selectedValue' label='Mutation' placeholder='All'
-                 :possible-values='possibleValues' :autocomplete='true' :small-chips='true'
-                 :multiple='true'>
+                 :possible-values='possibleValues' autocomplete small-chips
+                 multiple solo>
 
     <template v-slot:prepend-item>
 
-      <!-- Uploader opener -->
-      <div class='uploader-opener' @click='showUploader=true'>
+      <!-- List uploader opener -->
+      <div class='uploader-opener' @click='showListUploader=true'>
         <v-icon left>mdi-file-upload-outline</v-icon>
-        Upload from file
+        Select from list
       </div>
 
-      <!-- Uploader element-->
-      <v-dialog v-model='showUploader' max-width='500' transition='dialog-bottom-transition'>
+      <!-- Lineage selector opener -->
+      <div class='uploader-opener' @click='showLineageSelector=true'>
+        <v-icon left>mdi-shape-outline</v-icon>
+        Select from lineages
+      </div>
+
+      <!-- List uploader element-->
+      <v-dialog v-model='showListUploader' max-width='500' transition='dialog-bottom-transition'>
         <v-card>
           <!-- Dialog title -->
           <v-toolbar :color='primary_color' class='dialog-title' dark flat>
             <v-icon left>mdi-file-upload-outline</v-icon>
-            Upload mutations from file
+            Select mutations from list
           </v-toolbar>
 
           <!-- Dialog content -->
@@ -35,27 +41,29 @@
                 <!-- Separator selector -->
                 <v-col cols='12'>
                   <v-text-field v-model='selectedSeparator' label='Separator' :rules='rules' hide-details='auto'
-                                :loading='processing' outlined dense @input='parseFile' />
+                                :loading='processing' outlined dense @input='parseMutationList' />
                 </v-col>
 
-                <!-- File uploader -->
+                <!-- List uploader -->
                 <v-col cols='12'>
-                  <v-textarea v-model='uploadedFile' label='File content' auto-grow outlined rows='4' row-height='20'
+                  <v-textarea v-model='uploadedList' label='List content' auto-grow outlined rows='4' row-height='20'
                               clearable dense :loading='processing' hide-details='auto' :error-messages='errorMessages'
-                              :success-messages='successMessages' @input='parseFile' />
+                              :success-messages='successMessages' @input='parseMutationList' />
                 </v-col>
 
-                <!-- Example section -->
+                <!-- Examples section -->
                 <v-col cols='12'>
                   For example:
                   <code>M_A63T {{ selectedSeparator ? selectedSeparator : ';' }} M_D3G
-                    {{ selectedSeparator ? selectedSeparator : ';' }} M_I76V</code>
+                    {{ selectedSeparator ? selectedSeparator : ';' }} M_I76V</code> or
+                  <code>M:A63T {{ selectedSeparator ? selectedSeparator : ';' }} M:D3G
+                    {{ selectedSeparator ? selectedSeparator : ';' }} M:I76V</code>
                 </v-col>
 
                 <!-- Parsed result -->
-                <v-col v-if='parsedFile' cols='12'>
+                <v-col v-if='parsedList.length>0' cols='12'>
 
-                  <v-chip v-for='elem in parsedFile' :key='elem'>{{ elem }}</v-chip>
+                  <v-chip v-for='elem in parsedList' :key='elem'>{{ elem }}</v-chip>
 
                 </v-col>
               </v-row>
@@ -64,7 +72,49 @@
 
           <!-- Dialog actions -->
           <v-card-actions class='justify-end'>
-            <v-btn text @click='showUploader = false'>
+            <v-btn text @click='showListUploader = false'>
+              Done
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- Lineage selector element-->
+      <v-dialog v-model='showLineageSelector' max-width='500' transition='dialog-bottom-transition'>
+        <v-card>
+          <!-- Dialog title -->
+          <v-toolbar :color='primary_color' class='dialog-title' dark flat>
+            <v-icon left>mdi-shape-outline</v-icon>
+            Select mutations from lineages
+          </v-toolbar>
+
+          <!-- Dialog content -->
+          <v-card-text class='text-s-center dialog-text lineage-selector-dialog'>
+            <v-container fluid>
+              <v-row>
+
+                <!-- Help info -->
+                <v-col cols='12'>
+                  Please, select the lineages to filter the mutations.
+                </v-col>
+
+                <!-- Lineage selector -->
+                <v-col cols='12'>
+                  <FieldSelector v-model='selectedLineages' :possible-values='possibleLineages' placeholder='Lineages'
+                                 outlined autocomplete multiple small-chips @input='manageLineageSelection' />
+                </v-col>
+
+                <!-- Result -->
+                <v-col cols='12'>
+                  <v-chip v-for='elem in selectedLinMuts' :key='elem'>{{ elem }}</v-chip>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+
+          <!-- Dialog actions -->
+          <v-card-actions class='justify-end'>
+            <v-btn text @click='showLineageSelector = false'>
               Done
             </v-btn>
           </v-card-actions>
@@ -78,6 +128,7 @@
 <script>
 import FieldSelector from '@/components/form/FieldSelector'
 import { mapState } from 'vuex'
+import axios from 'axios'
 
 export default {
   name: 'MutationSelector',
@@ -87,14 +138,17 @@ export default {
     value: {},
 
     /** Possible values for the selector */
-    possibleValues: { required: true }
+    possibleValues: { required: true },
+
+    /** Object storing the query parameters */
+    queryParams: { required: true }
   },
   data () {
     return {
-      /** Uploader visibility */
-      showUploader: false,
+      /** List uploader visibility */
+      showListUploader: false,
 
-      /** Processing flag. If true, the file is being parsed. */
+      /** Processing flag. If true, the list is being parsed. */
       processing: false,
 
       /** Error messages for the parsing */
@@ -109,18 +163,32 @@ export default {
       /** Rules for the separators */
       rules: [
         value => !!value || 'Required.',
-        value => (value && value.length === 1) || 'The separator must be only one character long',
-        value => (value && value[0] !== '_') || 'This separator is not allowed',
+        value => (value && value[0] !== '_' && value[0] !== ':') || 'This separator is not allowed',
         value => (value && !(value[0] <= 9 && value[0] >= 0)) || 'The separator cannot be a number',
         value => (value && !(value[0] <= 'Z' && value[0] >= 'A')) || 'The separator cannot be a letter',
         value => (value && !(value[0] <= 'z' && value[0] >= 'a')) || 'The separator cannot be a letter'
       ],
 
-      /** Value for the uploaded file content*/
-      uploadedFile: '',
+      /** Value for the uploaded list content*/
+      uploadedList: '',
 
-      /** Array representing the parsed file content*/
-      parsedFile: []
+      /** Array representing the parsed list content*/
+      parsedList: [],
+
+      /** Lineage uploader visibility */
+      showLineageSelector: false,
+
+      /** Dictionary storing for each lineage the associated mutations   */
+      mutClassification: {},
+
+      /** The selectable lineages */
+      possibleLineages: [],
+
+      /** The selected lineages */
+      selectedLineages: [],
+
+      /** The mutations that correspond to the selected lineages */
+      selectedLinMuts: []
     }
   },
   computed: {
@@ -147,43 +215,92 @@ export default {
   },
   methods: {
     /**
-     * Perform the parsing of the uploadedFile
+     * Perform the parsing of the uploadedList
      * @returns {number}  Number of elements correctly parsed
      */
-    parseFile () {
+    parseMutationList () {
       let count = 0
       this.errorMessages = []
       this.successMessages = []
 
-      if (this.selectedSeparator !== '' && this.uploadedFile != null) {
+      if (this.selectedSeparator !== '' && this.uploadedList != null) {
         try {
           this.processing = true
 
           // Split, trim and remove duplicates
-          let values = this.uploadedFile.split(this.selectedSeparator).map(x => x.trim())
+          let values = this.uploadedList.split(this.selectedSeparator).map(x => x.trim().toLowerCase())
           values = values.filter((x, index) => x !== '' && values.indexOf(x) === index)
 
-          // Filter the possible ones only
-          this.parsedFile = values.filter((x) => this.possibleValues.includes(x))
-          count = this.parsedFile.length
+          // Filter the possible ones only. Allow : or _ dividers for prot and mutation
+          const dividers = { ':': '_', '_': ':' }
+          this.parsedList = this.possibleValues
+            .filter((x) => values.includes(x.toLowerCase()) ||
+              values.includes(x.toLowerCase().replace(/([_:])+/g, div => dividers[div])))
+          count = this.parsedList.length
           this.successMessages = ['Parsing completed. Detected ' + (count) + ' valid/allowed mutations.']
         } catch (e) {
           this.errorMessages = ['Invalid input. (Details – ' + e.toString() + ')']
         }
         this.processing = false
       } else {
-        this.parsedFile = []
+        this.parsedList = []
       }
       return count
+    },
+
+    /** Fetch the classification of the possible mutations*/
+    fetchClassification () {
+      const classificationAPI = `/explorer/getLineagesMutations`
+      const toSend = {
+        date: this.queryParams.date,
+        location: this.queryParams.location,
+        mutations: this.possibleValues
+      }
+      axios
+        .post(classificationAPI, toSend)
+        .then(res => {
+          this.mutClassification = res.data
+          this.possibleLineages = Object.keys(this.mutClassification)
+        }).catch((e) => {
+          this.$emit('error', e)
+        })
+    },
+
+    /**
+     * Perform the selection of the mutations based on the lineages
+     * @returns {number}  Number of elements correctly parsed
+     */
+    manageLineageSelection () {
+      let values = []
+
+      // Obtain mutations and remove duplicates
+      this.selectedLineages.forEach(lin => {
+        values = values.concat(this.mutClassification[lin])
+      })
+      this.selectedLinMuts = values.filter((x, index) => values.indexOf(x) === index)
+
+      return this.selectedLinMuts.length
     }
   },
   watch: {
     /** On uploader close apply filter parsing */
-    showUploader (newVal) {
+    showListUploader (newVal) {
       if (!newVal) {
-        const valCount = this.parseFile()
+        const valCount = this.parseMutationList()
         if (valCount > 0) {
-          this.$emit('input', this.parsedFile)
+          this.$emit('input', this.parsedList)
+        }
+      }
+    },
+
+    /** On uploader open fetch the lineages, on close apply filters */
+    showLineageSelector (newVal) {
+      if (newVal) {
+        this.fetchClassification()
+      } else {
+        const valCount = this.manageLineageSelection()
+        if (valCount > 0) {
+          this.$emit('input', this.selectedLinMuts)
         }
       }
     }
@@ -195,5 +312,14 @@ export default {
 .uploader-opener {
   text-align: center;
   padding: 10px 14px;
+  text-transform: initial;
+}
+
+.uploader-opener:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.lineage-selector-dialog {
+  min-height: 400px;
 }
 </style>

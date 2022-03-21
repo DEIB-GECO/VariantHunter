@@ -15,7 +15,7 @@
       <!---- Granularity ---->
       <v-flex class='xs12 sm4 md3 d-flex'>
         <FieldSelector v-model='selectedGranularity' label='Granularity' placeholder='Granularity'
-                       :possible-values='possibleGranularity' />
+                       :possible-values='possibleGranularity' solo />
       </v-flex>
 
       <!---- Location ---->

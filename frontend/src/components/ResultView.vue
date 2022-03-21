@@ -31,12 +31,13 @@
           <!-- Protein filter -->
           <v-flex justify-center class='xs12 sm4 md3 d-flex '>
             <FieldSelector v-model='selectedProtein' label='Protein' placeholder='All'
-                           :possible-values='possibleProteins' :autocomplete='true' />
+                           :possible-values='possibleProteins' autocomplete solo />
           </v-flex>
 
           <!-- Mutation filter -->
           <v-flex justify-center class='xs12 sm7 md4 d-flex '>
-            <MutationSelector v-model='selectedMutation' :possible-values='possibleMutations'/>
+            <MutationSelector v-model='selectedMutation' :possible-values='possibleMutations'
+                              :queryParams='queryParams'/>
           </v-flex>
         </v-layout>
       </v-container>
@@ -88,6 +89,12 @@
             </v-simple-table>
           </td>
         </template>
+        <template v-slot:body.append>
+          <td :colspan='6' class='table-append' />
+          <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append' >
+            Tot. seq.: {{querySupport[week-1]}}
+          </td>
+        </template>
       </v-data-table>
     </SectionElement>
 
@@ -103,8 +110,9 @@
     </SectionElement>
 
     <!-- ODD RATIO SECTION  --------------------------------------------------->
-    <SectionElement icon='mdi-align-vertical-bottom' title='DIFFUSION ODD RATIO' collapsed>
-      <OddRatioChart :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title' advanced/>
+    <SectionElement icon='mdi-align-vertical-bottom' title='DIFFUSION ODD RATIO'
+                    :tabs='["Week-by-week","Week-to-first-week","All"]' @tabChange='(selected) => oddRatioType=selected'>
+      <OddRatioChart :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title' :type='oddRatioType'/>
     </SectionElement>
 
     <!-- Next/prev week button ------------------------------------------------>
@@ -134,14 +142,16 @@ import TableSuperHeader from '@/components/tables/TableSuperHeader'
 import OddRatioChart from '@/components/plots/OddRatioChart'
 import SectionElement from '@/components/general/SectionElement'
 import MutationSelector from '@/components/form/MutationSelector'
+import { json2csv } from '@/utils/parserService'
 
 export default {
   name: 'ResultView',
   components: { MutationSelector, SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart },
   props: {
-    /** Array of raw data fetched from the server of the form:
+    /**
+     * Array of raw data fetched from the server of the form:
      *  [{  location, protein, [lineage,] mut, slope, w[1-4], f[1-4],
-     *      p_value_with_mut, p_value_without_mut, p_value_comparative_mut}, ...      ]
+     *      p_value_with_mut, p_value_without_mut, p_value_comp}, ...      ]
      */
     queryResult: { required: true },
 
@@ -188,12 +198,15 @@ export default {
       /** Loading flag for the table */
       isLoadingDetails: false,
 
-      /* Download flag: true if a file download is in progress */
-      downloadLoading: false
+      /** Download flag: true if a file download is in progress */
+      downloadLoading: false,
+
+      /** Type of odd ratio to be displayed. 0: week-by-week; 1: week-to-first-week; 2: all*/
+      oddRatioType: 0
     }
   },
   computed: {
-    ...mapState(['primary_color', 'secondary_color']),
+    ...mapState(['secondary_color']),
 
     /** The current customization status */
     status () {
@@ -221,7 +234,7 @@ export default {
         const extendedHeaders = [
           { text: 'P-value with mut', value: 'p_value_with_mut', divider: true, align: 'center' },
           { text: 'P-value without mut', value: 'p_value_without_mut', divider: true, align: 'center' },
-          { text: 'P-value comparative', value: 'p_value_comparative', divider: false, align: 'center' }
+          { text: 'P-value comparative', value: 'p_value_comp', divider: false, align: 'center' }
         ]
         headers = headers.concat(extendedHeaders)
       }
@@ -258,8 +271,8 @@ export default {
         if (!isNaN(rawRow['p_value_without_mut'])) {
           row['p_value_without_mut'] = rawRow['p_value_without_mut'].toExponential(3)
         }
-        if (!isNaN(rawRow['p_value_comparative_mut'])) {
-          row['p_value_comparative'] = rawRow['p_value_comparative_mut'].toExponential(3)
+        if (!isNaN(rawRow['p_value_comp'])) {
+          row['p_value_comp'] = rawRow['p_value_comp'].toExponential(3)
         }
 
         for (let i = 1; i <= 4; i++) {
@@ -327,7 +340,7 @@ export default {
     downloadData () {
       this.downloadLoading = true
       const sortedData = this.customSort(this.processedQueryResult, this.sortingIndexes, this.isDescSorting)
-      const csv = this.json2csv(sortedData, this.tableHeaders)
+      const csv = json2csv(sortedData, this.tableHeaders)
 
       // Anchor element to download the file
       const anchor = document.createElement('a')
@@ -367,34 +380,6 @@ export default {
       }
 
       downloadImage()
-    },
-
-    /**
-     * Converter utility json to csv
-     * @param jsonData    The json data to be converted
-     * @param headersInfo The headers info for the file to be generated
-     * @returns {String}  A string representing the csv file
-     */
-    json2csv (jsonData, headersInfo) {
-      // Names for the headers of the csv file (es. "Location","Slope",..)
-      const fieldsHeaders = []
-      // Names of the fields of the jsonData element (es. "location","slope",..)
-      const fieldsNames = []
-
-      headersInfo.forEach(function (headerInfo) {
-        fieldsHeaders.push(headerInfo.text)
-        fieldsNames.push(headerInfo.value)
-      })
-
-      const csv = jsonData.map(function (jsonRow) {
-        return fieldsNames
-          .map(function (fieldName) {
-            return JSON.stringify(String(jsonRow[fieldName]))
-          })
-          .join(',')
-      })
-      csv.unshift(fieldsHeaders.join(','))
-      return csv.join('\r\n')
     },
 
     /**
@@ -616,6 +601,13 @@ td.expanded-td tr:hover {
   font-size: 12px;
   letter-spacing: 0.019em;
   display: inherit;
+}
+
+td.table-append{
+  padding: 6px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+  border-right: thin solid rgba(0, 0, 0, 0.12);
 }
 
 /* Additional global rules to overwrite the vuetify styling fot table*/

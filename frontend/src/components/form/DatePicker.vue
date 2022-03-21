@@ -64,7 +64,7 @@ export default {
        * @param endDate The new value
        */
       set ([endDate]) {
-        const startDate = new Date(new Date(endDate).setDate(new Date(endDate).getDate() - 28)).toISOString().slice(0, 10)
+        const startDate = new Date(new Date(endDate).setDate(new Date(endDate).getDate() - 27)).toISOString().slice(0, 10)
         this.$emit('input', [startDate, endDate])
       }
     },
@@ -92,7 +92,7 @@ export default {
     /** Auto adjust the date range if not appropriately set*/
     selectedDate (newRange) {
       if (newRange && newRange[0] == null) {
-        const startDate = new Date(new Date(newRange[1]).setDate(new Date(newRange[1]).getDate() - 28)).toISOString().slice(0, 10)
+        const startDate = new Date(new Date(newRange[1]).setDate(new Date(newRange[1]).getDate() - 27)).toISOString().slice(0, 10)
         this.$emit('input', [startDate, newRange[1]])
       }
     }

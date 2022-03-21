@@ -38,7 +38,7 @@ def create_database():
             return
 
         # Create tables
-        print("\t STEP 1/2: Table creation...", end="")
+        print("\t STEP 1/3: Table creation...", end="")
         cur.execute(
             '''CREATE TABLE muts (date integer, lineage text, mut text, continent text, country text, region text )''')
 
@@ -66,8 +66,9 @@ def create_database():
         cur.execute('''CREATE TABLE lineage_table (lineage text)''')
         con.commit()
 
-        print("done.")
-        print("\t STEP 2/2: Data processing...")
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        exec_start = time.time()
+        print("\t STEP 2/3: Data processing...")
 
         header = f.readline()
         i = 0
@@ -171,21 +172,22 @@ def create_database():
         cur.execute("DROP TABLE timeloclin;")
         con.commit()
 
+        print(f'\t\tdone in {time.time() - exec_start:.5f} seconds.')
+        exec_start = time.time()
+        print("\t STEP 3/3: Data indexing...", end="")
+
         cur.execute("CREATE INDEX mutsg_idx1 ON  mutsg(location, date, lineage);")
         con.commit()
 
         cur.execute("CREATE INDEX mutsg_idx2 ON  mutsg(date, lineage);")
         con.commit()
 
-        cur.execute("CREATE INDEX timelocling1 ON  timelocling(date, lineage);")
-        con.commit()
-
-        cur.execute("CREATE INDEX timelocling2 ON  timelocling(date, lineage);")
+        cur.execute("CREATE INDEX timelocling_idx ON  timelocling(date, lineage);")
         con.commit()
 
         con.close()
 
-    print(f'\t\tdone in {time.time() - exec_start} seconds.')
+    print(f'done in {time.time() - exec_start:.5f} seconds.')
 
 
 create_database()

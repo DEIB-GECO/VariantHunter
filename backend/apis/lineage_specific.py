@@ -295,7 +295,7 @@ class FieldList(Resource):
                     compute_pvalue(
                         [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4],
                         week_sequence_counts),
-                'p_value_comparative_mut':
+                'p_value_comp':
                     compute_pvalue(
                         [c1, c2, c3, c4],
                         [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4]),
