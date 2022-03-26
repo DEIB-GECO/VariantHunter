@@ -1,15 +1,16 @@
 from __future__ import print_function
-
-import datetime as dtime
 import sqlite3
 import sys
 import time
-import tqdm
 from flask_restplus import Namespace
-from .utils.utils import start_date
 
-input_file_name = sys.argv[1]
-select_country = set([x.lower() for x in sys.argv[2].strip().split(',') if x])
+# Fetch the parameters: file path, selected countries and type (either gisaid or nextstrain)
+from .parsers.GisaidParser import GisaidParser
+from .parsers.NextstrainParser import NextstrainParser
+
+file_path = sys.argv[1]
+selected_countries = set([x.lower() for x in sys.argv[2].strip().split(',') if x])
+file_type = sys.argv[3].lower().strip() if len(sys.argv) > 3 else 'gisaid'
 
 api = Namespace('create_database', description='create_database')
 db_name = 'varianthunter.db'
@@ -23,171 +24,141 @@ def create_database():
     exec_start = time.time()
     print("> Starting database setup ...")
 
-    with open(input_file_name) as f:
+    with open(file_path) as f:
         con = sqlite3.connect(db_name)
-        # con.execute("begin exclusive")
         con.execute("pragma journal_mode=off;")
         con.execute("pragma locking_mode=EXCLUSIVE;")
         con.execute("pragma synchronous=OFF;")
         cur = con.cursor()
 
         # Check if tables already exist to skip database creation
-        cur.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' ''')
+        cur.execute(" SELECT count(name) FROM sqlite_master WHERE type='table' ")
         if cur.fetchone()[0] > 0:
             print('\t SKIPPED: database already exists.')
             return
 
-        # Create tables
-        print("\t STEP 1/3: Table creation...", end="")
-        cur.execute(
-            '''CREATE TABLE muts (date integer, lineage text, mut text, continent text, country text, region text )''')
+        def run_query(query):
+            cur.execute(query)
+            con.commit()
 
-        con.commit()
+        ###############################################################
+        # Create all the tables
+        print("\t STEP 1/4: Table creation...", end="")
 
-        cur.execute('''CREATE TABLE mutsg (date integer, lineage text, mut text, location text, count integer)''')
+        run_query('''   CREATE TABLE muts 
+                        (date integer, lineage text, mut text, continent text, country text, region text )''')
 
-        con.commit()
+        run_query('''   CREATE TABLE mutsg 
+                        (date integer, lineage text, mut text, location text, count integer)''')
 
-        cur.execute('''CREATE TABLE timeloclin (date integer, continent text, country text, region text, lineage text)''')
-        con.commit()
+        run_query('''   CREATE TABLE timeloclin 
+                        (date integer, continent text, country text, region text, lineage text)''')
 
-        cur.execute('''CREATE TABLE timelocling (date integer, location text, lineage text, count integer)''')
-        con.commit()
+        run_query('''   CREATE TABLE timelocling 
+                        (date integer, location text, lineage text, count integer)''')
 
-        cur.execute('''CREATE TABLE continent_table (continent text)''')
-        con.commit()
+        run_query('''   CREATE TABLE continent_table 
+                        (continent text)''')
 
-        cur.execute('''CREATE TABLE country_table (country text, continent text)''')
-        con.commit()
+        run_query('''   CREATE TABLE country_table 
+                        (country text, continent text)''')
 
-        cur.execute('''CREATE TABLE region_table (region text, country text)''')
-        con.commit()
+        run_query('''   CREATE TABLE region_table 
+                        (region text, country text)''')
 
-        cur.execute('''CREATE TABLE lineage_table (lineage text)''')
-        con.commit()
+        run_query('''   CREATE TABLE lineage_table 
+                        (lineage text)''')
 
         print(f'done in {time.time() - exec_start:.5f} seconds.')
         exec_start = time.time()
-        print("\t STEP 2/3: Data processing...")
 
-        header = f.readline()
-        i = 0
-        batch = []
-        batch_timeloclin = []
-        for line in tqdm.tqdm(f,desc = '\t\t'):
-            s = line.split("\t")
+        ###############################################################
+        # Parse the files and load the data into the tables
+        print("\t STEP 2/4: Data extraction...", end="")
 
-            locs = s[4].split('/')
-            country = locs[1].strip()
-            if len(select_country) != 0:
-                if country.lower() not in select_country:
-                    continue
-            continent = locs[0].strip()
-            if len(locs) < 3:
-                region = None
-            else:
-                region = locs[2].strip()
-
-            try:
-                n = float(s[20])
-            except:
-                n = 0.
-
-            l = int(s[6])
-
-            lin = s[11] if s[11] != '' else 'None'
-
-            try:
-                date = (dtime.datetime.strptime(s[3], "%Y-%m-%d") - start_date).days
-            except:
-                continue
-
-            if (29000 < l < 30000) and (n < 0.05):
-                batch_timeloclin.append((date, continent, country, region, lin))
-                for aa in s[14][1:-1].split(","):
-                    batch.append((date, lin, aa, continent, country, region))
-
-            if len(batch) > 50000:
-                con.executemany("insert into muts(date,lineage,mut,continent, country, region) values (?,?,?,?,?,?)", batch)
-                con.commit()
-                del batch
-                batch = []
-
-            if len(batch_timeloclin) > 50000:
-                con.executemany("insert into timeloclin(date,continent,country,region,lineage) values (?,?,?,?,?)",
-                                batch_timeloclin)
-                con.commit()
-                del batch_timeloclin
-                batch_timeloclin = []
-
-            del line
-
-        con.executemany("insert into muts(date,lineage,mut,continent, country, region)  values (?,?,?,?,?,?)", batch)
-        con.commit()
-        del batch
-        con.executemany("insert into timeloclin(date,continent,country,region,lineage) values (?,?,?,?,?)",
-                        batch_timeloclin)
-        con.commit()
-        del batch_timeloclin
-        con.commit()
-        cur.execute(
-            "insert into mutsg select date, lineage, mut, continent as location, count(*) as count from muts group by date,lineage,mut,continent")
-        con.commit()
-        cur.execute('''insert into mutsg select date, lineage, mut, country as location, count(*) as count 
-                           from muts 
-                           group by date,lineage,mut,country''')
-        con.commit()
-        cur.execute('''insert into mutsg select date, lineage, mut, region as location, count(*) as count 
-                           from muts 
-                           group by date,lineage,mut,region''')
-        con.commit()
-        cur.execute("DROP TABLE muts;")
-        con.commit()
-        cur.execute('''insert into timelocling select date, continent as location, lineage, count(*) as count 
-                           from timeloclin group by date, continent, lineage''')
-        con.commit()
-        cur.execute('''insert into timelocling select date, country as location, lineage, count(*) as count 
-                           from timeloclin group by date, country, lineage''')
-        con.commit()
-        cur.execute('''insert into timelocling select date, region as location, lineage, count(*) as count 
-                           from timeloclin group by date, region, lineage''')
-        con.commit()
-
-        cur.execute('''insert into continent_table select distinct continent 
-                           from timeloclin''')
-        con.commit()
-
-        cur.execute('''insert into country_table select distinct country, continent 
-                           from timeloclin''')
-        con.commit()
-
-        cur.execute('''insert into region_table select distinct region, country
-                           from timeloclin''')
-        con.commit()
-
-        cur.execute('''insert into lineage_table select distinct lineage 
-                           from timeloclin''')
-        con.commit()
-
-        cur.execute("DROP TABLE timeloclin;")
-        con.commit()
+        if file_type == 'gisaid':
+            print(" GISAID parsing...")
+            parser = GisaidParser(con=con, f=f)
+        else:
+            print(" NEXTSTRAIN parsing...")
+            parser = NextstrainParser(con, f)
+        parser.parse(selected_countries)
 
         print(f'\t\tdone in {time.time() - exec_start:.5f} seconds.')
         exec_start = time.time()
+
+        ###############################################################
+        # Aggregate data
+        print("\t STEP 3/4: Data aggregation...", end="")
+
+        run_query('''   INSERT INTO mutsg 
+                        SELECT date, lineage, mut, continent AS location, count(*) AS count 
+                        FROM muts 
+                        GROUP BY date, lineage, mut, continent;''')
+
+        run_query('''   INSERT INTO mutsg 
+                        SELECT date, lineage, mut, country AS location, count(*) AS count 
+                        FROM muts 
+                        GROUP BY date, lineage, mut, country;''')
+
+        run_query('''   INSERT INTO mutsg 
+                        SELECT date, lineage, mut, region AS location, count(*) AS count 
+                        FROM muts 
+                        GROUP BY date, lineage, mut, region;''')
+
+        run_query('''   DROP TABLE muts;''')
+
+        run_query('''   INSERT INTO timelocling 
+                        SELECT date, continent AS location, lineage, count(*) AS count 
+                        FROM timeloclin 
+                        GROUP BY date, continent, lineage;''')
+
+        run_query('''   INSERT INTO timelocling 
+                        SELECT date, country AS location, lineage, count(*) AS count 
+                        FROM timeloclin 
+                        GROUP BY date, country, lineage;''')
+
+        run_query('''   INSERT INTO timelocling 
+                        SELECT date, region AS location, lineage, count(*) AS count 
+                        FROM timeloclin 
+                        GROUP BY date, region, lineage;''')
+
+        run_query('''   INSERT INTO continent_table 
+                        SELECT DISTINCT continent 
+                        FROM timeloclin;''')
+
+        run_query('''   INSERT INTO country_table 
+                        SELECT DISTINCT country, continent 
+                        FROM timeloclin;''')
+
+        run_query('''   INSERT INTO region_table 
+                        SELECT DISTINCT region, country
+                        FROM timeloclin;''')
+
+        run_query('''   INSERT INTO lineage_table 
+                        SELECT DISTINCT lineage 
+                        FROM timeloclin;''')
+
+        run_query('''   DROP TABLE timeloclin;''')
+
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        exec_start = time.time()
+
+        ###############################################################
+        # Create indexes
         print("\t STEP 3/3: Data indexing...", end="")
 
-        cur.execute("CREATE INDEX mutsg_idx1 ON  mutsg(location, date, lineage);")
-        con.commit()
+        run_query('''   CREATE INDEX mutsg_idx1 
+                        ON  mutsg(location, date, lineage)''')
 
-        cur.execute("CREATE INDEX mutsg_idx2 ON  mutsg(date, lineage);")
-        con.commit()
+        run_query('''   CREATE INDEX mutsg_idx2 
+                        ON  mutsg(date, lineage)''')
 
-        cur.execute("CREATE INDEX timelocling_idx ON  timelocling(date, lineage);")
-        con.commit()
+        run_query('''   CREATE INDEX timelocling_idx 
+                        ON  timelocling(date, lineage)''')
 
         con.close()
-
-    print(f'done in {time.time() - exec_start:.5f} seconds.')
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
 
 
 create_database()

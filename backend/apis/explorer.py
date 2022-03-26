@@ -72,28 +72,27 @@ def extract_lineage_breakdown(granularity, location):
     con = sqlite3.connect(db_name)
     cur = con.cursor()
 
-    def extract_dates():
-        query = f'''    select distinct date
-                        from timelocling
-                        order by date;'''
-        dates = cur.execute(query).fetchall()
-        return [x[0] for x in dates]
-
-    def extract_lineages_from_date(date):
-        query = f'''    select lineage, sum(count)
-                        from timelocling
-                        where date='{date}'  and location='{location}' 
-                        group by location, lineage, date
+    def extract_lineages():
+        query = f'''    select distinct lineage
+                        from lineage_table
                         order by lineage;'''
-        lin_bd = cur.execute(query).fetchall()
-        return [{'name': lin, 'count': count} for lin, count in lin_bd]
+        lineages_list = cur.execute(query).fetchall()
+        return [x[0] for x in lineages_list]
 
-    days = extract_dates()
+    def extract_lineage_data(lin):
+        query = f'''    select date, sum(count)
+                        from timelocling
+                        where lineage='{lin}' and location='{location}' and date>=200 and date<=260
+                        group by date;'''
+        daily_counts = cur.execute(query).fetchall()
+        return [{'date': date, 'count': count} for date, count in daily_counts]
+
+    lineages = extract_lineages()
     lineage_breakdown = []
-    for day in days:
+    for lineage in lineages:
         lineage_breakdown.append({
-            'date': day,
-            'data': extract_lineages_from_date(day)
+            'name': lineage,
+            'data': extract_lineage_data(lineage)
         })
 
     con.close()

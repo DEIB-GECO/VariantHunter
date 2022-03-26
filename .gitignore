@@ -7,3 +7,4 @@ venv
 /metadata*.*
 
 venv2
+/backend/main/

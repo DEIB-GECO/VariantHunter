@@ -8,7 +8,7 @@
 -->
 
 <template>
-  <div style='width: 100%;' @mousemove='show'>
+  <div style='width: 100%;'>
     <!-- ExplorerHistogram plot -->
     <Plotly id='explorer' :data='data' :layout='layout' :displaylogo='false' :displayModeBar='true' />
   </div>
@@ -16,6 +16,7 @@
 
 <script>
 import { Plotly } from 'vue-plotly'
+import { diffToDate } from '@/utils/dateService'
 
 export default {
   name: 'ExplorerHistogram',
@@ -32,31 +33,18 @@ export default {
   data () {
     return {
       /** Currently selected timescale */
-      timeScale: 'ALL'
+      timeScale: 'ALL',
+
+      /** Visibility flag for the lineage breakdown */
+      showLineageBreakdown: false
     }
   },
   computed: {
-    /** Values for the x-axis of the barchart: dates */
-    x () {
-      const startDate = new Date('2020-01-01')
-      return this.sequenceData.map(element => {
-        const date = new Date(startDate)
-        // Dates from the server are relative and must be added to the start date
-        date.setDate(startDate.getDate() + element['date'])
-        return date
-      })
-    },
-
-    /** Values for the y-axis of the barchart: seq_count */
-    y () {
-      return this.sequenceData.map(element => element['seq_count'])
-    },
-
     /** Data processed for the histogram plot */
     dataHistogram () {
       return {
-        x: this.x,
-        y: this.y,
+        x: this.sequenceData.map(element => diffToDate(element['date'])),
+        y: this.sequenceData.map(element => element['seq_count']),
         mode: 'lines',
         type: 'bar',
         hovertemplate: '%{y} sequences<extra></extra>'
@@ -65,32 +53,25 @@ export default {
 
     /** Data processed for the lineage breakdown plot */
     dataBreakdown () {
+      return []
+
       return this.lineagesData.map(element => {
-        // const startDate = new Date('2020-01-01')
-        // const date = new Date(startDate)
-        // date.setDate(startDate.getDate() + element['date'])
-
         return {
-
+          x: element['data'].map(x => diffToDate(x.date)),
+          y: element['data'].map(x => x.count),
+          name: element['name'],
+          // stackgroup: 'one',
+          type: 'bar',
+          barmode: 'stack',
+          groupnorm: 'percent',
+          xaxis: 'x',
+          yaxis: 'y2',
+          hoveron: 'points+fills',
+          line: { width: 0 }
         }
       })
-      return [
-        { x: ['2022-01-01', '2022-01-02', '2022-01-03'], y: [2, 1, 4], stackgroup: 'one', groupnorm: 'percent', xaxis: 'x',
-          yaxis: 'y2' },
-        { x: ['2022-01-01', '2022-01-02', '2022-01-03'], y: [1, 1, 2], stackgroup: 'one', xaxis: 'x',
-          yaxis: 'y2' },
-        { x: ['2022-01-01', '2022-01-02', '2022-01-03'], y: [3, 0, 2], stackgroup: 'one', xaxis: 'x',
-          yaxis: 'y2' }
-      ]
-      // return {
-      //   x: this.x,
-      //   y: this.y,
-      //   xaxis: 'x',
-      //   yaxis: 'y2',
-      //   mode: 'lines',
-      //   type: 'bar',
+
       //   hovertemplate: '%{y} sequences<extra></extra>'
-      // }
     },
 
     /** Data processed for the whole plot */
@@ -107,7 +88,7 @@ export default {
           columns: 1,
           roworder: 'bottom to top'
         },
-        height: 665, // 355
+        height: 765, // 355
         xaxis: {
           rangeselector: this.selectorOptions,
           rangeslider: {},
@@ -119,12 +100,6 @@ export default {
           fixedrange: false,
           automargin: true,
           domain: [0, 0.55]
-        },
-        xaxis2: {
-          rangeselector: this.selectorOptions,
-          rangeslider: {},
-          automargin: true,
-          hoverformat: '%Y-%m-%d' // prevent hours info
         },
         yaxis2: {
           autorange: true,
@@ -139,7 +114,7 @@ export default {
         },
         annotations: [
           {
-            text: 'LINEAGES BREAKDOWN<br><b><sub>THIS FEATURE IS NOT YET AVAILABLE</sub></b>',
+            text: 'LINEAGES BREAKDOWN <br><sub>NOT AVAILABLE</sub>',
             font: { size: 14 },
             showarrow: false,
             align: 'center',
@@ -157,6 +132,7 @@ export default {
             yref: 'paper'
           }
         ],
+        hovermode: 'closest',
         showlegend: false,
         autosize: true
       }
@@ -179,21 +155,30 @@ export default {
     }
   },
   methods: {
-    show () {
+    manageRangeChange () {
+      // TODO @mousemove=''
       // const gd = document.getElementById('explorer')
       // console.log(gd.layout.xaxis.range)
     }
   },
-  mounted () {
-    /** Capture the change of the selector status to track the timeScale value
-     const that = this
-     const buttons = document.querySelector('.rangeselector').querySelectorAll('.button')
-     Array.from(buttons).forEach(b => {
-      b.addEventListener('click', function (event) {
-        that.timeScale = this.textContent
+  updated () {
+    /** Capture the change of the selector status to track the timeScale value*/
+    const that = this
+    try {
+      const buttons = document.querySelector('.rangeselector').querySelectorAll('.button')
+      Array.from(buttons).forEach(b => {
+        b.addEventListener('click', function (event) {
+          that.timeScale = this.textContent
+        })
       })
-    })*/
-
+    } catch (ignored) {
+      // Not able to locate the plotly buttons. Graph is empty.
+    }
+  },
+  watch: {
+    timeScale (newVal) {
+      this.showLineageBreakdown = newVal === '4 WEEKS'
+    }
   }
 }
 </script>

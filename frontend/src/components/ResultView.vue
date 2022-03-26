@@ -49,7 +49,7 @@
                     :items='processedQueryResult' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :show-expand='!withLineages' @item-expanded='loadLineageDetails'
                     :loading='isLoadingDetails' :single-expand='true' class='table-element' item-key='item_key'
-                    multi-sort show-select mobile-breakpoint='0'>
+                    :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'>
 
         <!---- Table controls ---->
         <template v-slot:top>
@@ -110,7 +110,7 @@
     </SectionElement>
 
     <!-- ODD RATIO SECTION  --------------------------------------------------->
-    <SectionElement icon='mdi-align-vertical-bottom' title='DIFFUSION ODD RATIO'
+    <SectionElement icon='mdi-align-vertical-bottom' title='DIFFUSION ODD RATIO' collapsed
                     :tabs='["Week-by-week","Week-to-first-week","All"]' @tabChange='(selected) => oddRatioType=selected'>
       <OddRatioChart :dateLabel='computeDateLabels()' :plotData='plotsInfo.data' :plotTitle='plotsInfo.title' :type='oddRatioType'/>
     </SectionElement>
@@ -177,6 +177,9 @@ export default {
 
       /** Array of selected rows */
       selectedRows: [],
+
+      /** Array of expanded rows (relevant for lineage-indep only)*/
+      expandedRows: [],
 
       /** Array of columns selected for sorting data */
       sortingIndexes: [],
@@ -545,6 +548,12 @@ export default {
       this.selectedRows = presKeys
         ? this.processedQueryResult.filter(row => presKeys.includes(row.item_key))
         : []
+    }
+  },
+  watch: {
+    /** Force closing expanded rows (relevant for lineage-indep only) on data update */
+    processedQueryResult () {
+      this.expandedRows = []
     }
   }
 }

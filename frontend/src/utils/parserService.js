@@ -9,7 +9,7 @@
  * @param headersInfo The headers info for the file to be generated
  * @returns {String}  A string representing the csv file
  */
-export function json2csv(jsonData, headersInfo) {
+export function json2csv (jsonData, headersInfo) {
   // Names for the headers of the csv file (es. "Location","Slope",..)
   const fieldsHeaders = []
   // Names of the fields of the jsonData element (es. "location","slope",..)

@@ -112,8 +112,6 @@ def extract_lineages_data(location, mut, w):
 
     week_sequence_counts = extract_week_seq_counts(location, w, mut=mut)
     tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4 = week_sequence_counts
-    print(week_sequence_counts)
-    print(extract_week_seq_counts(location, w))
 
     def extract_all_lineages(start, stop):
         query = f'''    select distinct lineage 

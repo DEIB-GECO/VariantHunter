@@ -90,7 +90,7 @@ export default {
   },
   computed: {
     tabLabelClass () {
-      return 'tab-icon ' + (this.showSectionBody ? '' : 'hidden ')
+      return 'tab-icon ' + (this.showSectionBody ? '' : 'hidden-tab ')
     }
   },
   methods: {
