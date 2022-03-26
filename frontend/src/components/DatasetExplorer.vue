@@ -16,24 +16,21 @@
     <template>
       <!-- Heading -->
       <v-flex class='xs12 d-flex main-label'>
-        <span
-        >Dataset Explorer
-          <hr
-          /></span>
+        <span>Dataset Explorer</span>
       </v-flex>
 
       <!-- Label -->
-      <v-flex class="xs12 d-flex sub-label">
+      <v-flex class='xs12 d-flex sub-label'>
         <span>{{ title }}</span>
       </v-flex>
 
       <!-- Loading animation -->
-      <v-flex v-if="isLoading" class="xs11 d-flex">
+      <v-flex v-if='isLoading' class='xs11 d-flex'>
         <v-skeleton-loader width='100%' type='image' />
       </v-flex>
 
       <!-- Plot -->
-      <v-flex v-if="hasResult" class="xs12 sm12 md11 d-flex explorer-element">
+      <v-flex v-if='hasResult' class='xs12 sm12 md11 d-flex explorer-element'>
         <ExplorerHistogram :sequence-data='sequenceData' :lineages-data='lineagesData' />
       </v-flex>
     </template>
@@ -172,11 +169,12 @@ export default {
 
 <style scoped>
 /* Form labels styling */
-.main-label {
+.main-label span{
   font-size: 23px;
   font-weight: 800;
   text-transform: uppercase;
   margin-top: 15px;
+  border-bottom: solid 4px white;
 }
 
 .main-label,

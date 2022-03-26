@@ -53,8 +53,6 @@ export default {
 
     /** Data processed for the lineage breakdown plot */
     dataBreakdown () {
-      return []
-
       return this.lineagesData.map(element => {
         return {
           x: element['data'].map(x => diffToDate(x.date)),
@@ -77,18 +75,18 @@ export default {
     /** Data processed for the whole plot */
     data () {
       const data = [this.dataHistogram]
-      return data.concat(this.dataBreakdown)
+      return data/* .concat(this.dataBreakdown)*/
     },
 
     /** Layout data for the plot */
     layout () {
       return {
-        grid: {
+        /* grid: {
           rows: 2,
           columns: 1,
           roworder: 'bottom to top'
-        },
-        height: 765, // 355
+        },*/
+        height: /* 765, */ 355,
         xaxis: {
           rangeselector: this.selectorOptions,
           rangeslider: {},
@@ -98,22 +96,22 @@ export default {
         yaxis: {
           autorange: true,
           fixedrange: false,
-          automargin: true,
-          domain: [0, 0.55]
+          automargin: true
+          /* domain: [0, 0.55]*/
         },
-        yaxis2: {
+        /* yaxis2: {
           autorange: true,
           fixedrange: false,
           automargin: true,
           domain: [0.66, 0.97]
-        },
+        },*/
         margin: {
           b: 55,
           t: 30,
           pad: 4
         },
         annotations: [
-          {
+          /* {
             text: 'LINEAGES BREAKDOWN <br><sub>NOT AVAILABLE</sub>',
             font: { size: 14 },
             showarrow: false,
@@ -130,7 +128,7 @@ export default {
             y: 0.575,
             xref: 'paper',
             yref: 'paper'
-          }
+          }*/
         ],
         hovermode: 'closest',
         showlegend: false,
@@ -143,7 +141,7 @@ export default {
       return {
         xanchor: 'center',
         x: 0.5,
-        y: -0.4,
+        y: -0.8, /* -0.4,*/
         buttons: [
           { step: 'all', label: 'ALL' },
           { step: 'day', stepmode: 'backward', count: 28, label: '4 WEEKS' },
