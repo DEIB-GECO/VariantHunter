@@ -77,7 +77,7 @@ def extract_lineage_breakdown(granularity, location, range):
         query = f'''    select distinct lineage
                         from timelocling
                         where location='{location}' and date>={range['begin']} and date<={range['end']}
-                        order by lineage;'''
+                        order by lineage desc;'''
         lineages_list = cur.execute(query).fetchall()
         return [x[0] for x in lineages_list]
 

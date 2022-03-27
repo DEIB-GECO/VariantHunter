@@ -11,7 +11,7 @@
 -->
 
 <template>
-  <div class='plotly-container'>
+  <div class='regular-plot plotly-container'>
     <!-- SUBSEQUENT WEEKS ODD RATIO -->
     <Plotly v-if='type!==1' :data='dataSubsWeeks' :layout='layoutSubsWeeks' :displaylogo='false'
             :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']" />

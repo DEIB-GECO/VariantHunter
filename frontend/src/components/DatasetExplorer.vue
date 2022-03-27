@@ -24,14 +24,28 @@
         <span>{{ title }}</span>
       </v-flex>
 
-      <!-- Loading animation -->
-      <v-flex v-if='isLoading' class='xs11 d-flex'>
+      <!-- Histogram loading animation -->
+      <v-flex v-if='isLoading.histogram' class='xs12 sm12 md11 d-flex'>
         <v-skeleton-loader width='100%' type='image' />
       </v-flex>
 
-      <!-- Plot -->
-      <v-flex v-if='hasResult' class='xs12 sm12 md11 d-flex explorer-element'>
-        <ExplorerHistogram :sequence-data='sequenceData' :lineages-data='lineagesData' @lineageBreakdownRequest='(e) => fetchLineageBreakdownInfo(e)'/>
+      <!-- Histogram plot -->
+      <v-flex v-if='showPlot.histogram' class='xs12 sm12 md11 d-flex explorer-element'>
+        <ExplorerHistogram :sequence-data='sequencesData' :lineages-data='lineagesData' @timeRangeChange='(tr) => onTimeRangeChanges(tr)'/>
+      </v-flex>
+
+      <!-- Breakdown loading animation -->
+      <v-flex v-if='isLoading.breakdown' class='xs12 sm12 md11 d-flex'>
+        <v-skeleton-loader width='100%' type='image' />
+      </v-flex>
+
+      <v-flex v-if='isDisabled.breakdown' class='xs12 sm12 md11 d-flex disabled-label'>
+        <sub><v-icon color='white' small left>mdi-information-outline</v-icon>Reduce the time range to at most 4 weeks to see lineages breakdown </sub>
+      </v-flex>
+
+      <!-- Breakdown plot -->
+      <v-flex v-if='showPlot.breakdown' class='xs12 sm12 md11 d-flex explorer-element lineage-breakdown'>
+        <LineagesBreakdown :lineages-data='lineagesData' />
       </v-flex>
     </template>
   </v-layout>
@@ -40,10 +54,12 @@
 <script>
 import ExplorerHistogram from '@/components/plots/ExplorerHistogram'
 import axios from 'axios'
+import LineagesBreakdown from '@/components/plots/LineagesBreakdown'
+import { dateDiff } from '@/utils/dateService'
 
 export default {
   name: 'DatasetExplorer',
-  components: { ExplorerHistogram },
+  components: { LineagesBreakdown, ExplorerHistogram },
   props: {
     /** Granularity to be explored */
     granularity: { required: true },
@@ -57,31 +73,50 @@ export default {
   data () {
     return {
       /** Loading flag. If true data are being fetched */
-      isLoading: false,
+      isLoading: {
+        histogram: false,
+        breakdown: false
+      },
 
-      /** Currently selected time range */
-      selectedRange: null,
+      /** Disabled plot flag. If true plot is disabled */
+      isDisabled: {
+        breakdown: false
+      },
 
       /** Array of sequence info  from the server */
-      sequenceData: [],
+      sequencesData: [],
 
       /** Array of lineages breakdown info  from the server */
-      lineagesData: []
+      lineagesData: [],
+
+      /** Currently selected time range */
+      selectedRange: null
     }
   },
   computed: {
-    /** Result flag. True iff there is a graph to be shown. */
+    /** Visibility flag for the plots */
     hasResult () {
       return (
-        !this.isLoading &&
         (this.granularity === 'world' || this.location !== null)
       )
     },
 
+    /** Visibility flag for the plots */
+    showPlot () {
+      return {
+        histogram:
+          !this.isLoading.histogram && this.sequencesData.length > 0,
+        breakdown:
+          !this.isLoading.histogram && this.sequencesData.length > 0 &&
+          !this.isLoading.breakdown && this.lineagesData.length > 0 &&
+          !this.isDisabled.breakdown
+      }
+    },
+
     /** Text for the label of the graph */
     title () {
-      if (!this.hasResult) {
-        return this.isLoading
+      if (!this.showPlot.histogram) {
+        return this.isLoading.histogram
           ? 'Loading data...'
           : 'Start exploring the dataset by selecting some parameters... '
       } else {
@@ -97,36 +132,39 @@ export default {
     /** Fetches from the server the info on the available sequences for the selected parameters */
     fetchSequenceInfo () {
       if (this.granularity === 'world' || this.location) {
-        this.isLoading = true
+        this.isLoading.histogram = true
         const sequenceAPI = `/explorer/getSequenceInfo`
         const toSend = {
           granularity: this.granularity,
-          location: this.location, // possibly it has no value
-          lineage: this.lineage // possibly it has no value
+          location: this.location,  // possibly it has no value
+          lineage: this.lineage     // possibly it has no value
         }
         axios
           .post(sequenceAPI, toSend)
           .then(res => {
-            this.sequenceData = res.data
+            this.sequencesData = res.data
           })
           .catch((e) => {
             this.$emit('error', e)
           })
           .finally(() => {
-            this.isLoading = false
+            this.isLoading.histogram = false
           })
+      } else {
+        this.sequencesData = []
       }
     },
 
     /** Fetches from the server the info on lineage breakdown for the selected parameters */
-    fetchLineageBreakdownInfo (range) {
-      console.log('Fetch lineage with range= ' + range)
-      if ((this.granularity === 'world' || this.location) /* && this.lineage === null*/ && range) {
+    fetchLineageBreakdownInfo () {
+      console.log('Fetch lineage with range= ' + this.selectedRange)
+      if ((this.granularity === 'world' || this.location) && this.selectedRange) {
+        this.isLoading.breakdown = true
         const sequenceAPI = `/explorer/getLineageBreakdown`
         const toSend = {
           granularity: this.granularity,
-          location: this.location, // possibly it has no value
-          range: range
+          location: this.location,    // possibly it has no value
+          range: this.selectedRange
         }
         axios
           .post(sequenceAPI, toSend)
@@ -136,33 +174,50 @@ export default {
           .catch((e) => {
             this.$emit('error', e)
           })
+          .finally(() => {
+            this.isLoading.breakdown = false
+          })
       } else {
         this.lineagesData = []
+      }
+    },
+
+    /** Handler of time range changes events for the histogram plot */
+    onTimeRangeChanges (newRange) {
+      this.selectedRange = newRange
+      if (newRange !== null) {
+        if (dateDiff(newRange[0], newRange[1]) > 35) {
+          this.isDisabled.breakdown = true
+        } else {
+          this.isDisabled.breakdown = false
+          this.fetchLineageBreakdownInfo()
+        }
       }
     }
   },
   beforeMount () {
     // Fetch the sequence info on show/hide section
     this.fetchSequenceInfo()
-    this.fetchLineageBreakdownInfo(this.selectedRange) // todo check useless calls
   },
   watch: {
     /** Reset sequence info on granularity value changes */
     granularity () {
-      this.sequenceData = []
-      this.lineagesData = []
+      this.sequencesData = []
     },
 
     /** Fetch sequence info on location value changes */
     location () {
       this.fetchSequenceInfo()
-      this.fetchLineageBreakdownInfo(this.selectedRange)
     },
 
     /** Fetch sequence info on lineage value changes */
     lineage () {
       this.fetchSequenceInfo()
-      this.fetchLineageBreakdownInfo(this.selectedRange)
+    },
+
+    /** Reset lineages data on sequence info reset */
+    sequencesData (newVal) {
+      if (newVal.length === 0) { this.lineagesData = [] }
     }
   }
 }
@@ -179,7 +234,8 @@ export default {
 }
 
 .main-label,
-.sub-label {
+.sub-label,
+.disabled-label{
   text-align: center;
   justify-content: center;
   padding-top: 5px !important;
@@ -187,9 +243,16 @@ export default {
   color: white;
 }
 
+.disabled-label{
+  margin-top: 10px;
+}
+
 /* Explorer container */
 .explorer-element {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
+}
+.lineage-breakdown {
+  margin-top: 10px !important;
 }
 </style>

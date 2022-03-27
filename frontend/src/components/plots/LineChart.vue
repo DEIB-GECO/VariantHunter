@@ -10,7 +10,7 @@
 -->
 
 <template>
-  <div class='plotly-container'>
+  <div class='regular-plot plotly-container'>
 
     <!-- LineChart plot -->
     <Plotly :data='data' :layout='layout' :displaylogo='false'

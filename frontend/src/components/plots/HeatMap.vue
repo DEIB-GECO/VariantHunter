@@ -9,7 +9,7 @@
 -->
 
 <template>
-  <div style="width: 100%;">
+  <div class="regular-plot" style="width: 100%;">
     <Plotly :data='data' :layout='layout' :displaylogo='false'/>
   </div>
 </template>

@@ -188,6 +188,9 @@ body {
 
 /* Border radius for the graph plots*/
 .main-svg {
+  border-radius: 4px;
+}
+.regular-plot .main-svg {
   border-radius: 4px 0 4px 4px;
 }
 
