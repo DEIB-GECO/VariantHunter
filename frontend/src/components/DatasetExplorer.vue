@@ -31,7 +31,7 @@
 
       <!-- Plot -->
       <v-flex v-if='hasResult' class='xs12 sm12 md11 d-flex explorer-element'>
-        <ExplorerHistogram :sequence-data='sequenceData' :lineages-data='lineagesData' />
+        <ExplorerHistogram :sequence-data='sequenceData' :lineages-data='lineagesData' @lineageBreakdownRequest='(e) => fetchLineageBreakdownInfo(e)'/>
       </v-flex>
     </template>
   </v-layout>
@@ -58,6 +58,9 @@ export default {
     return {
       /** Loading flag. If true data are being fetched */
       isLoading: false,
+
+      /** Currently selected time range */
+      selectedRange: null,
 
       /** Array of sequence info  from the server */
       sequenceData: [],
@@ -116,13 +119,14 @@ export default {
     },
 
     /** Fetches from the server the info on lineage breakdown for the selected parameters */
-    fetchLineageBreakdownInfo () {
-      if ((this.granularity === 'world' || this.location) && this.lineage === null) {
-        this.isLoading = true
+    fetchLineageBreakdownInfo (range) {
+      console.log('Fetch lineage with range= ' + range)
+      if ((this.granularity === 'world' || this.location) /* && this.lineage === null*/ && range) {
         const sequenceAPI = `/explorer/getLineageBreakdown`
         const toSend = {
           granularity: this.granularity,
-          location: this.location // possibly it has no value
+          location: this.location, // possibly it has no value
+          range: range
         }
         axios
           .post(sequenceAPI, toSend)
@@ -132,9 +136,6 @@ export default {
           .catch((e) => {
             this.$emit('error', e)
           })
-          .finally(() => {
-            this.isLoading = false
-          })
       } else {
         this.lineagesData = []
       }
@@ -143,7 +144,7 @@ export default {
   beforeMount () {
     // Fetch the sequence info on show/hide section
     this.fetchSequenceInfo()
-    this.fetchLineageBreakdownInfo()
+    this.fetchLineageBreakdownInfo(this.selectedRange) // todo check useless calls
   },
   watch: {
     /** Reset sequence info on granularity value changes */
@@ -155,13 +156,13 @@ export default {
     /** Fetch sequence info on location value changes */
     location () {
       this.fetchSequenceInfo()
-      this.fetchLineageBreakdownInfo()
+      this.fetchLineageBreakdownInfo(this.selectedRange)
     },
 
     /** Fetch sequence info on lineage value changes */
     lineage () {
       this.fetchSequenceInfo()
-      this.fetchLineageBreakdownInfo()
+      this.fetchLineageBreakdownInfo(this.selectedRange)
     }
   }
 }

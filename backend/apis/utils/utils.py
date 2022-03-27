@@ -31,6 +31,19 @@ def compute_weeks_from_date(date):
     return w
 
 
+def compute_diff_from_date(date):
+    """
+    Compute diff from the start_date from date
+    Args:
+        date: String representing the date to be considered
+
+    Returns: Difference from the start date
+
+    """
+    diff = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
+    return diff
+
+
 def compute_date_from_diff(diff):
     """
     Compute date value from diff from the start_date

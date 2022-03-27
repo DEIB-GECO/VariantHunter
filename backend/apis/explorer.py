@@ -12,7 +12,7 @@ import time
 
 from flask_restplus import Namespace, Resource
 
-from .utils.utils import compute_date_from_diff, compute_weeks_from_date
+from .utils.utils import compute_date_from_diff, compute_weeks_from_date, compute_diff_from_date
 
 api = Namespace('explorer', description='explorer')
 db_name = 'varianthunter.db'
@@ -57,12 +57,13 @@ def extract_seq_num(granularity, location, lineage):
     return daily_sequence_counts
 
 
-def extract_lineage_breakdown(granularity, location):
+def extract_lineage_breakdown(granularity, location, range):
     """
     Extract from the database the lineage breakdown info for the selected params
     Args:
         granularity:    the granularity
         location:       the location
+        range:          the date range
 
     Returns: an array of (day,data about the lineage breakdown) pairs
 
@@ -74,16 +75,22 @@ def extract_lineage_breakdown(granularity, location):
 
     def extract_lineages():
         query = f'''    select distinct lineage
-                        from lineage_table
+                        from timelocling
+                        where location='{location}' and date>={range['begin']} and date<={range['end']}
                         order by lineage;'''
         lineages_list = cur.execute(query).fetchall()
         return [x[0] for x in lineages_list]
 
     def extract_lineage_data(lin):
-        query = f'''    select date, sum(count)
-                        from timelocling
-                        where lineage='{lin}' and location='{location}' and date>=200 and date<=260
-                        group by date;'''
+        query = f'''    select t1.date, sum(t1.count)
+                        from timelocling as t1
+                        where t1.lineage='{lin}' and t1.location='{location}' 
+                        and t1.date>={range['begin']} and t1.date<={range['end']}
+                        group by t1.date
+                        having sum(t1.count)>= (
+                            select 0.10 * sum(t2.count)
+                            from timelocling as t2
+                            where t2.location='{location}' and t2.date=t1.date);'''
         daily_counts = cur.execute(query).fetchall()
         return [{'date': date, 'count': count} for date, count in daily_counts]
 
@@ -193,8 +200,12 @@ class FieldList(Resource):
         """
         granularity = api.payload['granularity']
         location = api.payload['location']
+        range = {
+            'begin': compute_diff_from_date(api.payload['range'][0])+1,
+            'end': compute_diff_from_date(api.payload['range'][1]),
+        }
 
-        info = extract_lineage_breakdown(granularity, location)
+        info = extract_lineage_breakdown(granularity, location, range)
         return info
 
 
