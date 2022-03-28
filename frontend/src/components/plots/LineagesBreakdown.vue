@@ -58,7 +58,7 @@ export default {
             '#808000', '#ffd8b1', '#575793', '#29b7d5',
             '#00c710', '#6b6868', '#b2b2b2', '#000000'
           ],
-        height: 390,
+        height: 400,
         xaxis: {
           automargin: true,
           hoverformat: '%Y-%m-%d' // prevent hours info

@@ -10,6 +10,8 @@ from .parsers.NextstrainParser import NextstrainParser
 
 file_path = sys.argv[1]
 selected_countries = set([x.lower() for x in sys.argv[2].strip().split(',') if x])
+if len(selected_countries)==1 and 'all' in selected_countries:
+    selected_countries.clear()
 file_type = sys.argv[3].lower().strip() if len(sys.argv) > 3 else 'gisaid'
 
 api = Namespace('create_database', description='create_database')

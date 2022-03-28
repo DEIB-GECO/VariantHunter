@@ -90,7 +90,7 @@
           </td>
         </template>
         <template v-slot:body.append>
-          <td :colspan='6' class='table-append' />
+          <td :colspan='withLineages? 5: 6' class='table-append' />
           <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append' >
             Tot. seq.: {{querySupport[week-1]}}
           </td>

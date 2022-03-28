@@ -13,8 +13,6 @@ class NextstrainParser(Parser):
     missing_info_mark = '?'
 
     def parse(self, selected_countries):
-        print("*************** WARNING ********************************************* \n"+
-              "NOT IMPLEMENTED: N-Content is required but not available. Default: n=0 for all the rows.")
         self.f.readline()
 
         for line in tqdm(self.f, desc='\t\t'):
@@ -30,14 +28,12 @@ class NextstrainParser(Parser):
             else:
                 region = s[8].strip()
 
-            # TODO: add computation of N-Content
-            n = 0.  # remove this lines once implemented
-            # try:
-            #     n = float(s[20])
-            # except:
-            #     n = 0.
-
             length = int(s[14])
+
+            try:
+                n = float(s[29])/length
+            except:
+                n = 0.
 
             lin = s[19] if s[19] != self.missing_info_mark else 'None'
 
