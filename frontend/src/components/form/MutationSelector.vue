@@ -101,12 +101,19 @@
                 <!-- Lineage selector -->
                 <v-col cols='12'>
                   <FieldSelector v-model='selectedLineages' :possible-values='possibleLineages' placeholder='Lineages'
-                                 outlined autocomplete multiple small-chips @input='manageLineageSelection' />
+                                 :loading='processing' outlined autocomplete multiple small-chips @input='manageLineageSelection' />
                 </v-col>
 
                 <!-- Result -->
-                <v-col cols='12'>
-                  <v-chip v-for='elem in selectedLinMuts' :key='elem'>{{ elem }}</v-chip>
+                <v-col cols='12' v-if='allLinMuts.length>0'>
+                  <v-chip v-for='elem in allLinMuts' :key='elem' class="mr-1 mb-1"
+                          :text-color='selectedLinMuts.includes(elem)?"green":"red"'
+                          :color='selectedLinMuts.includes(elem)?"green lighten-5":"red lighten-5"'>
+                    {{ elem }}
+                  </v-chip>
+                  <br />
+                  <v-chip x-small class="mt-5 mr-2" text-color='green' color='green lighten-5'>PRESENT MUTATION</v-chip>
+                  <v-chip x-small class="mt-5 mr-2" text-color='red' color='red lighten-5'>ABSENT MUTATION</v-chip>
                 </v-col>
               </v-row>
             </v-container>
@@ -178,9 +185,6 @@ export default {
       /** Lineage uploader visibility */
       showLineageSelector: false,
 
-      /** Dictionary storing for each lineage the associated mutations   */
-      mutClassification: {},
-
       /** The selectable lineages */
       possibleLineages: [],
 
@@ -188,6 +192,9 @@ export default {
       selectedLineages: [],
 
       /** The mutations that correspond to the selected lineages */
+      allLinMuts: [],
+
+      /** The mutations that correspond to the selected lineages and are allowed values */
       selectedLinMuts: []
     }
   },
@@ -248,38 +255,54 @@ export default {
       return count
     },
 
-    /** Fetch the classification of the possible mutations*/
-    fetchClassification () {
-      const classificationAPI = `/explorer/getLineagesMutations`
-      const toSend = {
-        date: this.queryParams.date,
-        location: this.queryParams.location,
-        mutations: this.possibleValues
+    /** Fetch the possible lineages*/
+    fetchLineages () {
+      if (this.possibleLineages.length === 0) {
+        this.processing = true
+        const url = `/lineage_specific/getLineages`
+        axios
+          .post(url, { location: null, date: null })
+          .then(res => {
+            this.possibleLineages = res.data
+          })
+          .catch((e) => {
+            this.$emit('error', e)
+          })
+          .finally(() => {
+            this.processing = false
+          })
       }
-      axios
-        .post(classificationAPI, toSend)
-        .then(res => {
-          this.mutClassification = res.data
-          this.possibleLineages = Object.keys(this.mutClassification)
-        }).catch((e) => {
-          this.$emit('error', e)
-        })
     },
 
     /**
      * Perform the selection of the mutations based on the lineages
-     * @returns {number}  Number of elements correctly parsed
      */
     manageLineageSelection () {
-      let values = []
+      this.allLinMuts = []
+      this.selectedLinMuts = []
 
-      // Obtain mutations and remove duplicates
-      this.selectedLineages.forEach(lin => {
-        values = values.concat(this.mutClassification[lin])
-      })
-      this.selectedLinMuts = values.filter((x, index) => values.indexOf(x) === index)
+      if (this.selectedLineages.length > 0) {
+        this.processing = true
+        const classificationAPI = `/explorer/getLineagesCharacterization`
+        const toSend = {
+          lineages: this.selectedLineages
+        }
+        axios
+          .post(classificationAPI, toSend)
+          .then(res => {
+            this.allLinMuts = res.data
 
-      return this.selectedLinMuts.length
+            // Filter only the allowed mutations and emit update
+            this.selectedLinMuts = this.possibleValues.filter((x) => this.allLinMuts.includes(x))
+            this.$emit('input', this.selectedLinMuts)
+          })
+          .catch((e) => {
+            this.$emit('error', e)
+          })
+          .finally(() => {
+            this.processing = false
+          })
+      }
     }
   },
   watch: {
@@ -293,15 +316,10 @@ export default {
       }
     },
 
-    /** On uploader open fetch the lineages, on close apply filters */
+    /** On uploader open fetch the lineages */
     showLineageSelector (newVal) {
       if (newVal) {
-        this.fetchClassification()
-      } else {
-        const valCount = this.manageLineageSelection()
-        if (valCount > 0) {
-          this.$emit('input', this.selectedLinMuts)
-        }
+        this.fetchLineages()
       }
     }
   }

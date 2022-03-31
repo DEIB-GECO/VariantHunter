@@ -24,11 +24,11 @@
     <v-flex class='xs12 d-flex field-element'>
       <!-- Manual selector -->
       <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues'
-                hide-details :label='placeholder' solo='solo' attach />
+                hide-details :label='placeholder' solo='solo' :loading='loading' attach />
 
       <!-- Autocomplete selector -->
       <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable :multiple='multiple'
-                      :small-chips='smallChips' hide-details :label='placeholder' :solo='solo'  attach >
+                      :small-chips='smallChips' hide-details :label='placeholder' :solo='solo' :loading='loading' attach >
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
@@ -64,7 +64,10 @@ export default {
     solo: Boolean,
 
     /** smallChips flag. If true, the selector shows small chips for selected items */
-    smallChips: Boolean
+    smallChips: Boolean,
+
+    /** loading flag. If true, the selector is loading data */
+    loading: Boolean
   },
   computed: {
     /** Selected value */

@@ -34,7 +34,7 @@ def get_all_lineages():
     con = sqlite3.connect(db_name)
     cur = con.cursor()
 
-    query = "select * from lineage_table where lineage is not null;"
+    query = "select distinct * from lineages_characterization;"
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     extracted_lineages.sort()

@@ -24,7 +24,7 @@ def get_continents():
     """
     con = sqlite3.connect(db_name)
     cur = con.cursor()
-    query = "select continent from continent_table where continent is not null;"
+    query = "select continent from continents where continent is not null;"
     continents = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return continents
@@ -38,7 +38,7 @@ def get_countries(continent):
     """
     con = sqlite3.connect(db_name)
     cur = con.cursor()
-    query = f'''select country from country_table where country is not null and continent='{continent}';'''
+    query = f'''select country from countries where country is not null and continent='{continent}';'''
     countries = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return countries
@@ -52,7 +52,7 @@ def get_regions(country):
     """
     con = sqlite3.connect(db_name)
     cur = con.cursor()
-    query = f'''select region from region_table where region is not null and country='{country}';'''
+    query = f'''select region from regions where region is not null and country='{country}';'''
     regions = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return regions

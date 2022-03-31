@@ -3,14 +3,13 @@ import sqlite3
 import sys
 import time
 from flask_restplus import Namespace
-
-# Fetch the parameters: file path, selected countries and type (either gisaid or nextstrain)
 from .parsers.GisaidParser import GisaidParser
 from .parsers.NextstrainParser import NextstrainParser
 
+# Fetch the parameters: file path, selected countries and type (either gisaid or nextstrain)
 file_path = sys.argv[1]
 selected_countries = set([x.lower() for x in sys.argv[2].strip().split(',') if x])
-if len(selected_countries)==1 and 'all' in selected_countries:
+if len(selected_countries) == 1 and 'all' in selected_countries:
     selected_countries.clear()
 file_type = sys.argv[3].lower().strip() if len(sys.argv) > 3 else 'gisaid'
 
@@ -25,6 +24,7 @@ def create_database():
     """
     exec_start = time.time()
     print("> Starting database setup ...")
+    curr_step, tot_steps = 1, 5
 
     with open(file_path) as f:
         con = sqlite3.connect(db_name)
@@ -45,7 +45,7 @@ def create_database():
 
         ###############################################################
         # Create all the tables
-        print("\t STEP 1/4: Table creation...", end="")
+        print(f"\t STEP {curr_step}/{tot_steps}: Table creation...", end="")
 
         run_query('''   CREATE TABLE muts 
                         (date integer, lineage text, mut text, continent text, country text, region text )''')
@@ -59,24 +59,25 @@ def create_database():
         run_query('''   CREATE TABLE timelocling 
                         (date integer, location text, lineage text, count integer)''')
 
-        run_query('''   CREATE TABLE continent_table 
+        run_query('''   CREATE TABLE continents 
                         (continent text)''')
 
-        run_query('''   CREATE TABLE country_table 
+        run_query('''   CREATE TABLE countries
                         (country text, continent text)''')
 
-        run_query('''   CREATE TABLE region_table 
+        run_query('''   CREATE TABLE regions 
                         (region text, country text)''')
 
-        run_query('''   CREATE TABLE lineage_table 
-                        (lineage text)''')
+        run_query('''   CREATE TABLE lineages_characterization 
+                        (lineage text, mut text)''')
 
         print(f'done in {time.time() - exec_start:.5f} seconds.')
         exec_start = time.time()
 
         ###############################################################
         # Parse the files and load the data into the tables
-        print("\t STEP 2/4: Data extraction...", end="")
+        curr_step += 1
+        print(f"\t STEP {curr_step}/{tot_steps}: Data extraction...", end="")
 
         if file_type == 'gisaid':
             print(" GISAID parsing...")
@@ -90,8 +91,19 @@ def create_database():
         exec_start = time.time()
 
         ###############################################################
+        curr_step += 1
+        print(f"\t STEP {curr_step}/{tot_steps}: Data indexing...", end="")
+
+        run_query('''   CREATE INDEX muts_idx
+                        ON  muts(date, lineage, mut)''')
+
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        exec_start = time.time()
+
+        ###############################################################
         # Aggregate data
-        print("\t STEP 3/4: Data aggregation...", end="")
+        curr_step += 1
+        print(f"\t STEP {curr_step}/{tot_steps}: Data aggregation...", end="")
 
         run_query('''   INSERT INTO mutsg 
                         SELECT date, lineage, mut, continent AS location, count(*) AS count 
@@ -107,6 +119,25 @@ def create_database():
                         SELECT date, lineage, mut, region AS location, count(*) AS count 
                         FROM muts 
                         GROUP BY date, lineage, mut, region;''')
+
+        run_query('''   CREATE VIEW temp.lin_mut_counts AS
+                                SELECT lineage, mut, count(*) AS count
+                                FROM muts
+                                GROUP BY lineage,mut;''')
+
+        run_query('''   CREATE VIEW temp.lin_counts AS
+                            SELECT lineage, count(*) as count
+                            FROM timeloclin
+                            GROUP BY lineage;''')
+
+        run_query('''   INSERT INTO lineages_characterization
+                        SELECT lineage, mut
+                        FROM lin_mut_counts AS T1
+                        WHERE T1.count >= (
+                            SELECT count*0.5
+                            FROM lin_counts
+                            WHERE lineage=T1.lineage
+                            );''')
 
         run_query('''   DROP TABLE muts;''')
 
@@ -125,20 +156,16 @@ def create_database():
                         FROM timeloclin 
                         GROUP BY date, region, lineage;''')
 
-        run_query('''   INSERT INTO continent_table 
+        run_query('''   INSERT INTO continents 
                         SELECT DISTINCT continent 
                         FROM timeloclin;''')
 
-        run_query('''   INSERT INTO country_table 
+        run_query('''   INSERT INTO countries 
                         SELECT DISTINCT country, continent 
                         FROM timeloclin;''')
 
-        run_query('''   INSERT INTO region_table 
+        run_query('''   INSERT INTO regions
                         SELECT DISTINCT region, country
-                        FROM timeloclin;''')
-
-        run_query('''   INSERT INTO lineage_table 
-                        SELECT DISTINCT lineage 
                         FROM timeloclin;''')
 
         run_query('''   DROP TABLE timeloclin;''')
@@ -148,7 +175,8 @@ def create_database():
 
         ###############################################################
         # Create indexes
-        print("\t STEP 3/3: Data indexing...", end="")
+        curr_step += 1
+        print(f"\t STEP {curr_step}/{tot_steps}: Data indexing...", end="")
 
         run_query('''   CREATE INDEX mutsg_idx1 
                         ON  mutsg(location, date, lineage)''')
