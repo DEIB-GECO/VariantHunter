@@ -32,6 +32,16 @@
       <DialogOpener :button-prefix='false' title='Columns description'>
         <ul>
           <li>
+            <b>Mut: </b>
+            the name of the mutation. <br/> In case of lineage specific analysis, the mutations
+            characterizing the lineage are <span class='char-mut'>highlighted</span>.
+          </li>
+          <li>
+            <b>Slope: </b>
+            is calculated through a linear interpolation of the
+            diffusion (percentage). (y=<b>m</b>x + q)
+          </li>
+          <li>
             <b>P value with mut: </b>
             shows if the population «with mutation» is growing
             differently compared to everything.
@@ -45,11 +55,6 @@
             <b>P value comparative: </b>
             shows if the population «with mutation» is growing
             differently compared to the population «without mutation».
-          </li>
-          <li>
-            <b>Slope: </b>
-            is calculated through a linear interpolation of the
-            diffusion (percentage). (y=<b>m</b>x + q)
           </li>
         </ul>
       </DialogOpener>

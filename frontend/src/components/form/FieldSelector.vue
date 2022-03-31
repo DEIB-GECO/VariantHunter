@@ -32,6 +32,13 @@
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
+        <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
+
+              <v-chip v-if="index<5" small>{{ item }}</v-chip>
+              <v-chip v-else-if="index===5" small outlined>
+                +{{ value.length - 5 }} others
+              </v-chip>
+            </template>
       </v-autocomplete>
 
     </v-flex>

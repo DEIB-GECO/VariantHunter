@@ -141,7 +141,8 @@ def get_lineage_characterization(lineages):
     Returns: an array of characterizing mutations
 
     """
-    print("\t Extract lineage characterization ...", end="")
+    print("\t Extract lineage characterization  ...", end="")
+    print(lineages)
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()

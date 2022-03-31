@@ -151,7 +151,10 @@ export default {
       /** Array storing the search results for each query */
       queriesResults: [],
 
-      /** Array storing the total number of sequences collected per week for each query */
+      /**
+       * Array storing additional queries info such as the total number of sequences collected
+       * per week for each query and the characterizing mutations for the lineage
+       */
       queriesSupport: [],
 
       /** Array storing the customization options (filter values, selections) for each query */
@@ -211,7 +214,11 @@ export default {
           this.queriesParams.push(toSend)
           this.queriesCustomOptions.push(customOptions)
           this.queriesResults.push(res['rows'])
-          const panelIndex = this.queriesSupport.push(res['tot_seq']) - 1
+          const supportInfo = {
+            totSeq: res['tot_seq'],
+            characterizingMuts: res['characterizing_muts']
+          }
+          const panelIndex = this.queriesSupport.push(supportInfo) - 1
 
           // Open the new panel and jump to the result container
           this.expandedPanels = [panelIndex]
@@ -255,6 +262,19 @@ export default {
       this.queriesResults.splice(queryIndex, 1)
       this.queriesSupport.splice(queryIndex, 1)
       this.isDeleting = false
+    },
+
+    fetchCaracterizingMuts () {
+      const classificationAPI = `/explorer/getLineagesCharacterization`
+      const toSend = { lineage: this.queryParams.lineage }
+      axios
+        .post(classificationAPI, toSend)
+        .then(res => {
+          this.characterizingMuts
+        })
+        .catch((e) => {
+          this.$emit('error', e)
+        })
     }
   },
   mounted () {

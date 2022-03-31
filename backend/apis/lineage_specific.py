@@ -14,6 +14,8 @@ from datetime import datetime
 import numpy as np
 import scipy.stats
 from flask_restplus import Namespace, Resource
+
+from .explorer import get_lineage_characterization
 from .utils.utils import start_date, compute_weeks_from_date
 
 api = Namespace('lineage_specific', description='lineage_specific')
@@ -301,4 +303,6 @@ class FieldList(Resource):
                         [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4]),
             })
 
-        return {'rows': statistics, 'tot_seq': week_sequence_counts}
+        characterizing_muts = get_lineage_characterization([lineage])
+
+        return {'rows': statistics, 'tot_seq': week_sequence_counts, 'characterizing_muts': characterizing_muts}

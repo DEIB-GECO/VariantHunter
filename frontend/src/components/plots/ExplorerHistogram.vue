@@ -33,11 +33,11 @@ export default {
   },
   data () {
     return {
-      /** Currently selected timescale */
-      timeScale: 'ALL',
-
       /** Currently selected time range */
-      timeRange: null
+      timeRange: null,
+
+      /** First load flag */
+      firstLoad: true
     }
   },
   computed: {
@@ -98,8 +98,14 @@ export default {
       try {
         const range = document.getElementById(this._uid.toString()).layout.xaxis.range
         this.timeRange = [range[0].substr(0, 10), range[1].substr(0, 10)]
+
+        // First load? then simulate click on 4 weeks view
+        if (this.firstLoad) {
+          this.firstLoad = false
+          const buttons = document.querySelector('.rangeselector').querySelectorAll('.button')
+          buttons[1].dispatchEvent(new Event('click'))
+        }
       } catch (ignored) {
-        console.log('Unable to fetch current range')
         // Not able to locate plotly.
       }
     }

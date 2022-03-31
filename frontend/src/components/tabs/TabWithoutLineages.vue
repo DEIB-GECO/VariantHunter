@@ -136,7 +136,7 @@ export default {
       /** Array storing the search results for all the queries */
       queriesResults: [],
 
-      /** Array storing the total number of sequences collected per week for all the queries */
+      /** Array of objects storing the total number of sequences collected per week for all the queries */
       queriesSupport: [],
 
       /** Array storing the customization options (filter values, selections) for each query */
@@ -194,7 +194,7 @@ export default {
           this.queriesParams.push(toSend)
           this.queriesCustomOptions.push(customOptions)
           this.queriesResults.push(res['rows'])
-          const panelIndex = this.queriesSupport.push(res['tot_seq']) - 1
+          const panelIndex = this.queriesSupport.push({ totSeq: res['tot_seq'] }) - 1
 
           // Open the new panel and jump to the result container
           this.expandedPanels = [panelIndex]

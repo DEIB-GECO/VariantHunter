@@ -5,7 +5,7 @@
   Props:
   ├── queryResult:  Array of raw data fetched from the server
   ├── queryParams:  Object storing the query parameters {granularity, location, date, [lineage]}
-  ├── querySupport: Array storing the total number of sequences collected per week
+  ├── querySupport: Object storing additional info such as total number of sequences collected per week and characterizing muts
   ├── queryCustOpt: Object storing the custom preselection for the filtering/selection options
   └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis.
 
@@ -27,7 +27,6 @@
               FILTERING OPTIONS
             </h3>
           </v-flex>
-
           <!-- Protein filter -->
           <v-flex justify-center class='xs12 sm4 md3 d-flex '>
             <FieldSelector v-model='selectedProtein' label='Protein' placeholder='All'
@@ -63,6 +62,11 @@
           <TableSuperHeader :with-lineages='withLineages' :show-p-values='showPValues' />
         </template>
 
+        <!-- Customized mutation column style for lineage specific search -->
+        <template v-if="withLineages" v-slot:item.mut="{ item }">
+          <div :class="isCharacterizingMut(item)? 'char-mut':''">{{ item.mut }}</div>
+        </template>
+
         <!---- Expanded table element ---->
         <template v-if='!withLineages && !isLoadingDetails' v-slot:expanded-item='{ headers, item }'>
           <td :colspan='5' class='expanded-item-title'>
@@ -92,7 +96,7 @@
         <template v-slot:body.append>
           <td :colspan='withLineages? 5: 6' class='table-append' />
           <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append' >
-            Tot. seq.: {{querySupport[week-1]}}
+            Tot. seq.: {{querySupport.totSeq[week-1]}}
           </td>
         </template>
       </v-data-table>
@@ -158,7 +162,7 @@ export default {
     /** Object storing the query parameters {granularity, location, date, [lineage]} */
     queryParams: { required: true },
 
-    /** Array storing the total number of sequences collected per week */
+    /** Object storing additional info such as total number of sequences collected per week and characterizing muts */
     querySupport: { required: true },
 
     /** Object storing the custom preselection for the filtering/selection options */
@@ -323,7 +327,7 @@ export default {
         }
       }
 
-      return { title: plotsTitle, data: plotsData, support: this.querySupport }
+      return { title: plotsTitle, data: plotsData, support: this.querySupport.totSeq }
     },
 
     /** Name for downloaded files:  Lin[<LINEAGE>|"Indep"]_<GRANULARITY>_[<LOCATION>]_<DATE> */
@@ -530,6 +534,15 @@ export default {
             this.$emit('error', e)
           })
       }
+    },
+
+    /**
+     * Determines whether a mutation is characterizing the lineage or not
+     * @param item   The item to be considered
+     * @returns {boolean}   True iff the mutation is characterizing the lineage
+     */
+    isCharacterizingMut (item) {
+      return this.querySupport.characterizingMuts.includes(item.protein + '_' + item.mut)
     }
   },
   mounted () {
@@ -586,6 +599,11 @@ export default {
 /* Table size */
 .table-element {
   width: 100%;
+}
+
+/* Special formatting for characterizing muts*/
+.char-mut{
+  background: rgba(255, 255, 0, 0.45);
 }
 
 /* Expanded element style */

@@ -115,6 +115,15 @@
                   <v-chip x-small class="mt-5 mr-2" text-color='green' color='green lighten-5'>PRESENT MUTATION</v-chip>
                   <v-chip x-small class="mt-5 mr-2" text-color='red' color='red lighten-5'>ABSENT MUTATION</v-chip>
                 </v-col>
+
+                <!-- Additional info -->
+                <v-col cols='1' class='mt-4'><v-icon small left>mdi-information-outline</v-icon></v-col>
+                <v-col cols='11' class='mt-4'>
+                <span>
+                  The characterizing mutations are identified as those that are
+                  present in at least 50% of the lineage sequences.
+                </span>
+                </v-col>
               </v-row>
             </v-container>
           </v-card-text>
