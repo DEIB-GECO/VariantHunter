@@ -29,11 +29,11 @@ export default {
   computed: {
     /** Data processed for the plot */
     data () {
-      return this.lineagesData.map(element => {
+      return Object.entries(this.lineagesData).sort().map(element => {
         return {
-          x: element['data'].map(x => diffToDate(x.date)),
-          y: element['data'].map(x => x.count),
-          name: element['name'],
+          x: Object.keys(element[1]).map(x => diffToDate(parseInt(x))),
+          y: Object.values(element[1]),
+          name: element[0],
           stackgroup: 'one',
           barmode: 'stack',
           groupnorm: 'percent',
@@ -46,7 +46,7 @@ export default {
     /** Layout data for the plot */
     layout () {
       return {
-        title: '<sub>Lineages breakdown for lineages affecting at least 10% of the sequences of each day</sub>',
+        title: '<sub>Daily lineages breakdown</sub>',
         colorway:
           [
             '#ef5378', '#5ee171', '#f3df67', '#6685f1',

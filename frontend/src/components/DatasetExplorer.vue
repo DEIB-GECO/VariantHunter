@@ -31,7 +31,7 @@
 
       <!-- Histogram plot -->
       <v-flex v-if='showPlot.histogram' class='xs12 sm12 md11 d-flex explorer-element'>
-        <ExplorerHistogram :sequence-data='sequencesData' :lineages-data='lineagesData' @timeRangeChange='(tr) => onTimeRangeChanges(tr)'/>
+        <ExplorerHistogram :sequence-data='sequencesData' @timeRangeChange='(tr) => onTimeRangeChanges(tr)'/>
       </v-flex>
 
       <!-- Breakdown loading animation -->
@@ -108,7 +108,7 @@ export default {
           !this.isLoading.histogram && this.sequencesData.length > 0,
         breakdown:
           !this.isLoading.histogram && this.sequencesData.length > 0 &&
-          !this.isLoading.breakdown && this.lineagesData.length > 0 &&
+          !this.isLoading.breakdown && Object.keys(this.lineagesData).length > 0 &&
           !this.isDisabled.breakdown
       }
     },
@@ -157,7 +157,6 @@ export default {
 
     /** Fetches from the server the info on lineage breakdown for the selected parameters */
     fetchLineageBreakdownInfo () {
-      console.log('Fetch lineage with range= ' + this.selectedRange)
       if ((this.granularity === 'world' || this.location) && this.selectedRange) {
         this.isLoading.breakdown = true
         const sequenceAPI = `/explorer/getLineageBreakdown`
@@ -178,7 +177,7 @@ export default {
             this.isLoading.breakdown = false
           })
       } else {
-        this.lineagesData = []
+        this.lineagesData = {}
       }
     },
 
@@ -217,7 +216,7 @@ export default {
 
     /** Reset lineages data on sequence info reset */
     sequencesData (newVal) {
-      if (newVal.length === 0) { this.lineagesData = [] }
+      if (newVal.length === 0) { this.lineagesData = {} }
     }
   }
 }

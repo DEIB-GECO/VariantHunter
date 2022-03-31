@@ -58,13 +58,13 @@ def extract_seq_num(granularity, location, lineage):
     return daily_sequence_counts
 
 
-def extract_lineage_breakdown(granularity, location, range):
+def extract_lineage_breakdown(granularity, location, period):
     """
     Extract from the database the lineage breakdown info for the selected params
     Args:
         granularity:    the granularity
         location:       the location
-        range:          the date range
+        period:          the date range
 
     Returns: an array of (day,data about the lineage breakdown) pairs
 
@@ -77,31 +77,43 @@ def extract_lineage_breakdown(granularity, location, range):
     def extract_lineages():
         query = f'''    select distinct lineage
                         from timelocling
-                        where location='{location}' and date>={range['begin']} and date<={range['end']}
-                        order by lineage desc;'''
+                        where location='{location}' and date>={period['begin']} and date<={period['end']}
+                        order by lineage;'''
         lineages_list = cur.execute(query).fetchall()
         return [x[0] for x in lineages_list]
 
-    def extract_lineage_data(lin):
-        query = f'''    select t1.date, sum(t1.count)
-                        from timelocling as t1
-                        where t1.lineage='{lin}' and t1.location='{location}' 
-                        and t1.date>={range['begin']} and t1.date<={range['end']}
-                        group by t1.date
-                        having sum(t1.count)>= (
-                            select 0.10 * sum(t2.count)
-                            from timelocling as t2
-                            where t2.location='{location}' and t2.date=t1.date);'''
-        daily_counts = cur.execute(query).fetchall()
-        return [{'date': date, 'count': count} for date, count in daily_counts]
+    def extract_day_threshold(day):
+        query = f'''    select 0.10 * sum(count)
+                        from timelocling as t2
+                        where location='{location}' and date={day};'''
+        day_threshold = cur.execute(query).fetchone()
+        return day_threshold[0] if day_threshold[0] is not None else 0
+
+    def extract_lineage_data(lin, day):
+        query = f'''    select sum(count)
+                        from timelocling
+                        where lineage='{lin}' and location='{location}' and date={day}
+                        group by lineage, location, date;'''
+        day_count = cur.execute(query).fetchone()
+        return day_count[0] if day_count is not None else 0
 
     lineages = extract_lineages()
-    lineage_breakdown = []
-    for lineage in lineages:
-        lineage_breakdown.append({
-            'name': lineage,
-            'data': extract_lineage_data(lineage)
-        })
+    lineage_breakdown = {}
+    for date in range(period['begin'],period['end']+1):
+        threshold = extract_day_threshold(date)
+        for lineage in lineages:
+            seq_count = extract_lineage_data(lineage,date)
+            key = lineage if seq_count > threshold else 'Others'
+
+            # Lineage already in the dictionary?
+            if key in lineage_breakdown.keys():
+                # Do we need to accumulate in 'Others'?
+                if key == 'Others' and date in lineage_breakdown['Others'].keys():
+                    lineage_breakdown[key][date] += seq_count
+                else:
+                    lineage_breakdown[key][date] = seq_count
+            else:
+                lineage_breakdown[key] = { date : seq_count}
 
     con.close()
     print(f'done in {time.time() - exec_start:.5f} seconds.')
@@ -142,7 +154,6 @@ def get_lineage_characterization(lineages):
 
     """
     print("\t Extract lineage characterization  ...", end="")
-    print(lineages)
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
