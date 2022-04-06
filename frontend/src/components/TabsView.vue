@@ -26,7 +26,7 @@
       </v-tab-item>
     </v-tabs>
 
-    <!-- Global error alert -->
+    <!-- Global error manager -->
     <ErrorAlert v-model='errorOccurred' :errorMessage='errorMessage' />
 
     <!-- Last update snackbar -->

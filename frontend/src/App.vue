@@ -100,6 +100,11 @@ export default {
 
 <style scoped>
 
+/** Navbar overlapping visibility */
+.navbar{
+  z-index: 10 !important;
+}
+
 /* Site logo */
 .logo{
   height: 35px;
