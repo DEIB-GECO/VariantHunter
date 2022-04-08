@@ -185,7 +185,7 @@ export default {
     onTimeRangeChanges (newRange) {
       this.selectedRange = newRange
       if (newRange !== null) {
-        if (dateDiff(newRange[0], newRange[1]) > 35) {
+        if (dateDiff(newRange[0], newRange[1]) > 28) {
           this.isDisabled.breakdown = true
         } else {
           this.isDisabled.breakdown = false
