@@ -1,7 +1,7 @@
 # Project exclude paths
 /frontend/node_modules/
 .idea
-#venv
+venv
 /frontend/dist
 /backend/varianthunter.db
 /metadata*.*
