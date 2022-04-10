@@ -28,33 +28,48 @@
         </v-btn>
       </v-flex>
 
-      <!---- Show/hide columns descriptions button ---->
-      <DialogOpener :button-prefix='false' title='Columns description'>
-        <ul>
-          <li>
-            <b>Mut: </b>
-            the name of the mutation. <br/> In case of lineage specific analysis, the mutations
-            characterizing the lineage are <span class='char-mut'>highlighted</span>.
+      <!---- Show/hide table interpretation button ---->
+      <DialogOpener :button-prefix='false' title='Table interpretation'>
+        <p>The mutation table depicts the trend of all and only the <b>mutations detected in
+        the last week of the considered analysis period</b>. Only mutations affecting at least 0.5% of
+          the sequences collected in the week are shown.</p>
+        <ul class='ul-table'>
+          <li class='li-table' >
+            <div class='li-name'>Protein</div>
+            <div class='li-content'>Name of the considered protein.</div>
           </li>
-          <li>
-            <b>Slope: </b>
-            is calculated through a linear interpolation of the
-            diffusion (percentage). (y=<b>m</b>x + q)
+          <li class='li-table' >
+            <div class='li-name'>Mut</div>
+            <div class='li-content'>Name of the considered mutation. <br /> In case of <i>lineage specific analysis</i>, the mutations
+            characterizing the lineage are <span class='char-mut'>highlighted</span></div>
           </li>
-          <li>
-            <b>P value with mut: </b>
-            shows if the population «with mutation» is growing
-            differently compared to everything.
+          <li class='li-table' >
+            <div class='li-name'>Slope</div>
+            <div class='li-content'>Slope computed through linear interpolation of the
+            diffusion (percentage): y=<b>m</b>x + q</div>
           </li>
-          <li>
-            <b>P value without mut: </b>
-            shows if the population «without mutation» is growing
-            differently compared to everything.
+          <li class='li-table' >
+            <div class='li-name'>Mutation diffusion</div>
+            <div class='li-content'>Diffusion of the mutation as a percentage of the number of sequences collected in the week.
+              The spread is shown for the four weeks of interest.</div>
           </li>
-          <li>
-            <b>P value comparative: </b>
-            shows if the population «with mutation» is growing
-            differently compared to the population «without mutation».
+          <li class='li-table'>
+            <div class='li-name'>P-value with mut</div>
+            <div class='li-content'>Shows if the population «with mutation» is growing
+            differently compared to everything. Its value is computed using a <i>Chi-square
+              test</i> of independence of variables in a contingency table.</div>
+          </li>
+          <li class='li-table'>
+            <div class='li-name'>P-value without mut</div>
+            <div class='li-content'>Shows if the population «without mutation» is growing
+            differently compared to everything. Its value is computed using a <i>Chi-square
+                test</i> of independence of variables in a contingency table.</div>
+          </li>
+          <li class='li-table'>
+            <div class='li-name'>P-value comparative</div>
+            <div class='li-content'>Shows if the population «with mutation» is growing
+            differently compared to the population «without mutation». Its value is computed using a <i>Chi-square
+              test</i> of independence of variables in a contingency table.</div>
           </li>
         </ul>
       </DialogOpener>

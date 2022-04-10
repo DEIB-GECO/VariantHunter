@@ -118,6 +118,7 @@ export default {
 
 /* Hint for date-picker */
 .hint {
+  color: rgba(0, 0, 0, 0.54);
   background: white;
   text-align: center;
   max-width: 290px;

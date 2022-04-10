@@ -1,6 +1,7 @@
+import os
 from logging.config import dictConfig
 
-from flask import Flask, redirect, Blueprint, render_template
+from flask import Flask, redirect, Blueprint, render_template, send_from_directory
 from flask_cors import CORS
 from flask_executor import Executor
 
@@ -28,6 +29,16 @@ simple_page = Blueprint('root_pages', __name__,
 def index():
     redirect(base_url)
     return render_template('index.html')
+
+
+@my_app.route(base_url+'favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(my_app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
+@my_app.route(base_url+'/appicon.png')
+def appicon():
+    return send_from_directory(os.path.join(my_app.root_path, 'static'), 'appicon.png', mimetype='image/png')
 
 
 # Catch all routes so all requests match index.html file.

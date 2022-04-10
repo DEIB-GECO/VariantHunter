@@ -21,7 +21,13 @@
     <v-flex class='xs12 d-flex field-element'>
       <v-autocomplete v-model='selectedLineage' :loading='isLoading'
                       :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world')"
-                      :items='possibleLineages' clearable hide-details label='Lineage' attach solo />
+                      :items='possibleLineages' clearable hide-details label='Lineage' attach solo>
+        <template v-slot:prepend-item>
+          <slot name='prepend-item'>
+            <div class='hint'>{{hint}}</div>
+          </slot>
+        </template>
+      </v-autocomplete>
     </v-flex>
   </v-layout>
 </template>
@@ -74,6 +80,13 @@ export default {
       set (val) {
         this.$emit('input', val)
       }
+    },
+
+    /** Hint for the selector  */
+    hint () {
+      return (this.selectedLocation)
+        ? 'Lineages in ' + this.selectedLocation + (this.selectedDate ? ' for the last week of the selected analysis period:' : ':')
+        : 'All available lineages:'
     }
   },
   methods: {
@@ -146,5 +159,15 @@ export default {
   padding-top: 0 !important;
   padding-bottom: 4px !important;
   text-transform: capitalize;
+}
+
+/* Hint */
+.hint {
+  color: rgba(0, 0, 0, 0.54);
+  text-align: center;
+  padding: 10px 14px;
+  line-height: 17px;
+  line-break: loose;
+  text-transform: initial !important;
 }
 </style>

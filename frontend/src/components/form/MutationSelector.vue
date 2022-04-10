@@ -23,7 +23,7 @@
         <v-card>
           <!-- Dialog title -->
           <v-toolbar :color='primary_color' class='dialog-title' dark flat>
-            <v-icon left>mdi-file-upload-outline</v-icon>
+            <v-icon left large>mdi-file-upload-outline</v-icon>
             Select mutations from list
           </v-toolbar>
 
@@ -84,7 +84,7 @@
         <v-card>
           <!-- Dialog title -->
           <v-toolbar :color='primary_color' class='dialog-title' dark flat>
-            <v-icon left>mdi-shape-outline</v-icon>
+            <v-icon left large>mdi-shape-outline</v-icon>
             Select mutations from lineages
           </v-toolbar>
 
@@ -337,6 +337,7 @@ export default {
 
 <style scoped>
 .uploader-opener {
+  color: rgba(0, 0, 0, 0.54);
   text-align: center;
   padding: 10px 14px;
   text-transform: initial;

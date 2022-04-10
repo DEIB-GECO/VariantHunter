@@ -60,7 +60,7 @@ def get_lineages_from_loc_date(location, date):
     """
     print("\t Extract lineages data given location and date...", end="")
     stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
-    start = stop - 28
+    start = stop - 7
 
     exec_start = time.time()
     con = sqlite3.connect(db_name)
@@ -110,7 +110,7 @@ def get_lineages_from_date(date):
     """
     print("\t Extract lineages data given date...", end="")
     stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
-    start = stop - 28
+    start = stop - 7
 
     exec_start = time.time()
     con = sqlite3.connect(db_name)

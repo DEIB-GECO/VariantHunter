@@ -14,35 +14,40 @@
 
     <!-- LineChart plot -->
     <Plotly :data='data' :layout='layout' :displaylogo='false'
-            :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']"  />
+            :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']" />
 
     <!-- Markers/lines Dialog -->
     <v-container class='plot-controls'>
       <v-layout justify-center row wrap>
-        <DialogOpener title='markers/lines meaning'>
-          <ul>
-            <li>
-              <v-icon left>mdi-close-thick</v-icon>
-              <br /><b>Cross markers </b>
-              are used to represent points supported by 5 or fewer observations.
+        <DialogOpener :button-prefix='false' title='Chart interpretation'>
+          <ul class='ul-table'>
+            <li class='li-table'>
+              <div class='li-name'>Cross marker<br />
+                <v-icon>mdi-close-thick</v-icon>
+              </div>
+              <div class='li-content'>It is used to represent points supported by 5 or fewer observations.</div>
             </li>
-            <li>
-              <v-icon left>mdi-circle</v-icon>
-              <br /><b>Circle markers </b>
-              are used to represent points supported by more than 5
-              observations.
+            <li class='li-table'>
+              <div class='li-name'>Circle marker<br />
+                <v-icon>mdi-circle</v-icon>
+              </div>
+              <div class='li-content'>It is used to represent points supported by more than 5 observations.</div>
             </li>
-            <li>
-              <v-icon left>mdi-minus-thick</v-icon>
-              <br /><b>Solid lines </b>
-              are used to represent mutations such that for at least one week
-              the observations are greater than 5.
+            <li class='li-table'>
+              <div class='li-name'>Solid line<br />
+                <v-icon>mdi-minus-thick</v-icon>
+              </div>
+              <div class='li-content'>It is used to represent mutations such that for at least one week
+                the observations are greater than 5.
+              </div>
             </li>
-            <li>
-              <v-icon left>mdi-dots-horizontal</v-icon>
-              <br /><b>Dashed lines </b>
-              are used to represent mutations such that for all the 4 weeks the
-              observations are 5 or less.
+            <li class='li-table'>
+              <div class='li-name'>Dashed line<br />
+                <v-icon>mdi-dots-horizontal</v-icon>
+              </div>
+              <div class='li-content'>It is used to represent mutations such that for all the 4 weeks the
+                observations are 5 or less.
+              </div>
             </li>
           </ul>
         </DialogOpener>
@@ -135,6 +140,7 @@ export default {
           tickfont: {
             size: 14
           },
+          range: [0, 100],
           dtick: 10,
           zeroline: false,
           showline: false,
