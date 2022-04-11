@@ -143,12 +143,14 @@
             </v-simple-table>
 
             <p>
-              Full example 1:<br/>
+              Full example 1:<br />
               <CodeBlock>FILE_PATH=/metadata/ FILE_NAME=metadata.tsv docker-compose up</CodeBlock>
             <p />
             <p>
-              Full example 2:<br/>
-              <CodeBlock>FILE_PATH=/metadata/ FILE_NAME=metadata.tsv LOCATION="Italy" START_DATE=01-12-2021 docker-compose up</CodeBlock>
+              Full example 2:<br />
+              <CodeBlock>FILE_PATH=/metadata/ FILE_NAME=metadata.tsv LOCATION="Italy" START_DATE=01-12-2021
+                docker-compose up
+              </CodeBlock>
             </p>
 
           </v-timeline-item>
@@ -157,7 +159,7 @@
       </v-container>
     </v-row>
 
-    <!-- Behind the tool -->
+    <!-- Contributors -->
     <v-row>
       <v-container class='pa-10'>
 
@@ -167,68 +169,42 @@
         </h3>
 
         <v-timeline dense class='contributors-list'>
-
-          <v-timeline-item flat>
+          <v-timeline-item flat v-for='(contributor, index) in contributors' v-bind:key='index'>
             <template v-slot:icon>
               <v-avatar size='60'>
-                <img :src='defaultPic' alt='Picture of Anna Bernasconi'>
+                <img :src='contributor.img' :alt='"Picture of "+contributor.name'>
               </v-avatar>
             </template>
-            Anna Bernasconi
-            <span class='associate-label'>Politecnico di Milano</span>
+            <div v-if='contributor.role'>
+              <v-chip class='role' color='success' text-color='success' x-small outlined>
+                {{ contributor.role }}
+              </v-chip>
+            </div>
+            {{ contributor.name }}
+            <span class='associate-label'>{{ contributor.associate }}</span>
+            <a :href='"mailto:"+contributor.mail' target='_blank'>
+              <v-icon small left>mdi-email-outline</v-icon>
+              {{ contributor.mail }} </a>
           </v-timeline-item>
-
-          <v-timeline-item flat>
-            <template v-slot:icon>
-              <v-avatar size='60'>
-                <img :src='defaultPic' alt='Picture of Stefano Ceri'>
-              </v-avatar>
-            </template>
-            Stefano Ceri
-            <span class='associate-label'>Politecnico di Milano</span>
-          </v-timeline-item>
-
-          <v-timeline-item flat>
-            <template v-slot:icon>
-              <v-avatar size='60'>
-                <img :src='defaultPic' alt='Picture of Matteo Chiara'>
-              </v-avatar>
-            </template>
-            Matteo Chiara
-            <span class='associate-label'>Università degli Studi di Milano Statale</span>
-          </v-timeline-item>
-
-          <v-timeline-item flat>
-            <template v-slot:icon>
-              <v-avatar size='60'>
-                <img :src='defaultPic' alt='Picture of Arif Canakoglu'>
-              </v-avatar>
-            </template>
-            Arif Canakoglu
-            <span class='associate-label'>Policlinico di Milano</span>
-          </v-timeline-item>
-
-          <v-timeline-item flat>
-            <template v-slot:icon>
-              <v-avatar size='60'>
-                <img :src='defaultPic' alt='Picture of Luca Minotti'>
-              </v-avatar>
-            </template>
-            Luca Minotti
-            <span class='associate-label'>Politecnico di Milano</span>
-          </v-timeline-item>
-
-          <v-timeline-item flat>
-            <template v-slot:icon>
-              <v-avatar size='60'>
-                <img :src='pinoliPic' alt='Picture of Pietro Pinoli'>
-              </v-avatar>
-            </template>
-            Pietro Pinoli
-            <span class='associate-label'>Politecnico di Milano</span>
-          </v-timeline-item>
-
         </v-timeline>
+      </v-container>
+    </v-row>
+
+    <!-- Contacts -->
+    <v-row>
+      <v-container class='pa-10'>
+        <h3>
+          <v-icon left color='#000000DE' large>mdi-account-box-outline</v-icon>
+          Contacts
+        </h3>
+        <p class='pa-5'>
+          Dipartimento di Elettronica, Informazione e Bioingegneria <br />
+          <a href='tel:+39 02 2399 3655' target='_blank'>+39 02 2399 3655</a><br />
+          Politecnico di Milano<br />
+          Via Ponzio 34/5<br />
+          20133 Milano<br />
+          Italy
+        </p>
       </v-container>
     </v-row>
 
@@ -248,9 +224,46 @@ export default {
       /** VariantHunter logo */
       websiteLogo: require('../assets/virusurf_logo.png'),
 
-      /** Contributors icon */
-      defaultPic: require('../assets/contributors/person.png'),
-      pinoliPic: require('../assets/contributors/pinoli.png')
+      /** Contributors data */
+      contributors: [
+        {
+          name: 'Anna Bernasconi',
+          associate: 'Politecnico di Milano',
+          img: require('../assets/contributors/person.png'),
+          mail: 'anna.bernasconi@polimi.it'
+        },
+        {
+          name: 'Stefano Ceri',
+          associate: 'Politecnico di Milano',
+          img: require('../assets/contributors/ceri.png'),
+          mail: 'stefano.ceri@polimi.it',
+          role: 'leader'
+        },
+        {
+          name: 'Matteo Chiara',
+          associate: 'Università degli Studi di Milano Statale',
+          img: require('../assets/contributors/person.png'),
+          mail: 'matteo.chiara@unimi.it'
+        },
+        {
+          name: 'Arif Canakoglu',
+          associate: 'Policlinico di Milano',
+          img: require('../assets/contributors/person.png'),
+          mail: 'arif.canakoglu@polimi.it'
+        },
+        {
+          name: 'Luca Minotti',
+          associate: 'Politecnico di Milano',
+          img: require('../assets/contributors/person.png'),
+          mail: 'luca2.minotti@polimi.it'
+        },
+        {
+          name: 'Pietro Pinoli',
+          associate: 'Politecnico di Milano',
+          img: require('../assets/contributors/pinoli.png'),
+          mail: 'pietro.pinoli@polimi.it'
+        }
+      ]
     }
   },
   computed: {
@@ -301,8 +314,18 @@ h3 {
 }
 
 .contributors-list {
-  font-size: initial;
   font-weight: 600;
+}
+
+.contributors-list a {
+  font-size: 13px;
+  font-weight: normal;
+  color: #0000008a !important;
+}
+
+.role {
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
 tr td:first-child, .monospaced {
