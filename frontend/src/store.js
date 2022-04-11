@@ -11,15 +11,6 @@ const state = {
   debug_mode: false // If set to true, it automatically performs search with standard parameters
 }
 
-const getters = {}
-
-const mutations = {}
-
-const actions = {}
-
 export default new Vuex.Store({
-  state,
-  getters,
-  mutations,
-  actions
+  state
 })

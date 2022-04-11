@@ -27,7 +27,6 @@ simple_page = Blueprint('root_pages', __name__,
 # Catch the index route
 @simple_page.route('/')
 def index():
-    redirect(base_url)
     return render_template('index.html')
 
 
@@ -45,7 +44,7 @@ def appicon():
 @my_app.route('/', defaults={'path': ''})
 @my_app.route('/<path:path>')
 def index_all(path):
-    return redirect(base_url)
+    return render_template('index.html')
 
 
 # prevent cached responses

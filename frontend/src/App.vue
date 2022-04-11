@@ -1,81 +1,82 @@
 <template>
-  <v-app>
-    <!-- Navbar -->
-    <v-toolbar :color='primary_color' class='navbar' short dark flat>
+   <div id="app">
+     <v-app>
+      <!-- Navbar -->
+      <v-toolbar :color='primary_color' class='navbar' short dark flat>
 
-      <!-- Logo -->
-      <v-img :src='websiteLogo' class='logo' contain max-height='39px' max-width='39px' />
-      <v-toolbar-title class='site-title'>
-        <span class='emphasis'>Variant</span>
-        <span>Hunter</span>
-      </v-toolbar-title>
+        <!-- Logo -->
+        <v-img :src='websiteLogo' class='logo' contain max-height='39px' max-width='39px' />
+        <v-toolbar-title class='site-title'>
+          <router-link to='/variant_hunter/'>
+            <span class='emphasis'>Variant</span>
+            <span>Hunter</span>
+          </router-link>
+        </v-toolbar-title>
 
-      <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
-      <!-- Scroll to top button -->
-      <v-btn v-if='showSearchShortcut' class='hidden-xs-only' href='#top' outlined rounded small>
-        <v-icon left>mdi-plus</v-icon>
-        New analysis
-      </v-btn>
+        <!-- Scroll to top button -->
+        <v-btn v-if='showSearchShortcut && $route.name!=="About"' class='hidden-xs-only' href='#top' outlined rounded small>
+          <v-icon left>mdi-plus</v-icon>
+          New analysis
+        </v-btn>
 
-      <!-- Navbar links to the other tools -->
-      <!--      <v-toolbar-items class="hidden-lg-and-down navbar-links">-->
-      <!--        <v-btn text href="https://github.com/DEIB-GECO/VariantHunter/wiki" target="_blank" class="navbar-link">-->
-      <!--            <span>Wiki</span>-->
-      <!--        </v-btn>-->
+        <!-- Navbar links to the other tools -->
+        <!--      <v-toolbar-items class="hidden-lg-and-down navbar-links">-->
+        <!--        <v-btn text href="https://github.com/DEIB-GECO/VariantHunter/wiki" target="_blank" class="navbar-link">-->
+        <!--            <span>Wiki</span>-->
+        <!--        </v-btn>-->
 
-      <!--        <v-btn text href="/viruclust_gisaid/repo_static/about__variantHunter.html" target="_blank" class="navbar-link">-->
-      <!--            <span>ABOUT</span>-->
-      <!--        </v-btn>-->
-      <!--      </v-toolbar-items>-->
+        <!--        <v-btn text href="/viruclust_gisaid/repo_static/about__variantHunter.html" target="_blank" class="navbar-link">-->
+        <!--            <span>ABOUT</span>-->
+        <!--        </v-btn>-->
+        <!--      </v-toolbar-items>-->
 
-      <!-- Menu links to the other tools -->
-      <!--      <div class="hidden-xl-only">-->
-      <!--        <v-menu>-->
+        <!-- Menu links to the other tools -->
+        <!--      <div class="hidden-xl-only">-->
+        <!--        <v-menu>-->
 
-      <!--          &lt;!&ndash; Menu icon &ndash;&gt;-->
-      <!--          <template v-slot:activator="{ on, attrs }">-->
-      <!--            <v-app-bar-nav-icon v-bind="attrs" v-on="on"/>-->
-      <!--          </template>-->
+        <!--          &lt;!&ndash; Menu icon &ndash;&gt;-->
+        <!--          <template v-slot:activator="{ on, attrs }">-->
+        <!--            <v-app-bar-nav-icon v-bind="attrs" v-on="on"/>-->
+        <!--          </template>-->
 
-      <!--          &lt;!&ndash; Menu links&ndash;&gt;-->
-      <!--          <div class="nav-menu">-->
-      <!--            <v-list-item class="menu-links">-->
-      <!--              <v-list-item-content>-->
-      <!--                      <v-list-item class="menu-links">-->
-      <!--                          <v-list-item-content>-->
-      <!--                            <v-btn text  href="https://github.com/DEIB-GECO/VariantHunter/wiki" target="_blank" class="menu-link">-->
-      <!--                                <span>Wiki</span>-->
-      <!--                            </v-btn>-->
-      <!--                          </v-list-item-content>-->
-      <!--                      </v-list-item>-->
+        <!--          &lt;!&ndash; Menu links&ndash;&gt;-->
+        <!--          <div class="nav-menu">-->
+        <!--            <v-list-item class="menu-links">-->
+        <!--              <v-list-item-content>-->
+        <!--                      <v-list-item class="menu-links">-->
+        <!--                          <v-list-item-content>-->
+        <!--                            <v-btn text  href="https://github.com/DEIB-GECO/VariantHunter/wiki" target="_blank" class="menu-link">-->
+        <!--                                <span>Wiki</span>-->
+        <!--                            </v-btn>-->
+        <!--                          </v-list-item-content>-->
+        <!--                      </v-list-item>-->
 
-      <!--                      <v-list-item class="menu-links">-->
-      <!--                          <v-list-item-content>-->
-      <!--                            <v-btn text  href="/viruclust_gisaid/repo_static/about__variantHunter.html" target="_blank" class="menu-link">-->
-      <!--                                <span>ABOUT</span>-->
-      <!--                            </v-btn>-->
-      <!--                          </v-list-item-content>-->
-      <!--                      </v-list-item>-->
-      <!--          </div>-->
-      <!--        </v-menu>-->
-      <!--      </div>-->
-    </v-toolbar>
+        <!--                      <v-list-item class="menu-links">-->
+        <!--                          <v-list-item-content>-->
+        <!--                            <v-btn text  href="/viruclust_gisaid/repo_static/about__variantHunter.html" target="_blank" class="menu-link">-->
+        <!--                                <span>ABOUT</span>-->
+        <!--                            </v-btn>-->
+        <!--                          </v-list-item-content>-->
+        <!--                      </v-list-item>-->
+        <!--          </div>-->
+        <!--        </v-menu>-->
+        <!--      </div>-->
+      </v-toolbar>
 
-    <v-main class='main-body' @scroll.native='scrollHandler'>
-      <TabView></TabView>
-    </v-main>
-  </v-app>
+      <v-main class='main-body' @scroll.native='scrollHandler'>
+        <router-view />
+      </v-main>
+     </v-app>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import TabView from '@/components/TabsView'
 
 export default {
-  components: {
-    TabView
-  },
+  name: 'App',
 
   data () {
     return {
@@ -98,7 +99,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
 /** Navbar overlapping visibility */
 .navbar{
@@ -214,5 +215,11 @@ body {
   border-radius: var(--border-radius);
   width: 100%;
   background: white;
+}
+
+/* Prevent text-underline for links */
+a, .site-title a{
+    color: inherit !important;
+    text-decoration: none !important;
 }
 </style>
