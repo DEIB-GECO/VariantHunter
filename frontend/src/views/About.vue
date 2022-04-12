@@ -240,16 +240,16 @@ export default {
           role: 'leader'
         },
         {
-          name: 'Matteo Chiara',
-          associate: 'Università degli Studi di Milano Statale',
-          img: require('../assets/contributors/person.png'),
-          mail: 'matteo.chiara@unimi.it'
-        },
-        {
           name: 'Arif Canakoglu',
           associate: 'Policlinico di Milano',
           img: require('../assets/contributors/person.png'),
           mail: 'arif.canakoglu@polimi.it'
+        },
+        {
+          name: 'Matteo Chiara',
+          associate: 'Università degli Studi di Milano Statale',
+          img: require('../assets/contributors/person.png'),
+          mail: 'matteo.chiara@unimi.it'
         },
         {
           name: 'Luca Minotti',

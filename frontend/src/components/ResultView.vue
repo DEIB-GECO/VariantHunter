@@ -518,7 +518,8 @@ export default {
         const toSend = {
           location: item.item.location,
           date: this.queryParams.date,
-          prot_mut: item.item.protein + '_' + item.item.mut
+          prot: item.item.protein,
+          mut: item.item.mut
         }
 
         axios

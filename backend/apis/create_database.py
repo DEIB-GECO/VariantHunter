@@ -1,8 +1,11 @@
 from __future__ import print_function
+
 import sqlite3
 import sys
 import time
+
 from flask_restplus import Namespace
+
 from .parsers.GisaidParser import GisaidParser
 from .parsers.NextstrainParser import NextstrainParser
 
@@ -24,7 +27,7 @@ def create_database():
     """
     exec_start = time.time()
     print("> Starting database setup ...")
-    curr_step, tot_steps = 1, 5
+    curr_step, tot_steps = 1, 4
 
     with open(file_path) as f:
         con = sqlite3.connect(db_name)
@@ -45,150 +48,122 @@ def create_database():
 
         ###############################################################
         # Create all the tables
-        print(f"\t STEP {curr_step}/{tot_steps}: Table creation...", end="")
+        print(f"\t STEP {curr_step}/{tot_steps}: Tables creation...", end="")
 
-        run_query('''   CREATE TABLE muts 
-                        (date integer, lineage text, mut text, continent text, country text, region text )''')
+        run_query('''   CREATE TABLE sequences
+                        (sequence_id int, date int, lineage_id int, continent_id int, country_id int, region_id int )''')
 
-        run_query('''   CREATE TABLE mutsg 
-                        (date integer, lineage text, mut text, location text, count integer)''')
+        run_query('''   CREATE TABLE aggr_sequences
+                        (date int, lineage_id int, location_id int, count int )''')
 
-        run_query('''   CREATE TABLE timeloclin 
-                        (date integer, continent text, country text, region text, lineage text)''')
+        run_query('''   CREATE TABLE substitutions
+                        (sequence_id int, protein_id int, mut text)''')
 
-        run_query('''   CREATE TABLE timelocling 
-                        (date integer, location text, lineage text, count integer)''')
+        run_query('''   CREATE TABLE aggr_substitutions
+                        (date int, lineage_id int, location_id int, protein_id int, mut text, count int)''')
+
+        run_query('''   CREATE TABLE lineages
+                        (lineage_id int primary key , lineage text)''')
+
+        run_query('''   CREATE TABLE lineages_characterization
+                        (lineage_id int , protein_id int, mut text)''')
+
+        run_query('''   CREATE TABLE locations
+                        (location_id int primary key , location text)''')
 
         run_query('''   CREATE TABLE continents 
-                        (continent text)''')
+                        (continent_id int)''')
 
         run_query('''   CREATE TABLE countries
-                        (country text, continent text)''')
+                        (country_id int, continent_id int)''')
 
-        run_query('''   CREATE TABLE regions 
-                        (region text, country text)''')
+        run_query('''   CREATE TABLE regions
+                        (region_id int, country_id int)''')
 
-        run_query('''   CREATE TABLE lineages_characterization 
-                        (lineage text, mut text)''')
+        run_query('''   CREATE TABLE proteins
+                        (protein_id int primary key , protein text)''')
 
         print(f'done in {time.time() - exec_start:.5f} seconds.')
-        exec_start = time.time()
+        step_start = time.time()
 
         ###############################################################
-        # Parse the files and load the data into the tables
+        # Parse the file and load the data into the tables
         curr_step += 1
-        print(f"\t STEP {curr_step}/{tot_steps}: Data extraction...", end="")
+        print(f"\t STEP {curr_step}/{tot_steps}: Data extraction ", end="")
 
-        if file_type == 'gisaid':
-            print(" GISAID parsing...")
-            parser = GisaidParser(con=con, f=f)
+        if file_type != 'nextstrain':
+            print(" [GISAID parser] ...")
+            parser = GisaidParser(con, f)
         else:
-            print(" NEXTSTRAIN parsing...")
+            print(" [NEXTSTRAIN parser] ...")
             parser = NextstrainParser(con, f)
         parser.parse(selected_countries)
+        del parser
 
-        print(f'\t\tdone in {time.time() - exec_start:.5f} seconds.')
-        exec_start = time.time()
-
-        ###############################################################
-        curr_step += 1
-        print(f"\t STEP {curr_step}/{tot_steps}: Data indexing...", end="")
-
-        run_query('''   CREATE INDEX muts_idx
-                        ON  muts(date, lineage, mut)''')
-
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
-        exec_start = time.time()
+        print(f'\t\tdone in {time.time() - step_start:.5f} seconds.')
+        step_start = time.time()
 
         ###############################################################
         # Aggregate data
         curr_step += 1
         print(f"\t STEP {curr_step}/{tot_steps}: Data aggregation...", end="")
 
-        run_query('''   INSERT INTO mutsg 
-                        SELECT date, lineage, mut, continent AS location, count(*) AS count 
-                        FROM muts 
-                        GROUP BY date, lineage, mut, continent;''')
+        run_query('''   INSERT INTO aggr_substitutions 
+                            SELECT date, lineage_id, continent_id AS location_id, protein_id, mut, count(*) AS count 
+                            FROM sequences SQ JOIN substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            GROUP BY date, lineage_id, continent_id, protein_id, mut;''')
 
-        run_query('''   INSERT INTO mutsg 
-                        SELECT date, lineage, mut, country AS location, count(*) AS count 
-                        FROM muts 
-                        GROUP BY date, lineage, mut, country;''')
+        run_query('''   INSERT INTO aggr_substitutions 
+                            SELECT date, lineage_id, country_id AS location_id, protein_id, mut, count(*) AS count 
+                            FROM sequences SQ JOIN substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            GROUP BY date, lineage_id, country_id, protein_id, mut;''')
 
-        run_query('''   INSERT INTO mutsg 
-                        SELECT date, lineage, mut, region AS location, count(*) AS count 
-                        FROM muts 
-                        GROUP BY date, lineage, mut, region;''')
+        run_query('''   INSERT INTO aggr_substitutions 
+                            SELECT date, lineage_id, region_id AS location_id, protein_id, mut, count(*) AS count 
+                            FROM sequences SQ JOIN substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            GROUP BY date, lineage_id, region_id, protein_id, mut;''')
 
-        run_query('''   CREATE VIEW temp.lin_mut_counts AS
-                                SELECT lineage, mut, count(*) AS count
-                                FROM muts
-                                GROUP BY lineage,mut;''')
+        #run_query('''   DROP TABLE substitutions;''')
 
-        run_query('''   CREATE VIEW temp.lin_counts AS
-                            SELECT lineage, count(*) as count
-                            FROM timeloclin
-                            GROUP BY lineage;''')
+        run_query('''   INSERT INTO aggr_sequences 
+                            SELECT date, lineage_id, continent_id AS location_id, count(*) AS count 
+                            FROM sequences 
+                            GROUP BY date, lineage_id, continent_id;''')
 
-        run_query('''   INSERT INTO lineages_characterization
-                        SELECT lineage, mut
-                        FROM lin_mut_counts AS T1
-                        WHERE T1.count >= (
-                            SELECT count*0.5
-                            FROM lin_counts
-                            WHERE lineage=T1.lineage
-                            );''')
+        run_query('''   INSERT INTO aggr_sequences 
+                            SELECT date, lineage_id, country_id AS location_id, count(*) AS count 
+                            FROM sequences 
+                            GROUP BY date, lineage_id, country_id;''')
 
-        run_query('''   DROP TABLE muts;''')
+        run_query('''   INSERT INTO aggr_sequences 
+                            SELECT date, lineage_id, region_id AS location_id, count(*) AS count 
+                            FROM sequences 
+                            GROUP BY date, lineage_id, region_id;''')
 
-        run_query('''   INSERT INTO timelocling 
-                        SELECT date, continent AS location, lineage, count(*) AS count 
-                        FROM timeloclin 
-                        GROUP BY date, continent, lineage;''')
+        #run_query('''   DROP TABLE sequences;''')
 
-        run_query('''   INSERT INTO timelocling 
-                        SELECT date, country AS location, lineage, count(*) AS count 
-                        FROM timeloclin 
-                        GROUP BY date, country, lineage;''')
-
-        run_query('''   INSERT INTO timelocling 
-                        SELECT date, region AS location, lineage, count(*) AS count 
-                        FROM timeloclin 
-                        GROUP BY date, region, lineage;''')
-
-        run_query('''   INSERT INTO continents 
-                        SELECT DISTINCT continent 
-                        FROM timeloclin;''')
-
-        run_query('''   INSERT INTO countries 
-                        SELECT DISTINCT country, continent 
-                        FROM timeloclin;''')
-
-        run_query('''   INSERT INTO regions
-                        SELECT DISTINCT region, country
-                        FROM timeloclin;''')
-
-        run_query('''   DROP TABLE timeloclin;''')
-
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
-        exec_start = time.time()
+        print(f'done in {time.time() - step_start:.5f} seconds.')
+        step_start = time.time()
 
         ###############################################################
         # Create indexes
         curr_step += 1
         print(f"\t STEP {curr_step}/{tot_steps}: Data indexing...", end="")
 
-        run_query('''   CREATE INDEX mutsg_idx1 
-                        ON  mutsg(location, date, lineage)''')
+        run_query('''   CREATE INDEX aggr_substitutions_idx1
+                        ON  aggr_substitutions(location_id, date, lineage_id)''')
 
-        run_query('''   CREATE INDEX mutsg_idx2 
-                        ON  mutsg(date, lineage)''')
+        run_query('''   CREATE INDEX aggr_substitutions_idx2 
+                        ON  aggr_substitutions(date, lineage_id)''')
 
-        run_query('''   CREATE INDEX timelocling_idx 
-                        ON  timelocling(date, lineage)''')
+        run_query('''   CREATE INDEX aggr_sequences_idx1
+                        ON  aggr_sequences(date, lineage_id)''')
 
+        run_query('''   CREATE INDEX aggr_sequences_idx2
+                                ON  aggr_sequences(location_id, lineage_id)''')
         con.close()
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        print(f'done in {time.time() - step_start:.5f} seconds.')
 
+    print(f'> Setup overall time: {time.time() - exec_start:.5f} seconds.')
 
 create_database()

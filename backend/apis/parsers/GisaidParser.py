@@ -1,5 +1,6 @@
-from tqdm import tqdm
 from datetime import datetime
+
+from tqdm import tqdm
 
 from .Parser import Parser
 from ..utils.utils import start_date
@@ -19,15 +20,15 @@ class GisaidParser(Parser):
             s = line.split("\t")
 
             locs = s[4].split('/')
-            country = locs[1].strip()
+            country_name = locs[1].strip()
             if len(selected_countries) != 0:
-                if country.lower() not in selected_countries:
+                if country_name.lower() not in selected_countries:
                     continue
-            continent = locs[0].strip()
+            continent_name = locs[0].strip()
             if len(locs) < 3:
-                region = None
+                region_name = None
             else:
-                region = locs[2].strip()
+                region_name = locs[2].strip()
 
             try:
                 n = float(s[20])
@@ -35,8 +36,7 @@ class GisaidParser(Parser):
                 n = 0.
 
             length = int(s[6])
-
-            lin = s[11] if s[11] != self.missing_info_mark else 'None'
+            lineage_name = s[11] if s[11] != self.missing_info_mark else 'None'
 
             try:
                 date = (datetime.strptime(s[3], "%Y-%m-%d") - start_date).days
@@ -44,17 +44,25 @@ class GisaidParser(Parser):
                 continue
 
             if (29000 < length < 30000) and (n < 0.05):
-                self.batch_timeloclin.append((date, continent, country, region, lin))
+                continent_id, country_id, region_id = self.get_location_ids(continent_name, country_name, region_name)
+                lineage_id = self.get_lineage_id(lineage_name)
+                sequence_id = self.get_sequence_id()
+
+                self.batch_seqs.append((sequence_id, date, lineage_id, continent_id, country_id, region_id))
                 for aa in s[14][1:-1].split(","):
-                    self.batch_muts.append((date, lin, aa, continent, country, region))
+                    if aa != '':
+                        protein_name, mutation_name = aa.split("_")
+                        protein_id = self.get_protein_id(protein_name)
+                        self.batch_subs.append((sequence_id, protein_id, mutation_name))
 
-            if len(self.batch_muts) > 50000:
-                self.batch_to_muts()
+            if len(self.batch_subs) > 50000:
+                self.batch_to_subs()
 
-            if len(self.batch_timeloclin) > 50000:
-                self.batch_to_timeloclin()
+            if len(self.batch_seqs) > 50000:
+                self.batch_to_seqs()
 
             del line
 
-        self.batch_to_muts()
-        self.batch_to_timeloclin()
+        self.batch_to_subs()
+        self.batch_to_seqs()
+        self.dict_to_tables()

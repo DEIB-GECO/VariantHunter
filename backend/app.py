@@ -1,7 +1,7 @@
 import os
 from logging.config import dictConfig
 
-from flask import Flask, redirect, Blueprint, render_template, send_from_directory
+from flask import Flask, Blueprint, render_template, send_from_directory
 from flask_cors import CORS
 from flask_executor import Executor
 

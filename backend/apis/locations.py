@@ -7,7 +7,9 @@
 """
 
 from __future__ import print_function
+
 import sqlite3
+
 from flask_restplus import Namespace, Resource
 
 api = Namespace('locations', description='locations')
@@ -24,10 +26,15 @@ def get_continents():
     """
     con = sqlite3.connect(db_name)
     cur = con.cursor()
-    query = "select continent from continents where continent is not null;"
+    query = ''' SELECT location 
+                FROM continents JOIN locations ON location_id = continent_id
+                WHERE location is not null;'''
     continents = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return continents
+
+
+all_continents = get_continents()   # At server startup, fetch all the continents
 
 
 def get_countries(continent):
@@ -38,7 +45,11 @@ def get_countries(continent):
     """
     con = sqlite3.connect(db_name)
     cur = con.cursor()
-    query = f'''select country from countries where country is not null and continent='{continent}';'''
+    query = f'''    SELECT CTR.location 
+                    FROM countries 
+                        JOIN locations CTR ON CTR.location_id = country_id
+                        JOIN locations CNT ON CNT.location_id = continent_id
+                    WHERE CTR.location is not null AND CNT.location = '{continent}';'''
     countries = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return countries
@@ -52,7 +63,11 @@ def get_regions(country):
     """
     con = sqlite3.connect(db_name)
     cur = con.cursor()
-    query = f'''select region from regions where region is not null and country='{country}';'''
+    query = f'''    SELECT REG.location 
+                    FROM regions 
+                        JOIN locations REG ON REG.location_id = region_id
+                        JOIN locations CTR ON CTR.location_id = country_id
+                    WHERE REG.location is not null AND CTR.location = '{country}';'''
     regions = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return regions
@@ -71,8 +86,7 @@ class FieldList(Resource):
         Endpoint to get the continents
         @return:    An array of continents
         """
-        continents = get_continents()
-        return continents
+        return all_continents
 
 
 @api.route('/getCountries')

@@ -11,12 +11,11 @@ from __future__ import print_function
 import sqlite3
 import time
 from datetime import datetime
-import numpy as np
-import scipy.stats
+
 from flask_restplus import Namespace, Resource
 
 from .explorer import get_lineage_characterization
-from .utils.utils import start_date, compute_weeks_from_date
+from .utils.utils import start_date, compute_weeks_from_date, produce_statistics
 
 api = Namespace('lineage_specific', description='lineage_specific')
 db_name = 'varianthunter.db'
@@ -36,16 +35,15 @@ def get_all_lineages():
     con = sqlite3.connect(db_name)
     cur = con.cursor()
 
-    query = "select distinct * from lineages_characterization;"
+    query = "SELECT lineage FROM lineages ORDER BY lineage;"
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
-    extracted_lineages.sort()
 
     print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
 
 
-all_lineages_dict = get_all_lineages()  # At server startup, fetch all the lineages
+all_lineages = get_all_lineages()  # At server startup, fetch all the lineages
 
 
 def get_lineages_from_loc_date(location, date):
@@ -65,9 +63,11 @@ def get_lineages_from_loc_date(location, date):
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
-    query = f'''select distinct lineage 
-                    from timelocling 
-                    where location = '{location}' and date > {start} and date <= {stop};'''
+    query = f'''    SELECT DISTINCT lineage 
+                    FROM aggr_sequences SQ
+                        JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
+                        JOIN locations LC ON SQ.location_id = LC.location_id
+                    WHERE location = '{location}' AND date > {start} AND date <= {stop};'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
@@ -89,9 +89,11 @@ def get_lineages_from_loc(location):
     con = sqlite3.connect(db_name)
     cur = con.cursor()
 
-    query = f'''    select distinct lineage 
-                    from timelocling 
-                    where location = '{location}';'''
+    query = f'''    SELECT DISTINCT lineage 
+                    FROM aggr_sequences SQ
+                        JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
+                        JOIN locations LC ON SQ.location_id = LC.location_id
+                    WHERE location = '{location}';'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
@@ -115,30 +117,15 @@ def get_lineages_from_date(date):
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
-    query = f'''select distinct lineage 
-                    from timelocling 
-                    where date > {start} and date <= {stop};'''
+    query = f'''    SELECT DISTINCT lineage 
+                    FROM aggr_sequences SQ
+                        JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
+                    WHERE date > {start} and date <= {stop};'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
     print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
-
-
-def compute_pvalue(freq1, freq2):
-    """
-    Compute p-value for the hypothesis test of independence of the observed frequencies
-    Args:
-        freq1:  Observed freq 1
-        freq2:  Observed freq 2
-
-    Returns: The computed p-value
-
-    """
-    try:
-        return scipy.stats.chi2_contingency([freq1, freq2])[1]
-    except:
-        return "NaN"
 
 
 def extract_week_seq_counts(location, lineage, w):
@@ -158,11 +145,13 @@ def extract_week_seq_counts(location, lineage, w):
     cur = con.cursor()
 
     def extract_week_count(start, stop):
-        query = f'''  select date,location,sum(count) 
-                    from timelocling 
-                    where date > {start} and date <= {stop} and location = '{location}' and lineage = '{lineage}' 
-                    group by date,location,lineage;'''
-        return sum([x[2] for x in cur.execute(query).fetchall()])
+        query = f'''    SELECT sum(count) 
+                        FROM aggr_sequences SQ
+                            JOIN locations LC on SQ.location_id = LC.location_id
+                            JOIN lineages LN on SQ.lineage_id = LN.lineage_id
+                        WHERE date > {start} and date <= {stop} and location = '{location}' and lineage = '{lineage}' 
+                        GROUP BY date, SQ.location_id, SQ.lineage_id;'''
+        return sum([x[0] for x in cur.execute(query).fetchall()])
 
     tot_seq_w4 = extract_week_count(w['w4_begin'], w['w4_end'])
     tot_seq_w3 = extract_week_count(w['w3_begin'], w['w3_end'])
@@ -191,13 +180,17 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
     cur = con.cursor()
 
     def extract_week_mutation(start, stop, is_target=False):
-        having_clause = f"having sum(count) >= {min_sequences}"
-        query = f'''  select mut, sum(count) 
-                    from mutsg 
-                    where date > {start} and date <= {stop} and location = '{location}' and lineage = '{lineage}' and mut !=''
-                    group by mut 
-                    {having_clause if is_target else ""};'''
-        return {k: v for k, v in cur.execute(query).fetchall()}
+        having_clause = f" HAVING sum(count) >= {min_sequences} "
+        query = f'''    SELECT protein, mut, sum(count) 
+                        FROM aggr_substitutions SB
+                            JOIN proteins PR ON SB.protein_id = PR.protein_id
+                            JOIN locations LC ON SB.location_id = LC.location_id
+                            JOIN lineages LN ON SB.lineage_id = LN.lineage_id
+                        WHERE date > {start} AND date <= {stop} AND location = '{location}' 
+                            AND lineage = '{lineage}'
+                        GROUP BY SB.protein_id, mut 
+                        {having_clause if is_target else ""};'''
+        return {p + '_' + m: c for p, m, c in cur.execute(query).fetchall()}
 
     muts_w4 = extract_week_mutation(w['w4_begin'], w['w4_end'], is_target=True)
     muts_w3 = extract_week_mutation(w['w3_begin'], w['w3_end'])
@@ -221,7 +214,7 @@ class FieldList(Resource):
         Endpoint to obtain all the possible lineages
         @return:    An array of lineages
         """
-        return all_lineages_dict
+        return all_lineages
 
 
 @api.route('/getLineages')
@@ -236,13 +229,13 @@ class FieldList(Resource):
         date = api.payload['date']
 
         if location is None and date is None:
-            lineages = all_lineages_dict
+            lineages = all_lineages
         elif date is None:
             lineages = get_lineages_from_loc(location)
         elif location is None:
             lineages = get_lineages_from_date(date)
         else:
-            lineages = get_lineages_from_loc_date(location,date)
+            lineages = get_lineages_from_loc_date(location, date)
         return lineages
 
 
@@ -261,48 +254,11 @@ class FieldList(Resource):
         w = compute_weeks_from_date(date)
 
         week_sequence_counts = extract_week_seq_counts(location, lineage, w)
-        tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4 = week_sequence_counts
 
-        mutation_data = extract_mutation_data(location, lineage, w,
-                                              min_sequences=int(week_sequence_counts[-1] * 0.005 + 1))
-        mut_w1, mut_w2, mut_w3, mut_w4 = mutation_data
+        min_sequences = int(week_sequence_counts[-1] * 0.005 + 1)
+        mutation_data = extract_mutation_data(location, lineage, w, min_sequences)
 
-        statistics = []
-        for mut, c4 in mut_w4.items():
-            protein, mutation = mut.split("_")
-            c1 = mut_w1.get(mut, 0)
-            c2 = mut_w2.get(mut, 0)
-            c3 = mut_w3.get(mut, 0)
-            f1 = (c1 / tot_seq_w1) * 100 if tot_seq_w1 > 0 else 0
-            f2 = (c2 / tot_seq_w2) * 100 if tot_seq_w2 > 0 else 0
-            f3 = (c3 / tot_seq_w3) * 100 if tot_seq_w3 > 0 else 0
-            f4 = (c4 / tot_seq_w4) * 100 if tot_seq_w4 > 0 else 0
-            slope, intercept = np.polyfit([0, 1, 2, 3], [f1, f2, f3, f4], 1)
-            statistics.append({
-                'location': location,
-                'protein': protein,
-                'mut': mutation,
-                'slope': slope,
-                'f1': f1,
-                'f2': f2,
-                'f3': f3,
-                'f4': f4,
-                'w1': c1,
-                'w2': c2,
-                'w3': c3,
-                'w4': c4,
-                'p_value_with_mut':
-                    compute_pvalue([c1, c2, c3, c4], week_sequence_counts),
-                'p_value_without_mut':
-                    compute_pvalue(
-                        [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4],
-                        week_sequence_counts),
-                'p_value_comp':
-                    compute_pvalue(
-                        [c1, c2, c3, c4],
-                        [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4]),
-            })
-
+        statistics = produce_statistics(location, week_sequence_counts, mutation_data)
         characterizing_muts = get_lineage_characterization([lineage])
 
         return {'rows': statistics, 'tot_seq': week_sequence_counts, 'characterizing_muts': characterizing_muts}
