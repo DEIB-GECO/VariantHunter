@@ -1,3 +1,8 @@
+from datetime import datetime
+
+from apis.utils.utils import start_date
+
+
 class Parser:
     """
     Abstract parser for the metadata.tsv file
@@ -12,6 +17,11 @@ class Parser:
         """
         self.con = con
         self.f = f
+        self.filter_by_data_flag = False
+        self.beginning_date_flag = False
+        self.end_data_flag = False
+        self.beginning_date = None
+        self.end_date = None
 
         self.sequences_count = 0
         self.lineages_count = 0
@@ -28,6 +38,34 @@ class Parser:
 
         self.batch_subs = []
         self.batch_seqs = []
+
+    def set_date_range(self, beginning_date, end_date):
+        """
+        Sets the date range for the parsing. Only the rows that refers to this period will be considered.
+        Args:
+            beginning_date: String representing the start date or "beginning" value
+            end_date:       String representing the end date or "end" value
+        """
+        self.beginning_date_flag = (beginning_date != 'beginning')
+        self.end_data_flag = (end_date != 'end')
+        self.filter_by_data_flag = (self.beginning_date_flag or self.end_data_flag)
+
+        if self.beginning_date_flag:
+            self.beginning_date = (datetime.strptime(beginning_date, "%Y-%m-%d") - start_date).days
+        if self.end_data_flag:
+            self.end_date = (datetime.strptime(end_date, "%Y-%m-%d") - start_date).days
+
+    def is_out_of_range(self, date):
+        """
+        Checks whether a date is in the date range of interest or not
+        Args:
+            date: The date to be checked
+
+        Returns: True iff the date is out of the filtered range of interest
+
+        """
+        return ((self.beginning_date_flag and date < self.beginning_date) or
+                (self.end_data_flag and date > self.end_date))
 
     def batch_to_subs(self):
         """

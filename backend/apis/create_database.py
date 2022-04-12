@@ -15,6 +15,8 @@ selected_countries = set([x.lower() for x in sys.argv[2].strip().split(',') if x
 if len(selected_countries) == 1 and 'all' in selected_countries:
     selected_countries.clear()
 file_type = sys.argv[3].lower().strip() if len(sys.argv) > 3 else 'gisaid'
+beginning_date = sys.argv[4].lower().strip() if len(sys.argv) > 4 else 'beginning'
+end_date = sys.argv[5].lower().strip() if len(sys.argv) > 5 else 'end'
 
 api = Namespace('create_database', description='create_database')
 db_name = 'varianthunter.db'
@@ -97,6 +99,7 @@ def create_database():
         else:
             print(" [NEXTSTRAIN parser] ...")
             parser = NextstrainParser(con, f)
+        parser.set_date_range(beginning_date, end_date)
         parser.parse(selected_countries)
         del parser
 
@@ -123,7 +126,7 @@ def create_database():
                             FROM sequences SQ JOIN substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, region_id, protein_id, mut;''')
 
-        #run_query('''   DROP TABLE substitutions;''')
+        run_query('''   DROP TABLE substitutions;''')
 
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, continent_id AS location_id, count(*) AS count 
@@ -140,7 +143,7 @@ def create_database():
                             FROM sequences 
                             GROUP BY date, lineage_id, region_id;''')
 
-        #run_query('''   DROP TABLE sequences;''')
+        run_query('''   DROP TABLE sequences;''')
 
         print(f'done in {time.time() - step_start:.5f} seconds.')
         step_start = time.time()
@@ -165,5 +168,6 @@ def create_database():
         print(f'done in {time.time() - step_start:.5f} seconds.')
 
     print(f'> Setup overall time: {time.time() - exec_start:.5f} seconds.')
+
 
 create_database()

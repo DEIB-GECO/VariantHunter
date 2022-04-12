@@ -29,19 +29,20 @@ class NextstrainParser(Parser):
             else:
                 region_name = s[8].strip()
 
+            try:
+                date = (datetime.strptime(s[5], "%Y-%m-%d") - start_date).days
+            except:
+                continue
+            if self.filter_by_data_flag and self.is_out_of_range(date):
+                continue
+
+            lineage_name = s[19] if s[19] != self.missing_info_mark else 'None'
             length = int(s[14])
 
             try:
                 n = float(s[29]) / length
             except:
                 n = 0.
-
-            lineage_name = s[19] if s[19] != self.missing_info_mark else 'None'
-
-            try:
-                date = (datetime.strptime(s[5], "%Y-%m-%d") - start_date).days
-            except:
-                continue
 
             if (29000 < length < 30000) and (n < 0.05):
                 continent_id, country_id, region_id = self.get_location_ids(continent_name, country_name, region_name)

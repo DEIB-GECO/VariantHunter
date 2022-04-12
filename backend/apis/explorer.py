@@ -142,7 +142,7 @@ def extract_last_update():
 
     con.close()
     print(f'done in {time.time() - exec_start:.5f} seconds.')
-    return compute_date_from_diff(diff)
+    return compute_date_from_diff(diff) if diff is not None else None
 
 
 last_update = extract_last_update()  # At server startup, fetch last update

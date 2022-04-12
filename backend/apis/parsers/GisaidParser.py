@@ -31,17 +31,19 @@ class GisaidParser(Parser):
                 region_name = locs[2].strip()
 
             try:
+                date = (datetime.strptime(s[3], "%Y-%m-%d") - start_date).days
+            except:
+                continue
+            if self.filter_by_data_flag and self.is_out_of_range(date):
+                continue
+
+            try:
                 n = float(s[20])
             except:
                 n = 0.
 
             length = int(s[6])
             lineage_name = s[11] if s[11] != self.missing_info_mark else 'None'
-
-            try:
-                date = (datetime.strptime(s[3], "%Y-%m-%d") - start_date).days
-            except:
-                continue
 
             if (29000 < length < 30000) and (n < 0.05):
                 continent_id, country_id, region_id = self.get_location_ids(continent_name, country_name, region_name)

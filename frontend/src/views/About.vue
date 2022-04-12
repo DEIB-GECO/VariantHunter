@@ -125,7 +125,7 @@
                   <p>Start date to be considered when importing data. <br />
                     Only the data in the period <span class='monospaced'>[START_DATE, END_DATE]</span> will be imported
                     into the tool.</p>
-                  Example: <span class='pl-3 monospaced'>START_DATE=01-12-2021</span><br />
+                  Example: <span class='pl-3 monospaced'>START_DATE=2021-12-01</span><br />
                 </td>
                 <td>Optional <br />Default: <span class='monospaced'>Beginning</span></td>
               </tr>
@@ -135,7 +135,7 @@
                   <p>End date to be considered when importing data. <br />
                     Only the data in the period <span class='monospaced'>[START_DATE, END_DATE]</span> will be imported
                     into the tool.</p>
-                  Example: <span class='pl-3 monospaced'>START_DATE=01-12-2021</span><br />
+                  Example: <span class='pl-3 monospaced'>START_DATE=2021-12-30</span><br />
                 </td>
                 <td>Optional <br />Default: <span class='monospaced'>End</span></td>
               </tr>
@@ -148,7 +148,7 @@
             <p />
             <p>
               Full example 2:<br />
-              <CodeBlock>FILE_PATH=/metadata/ FILE_NAME=metadata.tsv LOCATION="Italy" START_DATE=01-12-2021
+              <CodeBlock>FILE_PATH=/metadata/ FILE_NAME=metadata.tsv LOCATION="Italy" START_DATE=2021-12-01
                 docker-compose up
               </CodeBlock>
             </p>
