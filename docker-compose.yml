@@ -2,13 +2,16 @@ version: "3"
 services:
   app:
     image: gecopolimi/varianthunter
-    command: python -u ./backend/app.py /backend/app/database/${FILE_NAME} '${LOCATIONS}'
+    command: python -u ./backend/app.py /backend/app/database/${FILE_NAME} ${LOCATIONS} ${FILE_TYPE} ${START_DATE} ${END_DATE}
     ports:
-      - "5000:5000"
+      - "${PORT}:5000"
     volumes:
       - ${FILE_PATH}:/backend/app/database/
     environment:
       - FILE_PATH=${FILE_PATH}
       - FILE_NAME=${FILE_NAME}
-      - FILE_TYPE=${FILE_TYPE}
-      - LOCATIONS=${LOCATION}
+      - FILE_TYPE=${FILE_TYPE:-GISAID}
+      - LOCATIONS=${LOCATION:-All}
+      - PORT=${PORT:-5000}
+      - START_DATE=${START_DATE:-Beginning}
+      - END_DATE=${END_DATE:-End}

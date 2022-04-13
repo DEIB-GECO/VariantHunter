@@ -222,7 +222,7 @@ export default {
   data () {
     return {
       /** VariantHunter logo */
-      websiteLogo: require('../assets/virusurf_logo.png'),
+      websiteLogo: require('../assets/logo.png'),
 
       /** Contributors data */
       contributors: [

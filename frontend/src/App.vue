@@ -5,7 +5,7 @@
       <v-toolbar :color='primary_color' class='navbar' short dark flat>
 
         <!-- Logo -->
-        <v-img :src='websiteLogo' class='logo' contain max-height='39px' max-width='39px' />
+        <v-img :src='websiteLogo' class='logo' contain max-height='40x' max-width='40px' />
         <v-toolbar-title class='site-title'>
           <router-link to='/variant_hunter/'>
             <span class='emphasis'>Variant</span>
@@ -81,7 +81,7 @@ export default {
   data () {
     return {
       /** VariantHunter logo */
-      websiteLogo: require('./assets/virusurf_logo.png'),
+      websiteLogo: require('./assets/logo.png'),
 
       /** Flag to show the new search shortcut */
       showSearchShortcut: false
@@ -108,8 +108,7 @@ export default {
 
 /* Site logo */
 .logo{
-  height: 35px;
-  border-radius: 11px;
+  border-radius: 12px;
   margin-left: 17px;
 }
 
