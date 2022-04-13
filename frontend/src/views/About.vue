@@ -148,7 +148,7 @@
             <p />
             <p>
               Full example 2:<br />
-              <CodeBlock>FILE_PATH=/metadata/ FILE_NAME=metadata.tsv LOCATION="Italy" START_DATE=2021-12-01
+              <CodeBlock>FILE_PATH=/metadata/ FILE_NAME=metadata.tsv LOCATIONS="Italy" START_DATE=2021-12-01
                 docker-compose up
               </CodeBlock>
             </p>

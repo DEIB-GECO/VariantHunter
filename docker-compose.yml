@@ -10,8 +10,8 @@ services:
     environment:
       - FILE_PATH=${FILE_PATH}
       - FILE_NAME=${FILE_NAME}
-      - FILE_TYPE=${FILE_TYPE:-GISAID}
-      - LOCATIONS=${LOCATION:-All}
+      - FILE_TYPE=${FILE_TYPE:-gisaid}
+      - LOCATIONS=${LOCATIONS:-all}
       - PORT=${PORT:-5000}
-      - START_DATE=${START_DATE:-Beginning}
-      - END_DATE=${END_DATE:-End}
+      - START_DATE=${START_DATE:-beginning}
+      - END_DATE=${END_DATE:-end}
