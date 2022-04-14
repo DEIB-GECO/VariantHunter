@@ -1,25 +1,17 @@
 from __future__ import print_function
 
 import sqlite3
-import sys
 import time
 
 from flask_restplus import Namespace
 
 from .parsers.GisaidParser import GisaidParser
 from .parsers.NextstrainParser import NextstrainParser
-
-# Fetch the parameters: file path, selected countries and type (either gisaid or nextstrain)
-file_path = sys.argv[1]
-selected_countries = set([x.lower() for x in sys.argv[2].strip().split(',') if x])
-if len(selected_countries) == 1 and 'all' in selected_countries:
-    selected_countries.clear()
-file_type = sys.argv[3].lower().strip() if len(sys.argv) > 3 else 'gisaid'
-beginning_date = sys.argv[4].lower().strip() if len(sys.argv) > 4 else 'beginning'
-end_date = sys.argv[5].lower().strip() if len(sys.argv) > 5 else 'end'
+from .utils.cmd_parser import get_cmd_arguments
 
 api = Namespace('create_database', description='create_database')
 db_name = 'varianthunter.db'
+args = get_cmd_arguments()
 
 
 def create_database():
@@ -28,21 +20,33 @@ def create_database():
 
     """
     exec_start = time.time()
-    print("> Starting database setup ...")
+    print(">  * Starting initial setup ...")
     curr_step, tot_steps = 1, 4
 
-    with open(file_path) as f:
+    with open(args.file_path) as f:
         con = sqlite3.connect(db_name)
         con.execute("pragma journal_mode=off;")
         con.execute("pragma locking_mode=EXCLUSIVE;")
         con.execute("pragma synchronous=OFF;")
         cur = con.cursor()
 
-        # Check if tables already exist to skip database creation
-        cur.execute(" SELECT count(name) FROM sqlite_master WHERE type='table' ")
-        if cur.fetchone()[0] > 0:
-            print('\t SKIPPED: database already exists.')
-            return
+        # Check if tables already exists
+        cur.execute(" SELECT count(name) FROM sqlite_master WHERE type='table'")
+        if cur.fetchone()[0] > 1:
+            print('   INFO: Database already exists ', end='')
+            if args.reload:
+                # Clear current database
+                print('[database overwrite started]...')
+                con.execute("pragma writable_schema=1;")
+                cur.execute("DELETE FROM sqlite_master WHERE type in ('table', 'index', 'trigger')")
+                con.execute("pragma writable_schema=0;")
+                con.commit()
+                con.execute("vacuum")
+
+            else:
+                # Start the app directly
+                print('[database overwrite skipped]\n')
+                return
 
         def run_query(query):
             cur.execute(query)
@@ -93,14 +97,14 @@ def create_database():
         curr_step += 1
         print(f"\t STEP {curr_step}/{tot_steps}: Data extraction ", end="")
 
-        if file_type != 'nextstrain':
+        if args.file_type != 'nextstrain':
             print(" [GISAID parser] ...")
             parser = GisaidParser(con, f)
         else:
             print(" [NEXTSTRAIN parser] ...")
             parser = NextstrainParser(con, f)
-        parser.set_date_range(beginning_date, end_date)
-        parser.parse(selected_countries)
+        parser.set_date_range(args.beginning_date, args.end_date)
+        parser.parse(args.filtered_countries)
         del parser
 
         print(f'\t\tdone in {time.time() - step_start:.5f} seconds.')
@@ -167,7 +171,7 @@ def create_database():
         con.close()
         print(f'done in {time.time() - step_start:.5f} seconds.')
 
-    print(f'> Setup overall time: {time.time() - exec_start:.5f} seconds.')
+    print(f'> Setup overall time: {time.time() - exec_start:.5f} seconds.\n')
 
 
 create_database()

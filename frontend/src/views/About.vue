@@ -252,6 +252,12 @@ export default {
           mail: 'matteo.chiara@unimi.it'
         },
         {
+          name: 'Erika Ferrandi',
+          associate: '--',
+          img: require('../assets/contributors/person.png'),
+          mail: 'e.ferrandi@ibiom.cnr.it'
+        },
+        {
           name: 'Luca Minotti',
           associate: 'Politecnico di Milano',
           img: require('../assets/contributors/person.png'),

@@ -2,7 +2,7 @@ version: "3"
 services:
   app:
     image: gecopolimi/varianthunter
-    command: python -u ./backend/app.py /backend/app/database/${FILE_NAME} ${LOCATIONS} ${FILE_TYPE} ${START_DATE} ${END_DATE}
+    command: python -u ./backend/app.py -fp /backend/app/database/${FILE_NAME} -loc ${LOCATIONS} -ft ${FILE_TYPE} -sd ${START_DATE} -ed ${END_DATE}
     ports:
       - "${PORT}:5000"
     volumes:

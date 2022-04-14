@@ -21,6 +21,13 @@
           New analysis
         </v-btn>
 
+        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only' outlined rounded small>
+          <router-link to='\variant_hunter\about'>
+            <v-icon left>mdi-information-circle</v-icon>
+          About
+            </router-link>
+        </v-btn>
+
         <!-- Navbar links to the other tools -->
         <!--      <v-toolbar-items class="hidden-lg-and-down navbar-links">-->
         <!--        <v-btn text href="https://github.com/DEIB-GECO/VariantHunter/wiki" target="_blank" class="navbar-link">-->
