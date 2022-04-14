@@ -200,6 +200,27 @@
       </v-container>
     </v-row>
 
+    <v-row>
+      <v-container class='pa-10'>
+
+        <h3>
+          <v-icon left color='#000000DE' large>mdi-account-heart</v-icon>
+          Acknowledgements
+        </h3>
+
+        <v-timeline dense class='contributors-list'>
+          <v-timeline-item flat v-for='(contributor, index) in acks' v-bind:key='index'>
+            <template v-slot:icon>
+              <v-avatar size='60'>
+                <img :src='contributor.img' :alt='"Picture of "'>
+              </v-avatar>
+            </template>
+            {{ contributor.name }}
+          </v-timeline-item>
+        </v-timeline>
+      </v-container>
+    </v-row>
+
   </v-container>
 
 </template>
@@ -216,12 +237,27 @@ export default {
       /** VariantHunter logo */
       websiteLogo: require('../assets/logo.png'),
 
+      /** Ack data */
+      acks: [
+        {
+          name: 'Luca Cilibrasi',
+          img: require('../assets/contributors/person.png')
+        },
+        {
+          name: 'Shay Fleishon',
+          img: require('../assets/contributors/person.png')
+        },
+        {
+          name: 'Valeria Micheli',
+          img: require('../assets/contributors/person.png')
+        }
+      ],
       /** Contributors data */
       contributors: [
         {
           name: 'Anna Bernasconi',
           associate: 'Politecnico di Milano',
-          img: require('../assets/contributors/person.png'),
+          img: require('../assets/contributors/bernasconi.jpg'),
           mail: 'anna.bernasconi@polimi.it'
         },
         {
