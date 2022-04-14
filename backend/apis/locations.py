@@ -1,9 +1,11 @@
 """
-    API to retrieve locations data
+
+    APIs to retrieve locations data
     Endpoints:
-    ├── getContinents
-    ├── getCountries
-    └── getRegions
+    ├── getContinents: endpoint to get all the continents
+    ├── getCountries: endpoint to get all the countries of given a continent
+    └── getRegions: endpoint to get all the regions of given a country
+
 """
 
 from __future__ import print_function
@@ -34,7 +36,7 @@ def get_continents():
     return continents
 
 
-all_continents = get_continents()   # At server startup, fetch all the continents
+all_continents = get_continents()  # At server startup, fetch all the continents
 
 
 def get_countries(continent):
@@ -83,7 +85,7 @@ class FieldList(Resource):
     @api.doc('get_continents')
     def get(self):
         """
-        Endpoint to get the continents
+        Endpoint to get all the continents
         @return:    An array of continents
         """
         return all_continents
@@ -94,7 +96,7 @@ class FieldList(Resource):
     @api.doc('get_countries')
     def post(self):
         """
-        Endpoint to get the countries given a continent
+        Endpoint to get all the countries of given a continent
         @return:    An array of countries
         """
         countries = get_countries(api.payload['continent'])
@@ -106,7 +108,7 @@ class FieldList(Resource):
     @api.doc('get_regions')
     def post(self):
         """
-        Endpoint to get the regions given a country
+        Endpoint to get all the regions of given a country
         @return:    An array of regions
         """
         regions = get_regions(api.payload['country'])

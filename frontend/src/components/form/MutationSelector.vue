@@ -292,7 +292,7 @@ export default {
 
       if (this.selectedLineages.length > 0) {
         this.processing = true
-        const classificationAPI = `/explorer/getLineagesCharacterization`
+        const classificationAPI = `/explorer/getLineagesCharacteristics`
         const toSend = {
           lineages: this.selectedLineages
         }

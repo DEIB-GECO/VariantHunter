@@ -514,7 +514,7 @@ export default {
       // Catch row expansion only
       if (item.value) {
         this.isLoadingDetails = true
-        const url = `/lineage_independent/getLineages`
+        const url = `/lineage_independent/getLineagesStatistics`
         const toSend = {
           location: item.item.location,
           date: this.queryParams.date,

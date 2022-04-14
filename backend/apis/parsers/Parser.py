@@ -69,9 +69,9 @@ class Parser:
 
     def batch_to_subs(self):
         """
-        Inserts data from batch_subs into the substitutions table
+        Inserts data from batch_subs into the aa_substitutions table
         """
-        query = ''' INSERT INTO substitutions(sequence_id, protein_id, mut) 
+        query = ''' INSERT INTO aa_substitutions(sequence_id, protein_id, mut) 
                     VALUES (?,?,?)'''
         self.con.executemany(query, self.batch_subs)
         del self.batch_subs
@@ -122,7 +122,7 @@ class Parser:
         cur = self.con.cursor()
         cur.execute('''   CREATE VIEW temp.lin_mut_counts AS
                             SELECT lineage_id, protein_id, mut, count(*) AS count
-                            FROM substitutions NATURAL JOIN sequences
+                            FROM aa_substitutions NATURAL JOIN sequences
                             GROUP BY lineage_id, protein_id, mut;''')
 
         cur.execute('''   CREATE VIEW temp.lin_counts AS
@@ -130,7 +130,7 @@ class Parser:
                             FROM sequences
                             GROUP BY lineage_id;''')
 
-        cur.execute('''   INSERT INTO lineages_characterization
+        cur.execute('''   INSERT INTO lineages_characteristics
                             SELECT lineage_id, protein_id, mut
                             FROM lin_mut_counts AS LM
                             WHERE LM.count >= (

@@ -1,3 +1,10 @@
+"""
+
+    Startup setup
+    Database creation, data extraction from .tsv file and database population
+
+"""
+
 from __future__ import print_function
 
 import sqlite3
@@ -9,14 +16,14 @@ from .parsers.GisaidParser import GisaidParser
 from .parsers.NextstrainParser import NextstrainParser
 from .utils.cmd_parser import get_cmd_arguments
 
-api = Namespace('create_database', description='create_database')
+api = Namespace('startup', description='startup')
 db_name = 'varianthunter.db'
 args = get_cmd_arguments()
 
 
-def create_database():
+def startup():
     """
-    Creates and populates the database with the dataset passed as parameter
+    Performs the startup setup: database creation, data extraction and database population
 
     """
     exec_start = time.time()
@@ -62,16 +69,16 @@ def create_database():
         run_query('''   CREATE TABLE aggr_sequences
                         (date int, lineage_id int, location_id int, count int )''')
 
-        run_query('''   CREATE TABLE substitutions
+        run_query('''   CREATE TABLE aa_substitutions
                         (sequence_id int, protein_id int, mut text)''')
 
-        run_query('''   CREATE TABLE aggr_substitutions
+        run_query('''   CREATE TABLE aggr_aa_substitutions
                         (date int, lineage_id int, location_id int, protein_id int, mut text, count int)''')
 
         run_query('''   CREATE TABLE lineages
                         (lineage_id int primary key , lineage text)''')
 
-        run_query('''   CREATE TABLE lineages_characterization
+        run_query('''   CREATE TABLE lineages_characteristics
                         (lineage_id int , protein_id int, mut text)''')
 
         run_query('''   CREATE TABLE locations
@@ -115,22 +122,22 @@ def create_database():
         curr_step += 1
         print(f"\t STEP {curr_step}/{tot_steps}: Data aggregation...", end="")
 
-        run_query('''   INSERT INTO aggr_substitutions 
+        run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, continent_id AS location_id, protein_id, mut, count(*) AS count 
-                            FROM sequences SQ JOIN substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            FROM sequences SQ JOIN aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, continent_id, protein_id, mut;''')
 
-        run_query('''   INSERT INTO aggr_substitutions 
+        run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, country_id AS location_id, protein_id, mut, count(*) AS count 
-                            FROM sequences SQ JOIN substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            FROM sequences SQ JOIN aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, country_id, protein_id, mut;''')
 
-        run_query('''   INSERT INTO aggr_substitutions 
+        run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, region_id AS location_id, protein_id, mut, count(*) AS count 
-                            FROM sequences SQ JOIN substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            FROM sequences SQ JOIN aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, region_id, protein_id, mut;''')
 
-        run_query('''   DROP TABLE substitutions;''')
+        run_query('''   DROP TABLE aa_substitutions;''')
 
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, continent_id AS location_id, count(*) AS count 
@@ -157,11 +164,11 @@ def create_database():
         curr_step += 1
         print(f"\t STEP {curr_step}/{tot_steps}: Data indexing...", end="")
 
-        run_query('''   CREATE INDEX aggr_substitutions_idx1
-                        ON  aggr_substitutions(location_id, date, lineage_id)''')
+        run_query('''   CREATE INDEX aggr_aa_substitutions_idx1
+                        ON  aggr_aa_substitutions(location_id, date, lineage_id)''')
 
-        run_query('''   CREATE INDEX aggr_substitutions_idx2 
-                        ON  aggr_substitutions(date, lineage_id)''')
+        run_query('''   CREATE INDEX aggr_aa_substitutions_idx2 
+                        ON  aggr_aa_substitutions(date, lineage_id)''')
 
         run_query('''   CREATE INDEX aggr_sequences_idx1
                         ON  aggr_sequences(date, lineage_id)''')
@@ -174,4 +181,4 @@ def create_database():
     print(f'> Setup overall time: {time.time() - exec_start:.5f} seconds.\n')
 
 
-create_database()
+startup()

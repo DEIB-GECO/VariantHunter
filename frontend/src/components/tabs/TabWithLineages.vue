@@ -265,7 +265,7 @@ export default {
     },
 
     fetchCaracterizingMuts () {
-      const classificationAPI = `/explorer/getLineagesCharacterization`
+      const classificationAPI = `/explorer/getLineagesCharacteristics`
       const toSend = { lineage: this.queryParams.lineage }
       axios
         .post(classificationAPI, toSend)

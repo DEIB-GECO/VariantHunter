@@ -1,3 +1,10 @@
+"""
+
+    COMMAND LINE ARGUMENT PARSER UTILITIES.
+    Utilities for parsing the arguments form command line.
+
+"""
+
 import argparse
 
 
@@ -34,7 +41,6 @@ def get_cmd_arguments():
                         help="boolean flag to overwrite the current database, if present")
 
     args = parser.parse_args()
-    print(args)
     return args
 
 

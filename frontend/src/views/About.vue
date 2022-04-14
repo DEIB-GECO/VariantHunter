@@ -73,16 +73,8 @@
               <tr>
                 <td>FILE_PATH</td>
                 <td>
-                  <p>Path to the folder containing the <span class='monospaced'>.tsv</span> metadata file.</p>
-                  Example: <span class='pl-3 monospaced'>FILE_PATH=/Users/rossi/datasets</span>
-                </td>
-                <td>Required</td>
-              </tr>
-              <tr>
-                <td>FILE_NAME</td>
-                <td>
-                  <p>Name of the <span class='monospaced'>.tsv</span> metadata file (extension included).</p>
-                  Example: <span class='pl-3 monospaced'>FILE_NAME=metadata.tsv</span>
+                  <p>Path to the <span class='monospaced'>.tsv</span> metadata file.</p>
+                  Example: <span class='pl-3 monospaced'>FILE_PATH=/Users/rossi/datasets/metadata.tsv</span>
                 </td>
                 <td>Required</td>
               </tr>

@@ -1,9 +1,12 @@
 """
+
     API to retrieve daily sequences counts
     Endpoints:
-    ├── getLineagesMutations
-    ├── getLineageBreakdown
-    └── getSequenceInfo
+    ├── getSequenceInfo: endpoint to get the sequence counts for each day
+    ├── getLineagesBreakdown: endpoint to get the lineage breakdown info for each day
+    ├── getLastUpdate: endpoint to get the date of the last update of the dataset
+    └── getLineagesCharacteristics: endpoint to get the characterizing protein mutations of specified lineages
+
 """
 
 from __future__ import print_function
@@ -164,12 +167,12 @@ def get_lineage_characterization(lineages):
 
     def extract_muts_from_lineage():
         query = f'''    SELECT DISTINCT protein, mut
-                        FROM lineages_characterization LC
+                        FROM lineages_characteristics LC
                             JOIN lineages LN ON LC.lineage_id = LN.lineage_id
                             JOIN proteins PR ON LC.protein_id = PR.protein_id
                         WHERE lineage in (%s) ''' % ("?," * len(lineages))[:-1] + '''
                         ORDER BY protein, mut;'''
-        return [x[0]+'_'+x[1] for x in cur.execute(query, lineages).fetchall()]
+        return [x[0] + '_' + x[1] for x in cur.execute(query, lineages).fetchall()]
 
     characterizing_muts = extract_muts_from_lineage()
 
@@ -198,7 +201,7 @@ class FieldList(Resource):
         return info
 
 
-@api.route('/getLineageBreakdown')
+@api.route('/getLineagesBreakdown')
 class FieldList(Resource):
     @api.doc('get_lineage_breakdown')
     def post(self):
@@ -227,12 +230,12 @@ class FieldList(Resource):
         return last_update
 
 
-@api.route('/getLineagesCharacterization')
+@api.route('/getLineagesCharacteristics')
 class FieldList(Resource):
-    @api.doc('get_lineages_characterization')
+    @api.doc('get_lineages_characteristics')
     def post(self):
         """
-        Endpoint to get the characterization of specified lineages
+        Endpoint to get the characterizing protein mutations of specified lineages
         @return:    A list of characterizing mutations
         """
         lineages = api.payload['lineages']

@@ -1,8 +1,10 @@
 """
+
     API to perform lineage independent analysis
     Endpoints:
-    ├── getStatistics
-    └── getLineages
+    ├── getStatistics: endpoint to perform a lineage independent analysis
+    └── getLineagesStatistics: endpoint to obtain statistics about lineages for given protein, mutation, location and date
+
 """
 
 from __future__ import print_function
@@ -42,7 +44,7 @@ def extract_week_seq_counts(location, w, prot=None, mut=None):
         if prot is not None and mut is not None:
             # count the seq collected for a given week and location having a given mutation
             query = f'''    SELECT sum(count)
-                            FROM  aggr_substitutions SB
+                            FROM  aggr_aa_substitutions SB
                                 JOIN locations LC ON SB.location_id = LC.location_id
                                 JOIN proteins PR ON SB.protein_id = PR.protein_id
                             WHERE date > {start} AND date <= {stop} AND location = '{location}' 
@@ -82,10 +84,11 @@ def extract_mutation_data(location, w, min_sequences=0):
     con = sqlite3.connect(db_name)
     cur = con.cursor()
     print()
+
     def extract_week_mutation(start, stop, is_target=False):
         having_clause = f"HAVING sum(count) >= {min_sequences}"
         query = f'''    SELECT protein, mut, sum(count) 
-                        FROM aggr_substitutions SB
+                        FROM aggr_aa_substitutions SB
                             JOIN proteins PR ON SB.protein_id = PR.protein_id
                             JOIN locations LC ON SB.location_id = LC.location_id
                         WHERE date > {start} AND date <= {stop} AND location = '{location}'
@@ -125,7 +128,7 @@ def extract_lineages_data(location, prot, mut, w):
     def extract_all_lineages(start, stop):
         # get the lineages for the considered period, location, prot and mut
         query = f'''    SELECT DISTINCT SB.lineage_id, lineage
-                        FROM aggr_substitutions SB
+                        FROM aggr_aa_substitutions SB
                             JOIN lineages LN ON SB.lineage_id = LN.lineage_id
                             JOIN locations LC ON SB.location_id = LC.location_id
                             JOIN proteins PR ON SB.protein_id = PR.protein_id
@@ -136,7 +139,7 @@ def extract_lineages_data(location, prot, mut, w):
 
     def extract_week_info(lin_id, start, stop):
         query = f'''    SELECT sum(count) 
-                        FROM aggr_substitutions SB
+                        FROM aggr_aa_substitutions SB
                             JOIN locations LC ON SB.location_id = LC.location_id
                             JOIN proteins PR ON SB.protein_id = PR.protein_id
                         WHERE date > {start} AND date <= {stop} AND location = '{location}' 
@@ -195,12 +198,12 @@ class FieldList(Resource):
         return {'rows': statistics, 'tot_seq': week_sequence_counts}
 
 
-@api.route('/getLineages')
+@api.route('/getLineagesStatistics')
 class FieldList(Resource):
-    @api.doc('get_lineages')
+    @api.doc('get_lineages_statistics')
     def post(self):
         """
-        Endpoint to obtain info about lineages for given mutation, location and date
+        Endpoint to obtain statistics about lineages for given protein, mutation, location and date
         @return:    An object including the results
         """
         location = api.payload['location']

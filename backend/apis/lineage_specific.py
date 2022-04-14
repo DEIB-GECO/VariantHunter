@@ -1,9 +1,11 @@
 """
+
     API to perform lineage specific analysis
     Endpoints:
-    ├── getLineages
-    ├── getAllLineages
-    └── getStatistics
+    ├── getAllLineages: endpoint to obtain all the possible lineages
+    ├── getLineages: endpoint to obtain the lineages for a given location and week (if specified)
+    └── getStatistics: endpoint to perform a lineage specific analysis
+
 """
 
 from __future__ import print_function
@@ -182,7 +184,7 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
     def extract_week_mutation(start, stop, is_target=False):
         having_clause = f" HAVING sum(count) >= {min_sequences} "
         query = f'''    SELECT protein, mut, sum(count) 
-                        FROM aggr_substitutions SB
+                        FROM aggr_aa_substitutions SB
                             JOIN proteins PR ON SB.protein_id = PR.protein_id
                             JOIN locations LC ON SB.location_id = LC.location_id
                             JOIN lineages LN ON SB.lineage_id = LN.lineage_id

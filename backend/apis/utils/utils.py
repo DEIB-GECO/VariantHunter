@@ -1,5 +1,8 @@
 """
-    Utilities
+
+    APIS MIXINS
+    General purpose functions shared by the APIs
+
 """
 
 from datetime import datetime, timedelta

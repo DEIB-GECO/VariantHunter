@@ -159,7 +159,7 @@ export default {
     fetchLineageBreakdownInfo () {
       if ((this.granularity === 'world' || this.location) && this.selectedRange) {
         this.isLoading.breakdown = true
-        const sequenceAPI = `/explorer/getLineageBreakdown`
+        const sequenceAPI = `/explorer/getLineagesBreakdown`
         const toSend = {
           granularity: this.granularity,
           location: this.location,    // possibly it has no value
