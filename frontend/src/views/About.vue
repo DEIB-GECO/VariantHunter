@@ -270,13 +270,13 @@ export default {
         {
           name: 'Arif Canakoglu',
           associate: 'Policlinico di Milano',
-          img: require('../assets/contributors/person.png'),
+          img: require('../assets/contributors/canakoglu.jpeg'),
           mail: 'arif.canakoglu@polimi.it'
         },
         {
           name: 'Matteo Chiara',
           associate: 'Università degli Studi di Milano Statale',
-          img: require('../assets/contributors/person.png'),
+          img: require('../assets/contributors/chiara.png'),
           mail: 'matteo.chiara@unimi.it'
         },
         {
@@ -288,7 +288,7 @@ export default {
         {
           name: 'Luca Minotti',
           associate: 'Politecnico di Milano',
-          img: require('../assets/contributors/person.png'),
+          img: require('../assets/contributors/minotti.jpeg'),
           mail: 'luca2.minotti@polimi.it'
         },
         {
