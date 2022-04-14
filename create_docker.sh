@@ -1,3 +1,6 @@
+cd frontend
+npm run build
+cd ..
 rm -rf docker
 mkdir docker
 cp requirements.txt ./docker/
