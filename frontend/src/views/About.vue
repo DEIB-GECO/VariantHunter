@@ -158,17 +158,22 @@ export default {
       /** Contributors data */
       contributors: [
         {
+          name: 'Pietro Pinoli',
+          associate: 'Politecnico di Milano',
+          img: require('../assets/contributors/pinoli.png'),
+          mail: 'pietro.pinoli@polimi.it'
+        },
+        {
+          name: 'Luca Minotti',
+          associate: 'Politecnico di Milano',
+          img: require('../assets/contributors/minotti.jpeg'),
+          mail: 'luca2.minotti@mail.polimi.it'
+        },
+        {
           name: 'Anna Bernasconi',
           associate: 'Politecnico di Milano',
           img: require('../assets/contributors/bernasconi.jpg'),
           mail: 'anna.bernasconi@polimi.it'
-        },
-        {
-          name: 'Stefano Ceri',
-          associate: 'Politecnico di Milano',
-          img: require('../assets/contributors/ceri.png'),
-          mail: 'stefano.ceri@polimi.it',
-          role: 'leader'
         },
         {
           name: 'Arif Canakoglu',
@@ -189,16 +194,11 @@ export default {
           mail: 'e.ferrandi@ibiom.cnr.it'
         },
         {
-          name: 'Luca Minotti',
+          name: 'Stefano Ceri',
           associate: 'Politecnico di Milano',
-          img: require('../assets/contributors/minotti.jpeg'),
-          mail: 'luca2.minotti@mail.polimi.it'
-        },
-        {
-          name: 'Pietro Pinoli',
-          associate: 'Politecnico di Milano',
-          img: require('../assets/contributors/pinoli.png'),
-          mail: 'pietro.pinoli@polimi.it'
+          img: require('../assets/contributors/ceri.png'),
+          mail: 'stefano.ceri@polimi.it',
+          role: 'leader'
         }
       ]
     }

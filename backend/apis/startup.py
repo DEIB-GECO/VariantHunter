@@ -27,7 +27,7 @@ def startup():
 
     """
     exec_start = time.time()
-    print(">  * Starting initial setup ...")
+    print("> Starting initial setup ...")
     curr_step, tot_steps = 1, 4
 
     with open(args.file_path) as f:
@@ -178,7 +178,7 @@ def startup():
         con.close()
         print(f'done in {time.time() - step_start:.5f} seconds.')
 
-    print(f'> Setup overall time: {time.time() - exec_start:.5f} seconds.\n')
+    print(f'>> Setup overall time: {time.time() - exec_start:.5f} seconds.\n')
 
 
 startup()
