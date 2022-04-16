@@ -2,14 +2,13 @@
   Component:    CodeBlock
   Description:  Code block with copy button
 
-  Slots:
-  └── default:  The content of the code block
+  Props:
+  └── code:  The content of the code block
 -->
 
 <template>
-
-  <code @click='doCopy'>
-    <slot></slot>
+  <code @click='doCopy()'>
+    {{code}}
     <v-icon small class='ml-3'>mdi-content-copy</v-icon>
     <v-snackbar v-model='successMessage' timeout='2000' height='5' color='success' transition='scroll-y-transition'>
       <v-icon left>mdi-content-copy</v-icon>
@@ -22,6 +21,9 @@
 <script>
 export default {
   name: 'CodeBlock',
+  props: {
+    code: { required: true }
+  },
   data () {
     return {
       /** Success message for the copy action */
@@ -34,7 +36,7 @@ export default {
      * @param e The copy event
      */
     doCopy (e) {
-      this.$copyText(e.target.innerText).then(() => { this.successMessage = true })
+      this.$copyText(this.code).then(() => { this.successMessage = true })
     }
   }
 }

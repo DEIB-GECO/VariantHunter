@@ -79,11 +79,10 @@ def extract_mutation_data(location, w, min_sequences=0):
     Returns: An array describing the mutations for each week
 
     """
-    print("\t Extract mutation data for the four weeks...", end="")
+    print("\t Extract mutation data for the four weeks ...", end="")
     exec_start = time.time()
     con = sqlite3.connect(db_name)
     cur = con.cursor()
-    print()
 
     def extract_week_mutation(start, stop, is_target=False):
         having_clause = f"HAVING sum(count) >= {min_sequences}"

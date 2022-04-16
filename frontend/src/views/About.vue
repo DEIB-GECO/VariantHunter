@@ -45,110 +45,8 @@
     </v-row>
 
     <!-- Docker info -->
-    <v-row class='with-separator'>
-      <v-container class='pa-10 pb-0 mt-5'>
-        <h3>
-          <v-icon left color='#000000DE' large>mdi-docker</v-icon>
-          How to run the Docker
-        </h3>
-        <v-timeline dense align-top>
-          <v-timeline-item flat small color='#000000DE'>
-            Open the terminal and run
-            <CodeBlock>docker pull gecopolimi/varianthunter</CodeBlock>
-          </v-timeline-item>
-          <v-timeline-item flat small color='#000000DE'>
-            Run the following command
-            <CodeBlock><i>{parameters_list}</i> &nbsp;&nbsp;docker-compose up</CodeBlock>
-            <br />
-            where {parameters_list} is a space-separated list of the following parameters:
-            <v-simple-table class='mt-3 mb-4'>
-              <thead>
-              <tr>
-                <th class='text-left'>Parameter name</th>
-                <th class='text-left'>Description</th>
-                <th class='text-left'>Required</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>FILE_PATH</td>
-                <td>
-                  <p>Path to the <span class='monospaced'>.tsv</span> metadata file.</p>
-                  Example: <span class='pl-3 monospaced'>FILE_PATH=/Users/rossi/datasets/metadata.tsv</span>
-                </td>
-                <td>Required</td>
-              </tr>
-              <tr>
-                <td>FILE_TYPE</td>
-                <td>
-                  Type of the <span class='monospaced'>.tsv</span> metadata file. Currently supported:
-                  <ul>
-                    <li><span class='monospaced'>GISAID</span> :
-                      <a href='https://www.epicov.org/epi3/frontend' target='_blank'>more info</a></li>
-                    <li><span class='monospaced'>NEXTSTRAIN</span> :
-                      <a href='https://nextstrain.org/ncov/open/global' target='_blank'>more info</a></li>
-                  </ul>
-                  <p />
-                  Example: <span class='pl-3 monospaced'>FILE_TYPE=GISAID</span>
-                </td>
-                <td>Optional. <br />Default: <span class='monospaced'>GISAID</span></td>
-              </tr>
-              <tr>
-                <td>LOCATIONS</td>
-                <td>
-                  <p>Comma separated list of country names whose sequence data is to be imported in the tool.<br />
-                    Use "<span class='monospaced'>All</span>" to import the entire dataset.</p>
-                  Example: <span class='pl-3 monospaced'>LOCATIONS="Italy"</span><br />
-                  Example: <span class='pl-3 monospaced'>LOCATIONS="Italy,Germany,Iran"</span>
-                </td>
-                <td>Optional <br />Default: <span class='monospaced'>"All"</span></td>
-              </tr>
-              <tr>
-                <td>PORT</td>
-                <td>
-                  <p>The port to be used by the server</p>
-                  Example: <span class='pl-3 monospaced'>PORT=5001</span><br />
-                </td>
-                <td>Optional <br />Default: <span class='monospaced'>5000</span></td>
-              </tr>
-              <tr>
-                <td>START_DATE</td>
-                <td>
-                  <p>Start date to be considered when importing data. <br />
-                    Only the data in the period <span class='monospaced'>[START_DATE, END_DATE]</span> will be imported
-                    into the tool.</p>
-                  Example: <span class='pl-3 monospaced'>START_DATE=2021-12-01</span><br />
-                </td>
-                <td>Optional <br />Default: <span class='monospaced'>Beginning</span></td>
-              </tr>
-              <tr>
-                <td>END_DATE</td>
-                <td>
-                  <p>End date to be considered when importing data. <br />
-                    Only the data in the period <span class='monospaced'>[START_DATE, END_DATE]</span> will be imported
-                    into the tool.</p>
-                  Example: <span class='pl-3 monospaced'>START_DATE=2021-12-30</span><br />
-                </td>
-                <td>Optional <br />Default: <span class='monospaced'>End</span></td>
-              </tr>
-              </tbody>
-            </v-simple-table>
-
-            <p>
-              Full example 1:<br />
-              <CodeBlock>FILE_PATH=/metadata/ FILE_NAME=metadata.tsv docker-compose up</CodeBlock>
-            <p />
-            <p>
-              Full example 2:<br />
-              <CodeBlock>FILE_PATH=/metadata/ FILE_NAME=metadata.tsv LOCATIONS="Italy" START_DATE=2021-12-01
-                docker-compose up
-              </CodeBlock>
-            </p>
-
-          </v-timeline-item>
-
-        </v-timeline>
-      </v-container>
+    <v-row class='with-separator underlined-links'>
+      <DockerGuide />
     </v-row>
 
     <!-- Contributors -->
@@ -216,6 +114,7 @@
               </v-avatar>
             </template>
             {{ contributor.name }}
+            <span class='associate-label'>{{ contributor.associate }}</span>
           </v-timeline-item>
         </v-timeline>
       </v-container>
@@ -226,12 +125,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import CodeBlock from '@/components/general/CodeBlock'
+import DockerGuide from '@/components/general/DockerGuide'
 
 export default {
   name: 'About',
-  components: { CodeBlock },
+  components: { DockerGuide },
   data () {
     return {
       /** VariantHunter logo */
@@ -241,17 +139,22 @@ export default {
       acks: [
         {
           name: 'Luca Cilibrasi',
-          img: require('../assets/contributors/person.png')
+          img: require('../assets/contributors/person.png'),
+          associate: 'Politecnico di Milano, Milan, Italy'
         },
         {
           name: 'Shay Fleishon',
-          img: require('../assets/contributors/person.png')
+          img: require('../assets/contributors/person.png'),
+          associate: 'Independent Researcher, Jerusalem, Israel'
         },
         {
           name: 'Valeria Micheli',
-          img: require('../assets/contributors/person.png')
+          img: require('../assets/contributors/person.png'),
+          associate: 'Laboratory of Clinical Microbiology, Virology and Bioemergencies, \n' +
+            'ASST Fatebenefratelli, Sacco, Milan, Italy'
         }
       ],
+
       /** Contributors data */
       contributors: [
         {
@@ -281,7 +184,7 @@ export default {
         },
         {
           name: 'Erika Ferrandi',
-          associate: '--',
+          associate: '--', // TODO: add value and reorder the contributors
           img: require('../assets/contributors/person.png'),
           mail: 'e.ferrandi@ibiom.cnr.it'
         },
@@ -289,7 +192,7 @@ export default {
           name: 'Luca Minotti',
           associate: 'Politecnico di Milano',
           img: require('../assets/contributors/minotti.jpeg'),
-          mail: 'luca2.minotti@polimi.it'
+          mail: 'luca2.minotti@mail.polimi.it'
         },
         {
           name: 'Pietro Pinoli',
@@ -299,15 +202,13 @@ export default {
         }
       ]
     }
-  },
-  computed: {
-    ...mapState(['primary_color', 'tertiary_color_dark', 'tertiary_color_light'])
   }
 }
 </script>
 
 <style scoped>
 
+/* Huge logo styling */
 .huge-title {
   margin: auto;
   justify-content: center;
@@ -325,26 +226,18 @@ export default {
   line-height: 65px;
 }
 
-h3 {
-  font-size: 20px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.theme--light.v-timeline::before {
-  background: #000000DE;
-  border-radius: 3px;
-}
-
+/* Add a border to separate the sections */
 .with-separator {
   border-top: 2px solid #000000DE;
 }
 
+/* Contibutors/Ack styling */
 .associate-label {
   display: block;
   text-transform: uppercase;
   font-size: 12px;
   font-weight: normal;
+  white-space: pre;
 }
 
 .contributors-list {
@@ -362,14 +255,19 @@ h3 {
   font-weight: 500;
 }
 
-tr td:first-child, .monospaced {
-  font-family: monospace !important;
+</style>
+
+<style>
+
+/* Revert usual behavior for links */
+.underlined-links a {
+  color: var(--secondary-color) !important;
 }
 
-tbody tr td {
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
-  font-size: 14px !important;
+/* Sections styling */
+h3 {
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
 }
-
 </style>

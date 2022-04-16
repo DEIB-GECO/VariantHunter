@@ -1,3 +1,4 @@
+import logging
 import os
 from logging.config import dictConfig
 
@@ -30,12 +31,13 @@ def index():
     return render_template('index.html')
 
 
-@my_app.route(base_url+'favicon.ico')
+@my_app.route(base_url + 'favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(my_app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+    return send_from_directory(os.path.join(my_app.root_path, 'static'), 'favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
 
 
-@my_app.route(base_url+'/appicon.png')
+@my_app.route(base_url + '/appicon.png')
 def appicon():
     return send_from_directory(os.path.join(my_app.root_path, 'static'), 'appicon.png', mimetype='image/png')
 
@@ -72,12 +74,17 @@ dictConfig({
     }
 })
 
-
 # register blueprints
 my_app.register_blueprint(api_blueprint, url_prefix=api_url)
 my_app.register_blueprint(simple_page, url_prefix=base_url)
 my_app.app_context().push()
 
+# prevent logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 if __name__ == '__main__':
+    port = os.getenv('PORT', 5000)
+    print("\n\n> * STARTUP COMPLETED: The application is now accessible from your browser at http://0.0.0.0:"
+          + str(port) + " (PRESS CTRL+C to stop)\n")
     my_app.run(host="0.0.0.0", port=5000)
