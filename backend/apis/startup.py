@@ -21,6 +21,20 @@ db_name = 'varianthunter.db'
 args = get_cmd_arguments()
 
 
+def clear_db(database_name):
+    con = sqlite3.connect(database_name)
+    con.execute("pragma journal_mode=off;")
+    con.execute("pragma locking_mode=EXCLUSIVE;")
+    con.execute("pragma synchronous=OFF;")
+    cur = con.cursor()
+    con.execute("pragma writable_schema=1;")
+    cur.execute("DELETE FROM sqlite_master WHERE type in ('table', 'index', 'trigger')")
+    con.execute("pragma writable_schema=0;")
+    con.commit()
+    con.execute("vacuum")
+    con.close()
+
+
 def startup():
     """
     Performs the startup setup: database creation, data extraction and database population
@@ -59,17 +73,22 @@ def startup():
             cur.execute(query)
             con.commit()
 
+        clear_db("temp_table1.db")
+        clear_db("temp_table2.db")
+        cur.execute("ATTACH DATABASE 'temp_table1.db' AS temp_table1;")
+        cur.execute("ATTACH DATABASE 'temp_table2.db' AS temp_table2;")
+
         ###############################################################
         # Create all the tables
         print(f"\t STEP {curr_step}/{tot_steps}: Tables creation...", end="")
 
-        run_query('''   CREATE TABLE sequences
+        run_query('''   CREATE TABLE temp_table1.sequences
                         (sequence_id int, date int, lineage_id int, continent_id int, country_id int, region_id int )''')
 
         run_query('''   CREATE TABLE aggr_sequences
                         (date int, lineage_id int, location_id int, count int )''')
 
-        run_query('''   CREATE TABLE aa_substitutions
+        run_query('''   CREATE TABLE temp_table2.aa_substitutions
                         (sequence_id int, protein_id int, mut text)''')
 
         run_query('''   CREATE TABLE aggr_aa_substitutions
@@ -124,37 +143,39 @@ def startup():
 
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, continent_id AS location_id, protein_id, mut, count(*) AS count 
-                            FROM sequences SQ JOIN aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, continent_id, protein_id, mut;''')
 
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, country_id AS location_id, protein_id, mut, count(*) AS count 
-                            FROM sequences SQ JOIN aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, country_id, protein_id, mut;''')
 
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, region_id AS location_id, protein_id, mut, count(*) AS count 
-                            FROM sequences SQ JOIN aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, region_id, protein_id, mut;''')
 
-        run_query('''   DROP TABLE aa_substitutions;''')
+        run_query('''   DETACH DATABASE 'temp_table2';''')
+        clear_db('temp_table2.db')
 
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, continent_id AS location_id, count(*) AS count 
-                            FROM sequences 
+                            FROM temp_table1.sequences 
                             GROUP BY date, lineage_id, continent_id;''')
 
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, country_id AS location_id, count(*) AS count 
-                            FROM sequences 
+                            FROM temp_table1.sequences 
                             GROUP BY date, lineage_id, country_id;''')
 
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, region_id AS location_id, count(*) AS count 
-                            FROM sequences 
+                            FROM temp_table1.sequences 
                             GROUP BY date, lineage_id, region_id;''')
 
-        run_query('''   DROP TABLE sequences;''')
+        run_query('''   DETACH DATABASE 'temp_table1';''')
+        clear_db('temp_table1.db')
 
         print(f'done in {time.time() - step_start:.5f} seconds.')
         step_start = time.time()

@@ -71,9 +71,10 @@ class Parser:
         """
         Inserts data from batch_subs into the aa_substitutions table
         """
-        query = ''' INSERT INTO aa_substitutions(sequence_id, protein_id, mut) 
+        query = ''' INSERT INTO temp_table2.aa_substitutions(sequence_id, protein_id, mut) 
                     VALUES (?,?,?)'''
         self.con.executemany(query, self.batch_subs)
+        self.con.commit()
         del self.batch_subs
         self.batch_subs = []
 
@@ -81,7 +82,7 @@ class Parser:
         """
         Inserts data from batch_seqs into the sequences table
         """
-        query = ''' INSERT INTO sequences(sequence_id, date, lineage_id, continent_id, country_id, region_id) 
+        query = ''' INSERT INTO temp_table1.sequences(sequence_id, date, lineage_id, continent_id, country_id, region_id) 
                     VALUES (?,?,?,?,?,?)'''
         self.con.executemany(query, self.batch_seqs)
         self.con.commit()
