@@ -3,7 +3,7 @@
 .idea
 venv
 /frontend/dist
-/backend/varianthunter.db
+*.db
 /metadata*.*
 docker
 venv2
