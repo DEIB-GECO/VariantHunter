@@ -19,7 +19,7 @@ from flask_restplus import Namespace, Resource
 from .utils.utils import compute_date_from_diff, compute_diff_from_date
 
 api = Namespace('explorer', description='explorer')
-db_name = 'varianthunter.db'
+db_name = 'db/varianthunter.db'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

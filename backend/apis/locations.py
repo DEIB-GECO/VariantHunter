@@ -15,7 +15,7 @@ import sqlite3
 from flask_restplus import Namespace, Resource
 
 api = Namespace('locations', description='locations')
-db_name = 'varianthunter.db'
+db_name = 'db/varianthunter.db'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

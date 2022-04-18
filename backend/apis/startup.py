@@ -15,9 +15,20 @@ from flask_restplus import Namespace
 from .parsers.GisaidParser import GisaidParser
 from .parsers.NextstrainParser import NextstrainParser
 from .utils.cmd_parser import get_cmd_arguments
+import os
+
+try:
+    os.mkdir('db')
+except:
+    pass
+
+try:
+    os.mkdir('db/temp_folder')
+except:
+    pass
 
 api = Namespace('startup', description='startup')
-db_name = 'varianthunter.db'
+db_name = 'db/varianthunter.db'
 args = get_cmd_arguments()
 
 
@@ -26,6 +37,9 @@ def clear_db(database_name):
     con.execute("pragma journal_mode=off;")
     con.execute("pragma locking_mode=EXCLUSIVE;")
     con.execute("pragma synchronous=OFF;")
+    con.execute("PRAGMA     temp_store_directory = 'db/temp_folder/';")
+
+
     cur = con.cursor()
     con.execute("pragma writable_schema=1;")
     cur.execute("DELETE FROM sqlite_master WHERE type in ('table', 'index', 'trigger')")
@@ -73,10 +87,14 @@ def startup():
             cur.execute(query)
             con.commit()
 
-        clear_db("temp_table1.db")
-        clear_db("temp_table2.db")
-        cur.execute("ATTACH DATABASE 'temp_table1.db' AS temp_table1;")
-        cur.execute("ATTACH DATABASE 'temp_table2.db' AS temp_table2;")
+        clear_db("db/temp_table1.db")
+        clear_db("db/temp_table2.db")
+        cur.execute("ATTACH DATABASE 'db/temp_table1.db' AS temp_table1;")
+        cur.execute("ATTACH DATABASE 'db/temp_table2.db' AS temp_table2;")
+        con.execute("PRAGMA     temp_store_directory = 'db/temp_folder/';")
+        con.execute("pragma journal_mode=off;")
+        con.execute("pragma locking_mode=EXCLUSIVE;")
+        con.execute("pragma synchronous=OFF;")
 
         ###############################################################
         # Create all the tables
@@ -157,7 +175,7 @@ def startup():
                             GROUP BY date, lineage_id, region_id, protein_id, mut;''')
 
         run_query('''   DETACH DATABASE 'temp_table2';''')
-        clear_db('temp_table2.db')
+        clear_db('db/temp_table2.db')
 
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, continent_id AS location_id, count(*) AS count 
@@ -175,7 +193,7 @@ def startup():
                             GROUP BY date, lineage_id, region_id;''')
 
         run_query('''   DETACH DATABASE 'temp_table1';''')
-        clear_db('temp_table1.db')
+        clear_db('db/temp_table1.db')
 
         print(f'done in {time.time() - step_start:.5f} seconds.')
         step_start = time.time()

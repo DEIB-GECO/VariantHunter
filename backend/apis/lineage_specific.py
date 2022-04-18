@@ -20,7 +20,7 @@ from .explorer import get_lineage_characterization
 from .utils.utils import start_date, compute_weeks_from_date, produce_statistics
 
 api = Namespace('lineage_specific', description='lineage_specific')
-db_name = 'varianthunter.db'
+db_name = 'db/varianthunter.db'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

@@ -12,5 +12,6 @@ services:
       - "${PORT:-5000}:5000"
     volumes:
       - ${FILE_PATH}:/backend/app/database/metadata.tsv
+      - ${DB_PATH}:/backend/app/db/
     environment:
       - PORT=${PORT:-5000}
