@@ -11,11 +11,10 @@
 from __future__ import print_function
 
 import sqlite3
-
+from .utils.path_manager import db_path
 from flask_restplus import Namespace, Resource
 
 api = Namespace('locations', description='locations')
-db_name = 'db/varianthunter.db'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -26,7 +25,7 @@ def get_continents():
     Fetch all the continents form the database
     @return:    An array of continents
     """
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
     query = ''' SELECT location 
                 FROM continents JOIN locations ON location_id = continent_id
@@ -45,7 +44,7 @@ def get_countries(continent):
     @param continent:   The continent to be considered
     @return:            An array of countries
     """
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
     query = f'''    SELECT CTR.location 
                     FROM countries 
@@ -63,7 +62,7 @@ def get_regions(country):
     @param country: The country to be considered
     @return:        An array of regions
     """
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
     query = f'''    SELECT REG.location 
                     FROM regions 

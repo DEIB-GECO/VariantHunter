@@ -17,10 +17,10 @@ from datetime import datetime
 from flask_restplus import Namespace, Resource
 
 from .explorer import get_lineage_characterization
+from .utils.path_manager import db_path
 from .utils.utils import start_date, compute_weeks_from_date, produce_statistics
 
 api = Namespace('lineage_specific', description='lineage_specific')
-db_name = 'db/varianthunter.db'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -34,7 +34,7 @@ def get_all_lineages():
     """
     print("> Extract all lineages ...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     query = "SELECT lineage FROM lineages ORDER BY lineage;"
@@ -63,7 +63,7 @@ def get_lineages_from_loc_date(location, date):
     start = stop - 7
 
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
     query = f'''    SELECT DISTINCT lineage 
                     FROM aggr_sequences SQ
@@ -88,7 +88,7 @@ def get_lineages_from_loc(location):
     """
     print("\t Extract lineages data given location...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     query = f'''    SELECT DISTINCT lineage 
@@ -117,7 +117,7 @@ def get_lineages_from_date(date):
     start = stop - 7
 
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
     query = f'''    SELECT DISTINCT lineage 
                     FROM aggr_sequences SQ
@@ -143,7 +143,7 @@ def extract_week_seq_counts(location, lineage, w):
     """
     print("\t Extract number of sequences in the four weeks...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     def extract_week_count(start, stop):
@@ -178,7 +178,7 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
         """
     print("\t Extract mutation data for the four weeks...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     def extract_week_mutation(start, stop, is_target=False):

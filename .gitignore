@@ -3,8 +3,8 @@
 .idea
 venv
 /frontend/dist
-db
 /metadata*.*
 docker
 venv2
 /backend/main/
+/backend/data/

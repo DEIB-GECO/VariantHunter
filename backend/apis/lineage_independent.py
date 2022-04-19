@@ -14,10 +14,10 @@ import time
 
 from flask_restplus import Namespace, Resource
 
+from .utils.path_manager import db_path
 from .utils.utils import compute_weeks_from_date, produce_statistics
 
 api = Namespace('lineage_independent', description='lineage_independent')
-db_name = 'db/varianthunter.db'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -37,7 +37,7 @@ def extract_week_seq_counts(location, w, prot=None, mut=None):
     """
     print("\t Extract number of sequences in the four weeks...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     def extract_week_count(start, stop):
@@ -81,7 +81,7 @@ def extract_mutation_data(location, w, min_sequences=0):
     """
     print("\t Extract mutation data for the four weeks ...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     def extract_week_mutation(start, stop, is_target=False):
@@ -118,7 +118,7 @@ def extract_lineages_data(location, prot, mut, w):
     """
     print("\t Extract lineages data in the four weeks for mutation...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     week_sequence_counts = extract_week_seq_counts(location, w, prot, mut)

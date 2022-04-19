@@ -9,35 +9,32 @@ from __future__ import print_function
 
 import sqlite3
 import time
+from shutil import rmtree
 
 from flask_restplus import Namespace
 
 from .parsers.GisaidParser import GisaidParser
 from .parsers.NextstrainParser import NextstrainParser
-from .utils.cmd_parser import get_cmd_arguments
-import os
-
-try:
-    os.mkdir('db')
-except:
-    pass
-
-try:
-    os.mkdir('db/temp_folder')
-except:
-    pass
+from .utils.arg_manager import get_cmd_arguments
+from .utils.path_manager import db_paths as paths
 
 api = Namespace('startup', description='startup')
-db_name = 'db/varianthunter.db'
 args = get_cmd_arguments()
+
+
+def connection_preset(db_con):
+    db_con.execute("pragma journal_mode=OFF;")  # disables the rollback journal completely
+    db_con.execute("pragma locking_mode=EXCLUSIVE;")  # never releases file-locks
+    db_con.execute("pragma synchronous=OFF;")  # continues without syncing
+    db_con.execute(f"pragma temp_store_directory = '{paths.temp_dir}';")  # temporary tables and indices folder
 
 
 def clear_db(database_name):
     con = sqlite3.connect(database_name)
-    con.execute("pragma journal_mode=off;")
-    con.execute("pragma locking_mode=EXCLUSIVE;")
-    con.execute("pragma synchronous=OFF;")
-    con.execute("pragma temp_store_directory = 'db/temp_folder/';")
+    con.execute("pragma journal_mode=OFF;")  # disables the rollback journal completely
+    con.execute("pragma locking_mode=EXCLUSIVE;")  # never releases file-locks
+    con.execute("pragma synchronous=OFF;")  # continues without syncing
+    con.execute(f"pragma temp_store_directory = '{paths.temp_dir}';")  # temporary tables and indices folder
 
     cur = con.cursor()
     con.execute("pragma writable_schema=1;")
@@ -54,11 +51,11 @@ def startup():
 
     """
     exec_start = time.time()
-    print("> Starting initial setup ...")
+    print("> Starting initial setup ... ")
     curr_step, tot_steps = 1, 4
 
     with open(args.file_path) as f:
-        con = sqlite3.connect(db_name)
+        con = sqlite3.connect(paths.db_path)
         con.execute("pragma journal_mode=off;")
         con.execute("pragma locking_mode=EXCLUSIVE;")
         con.execute("pragma synchronous=OFF;")
@@ -70,7 +67,7 @@ def startup():
             print('   INFO: Database already exists ', end='')
             if args.reload:
                 # Clear current database
-                print('[database overwrite started]...')
+                print('[database overwrite started]... ')
                 con.execute("pragma writable_schema=1;")
                 cur.execute("DELETE FROM sqlite_master WHERE type in ('table', 'index', 'trigger')")
                 con.execute("pragma writable_schema=0;")
@@ -86,18 +83,18 @@ def startup():
             cur.execute(query)
             con.commit()
 
-        clear_db("db/temp_table1.db")
-        clear_db("db/temp_table2.db")
-        cur.execute("ATTACH DATABASE 'db/temp_table1.db' AS temp_table1;")
-        cur.execute("ATTACH DATABASE 'db/temp_table2.db' AS temp_table2;")
-        con.execute("pragma temp_store_directory = 'db/temp_folder/';")
+        clear_db(paths.temp_db1_path)
+        clear_db(paths.temp_db2_path)
+        cur.execute(f''' ATTACH DATABASE '{paths.temp_db1_path}' AS temp_table1; ''')
+        cur.execute(f''' ATTACH DATABASE '{paths.temp_db2_path}' AS temp_table2;''')
+        con.execute(f"pragma temp_store_directory = '{paths.temp_dir}'")
         con.execute("pragma journal_mode=off;")
         con.execute("pragma locking_mode=EXCLUSIVE;")
         con.execute("pragma synchronous=OFF;")
 
         ###############################################################
         # Create all the tables
-        print(f"\t STEP {curr_step}/{tot_steps}: Tables creation...", end="")
+        print(f"\t STEP {curr_step}/{tot_steps}: Tables creation... ", end="")
 
         run_query('''   CREATE TABLE temp_table1.sequences
                         (sequence_id int, date int, lineage_id int, continent_id int, country_id int, region_id int )''')
@@ -141,7 +138,7 @@ def startup():
         print(f"\t STEP {curr_step}/{tot_steps}: Data extraction ", end="")
 
         if args.file_type != 'nextstrain':
-            print(" [GISAID parser] ...")
+            print(" [GISAID parser] ... ")
             parser = GisaidParser(con, f)
         else:
             print(" [NEXTSTRAIN parser] ...")
@@ -156,35 +153,46 @@ def startup():
         ###############################################################
         # Aggregate data
         curr_step += 1
-        print(f"\t STEP {curr_step}/{tot_steps}: Data aggregation...", end="")
+        progress_step = round(100 / 6)
+        print(f"\t STEP {curr_step}/{tot_steps}: Data aggregation... ", end=" 0%")
 
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, continent_id AS location_id, protein_id, mut, count(*) AS count 
                             FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, continent_id, protein_id, mut;''')
 
+        print(f"\b\b\b{progress_step * 1}%", end="")
+
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, country_id AS location_id, protein_id, mut, count(*) AS count 
                             FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, country_id, protein_id, mut;''')
+
+        print(f"\b\b\b{progress_step * 2}%", end="")
 
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, region_id AS location_id, protein_id, mut, count(*) AS count 
                             FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, region_id, protein_id, mut;''')
 
+        print(f"\b\b\b{progress_step * 3}%", end="")
+
         run_query('''   DETACH DATABASE 'temp_table2';''')
-        clear_db('db/temp_table2.db')
+        clear_db(paths.temp_db2_path)
 
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, continent_id AS location_id, count(*) AS count 
                             FROM temp_table1.sequences 
                             GROUP BY date, lineage_id, continent_id;''')
 
+        print(f"\b\b\b{progress_step * 4}%", end="")
+
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, country_id AS location_id, count(*) AS count 
                             FROM temp_table1.sequences 
                             GROUP BY date, lineage_id, country_id;''')
+
+        print(f"\b\b\b{progress_step * 5}%", end="")
 
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, region_id AS location_id, count(*) AS count 
@@ -192,15 +200,15 @@ def startup():
                             GROUP BY date, lineage_id, region_id;''')
 
         run_query('''   DETACH DATABASE 'temp_table1';''')
-        clear_db('db/temp_table1.db')
+        clear_db(paths.temp_db1_path)
 
-        print(f'done in {time.time() - step_start:.5f} seconds.')
+        print(f'\b\b\bdone in {time.time() - step_start:.5f} seconds.')
         step_start = time.time()
 
         ###############################################################
         # Create indexes
         curr_step += 1
-        print(f"\t STEP {curr_step}/{tot_steps}: Data indexing...", end="")
+        print(f"\t STEP {curr_step}/{tot_steps}: Data indexing... ", end="")
 
         run_query('''   CREATE INDEX aggr_aa_substitutions_idx1
                         ON  aggr_aa_substitutions(location_id, date, lineage_id)''')
@@ -220,3 +228,6 @@ def startup():
 
 
 startup()
+
+# clean temporary files
+rmtree(paths.temp_tree, ignore_errors=True)

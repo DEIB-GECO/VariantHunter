@@ -16,10 +16,10 @@ import time
 
 from flask_restplus import Namespace, Resource
 
+from .utils.path_manager import db_path
 from .utils.utils import compute_date_from_diff, compute_diff_from_date
 
 api = Namespace('explorer', description='explorer')
-db_name = 'db/varianthunter.db'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -37,7 +37,7 @@ def extract_seq_num(location, lineage):
     """
     print("\t Extract number of sequences ...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     def execute_query():
@@ -75,7 +75,7 @@ def extract_lineage_breakdown(location, period):
     """
     print("\t Extract lineage breakdown of sequences ...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     def extract_lineages():
@@ -136,7 +136,7 @@ def extract_last_update():
     """
     print("> Extract last update date ...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     query = f'''    SELECT max(date) 
@@ -162,7 +162,7 @@ def get_lineage_characterization(lineages):
     """
     print("\t Extract lineage characterization  ...", end="")
     exec_start = time.time()
-    con = sqlite3.connect(db_name)
+    con = sqlite3.connect(db_path)
     cur = con.cursor()
 
     def extract_muts_from_lineage():
