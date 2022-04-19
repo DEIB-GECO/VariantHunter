@@ -4,7 +4,7 @@ services:
     image: gecopolimi/varianthunter
     command:
       bash -c "
-        [ '${RELOAD}' == '' ] 
+        [ '${RELOAD:-false}' == 'false' ] 
         && { python -u ./backend/app.py -fp /backend/app/database/metadata.tsv -loc '${LOCATIONS:-all}' -ft ${FILE_TYPE:-gisaid} -sd ${START_DATE:-beginning} -ed ${END_DATE:-end};}
         || { python -u ./backend/app.py -fp /backend/app/database/metadata.tsv -loc '${LOCATIONS:-all}' -ft ${FILE_TYPE:-gisaid} -sd ${START_DATE:-beginning} -ed ${END_DATE:-end} -r;}
       "
@@ -12,6 +12,6 @@ services:
       - "${PORT:-5000}:5000"
     volumes:
       - ${FILE_PATH}:/backend/app/database/metadata.tsv
-      - ${DB_PATH}:/backend/app/db/
+      - ${DB_PATH:-./backend/app/db/}:/backend/app/db/
     environment:
       - PORT=${PORT:-5000}

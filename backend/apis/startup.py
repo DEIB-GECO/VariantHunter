@@ -37,8 +37,7 @@ def clear_db(database_name):
     con.execute("pragma journal_mode=off;")
     con.execute("pragma locking_mode=EXCLUSIVE;")
     con.execute("pragma synchronous=OFF;")
-    con.execute("PRAGMA     temp_store_directory = 'db/temp_folder/';")
-
+    con.execute("pragma temp_store_directory = 'db/temp_folder/';")
 
     cur = con.cursor()
     con.execute("pragma writable_schema=1;")
@@ -91,7 +90,7 @@ def startup():
         clear_db("db/temp_table2.db")
         cur.execute("ATTACH DATABASE 'db/temp_table1.db' AS temp_table1;")
         cur.execute("ATTACH DATABASE 'db/temp_table2.db' AS temp_table2;")
-        con.execute("PRAGMA     temp_store_directory = 'db/temp_folder/';")
+        con.execute("pragma temp_store_directory = 'db/temp_folder/';")
         con.execute("pragma journal_mode=off;")
         con.execute("pragma locking_mode=EXCLUSIVE;")
         con.execute("pragma synchronous=OFF;")
