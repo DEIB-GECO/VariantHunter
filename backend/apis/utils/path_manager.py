@@ -10,6 +10,12 @@ from os import mkdir, getenv
 
 
 def create_directory(dir_name):
+    """
+    Create a directory. If the directory already exists, then do nothing.
+    Args:
+        dir_name: The path for the directory to be created
+
+    """
     try:
         mkdir(dir_name)
     except:

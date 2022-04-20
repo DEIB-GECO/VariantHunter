@@ -7,42 +7,20 @@
 
 from __future__ import print_function
 
-import sqlite3
-import time
 from shutil import rmtree
+from sqlite3 import connect
+from time import time
 
 from flask_restplus import Namespace
 
 from .parsers.GisaidParser import GisaidParser
 from .parsers.NextstrainParser import NextstrainParser
 from .utils.arg_manager import get_cmd_arguments
+from .utils.db_manager import connection_preset, clear_db
 from .utils.path_manager import db_paths as paths
 
 api = Namespace('startup', description='startup')
 args = get_cmd_arguments()
-
-
-def connection_preset(db_con):
-    db_con.execute("pragma journal_mode=OFF;")  # disables the rollback journal completely
-    db_con.execute("pragma locking_mode=EXCLUSIVE;")  # never releases file-locks
-    db_con.execute("pragma synchronous=OFF;")  # continues without syncing
-    db_con.execute(f"pragma temp_store_directory = '{paths.temp_dir}';")  # temporary tables and indices folder
-
-
-def clear_db(database_name):
-    con = sqlite3.connect(database_name)
-    con.execute("pragma journal_mode=OFF;")  # disables the rollback journal completely
-    con.execute("pragma locking_mode=EXCLUSIVE;")  # never releases file-locks
-    con.execute("pragma synchronous=OFF;")  # continues without syncing
-    con.execute(f"pragma temp_store_directory = '{paths.temp_dir}';")  # temporary tables and indices folder
-
-    cur = con.cursor()
-    con.execute("pragma writable_schema=1;")
-    cur.execute("DELETE FROM sqlite_master WHERE type in ('table', 'index', 'trigger')")
-    con.execute("pragma writable_schema=0;")
-    con.commit()
-    con.execute("vacuum")
-    con.close()
 
 
 def startup():
@@ -50,15 +28,13 @@ def startup():
     Performs the startup setup: database creation, data extraction and database population
 
     """
-    exec_start = time.time()
+    exec_start = time()
     print("> Starting initial setup ... ")
     curr_step, tot_steps = 1, 4
 
     with open(args.file_path) as f:
-        con = sqlite3.connect(paths.db_path)
-        con.execute("pragma journal_mode=off;")
-        con.execute("pragma locking_mode=EXCLUSIVE;")
-        con.execute("pragma synchronous=OFF;")
+        con = connect(paths.db_path)
+        connection_preset(con)
         cur = con.cursor()
 
         # Check if tables already exists
@@ -68,11 +44,7 @@ def startup():
             if args.reload:
                 # Clear current database
                 print('[database overwrite started]... ')
-                con.execute("pragma writable_schema=1;")
-                cur.execute("DELETE FROM sqlite_master WHERE type in ('table', 'index', 'trigger')")
-                con.execute("pragma writable_schema=0;")
-                con.commit()
-                con.execute("vacuum")
+                clear_db(db_con=con, db_cur=cur)
 
             else:
                 # Start the app directly
@@ -83,14 +55,11 @@ def startup():
             cur.execute(query)
             con.commit()
 
-        clear_db(paths.temp_db1_path)
-        clear_db(paths.temp_db2_path)
+        clear_db(db_name=paths.temp_db1_path)
+        clear_db(db_name=paths.temp_db2_path)
         cur.execute(f''' ATTACH DATABASE '{paths.temp_db1_path}' AS temp_table1; ''')
         cur.execute(f''' ATTACH DATABASE '{paths.temp_db2_path}' AS temp_table2;''')
-        con.execute(f"pragma temp_store_directory = '{paths.temp_dir}'")
-        con.execute("pragma journal_mode=off;")
-        con.execute("pragma locking_mode=EXCLUSIVE;")
-        con.execute("pragma synchronous=OFF;")
+        connection_preset(con)
 
         ###############################################################
         # Create all the tables
@@ -129,8 +98,8 @@ def startup():
         run_query('''   CREATE TABLE proteins
                         (protein_id int primary key , protein text)''')
 
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
-        step_start = time.time()
+        print(f'done in {time() - exec_start:.5f} seconds.')
+        step_start = time()
 
         ###############################################################
         # Parse the file and load the data into the tables
@@ -147,8 +116,8 @@ def startup():
         parser.parse(args.filtered_countries)
         del parser
 
-        print(f'\t\tdone in {time.time() - step_start:.5f} seconds.')
-        step_start = time.time()
+        print(f'\t\tdone in {time() - step_start:.5f} seconds.')
+        step_start = time()
 
         ###############################################################
         # Aggregate data
@@ -178,7 +147,7 @@ def startup():
         print(f"\b\b\b{progress_step * 3}%", end="")
 
         run_query('''   DETACH DATABASE 'temp_table2';''')
-        clear_db(paths.temp_db2_path)
+        clear_db(db_name=paths.temp_db2_path)
 
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, continent_id AS location_id, count(*) AS count 
@@ -200,10 +169,10 @@ def startup():
                             GROUP BY date, lineage_id, region_id;''')
 
         run_query('''   DETACH DATABASE 'temp_table1';''')
-        clear_db(paths.temp_db1_path)
+        clear_db(db_name=paths.temp_db1_path)
 
-        print(f'\b\b\bdone in {time.time() - step_start:.5f} seconds.')
-        step_start = time.time()
+        print(f'\b\b\bdone in {time() - step_start:.5f} seconds.')
+        step_start = time()
 
         ###############################################################
         # Create indexes
@@ -222,9 +191,9 @@ def startup():
         run_query('''   CREATE INDEX aggr_sequences_idx2
                                 ON  aggr_sequences(location_id, lineage_id)''')
         con.close()
-        print(f'done in {time.time() - step_start:.5f} seconds.')
+        print(f'done in {time() - step_start:.5f} seconds.')
 
-    print(f'>> Setup overall time: {time.time() - exec_start:.5f} seconds.\n')
+    print(f'>> Setup overall time: {time() - exec_start:.5f} seconds.\n')
 
 
 startup()
