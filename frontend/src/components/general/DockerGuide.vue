@@ -4,12 +4,12 @@
 -->
 
 <template>
-  <v-container class='pa-10 pb-0 mt-5'>
+  <v-container class='mt-5'>
     <h3 id='docker_guide'>
       <v-icon left color='#000000DE' large>mdi-docker</v-icon>
       How to run the Docker
     </h3>
-    <v-timeline dense align-top>
+    <v-timeline v-if='!collapsed' dense align-top>
 
       <!------ PREREQUISITES ------>
       <v-timeline-item flat small color='red' class='mb-10' icon='mdi-information-variant'>
@@ -188,7 +188,8 @@
           <tr v-if='showAllParams'>
             <td>DB_PATH</td>
             <td>
-              <p>Path to the <span class='monospaced'>varianthunter.db</span> database file.</p>
+              <p>Path to the <span class='monospaced'>varianthunter.db</span> database file or location where to
+                generate it.</p>
               Usage:
               <ul>
                 <li>export the database file</li>
@@ -197,6 +198,9 @@
                 </li>
               </ul>
               <p />
+              <p><u>Notice</u>: if a database already exists and <span class='monospaced'>FORCE=true</span> is not
+                specified, then all the params are ignored and the specified database is loaded.
+              </p>
               Example: <span class='pl-3 monospaced'>DB_PATH=/Users/rossi/save_db_here</span><br />
               Example: <span class='pl-3 monospaced'>DB_PATH=/Users/rossi/fetch_db_from_here</span><br />
             </td>
@@ -204,20 +208,21 @@
           </tr>
           </tbody>
         </v-simple-table>
-
-        <p>
-          Full example 1:<br />
-          <CodeBlock code='FILE_PATH=/gisaid_metadata/metadata.tsv docker-compose up' />
-        <p />
-        <p>
-          Full example 2:<br />
-          <CodeBlock code='FILE_PATH=/gisaid_metadata/metadata.tsv LOCATIONS="Italy" START_DATE=2021-12-01
+        <div class='ml-5'>
+          <p>
+            <i>Full example 1:</i><br />
+            <CodeBlock code='FILE_PATH=/gisaid_metadata/metadata.tsv docker-compose up' />
+          <p />
+          <p>
+            <i>Full example 2:</i><br />
+            <CodeBlock code='FILE_PATH=/gisaid_metadata/metadata.tsv LOCATIONS="Italy" START_DATE=2021-12-01
                 docker-compose up' />
-        </p>
-        <p>
-          Full example 3:<br />
-          <CodeBlock code='FILE_PATH=/nextstrain_metadata/metadata.tsv FILE_TYPE=NEXTSTRAIN docker-compose up' />
-        <p />
+          </p>
+          <p>
+            <i>Full example 3:</i><br />
+            <CodeBlock code='FILE_PATH=/nextstrain_metadata/metadata.tsv FILE_TYPE=NEXTSTRAIN docker-compose up' />
+          <p />
+        </div>
 
       </v-timeline-item>
 
@@ -228,7 +233,8 @@
         Now the database has been loaded and the application is accessible from the browser.
         <v-alert class='mt-4' type='warning' outlined dense>
           Depending on the amount of data imported into the tool from the <span class='monospaced'>.tsv</span> file, the
-          process may take some time and tens of GB. <b>It is strongly recommended to import only the data of interest for
+          process may take some time and tens of GB. <b>It is strongly recommended to import only the data of interest
+          for
           the analysis.</b>
         </v-alert>
       </v-timeline-item>
@@ -239,6 +245,16 @@
         specification of <span class='monospaced'>RELOAD=true</span> is required to rerun the upload of the database.
       </v-timeline-item>
     </v-timeline>
+    <v-container  class='pl-10 pr-10'>
+      <v-btn v-if="collapsed" class='full-width-button black--text' @click.native='collapsed=false' color='#e0e0e0' large depressed outlined rounded>
+        <v-icon left>mdi-plus</v-icon>
+        <span class='black--text'>Show instructions</span>
+      </v-btn>
+      <v-btn v-else class='full-width-button black--text' @click.native='collapsed=true' color='#e0e0e0'  depressed outlined rounded>
+        <v-icon left>mdi-minus</v-icon>
+        <span class='black--text'>collapse</span>
+      </v-btn>
+    </v-container>
   </v-container>
 </template>
 
@@ -250,7 +266,11 @@ export default {
   components: { CodeBlock },
   data () {
     return {
-      showAllParams: false
+      /** Flag to show/hide the advanced otional params */
+      showAllParams: false,
+
+      /** Flag to show/hide the whole section*/
+      collapsed: true
     }
   }
 }
@@ -258,15 +278,12 @@ export default {
 
 <style scoped>
 
+/** Requirement red list */
 ul.red-list li::marker {
   color: #F44336;
 }
 
-.theme--light.v-timeline::before {
-  background: #000000DE;
-  border-radius: 3px;
-}
-
+/* Table styling */
 tr td:first-child, .monospaced {
   font-family: monospace !important;
 }
@@ -288,7 +305,6 @@ tbody tr td:first-child {
 
 .alternate-rows tr:nth-child(2n) {
   background: #f6f6f6;
-  border-radius: 20px !important;
 }
 
 .alternate-rows * :hover {
@@ -297,6 +313,10 @@ tbody tr td:first-child {
 
 .expand-table, .expand-table > *:hover {
   background: white !important;
+}
+
+.full-width-button {
+  width: 100% !important;
 }
 
 </style>

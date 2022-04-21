@@ -44,80 +44,81 @@
       </v-col>
     </v-row>
 
+    <!-- Tool info -->
+    <v-row v-if='false' class='with-separator'>
+      <ToolGuide />
+    </v-row>
+
     <!-- Docker info -->
-    <v-row class='with-separator underlined-links'>
+    <v-row class='underlined-links'>
       <DockerGuide />
     </v-row>
 
-    <!-- Contributors -->
-    <v-row>
-      <v-container class='pa-10'>
+    <v-row class='justify-center mt-5'>
+      <v-col cols='col-xs-12 col-sm-12 col-lg-6'>
+        <v-container class='mt-10'>
 
-        <h3>
-          <v-icon left color='#000000DE' large>mdi-account-supervisor</v-icon>
-          Contributors
-        </h3>
+          <h3>
+            <v-icon left color='#000000DE' large>mdi-account-supervisor</v-icon>
+            Contributors
+          </h3>
 
-        <v-timeline dense class='contributors-list'>
-          <v-timeline-item flat v-for='(contributor, index) in contributors' v-bind:key='index'>
-            <template v-slot:icon>
-              <v-avatar size='60'>
-                <img :src='contributor.img' :alt='"Picture of "+contributor.name'>
-              </v-avatar>
-            </template>
-            <div v-if='contributor.role'>
-              <v-chip class='role' color='success' text-color='success' x-small outlined>
-                {{ contributor.role }}
-              </v-chip>
-            </div>
-            {{ contributor.name }}
-            <span class='associate-label'>{{ contributor.associate }}</span>
-            <a :href='"mailto:"+contributor.mail' target='_blank'>
-              <v-icon small left>mdi-email-outline</v-icon>
-              {{ contributor.mail }} </a>
-          </v-timeline-item>
-        </v-timeline>
-      </v-container>
-    </v-row>
+          <v-timeline dense class='contributors-list'>
+            <v-timeline-item flat v-for='(contributor, index) in contributors' v-bind:key='index'>
+              <template v-slot:icon>
+                <v-avatar size='60'>
+                  <img :src='contributor.img' :alt='"Picture of "+contributor.name'>
+                </v-avatar>
+              </template>
+              <div v-if='contributor.role'>
+                <v-chip class='role' :color=contributor.roleColor :text-color=contributor.roleColor x-small outlined>
+                  {{ contributor.role }}
+                </v-chip>
+              </div>
+              {{ contributor.name }}
+              <span class='associate-label'>{{ contributor.associate }}</span>
+              <a :href='"mailto:"+contributor.mail' target='_blank'>
+                <v-icon small left>mdi-email-outline</v-icon>
+                {{ contributor.mail }} </a>
+            </v-timeline-item>
+          </v-timeline>
+        </v-container>
+      </v-col>
+      <v-col cols='col-xs-12 col-sm-12 col-lg-6'>
+        <v-container class='mt-10'>
+          <h3>
+            <v-icon left color='#000000DE' large>mdi-account-box-outline</v-icon>
+            Contacts
+          </h3>
+          <p class='pa-5'>
+            Dipartimento di Elettronica, Informazione e Bioingegneria <br />
+            <a href='tel:+39 02 2399 3655' target='_blank'>+39 02 2399 3655</a><br />
+            Politecnico di Milano<br />
+            Via Ponzio 34/5<br />
+            20133 Milano<br />
+            Italy
+          </p>
+        </v-container>
+        <v-container class='mt-10'>
 
-    <!-- Contacts -->
-    <v-row>
-      <v-container class='pa-10'>
-        <h3>
-          <v-icon left color='#000000DE' large>mdi-account-box-outline</v-icon>
-          Contacts
-        </h3>
-        <p class='pa-5'>
-          Dipartimento di Elettronica, Informazione e Bioingegneria <br />
-          <a href='tel:+39 02 2399 3655' target='_blank'>+39 02 2399 3655</a><br />
-          Politecnico di Milano<br />
-          Via Ponzio 34/5<br />
-          20133 Milano<br />
-          Italy
-        </p>
-      </v-container>
-    </v-row>
+          <h3>
+            <v-icon left color='#000000DE' large>mdi-account-heart</v-icon>
+            Acknowledgements
+          </h3>
 
-    <v-row>
-      <v-container class='pa-10'>
-
-        <h3>
-          <v-icon left color='#000000DE' large>mdi-account-heart</v-icon>
-          Acknowledgements
-        </h3>
-
-        <v-timeline dense class='contributors-list'>
-          <v-timeline-item flat v-for='(contributor, index) in acks' v-bind:key='index'>
-            <template v-slot:icon>
-              <v-avatar size='60'>
-                <img :src='contributor.img' :alt='"Picture of "'>
-              </v-avatar>
-            </template>
-            {{ contributor.name }}
-            <span class='associate-label'>{{ contributor.associate }}</span>
-          </v-timeline-item>
-        </v-timeline>
-      </v-container>
+          <v-timeline dense class='contributors-list'>
+            <v-timeline-item flat v-for='(contributor, index) in acks' v-bind:key='index'>
+              <template v-slot:icon>
+                <v-avatar size='60'>
+                  <img :src='contributor.img' :alt='"Picture of "'>
+                </v-avatar>
+              </template>
+              {{ contributor.name }}
+              <span class='associate-label'>{{ contributor.associate }}</span>
+            </v-timeline-item>
+          </v-timeline>
+        </v-container>
+      </v-col>
     </v-row>
 
   </v-container>
@@ -126,10 +127,11 @@
 
 <script>
 import DockerGuide from '@/components/general/DockerGuide'
+import ToolGuide from '@/components/general/ToolGuide'
 
 export default {
   name: 'About',
-  components: { DockerGuide },
+  components: { ToolGuide, DockerGuide },
   data () {
     return {
       /** VariantHunter logo */
@@ -161,7 +163,9 @@ export default {
           name: 'Pietro Pinoli',
           associate: 'Politecnico di Milano',
           img: require('../assets/contributors/pinoli.png'),
-          mail: 'pietro.pinoli@polimi.it'
+          mail: 'pietro.pinoli@polimi.it',
+          role: 'reference',
+          roleColor: 'info'
         },
         {
           name: 'Luca Minotti',
@@ -198,7 +202,8 @@ export default {
           associate: 'Politecnico di Milano',
           img: require('../assets/contributors/ceri.png'),
           mail: 'stefano.ceri@polimi.it',
-          role: 'leader'
+          role: 'leader',
+          roleColor: 'success'
         }
       ]
     }
@@ -228,7 +233,7 @@ export default {
 
 /* Add a border to separate the sections */
 .with-separator {
-  border-top: 2px solid #000000DE;
+  border-top: 2px solid rgba(0, 0, 0, 0.12);
 }
 
 /* Contibutors/Ack styling */
@@ -270,4 +275,5 @@ h3 {
   font-weight: 900;
   text-transform: uppercase;
 }
+
 </style>
