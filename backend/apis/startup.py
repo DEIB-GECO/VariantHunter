@@ -29,7 +29,7 @@ def startup():
 
     """
     exec_start = time()
-    print("> Starting initial setup ... ")
+    print("\033[01m\033[33m> Starting initial setup ... \033[0m")
     curr_step, tot_steps = 1, 4
 
     with open(args.file_path) as f:
@@ -40,15 +40,15 @@ def startup():
         # Check if tables already exists
         cur.execute(" SELECT count(name) FROM sqlite_master WHERE type='table'")
         if cur.fetchone()[0] > 1:
-            print('   INFO: Database already exists ', end='')
+            print('   \033[34mINFO: Database already exists ', end='')
             if args.reload:
                 # Clear current database
-                print('[database overwrite started]... ')
+                print('[database overwrite started]... \033[0m')
                 clear_db(db_con=con, db_cur=cur)
 
             else:
                 # Start the app directly
-                print('[database overwrite skipped]\n')
+                print('[database overwrite skipped]\033[0m\n')
                 return
 
         def run_query(query):
@@ -63,7 +63,7 @@ def startup():
 
         ###############################################################
         # Create all the tables
-        print(f"\t STEP {curr_step}/{tot_steps}: Tables creation... ", end="")
+        print(f"\t STEP {curr_step}/{tot_steps}: Tables creation ... ", end="")
 
         run_query('''   CREATE TABLE temp_table1.sequences
                         (sequence_id int, date int, lineage_id int, continent_id int, country_id int, region_id int )''')
@@ -122,47 +122,42 @@ def startup():
         ###############################################################
         # Aggregate data
         curr_step += 1
-        progress_step = round(100 / 6)
-        print(f"\t STEP {curr_step}/{tot_steps}: Data aggregation... ", end=" 0%")
+        print(f"\t STEP {curr_step}/{tot_steps}: Data aggregation ... ")
 
+        print("\t\tProcessing aa substitutions by continent ...")
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, continent_id AS location_id, protein_id, mut, count(*) AS count 
                             FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, continent_id, protein_id, mut;''')
 
-        print(f"\b\b\b{progress_step * 1}%", end="")
-
+        print("\t\tProcessing aa substitutions by country ...")
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, country_id AS location_id, protein_id, mut, count(*) AS count 
                             FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, country_id, protein_id, mut;''')
 
-        print(f"\b\b\b{progress_step * 2}%", end="")
-
+        print("\t\tProcessing aa substitutions by region ...")
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, region_id AS location_id, protein_id, mut, count(*) AS count 
                             FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
                             GROUP BY date, lineage_id, region_id, protein_id, mut;''')
 
-        print(f"\b\b\b{progress_step * 3}%", end="")
-
         run_query('''   DETACH DATABASE 'temp_table2';''')
         clear_db(db_name=paths.temp_db2_path)
 
+        print("\t\tProcessing sequences by continent ...")
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, continent_id AS location_id, count(*) AS count 
                             FROM temp_table1.sequences 
                             GROUP BY date, lineage_id, continent_id;''')
 
-        print(f"\b\b\b{progress_step * 4}%", end="")
-
+        print("\t\tProcessing sequences by country ...")
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, country_id AS location_id, count(*) AS count 
                             FROM temp_table1.sequences 
                             GROUP BY date, lineage_id, country_id;''')
 
-        print(f"\b\b\b{progress_step * 5}%", end="")
-
+        print("\t\tProcessing sequences by region ...")
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, region_id AS location_id, count(*) AS count 
                             FROM temp_table1.sequences 
@@ -171,13 +166,13 @@ def startup():
         run_query('''   DETACH DATABASE 'temp_table1';''')
         clear_db(db_name=paths.temp_db1_path)
 
-        print(f'\b\b\bdone in {time() - step_start:.5f} seconds.')
+        print(f'\t\tdone in {time() - step_start:.5f} seconds.')
         step_start = time()
 
         ###############################################################
         # Create indexes
         curr_step += 1
-        print(f"\t STEP {curr_step}/{tot_steps}: Data indexing... ", end="")
+        print(f"\t STEP {curr_step}/{tot_steps}: Data indexing ... ")
 
         run_query('''   CREATE INDEX aggr_aa_substitutions_idx1
                         ON  aggr_aa_substitutions(location_id, date, lineage_id)''')
@@ -191,11 +186,12 @@ def startup():
         run_query('''   CREATE INDEX aggr_sequences_idx2
                                 ON  aggr_sequences(location_id, lineage_id)''')
         con.close()
-        print(f'done in {time() - step_start:.5f} seconds.')
+        print(f'\t\tdone in {time() - step_start:.5f} seconds.')
 
-    print(f'>> Setup overall time: {time() - exec_start:.5f} seconds.\n')
+    print(f'\t>> Setup overall time: {time() - exec_start:.5f} seconds.\n')
 
 
+print("\n\033[01m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯    V A R I A N T    H U N T E R    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\033[0m\n")
 startup()
 
 # clean temporary files

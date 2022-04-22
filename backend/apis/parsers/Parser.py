@@ -93,10 +93,14 @@ class Parser:
         """
         Inserts data from dictionaries into the tables
         """
+        print(f"\t\t Loading proteins info ... ")
 
         query = ''' INSERT INTO proteins (protein, protein_id)
                     VALUES (?,?)'''
         self.con.executemany(query, self.proteins_dict.items())
+        self.con.commit()
+
+        print(f"\t\t Loading locations info ... ")
 
         query = ''' INSERT INTO continents (continent_id) 
                     VALUES (?)'''
@@ -115,10 +119,16 @@ class Parser:
         self.con.executemany(
             query, [*self.regions_dict.items(), *self.countries_dict.items(), *self.continents_dict.items()]
         )
+        self.con.commit()
+
+        print(f"\t\t Loading lineages info ...")
 
         query = ''' INSERT INTO lineages (lineage, lineage_id)
                             VALUES (?,?)'''
         self.con.executemany(query, self.lineages_dict.items())
+        self.con.commit()
+
+        print(f"\t\t Analyzing lineages info ... ")
 
         cur = self.con.cursor()
         cur.execute('''   CREATE VIEW temp.lin_mut_counts AS

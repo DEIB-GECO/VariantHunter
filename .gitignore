@@ -7,4 +7,4 @@ venv
 docker
 venv2
 /backend/main/
-/backend/data/
+/backend/data_i/
