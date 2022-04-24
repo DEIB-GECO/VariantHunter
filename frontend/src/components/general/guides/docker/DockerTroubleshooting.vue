@@ -1,0 +1,286 @@
+<!--
+  Component:    DockerTroubleshooting
+  Description:  Troubleshooting guide
+
+  Props:
+  └── value: Value variable for binding of the flag to show the dialog
+
+  Events:
+  ├── showContacts: emitted when the user request the contact list
+  └── openAltGuide: emitted when the user request the alternative guide
+
+-->
+
+<template>
+  <v-dialog v-model='showDialog' max-width='1100' transition='dialog-bottom-transition'>
+    <v-card>
+      <!-- Dialog title -->
+      <v-toolbar :color='primary_color' class='dialog-title' dark flat>
+        <v-icon left large>mdi-lifebuoy</v-icon>
+        Troubleshooting
+      </v-toolbar>
+
+      <!-- Dialog content -->
+      <v-card-text class='text-s-center black--text dialog-text underlined-links'>
+        <slot>
+          <v-expansion-panels class='mt-3' flat>
+
+            <!---- SQLITE MEMORY ERROR ---->
+            <v-expansion-panel>
+              <v-expansion-panel-header class='blue-grey lighten-5'>
+                <v-col class='col-auto'>
+                  <v-icon left color='black'>mdi-content-save</v-icon>
+                </v-col>
+                <v-col>
+                  I got <span class='monospaced red--text'>sqlite3.OperationalError: database or disk is full</span>
+                  or <span class='monospaced red--text'>sqlite3. DatabaseError: database disk image is malformed</span>
+                  during the execution or a similar memory-related error
+                </v-col>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content class='blue-grey lighten-5 steps'>
+                <p>This issue is probably due to the fact that there is not enough free space on the device to run <i>Variant
+                  Hunter</i>.</p>
+
+                <ul>
+
+                  <li>
+                    First check if there is still free storage space left on the device.
+                    <ul>
+                      <li>
+                        <b>If so</b>, then you may have run out of resources that are allocated to the <i>Docker
+                        Engine</i>
+                        (64GB by default).
+                        <ul>
+                          <li>
+                            Consider reducing the amount of data imported into the tool (by specifying more restrictive
+                            <span class='monospaced'>Location</span>,
+                            <span class='monospaced'>START_DATE</span> and
+                            <span class='monospaced'>END_DATE</span> parameters).
+                          </li>
+                          <li>
+                            Alternatively, you can increase the allocated resources from Docker settings:
+                            go to <i> Preferences > Resources: Advanced </i> and increase the value for (maximum) <i>"Disk
+                            image size"</i>. Then press <i>"Apply & Restart"</i>.<br />
+                            Notice that this amount of storage space must then also be actually available on the device.
+                            <v-img :src='dockerSettingsImg' alt='Screenshot to illustrate the steps to be performed' contain max-height='300'/>
+                          </li>
+                        </ul>
+
+                      </li>
+
+                      <li>
+                        <b>If not</b>, then you need more storage.<br />
+                        <ul>
+                          <li>
+                            Consider reducing the amount of data imported into the tool (by specifying more restrictive
+                            <span class='monospaced'>Location</span>,
+                            <span class='monospaced'>START_DATE</span> and
+                            <span class='monospaced'>END_DATE</span> parameters).
+                          </li>
+                        </ul>
+
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+
+                <!-- macOS alert -->
+                <v-alert class='mt-4' type='error' icon='mdi-apple-finder' outlined dense>
+                  <b>When importing a considerable amount of data</b> (e.g. <span class='monospaced'>"All"</span> from
+                  <span class='monospaced'>Beginning</span> to <span class='monospaced'>End</span>) <b>while running
+                  macOS</b>
+                  please remember to follow
+                  <span class='fake-link' @click.self='$emit("openAltGuide")'>
+                    this alternative guide
+                  </span>
+                </v-alert>
+
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!---- DB RELOADING PROBLEM ---->
+            <v-expansion-panel>
+              <v-expansion-panel-header class='blue-grey lighten-5'>
+                <v-col class='col-auto'>
+                  <v-icon left color='black'>mdi-database-sync</v-icon>
+                </v-col>
+                <v-col>
+                  I cannot generate the database. I got <span
+                  class='monospaced info--text'>database overwrite skipped</span> in the console
+                </v-col>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content class='blue-grey lighten-5 steps'>
+                <ul>
+
+                  <li>
+                    <p>
+                      When you specify <span class='monospaced'>DB_PATH</span>, and a database already
+                      exists in the specified directory, then all the params are ignored and the existing database is
+                      loaded. <br />
+                      <b>To prevent this, please specify also <span class='monospaced'>RELOAD=true</span>.</b>
+                    </p>
+                    <p>
+                      Notice that this would delete the existing database.
+                    </p>
+                  </li>
+                  <li>
+                    If you are not specifying the <span class='monospaced'>DB_PATH</span> parameter,
+                    then remember that if the passed parameters have not changed since the last launch
+                    of the container, Docker will not regenerate the container but will simply restart it.<br />
+                    <b>To prevent this, please specify also <span class='monospaced'>RELOAD=true</span>.</b>
+                  </li>
+                  <li>
+                    Another possibility is that you have aborted the process while generating the
+                    database or have forced the shutdown by preventing gracefully stop.<br />
+                    <b>To solve this, please specify also <span class='monospaced'>RELOAD=true</span>.</b>
+                  </li>
+                </ul>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!---- TIME PROBLEM ---->
+            <v-expansion-panel>
+              <v-expansion-panel-header class='blue-grey lighten-5'>
+                <v-col class='col-auto'>
+                  <v-icon left color='black'>mdi-clock-outline</v-icon>
+                </v-col>
+                <v-col>
+                  Generating the database is taking a long time
+                </v-col>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content class='blue-grey lighten-5 steps'>
+
+                <p>
+                  Depending on the amount of data imported into the tool from the <span class='monospaced'>.tsv</span>
+                  file, the process may take some time and tens of GB. <b>It is strongly recommended to
+                  import only the data of interest for the analysis,</b>by specifying
+                  <span class='monospaced'>LOCATIONS</span>,
+                  <span class='monospaced'>START_DATE</span> and
+                  <span class='monospaced'>END_DATE</span>.
+                </p>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!---- MEMORY PROBLEM ---->
+            <v-expansion-panel>
+              <v-expansion-panel-header class='blue-grey lighten-5'>
+                <v-col class='col-auto'>
+                  <v-icon left color='black'>mdi-sd</v-icon>
+                </v-col>
+                <v-col>
+                  Database generation is taking a lot of storage memory
+                </v-col>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content class='blue-grey lighten-5 steps'>
+
+                <p>
+                  Depending on the amount of data imported into the tool from the <span class='monospaced'>.tsv</span>
+                  file, the process may take some time and tens of GB. <b>It is strongly recommended to
+                  import only the data of interest for the analysis,</b>by specifying
+                  <span class='monospaced'>LOCATIONS</span>,
+                  <span class='monospaced'>START_DATE</span> and
+                  <span class='monospaced'>END_DATE</span>.
+                </p>
+
+                <!-- macOS alert -->
+                <v-alert class='mt-4' type='error' icon='mdi-apple-finder' outlined dense>
+                  <b>When importing a considerable amount of data</b> (e.g. <span class='monospaced'>"All"</span> from
+                  <span class='monospaced'>Beginning</span> to <span class='monospaced'>End</span>) <b>while running
+                  macOS</b>
+                  please remember to follow
+                  <span class='fake-link' @click.self='$emit("openAltGuide")'>
+                    this alternative guide
+                  </span>
+                </v-alert>
+
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!---- OTHER ---->
+            <v-expansion-panel>
+              <v-expansion-panel-header class='blue-grey lighten-5 mt-3'>
+                <v-col class='col-auto'>
+                  <v-icon left color='black'>mdi-magnify</v-icon>
+                </v-col>
+                <v-col>
+                  My problem is not listed
+                </v-col>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content class='blue-grey lighten-5 steps'>
+
+                <p>
+                  If your problem is not listed above, then please contact us. <br/>
+                  Let us know your problem and we will try to fix it as soon as possible.
+                </p>
+                <v-btn color='success' small depressed outlined rounded @click.native='$emit("showContacts");'>
+                  <v-icon left>mdi-email-fast</v-icon>
+                  go to the  contact list
+                </v-btn>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+          </v-expansion-panels>
+        </slot>
+      </v-card-text>
+
+      <!-- Dialog actions -->
+      <v-card-actions class='justify-end'>
+        <v-btn text @click='showDialog = false'>
+          Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+
+export default {
+  name: 'DockerTroubleshooting',
+  props: {
+    /** Value variable for binding of the flag to show the dialog */
+    value: {}
+  },
+  data () {
+    return {
+      dockerSettingsImg: require('../../../../assets/troubleshooting/docker_settings.png')
+    }
+  },
+  computed: {
+    ...mapState(['primary_color']),
+
+    /** Flag to show/hide the dialog */
+    showDialog: {
+      /**
+       * Getter the flag
+       * @returns {boolean}  The selected value
+       */
+      get () {
+        return this.value
+      },
+
+      /**
+       * Setter for the value
+       * @param val The new value
+       */
+      set (val) {
+        this.$emit('input', val)
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+.steps li::marker {
+  font-size: 26px;
+}
+
+.steps li {
+  margin-bottom: 9px;
+  margin-top: 9px;
+}
+
+</style>
