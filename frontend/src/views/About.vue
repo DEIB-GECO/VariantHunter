@@ -4,7 +4,7 @@
 -->
 
 <template>
-  <v-container>
+  <v-container class='about'>
 
     <!-- Website title -->
     <v-row class='justify-center mt-5'>
@@ -45,7 +45,7 @@
     </v-row>
 
     <!-- Tool info -->
-    <v-row v-if='false' class='with-separator'>
+    <v-row  class='with-separator'>
       <ToolGuide />
     </v-row>
 
@@ -58,7 +58,7 @@
       <v-col cols='col-xs-12 col-sm-12 col-lg-6'>
         <v-container class='mt-10'>
 
-          <h3>
+          <h3 id='contributors'>
             <v-icon left color='#000000DE' large>mdi-account-supervisor</v-icon>
             Contributors
           </h3>
@@ -126,8 +126,8 @@
 </template>
 
 <script>
-import DockerGuide from '@/components/general/DockerGuide'
-import ToolGuide from '@/components/general/ToolGuide'
+import ToolGuide from '@/components/general/guides/tool/ToolGuide'
+import DockerGuide from '@/components/general/guides/docker/DockerGuide'
 
 export default {
   name: 'About',
@@ -236,13 +236,13 @@ export default {
   border-top: 2px solid rgba(0, 0, 0, 0.12);
 }
 
-/* Contibutors/Ack styling */
+/* Contributors/Ack styling */
 .associate-label {
   display: block;
   text-transform: uppercase;
   font-size: 12px;
   font-weight: normal;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .contributors-list {
@@ -274,6 +274,29 @@ h3 {
   font-size: 20px;
   font-weight: 900;
   text-transform: uppercase;
+}
+h4 {
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* Monospaced styling */
+.monospaced {
+  font-family: monospace !important;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+/** Full width expand-collapse button */
+.full-width-button {
+  width: 100% !important;
+}
+
+/* Expansion panel header style */
+.about .v-expansion-panel-header, .v-dialog .v-expansion-panel-header{
+  font-weight: 600;
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 
 </style>

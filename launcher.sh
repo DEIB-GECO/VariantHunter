@@ -4,7 +4,7 @@
 #     during the execution of Docker in order to prevent it from filling the disk.
 #
 #     Run this script with the following command:
-#     /bin/zsh /startup.sh {parameters_list}
+#     /bin/zsh ./launcher.sh {parameters_list}
 #
 #     More details at http://cerilab.deib.polimi.it/variant_hunter/about#docker
 #
@@ -15,12 +15,13 @@ Clean() {
   trap 'kill 0' EXIT
   while [ true ]; do
     docker volume prune --filter label=varianthunter_app_1 -f >/dev/null
-    sleep 240
+    sleep 200
   done
 }
 
 RunDocker() {
   trap 'echo "\nPress again Ctrl+C to exit."; kill 0' EXIT
+  docker pull gecopolimi/varianthunter
   bash -c " ${DOCKER_PARAM} Docker-compose up"
 }
 
