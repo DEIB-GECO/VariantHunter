@@ -231,10 +231,10 @@ export default {
         { text: 'Protein', value: 'protein', divider: true, align: 'center' },
         { text: 'Mut', value: 'mut', divider: true, align: 'center' },
         { text: 'Slope', value: 'slope', divider: true, align: 'center' },
-        { text: this.computeDateLabel(28, 22), value: 'f_w1', divider: true, align: 'center' },
-        { text: this.computeDateLabel(21, 15), value: 'f_w2', divider: true, align: 'center' },
-        { text: this.computeDateLabel(14, 8), value: 'f_w3', divider: true, align: 'center' },
-        { text: this.computeDateLabel(7, 0), value: 'f_w4', divider: true, align: 'center' }
+        { text: this.computeDateLabel(27, 21), value: 'f_w1', divider: true, align: 'center' },
+        { text: this.computeDateLabel(20, 14), value: 'f_w2', divider: true, align: 'center' },
+        { text: this.computeDateLabel(13, 7), value: 'f_w3', divider: true, align: 'center' },
+        { text: this.computeDateLabel(6, 0), value: 'f_w4', divider: true, align: 'center' }
       ]
 
       if (this.showPValues) {
@@ -473,10 +473,10 @@ export default {
      */
     computeDateLabels () {
       const dateLabels = []
-      dateLabels['w1'] = this.computeDateLabel(28, 22)
-      dateLabels['w2'] = this.computeDateLabel(21, 15)
-      dateLabels['w3'] = this.computeDateLabel(14, 8)
-      dateLabels['w4'] = this.computeDateLabel(7, 0)
+      dateLabels['w1'] = this.computeDateLabel(27, 21)
+      dateLabels['w2'] = this.computeDateLabel(20, 14)
+      dateLabels['w3'] = this.computeDateLabel(13, 7)
+      dateLabels['w4'] = this.computeDateLabel(6, 0)
       return dateLabels
     },
 
