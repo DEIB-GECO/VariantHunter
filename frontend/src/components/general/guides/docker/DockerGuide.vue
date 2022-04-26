@@ -126,19 +126,10 @@
           <p />
         </div>
 
-      </v-timeline-item>
-
-      <!-- UP AND RUNNING -->
-      <v-timeline-item flat color='success' icon='mdi-check-bold'>
-        Once the setup is <b>completed</b> the log on the terminal shows the following message:<br />
-        <span class='monospaced'> * STARTUP COMPLETED: The application is now accessible from your browser at
-              http://0.0.0.0:&lt;PORT&gt;</span><br />
-        Now the database has been loaded and the application is accessible from the browser.
-
         <!-- TIME/MEMORY ALERT -->
         <v-alert class='mt-4' type='warning' icon='mdi-exclamation-thick' outlined dense>
           Depending on the amount of data imported into the tool from the <span class='monospaced'>.tsv</span> file, the
-          process may take some time and tens of GB. <b>It is strongly recommended to import only the data of interest
+          process may take some time and tens of GB (1M sequences may require even 30 GB to be processed). <b>It is strongly recommended to import only the data of interest
           for the analysis,</b> by specifying <span class='monospaced'>LOCATIONS</span>, <span class='monospaced'>
           START_DATE</span> and <span class='monospaced'>END_DATE</span>.
         </v-alert>
@@ -152,6 +143,15 @@
             this alternative guide
           </span>
         </v-alert>
+
+      </v-timeline-item>
+
+      <!-- UP AND RUNNING -->
+      <v-timeline-item flat color='success' icon='mdi-check-bold'>
+        Once the setup is <b>completed</b> the log on the terminal shows the following message:<br />
+        <span class='monospaced'> * STARTUP COMPLETED: The application is now accessible from your browser at
+              http://0.0.0.0:&lt;PORT&gt;</span><br />
+        Now the database has been loaded and the application is accessible from the browser.
       </v-timeline-item>
 
       <!-- STOP STEP -->

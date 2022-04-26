@@ -193,8 +193,8 @@ export default {
         },
         {
           name: 'Erika Ferrandi',
-          associate: '--', // TODO: add value and reorder the contributors
-          img: require('../assets/contributors/person.png'),
+          associate: 'IBIOM-CNR Bari',
+          img: require('../assets/contributors/ferrandi.png'),
           mail: 'e.ferrandi@ibiom.cnr.it'
         },
         {

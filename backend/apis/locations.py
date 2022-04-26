@@ -29,7 +29,8 @@ def get_continents():
     cur = con.cursor()
     query = ''' SELECT location 
                 FROM continents JOIN locations ON location_id = continent_id
-                WHERE location is not null;'''
+                WHERE location is not null
+                ORDER BY location;'''
     continents = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return continents
@@ -50,7 +51,8 @@ def get_countries(continent):
                     FROM countries 
                         JOIN locations CTR ON CTR.location_id = country_id
                         JOIN locations CNT ON CNT.location_id = continent_id
-                    WHERE CTR.location is not null AND CNT.location = '{continent}';'''
+                    WHERE CTR.location is not null AND CNT.location = '{continent}'
+                    ORDER BY CTR.location;'''
     countries = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return countries
@@ -68,7 +70,8 @@ def get_regions(country):
                     FROM regions 
                         JOIN locations REG ON REG.location_id = region_id
                         JOIN locations CTR ON CTR.location_id = country_id
-                    WHERE REG.location is not null AND CTR.location = '{country}';'''
+                    WHERE REG.location is not null AND CTR.location = '{country}'
+                    ORDER BY REG.location;'''
     regions = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
     return regions

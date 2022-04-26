@@ -15,7 +15,7 @@
       <!---- Granularity ---->
       <v-flex class='xs12 sm4 md2 d-flex'>
         <FieldSelector v-model='selectedGranularity' label='Granularity' placeholder='Granularity'
-                       :possible-values='possibleGranularity' solo/>
+                       :possible-values='possibleGranularity' solo />
       </v-flex>
 
       <!---- Location ---->
@@ -142,15 +142,12 @@ export default {
       /** Array storing the customization options (filter values, selections) for each query */
       queriesCustomOptions: [],
 
-      /** Flag to automatically clear the form after submit */
-      autoclear: false,
-
       /** Deleting processing flag. If true a delete request is being processed */
       isDeleting: false
     }
   },
   computed: {
-    ...mapState(['secondary_color', 'debug_mode']),
+    ...mapState(['secondary_color']),
 
     /** Form error flag: true if the form cannot be sent */
     formError () {
@@ -161,13 +158,11 @@ export default {
     }
   },
   methods: {
-    /** Clears the form if autoclear is enabled */
+    /** Clears the form */
     clearForm () {
-      if (this.autoclear) {
-        this.selectedDate = null
-        this.selectedLocation = null
-        this.selectedGranularity = null
-      }
+      this.selectedDate = null
+      this.selectedLocation = null
+      this.selectedGranularity = null
     },
 
     /**
@@ -182,7 +177,6 @@ export default {
         location: this.selectedLocation ? this.selectedLocation : 'all',
         date: this.selectedDate[1]
       }
-      this.clearForm()
 
       axios
         .post(url, toSend)
@@ -237,17 +231,6 @@ export default {
       this.queriesResults.splice(queryIndex, 1)
       this.queriesSupport.splice(queryIndex, 1)
       this.isDeleting = false
-    }
-  },
-  mounted () {
-    // Default values (test purposes only)
-    if (this.debug_mode) {
-      setTimeout(() => {
-        this.selectedGranularity = 'continent'
-        this.selectedDate = [null, '2022-02-01']
-        this.selectedLocation = 'Europe'
-        this.startAnalysis(null)
-      }, 1000)
     }
   }
 }

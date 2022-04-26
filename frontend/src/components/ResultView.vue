@@ -48,7 +48,8 @@
                     :items='processedQueryResult' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :show-expand='!withLineages' @item-expanded='loadLineageDetails'
                     :loading='isLoadingDetails' :single-expand='true' class='table-element' item-key='item_key'
-                    :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'>
+                    :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'
+                    @toggle-select-all='handleToggleSelection'>
 
         <!---- Table controls ---->
         <template v-slot:top>
@@ -544,6 +545,16 @@ export default {
      */
     isCharacterizingMut (item) {
       return this.querySupport.characterizingMuts.includes(item.protein + '_' + item.mut)
+    },
+
+    /**
+     * Clear all the selected rows on deselect-all table event
+     * @param toggleStatus  Status of the toggle from v-data-table event
+     */
+    handleToggleSelection (toggleStatus) {
+      if (!toggleStatus.value) {
+        this.selectedRows = []
+      }
     }
   },
   mounted () {

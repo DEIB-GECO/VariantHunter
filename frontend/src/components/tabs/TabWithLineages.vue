@@ -160,15 +160,12 @@ export default {
       /** Array storing the customization options (filter values, selections) for each query */
       queriesCustomOptions: [],
 
-      /** Flag to automatically clear the form after submit */
-      autoclear: false,
-
       /** Deleting processing flag. If true a delete request is being processed */
       isDeleting: false
     }
   },
   computed: {
-    ...mapState(['secondary_color', 'debug_mode']),
+    ...mapState(['secondary_color']),
 
     /** Form error flag: true if the form cannot be sent */
     formError () {
@@ -179,16 +176,6 @@ export default {
     }
   },
   methods: {
-    /** Clears the form if autoclear is enabled */
-    clearForm () {
-      if (this.autoclear) {
-        this.selectedLineage = null
-        this.selectedDate = null
-        this.selectedLocation = null
-        this.selectedGranularity = null
-      }
-    },
-
     /**
      * Triggers the analysis request to the server
      * @param customOptions   The customization options (filter values, selections) for the new tab
@@ -202,7 +189,6 @@ export default {
         date: this.selectedDate[1],
         lineage: this.selectedLineage
       }
-      this.clearForm()
 
       axios
         .post(url, toSend)
@@ -262,31 +248,6 @@ export default {
       this.queriesResults.splice(queryIndex, 1)
       this.queriesSupport.splice(queryIndex, 1)
       this.isDeleting = false
-    },
-
-    fetchCaracterizingMuts () {
-      const classificationAPI = `/explorer/getLineagesCharacteristics`
-      const toSend = { lineage: this.queryParams.lineage }
-      axios
-        .post(classificationAPI, toSend)
-        .then(res => {
-          this.characterizingMuts
-        })
-        .catch((e) => {
-          this.$emit('error', e)
-        })
-    }
-  },
-  mounted () {
-    // Default values (test purposes only)
-    if (this.debug_mode) {
-      setTimeout(() => {
-        this.selectedGranularity = 'country'
-        this.selectedDate = [null, '2022-02-01']
-        this.selectedLocation = 'Italy'
-        this.selectedLineage = 'BA.1'
-        this.startAnalysis(null)
-      }, 1000)
     }
   }
 }

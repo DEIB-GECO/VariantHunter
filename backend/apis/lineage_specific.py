@@ -69,7 +69,8 @@ def get_lineages_from_loc_date(location, date):
                     FROM aggr_sequences SQ
                         JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
                         JOIN locations LC ON SQ.location_id = LC.location_id
-                    WHERE location = '{location}' AND date > {start} AND date <= {stop};'''
+                    WHERE location = '{location}' AND date > {start} AND date <= {stop}
+                    ORDER BY lineage;'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
@@ -95,7 +96,8 @@ def get_lineages_from_loc(location):
                     FROM aggr_sequences SQ
                         JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
                         JOIN locations LC ON SQ.location_id = LC.location_id
-                    WHERE location = '{location}';'''
+                    WHERE location = '{location}'
+                    ORDER BY lineage;'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
@@ -122,7 +124,8 @@ def get_lineages_from_date(date):
     query = f'''    SELECT DISTINCT lineage 
                     FROM aggr_sequences SQ
                         JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                    WHERE date > {start} and date <= {stop};'''
+                    WHERE date > {start} and date <= {stop}
+                    ORDER BY lineage;'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
