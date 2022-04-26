@@ -28,11 +28,11 @@ def compute_weeks_from_date(date):
     w = {}
     w['w4_end'] = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
     w['w4_begin'] = w['w4_end'] - 7
-    w['w3_end'] = w['w4_begin'] - 1
+    w['w3_end'] = w['w4_begin']
     w['w3_begin'] = w['w3_end'] - 7
-    w['w2_end'] = w['w3_begin'] - 1
+    w['w2_end'] = w['w3_begin']
     w['w2_begin'] = w['w2_end'] - 7
-    w['w1_end'] = w['w2_begin'] - 1
+    w['w1_end'] = w['w2_begin']
     w['w1_begin'] = w['w1_end'] - 7
     return w
 
