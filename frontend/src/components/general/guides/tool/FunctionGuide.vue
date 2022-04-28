@@ -12,41 +12,40 @@
 -->
 
 <template>
-  <v-expansion-panel>
-    <v-expansion-panel-header class='blue-grey lighten-5'>
-      <v-col class='col-auto'>
-        <v-icon left color='black'>mdi-star-circle-outline</v-icon>
-      </v-col>
-      <v-col>
-        {{title}}
-      </v-col>
-    </v-expansion-panel-header>
-    <v-expansion-panel-content class='blue-grey lighten-5'>
-      <template>
+  <ExpansionPanel>
+    <template v-slot:icons>
+      <v-icon left color='#000000DE'>mdi-star-circle-outline</v-icon>
+    </template>
+    <template v-slot:title>
+      {{ title }}
+    </template>
+    <template v-slot:default>
 
-        <!-- INTRO -->
-        <slot>
-        </slot>
+      <!-- INTRO -->
+      <slot>
+      </slot>
 
-        <!-- USE CASES -->
-        <v-row v-if="!noUseCases" class='ma-10'>
-          <v-expansion-panels class='mt-3' flat>
+      <!-- USE CASES -->
+      <v-row v-if='!noUseCases' class='ma-10'>
+        <v-expansion-panels class='mt-3' flat>
 
-            <slot name='use-cases'>
-            </slot>
+          <slot name='use-cases'>
+          </slot>
 
-          </v-expansion-panels>
+        </v-expansion-panels>
 
-        </v-row>
+      </v-row>
 
-      </template>
-    </v-expansion-panel-content>
-  </v-expansion-panel>
+    </template>
+  </ExpansionPanel>
 </template>
 
 <script>
+import ExpansionPanel from '@/components/general/ExpansionPanel'
+
 export default {
   name: 'FunctionGuide',
+  components: { ExpansionPanel },
   props: {
     /** Title for the panel header */
     title: {},
