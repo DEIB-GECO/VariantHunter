@@ -5,10 +5,6 @@
   Props:
   └── value: Value variable for binding of the flag to show the dialog
 
-  Events:
-  ├── showContacts: emitted when the user request the contact list
-  └── openAltGuide: emitted when the user request the alternative guide
-
 -->
 
 <template>
@@ -84,17 +80,6 @@
                   </li>
                 </ul>
 
-                <!-- macOS alert -->
-                <v-alert class='mt-4' type='error' icon='mdi-apple-finder' outlined dense>
-                  <b>When importing a considerable amount of data</b> (e.g. <span class='monospaced'>"All"</span> from
-                  <span class='monospaced'>Beginning</span> to <span class='monospaced'>End</span>) <b>while running
-                  macOS</b>
-                  please remember to follow
-                  <span class='fake-link' @click.self='$emit("openAltGuide")'>
-                    this alternative guide
-                  </span>
-                </v-alert>
-
               </v-expansion-panel-content>
             </v-expansion-panel>
 
@@ -117,7 +102,7 @@
                       When you specify <span class='monospaced'>DB_PATH</span>, and a database already
                       exists in the specified directory, then all the params are ignored and the existing database is
                       loaded. <br />
-                      <b>To prevent this, please specify also <span class='monospaced'>RELOAD=true</span>.</b>
+                      <b>To prevent this, please specify also <span class='monospaced'>REGENERATE=true</span>.</b>
                     </p>
                     <p>
                       Notice that this would delete the existing database.
@@ -127,12 +112,12 @@
                     If you are not specifying the <span class='monospaced'>DB_PATH</span> parameter,
                     then remember that if the passed parameters have not changed since the last launch
                     of the container, Docker will not regenerate the container but will simply restart it.<br />
-                    <b>To prevent this, please specify also <span class='monospaced'>RELOAD=true</span>.</b>
+                    <b>To prevent this, please specify also <span class='monospaced'>REGENERATE=true</span>.</b>
                   </li>
                   <li>
                     Another possibility is that you have aborted the process while generating the
                     database or have forced the shutdown by preventing gracefully stop.<br />
-                    <b>To solve this, please specify also <span class='monospaced'>RELOAD=true</span>.</b>
+                    <b>To solve this, please specify also <span class='monospaced'>REGENERATE=true</span>.</b>
                   </li>
                 </ul>
               </v-expansion-panel-content>
@@ -182,17 +167,6 @@
                   <span class='monospaced'>END_DATE</span>.
                 </p>
 
-                <!-- macOS alert -->
-                <v-alert class='mt-4' type='error' icon='mdi-apple-finder' outlined dense>
-                  <b>When importing a considerable amount of data</b> (e.g. <span class='monospaced'>"All"</span> from
-                  <span class='monospaced'>Beginning</span> to <span class='monospaced'>End</span>) <b>while running
-                  macOS</b>
-                  please remember to follow
-                  <span class='fake-link' @click.self='$emit("openAltGuide")'>
-                    this alternative guide
-                  </span>
-                </v-alert>
-
               </v-expansion-panel-content>
             </v-expansion-panel>
 
@@ -212,7 +186,7 @@
                   If your problem is not listed above, then please contact us. <br/>
                   Let us know your problem and we will try to fix it as soon as possible.
                 </p>
-                <v-btn color='success' small depressed outlined rounded @click.native='$emit("showContacts");'>
+                <v-btn color='success' small depressed outlined rounded @click.native='showContacts()'>
                   <v-icon left>mdi-email-fast</v-icon>
                   go to the  contact list
                 </v-btn>
@@ -267,6 +241,13 @@ export default {
       set (val) {
         this.$emit('input', val)
       }
+    }
+  },
+  methods: {
+    /** Go to the contact section by hiding all the dialogs */
+    showContacts () {
+      this.showDialog = false
+      document.getElementById('contributors').scrollIntoView()
     }
   }
 }

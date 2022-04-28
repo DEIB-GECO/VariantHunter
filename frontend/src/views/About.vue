@@ -269,6 +269,13 @@ export default {
   color: var(--secondary-color) !important;
 }
 
+/** Fake links styling */
+.fake-link {
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+}
+
 /* Sections styling */
 h3 {
   font-size: 20px;

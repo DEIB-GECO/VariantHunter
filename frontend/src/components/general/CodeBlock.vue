@@ -3,12 +3,22 @@
   Description:  Code block with copy button
 
   Props:
-  └── code:  The content of the code block
+  ├── code:   The content of the code block
+  └── hover:  The tip text to be shown on hover
 -->
 
 <template>
   <code @click='doCopy()'>
-    {{code}}
+    <v-tooltip v-if='hover' bottom color='black' max-width='400'>
+      <template v-slot:activator="{ on, attrs }">
+        <span v-bind="attrs"
+          v-on="on">
+        {{code}}
+        </span>
+      </template>
+      <span v-html="hover"></span>
+    </v-tooltip>
+    <span v-else>{{code}}</span>
     <v-icon small class='ml-3'>mdi-content-copy</v-icon>
     <v-snackbar v-model='successMessage' timeout='2000' height='5' color='success' transition='scroll-y-transition'>
       <v-icon left>mdi-content-copy</v-icon>
@@ -22,7 +32,11 @@
 export default {
   name: 'CodeBlock',
   props: {
-    code: { required: true }
+    /** The content of the code block */
+    code: { required: true },
+
+    /** The tip text to be shown on hover */
+    hover: {}
   },
   data () {
     return {
@@ -46,6 +60,6 @@ export default {
 code{
   cursor: copy;
   font-size: 16px;
-
+  word-spacing: 6px;
 }
 </style>

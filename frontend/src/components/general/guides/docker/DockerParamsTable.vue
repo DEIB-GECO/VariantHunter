@@ -21,9 +21,10 @@
       <td>FILE_PATH</td>
       <td>
         <p>Path to the <span class='monospaced'>.tsv</span> metadata file.</p>
-        Example: <span class='pl-3 monospaced'>FILE_PATH=/Users/rossi/datasets/metadata.tsv</span>
+        Example: <span class='pl-3 monospaced'>FILE_PATH=/Users/rossi/datasets/metadata.tsv</span><br />
+        Example: <span class='pl-3 monospaced'>FILE_PATH=./metadata.tsv</span>
       </td>
-      <td><b>Required</b>.</td>
+      <td><b>Required</b>, unless importing an existing database.</td>
     </tr>
 
     <tr>
@@ -87,22 +88,22 @@
     </tr>
 
     <tr v-if='showAllParams'>
-      <td>RELOAD</td>
-      <td>
-        <p>Flag to drop the current database and reload the data from the <span class='monospaced'>.tsv</span>
-          file. </p>
-        Example: <span class='pl-3 monospaced'>RELOAD=true</span><br />
-      </td>
-      <td><b>Optional</b>. <br />Default: <span class='monospaced'>false</span></td>
-    </tr>
-
-    <tr v-if='showAllParams'>
       <td>PORT</td>
       <td>
         <p>The port to be used by the server</p>
         Example: <span class='pl-3 monospaced'>PORT=5001</span><br />
       </td>
       <td><b>Optional</b>. <br />Default: <span class='monospaced'>5000</span></td>
+    </tr>
+
+    <tr v-if='showAllParams'>
+      <td>REGENERATE</td>
+      <td>
+        <p>Flag to drop the current database (if existing) and regenerate the data from the <span class='monospaced'>.tsv</span>
+          file. </p>
+        Example &nbsp; <i>[ overwrite an existing database ]</i>: <div class='pl-3 monospaced'>FILE_PATH=./metadata.tsv DB_PATH=./folder_to_overwrite REGENERATE=true</div>
+      </td>
+      <td><b>Optional</b>. <br />Default: <span class='monospaced'>false</span></td>
     </tr>
 
     <tr v-if='showAllParams'>
@@ -118,7 +119,7 @@
           </li>
         </ul>
         <p />
-        <p><u>Notice</u>: if a database already exists and <span class='monospaced'>RELOAD=true</span> is not
+        <p><u>Notice</u>: if a database already exists and <span class='monospaced'>REGENERATE=true</span> is not
           specified, then all the params are ignored and the specified database is loaded.
         </p>
         Example: <span class='pl-3 monospaced'>DB_PATH=/Users/rossi/save_db_here</span><br />
@@ -145,7 +146,9 @@ export default {
   name: 'DockerParamsTable',
   props: {
     /** Value variable for binding of the value */
-    value: {}
+    value: {},
+
+    type: {}
   },
   computed: {
     /** Flag to show/hide the advanced optional params */
@@ -174,6 +177,7 @@ export default {
 
 /* Table styling */
 tr td:first-child, .monospaced {
+  font-style: normal !important;
   font-family: monospace !important;
 }
 
@@ -183,8 +187,8 @@ tr td:first-child, .monospaced {
 }
 
 tbody tr td {
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
   font-size: 14px !important;
 }
 
