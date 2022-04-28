@@ -32,29 +32,30 @@ def startup():
     print("\033[01m\033[33m> Starting initial setup ... \033[0m")
     curr_step, tot_steps = 1, 4
 
+    con = connect(paths.db_path)
+    connection_preset(con)
+    cur = con.cursor()
+
+    # Check if tables already exists
+    cur.execute(" SELECT count(name) FROM sqlite_master WHERE type='table'")
+    if cur.fetchone()[0] > 1:
+        print('   \033[34mINFO: Database already exists ', end='')
+        if args.regenerate:
+            # Clear current database
+            print('[database overwrite started]... \033[0m')
+            clear_db(db_con=con, db_cur=cur)
+
+        else:
+            # Start the app directly
+            print('[database overwrite skipped]\033[0m\n')
+            con.close()
+            return
+
+    def run_query(query):
+        cur.execute(query)
+        con.commit()
+
     with open(args.file_path) as f:
-        con = connect(paths.db_path)
-        connection_preset(con)
-        cur = con.cursor()
-
-        # Check if tables already exists
-        cur.execute(" SELECT count(name) FROM sqlite_master WHERE type='table'")
-        if cur.fetchone()[0] > 1:
-            print('   \033[34mINFO: Database already exists ', end='')
-            if args.reload:
-                # Clear current database
-                print('[database overwrite started]... \033[0m')
-                clear_db(db_con=con, db_cur=cur)
-
-            else:
-                # Start the app directly
-                print('[database overwrite skipped]\033[0m\n')
-                return
-
-        def run_query(query):
-            cur.execute(query)
-            con.commit()
-
         clear_db(db_name=paths.temp_db1_path)
         clear_db(db_name=paths.temp_db2_path)
         cur.execute(f''' ATTACH DATABASE '{paths.temp_db1_path}' AS temp_table1; ''')

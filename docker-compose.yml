@@ -12,18 +12,18 @@
 version: "3"
 services:
   app:
-    image: gecopolimi/varianthunter
+    image: gecopolimi/varianthunterloc
     command:
       bash -c "
-        [ '${RELOAD:-false}' == 'false' ] 
+        [ '${REGENERATE:-false}' == 'false' ] 
         && { python -u ./backend/app.py -fp /backend/app/dataset/metadata.tsv -loc '${LOCATIONS:-all}' -ft ${FILE_TYPE:-gisaid} -sd ${START_DATE:-beginning} -ed ${END_DATE:-end};}
         || { python -u ./backend/app.py -fp /backend/app/dataset/metadata.tsv -loc '${LOCATIONS:-all}' -ft ${FILE_TYPE:-gisaid} -sd ${START_DATE:-beginning} -ed ${END_DATE:-end} -r;}
       "
     ports:
       - "${PORT:-5000}:5000"
     volumes:
-      - ${FILE_PATH}:/backend/app/dataset/metadata.tsv
-      - ${DB_PATH:-./}:/backend/app/data_e/  # if not specified, it is not used
+      - ${FILE_PATH:-./}:/backend/app/dataset/metadata.tsv  # default value never used
+      - ${DB_PATH:-./}:/backend/app/data_e/  # default value never used
     environment:
       - PORT=${PORT:-5000}
       - DB_PATH=${DB_PATH:-unset}

@@ -36,8 +36,8 @@ def get_cmd_arguments():
                         type=str.lower, default="end", dest='end_date',
                         help="end date to be considered when importing data. Use the format YYYY-mm-dd")
 
-    parser.add_argument('--reload', '-r',
-                        default=False, action='store_true', dest='reload',
+    parser.add_argument('--regenerate', '-r',
+                        default=False, action='store_true', dest='regenerate',
                         help="boolean flag to overwrite the current database, if present")
 
     args = parser.parse_args()
