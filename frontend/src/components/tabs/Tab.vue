@@ -50,13 +50,15 @@
               </v-expand-transition>
 
               <!-- Show/hide Explorer controls -->
-              <v-flex justify-center class='xs12 d-flex'>
-                <v-btn v-if='!showExplorer' outlined depressed rounded small color='white'
+              <v-flex v-if='!showExplorer' justify-center class='xs12 d-flex'>
+                <v-btn outlined depressed rounded small color='white'
                        @click='showExplorer = !showExplorer'>
                   <v-icon left>mdi-compass</v-icon>
                   Show dataset explorer
                 </v-btn>
-                <v-btn v-if='showExplorer' outlined depressed rounded small color='white'
+              </v-flex>
+              <v-flex v-if='showExplorer' justify-center class='xs12 d-flex pt-0'>
+                <v-btn outlined depressed rounded small color='white'
                        @click='showExplorer = !showExplorer'>
                   <v-icon left>mdi-close-circle-outline</v-icon>
                   Hide
@@ -90,6 +92,9 @@ import { mapState } from 'vuex'
 export default {
   name: 'Tab',
   props: {
+    /** Value variable for binding of the visibility flag for the Dataset Explorer */
+    value: {},
+
     /** Progress circe flag: true if the progress circle is displayed */
     isLoading: { required: true },
 
@@ -99,14 +104,18 @@ export default {
     /** Result length */
     resultLength: { required: true }
   },
-  data () {
-    return {
-      /** Flag to show/hide the explorer */
-      showExplorer: false
-    }
-  },
   computed: {
-    ...mapState(['secondary_color'])
+    ...mapState(['secondary_color']),
+
+    /** Flag to show/hide the explorer */
+    showExplorer: {
+      get () {
+        return this.value
+      },
+      set (value) {
+        this.$emit('input', value)
+      }
+    }
   }
 }
 </script>

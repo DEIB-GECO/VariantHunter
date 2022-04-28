@@ -36,7 +36,7 @@
           <!-- Mutation filter -->
           <v-flex justify-center class='xs12 sm7 md4 d-flex '>
             <MutationSelector v-model='selectedMutation' :possible-values='possibleMutations'
-                              :queryParams='queryParams'/>
+                              :queryParams='queryParams' :characterizing-muts='querySupport.characterizingMuts'/>
           </v-flex>
         </v-layout>
       </v-container>

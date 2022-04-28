@@ -7,7 +7,7 @@
 -->
 
 <template>
-  <Tab :is-loading='isLoading' :result-length='queriesResults.length' :form-error='formError'
+  <Tab v-model='showExplorer' :is-loading='isLoading' :result-length='queriesResults.length' :form-error='formError'
        @send='startAnalysis(null)'>
 
     <!-- Form fields -->
@@ -41,7 +41,7 @@
     <template v-slot:explorer>
       <v-flex class='xs12 d-flex'>
         <DatasetExplorer :granularity='selectedGranularity' :location='selectedLocation' :lineage='selectedLineage'
-                         @error='e=> $emit("error",e)' />
+                         @weekSelection='onWeekSelection' @error='e=> $emit("error",e)' />
       </v-flex>
     </template>
 
@@ -127,6 +127,9 @@ export default {
     return {
       /** Progress circe flag: true if the progress circle is displayed */
       isLoading: false,
+
+      /** Visibility flag for the DatasetExplorer */
+      showExplorer: false,
 
       /** Granularity: available options */
       possibleGranularity: [/* 'world',*/'continent', 'country', 'region'],
@@ -248,6 +251,19 @@ export default {
       this.queriesResults.splice(queryIndex, 1)
       this.queriesSupport.splice(queryIndex, 1)
       this.isDeleting = false
+    },
+
+    /**
+     * Handler for weekSelection event from Dataset Explorer
+     * @param range The selected range
+     */
+    onWeekSelection (range) {
+      this.showExplorer = false
+      document.getElementById('top').scrollIntoView()
+      this.selectedDate = range
+      if (!this.formError) {
+        this.startAnalysis(null)
+      }
     }
   }
 }

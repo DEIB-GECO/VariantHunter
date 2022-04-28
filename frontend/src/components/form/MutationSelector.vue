@@ -18,6 +18,12 @@
         Select from lineages
       </div>
 
+      <!-- Non characterizing mutation selector -->
+      <div v-if="characterizingMuts" class='uploader-opener' @click='selectNonCharMuts()'>
+        <v-icon left>mdi-star-off-outline</v-icon>
+        All non-characterizing mutations
+      </div>
+
       <!-- List uploader element-->
       <v-dialog v-model='showListUploader' max-width='500' transition='dialog-bottom-transition'>
         <v-card>
@@ -157,7 +163,10 @@ export default {
     possibleValues: { required: true },
 
     /** Object storing the query parameters */
-    queryParams: { required: true }
+    queryParams: { required: true },
+
+    /** Object storing the query parameters */
+    characterizingMuts: {}
   },
   data () {
     return {
@@ -312,6 +321,14 @@ export default {
             this.processing = false
           })
       }
+    },
+
+    /**
+     * Select the non characterizing mutations
+     */
+    selectNonCharMuts () {
+      const nonCharMuts = this.possibleValues.filter((x) => !this.characterizingMuts.includes(x))
+      this.$emit('input', nonCharMuts)
     }
   },
   watch: {

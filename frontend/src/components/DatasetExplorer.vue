@@ -8,7 +8,8 @@
   └── lineage:      Lineage to be explored
 
   Events:
-  └── error:        Emitted on server errors
+  ├── weekSelection:  Emitted when the user select the 4 weeks to analyze
+  └── error:          Emitted on server errors
 -->
 
 <template>
@@ -31,7 +32,7 @@
 
       <!-- Histogram plot -->
       <v-flex v-if='showPlot.histogram' class='xs12 sm12 md11 d-flex explorer-element'>
-        <ExplorerHistogram :sequence-data='sequencesData' @timeRangeChange='(tr) => onTimeRangeChanges(tr)'/>
+        <ExplorerHistogram :sequence-data='sequencesData' @timeRangeChange='(tr) => onTimeRangeChanges(tr)' />
       </v-flex>
 
       <!-- Breakdown loading animation -->
@@ -39,8 +40,10 @@
         <v-skeleton-loader width='100%' type='image' />
       </v-flex>
 
-      <v-flex v-if='isDisabled.breakdown' class='xs12 sm12 md11 d-flex disabled-label'>
-        <sub><v-icon color='white' small left>mdi-information-outline</v-icon>Reduce the time range to at most 4 weeks to see lineages breakdown </sub>
+      <v-flex v-if='isDisabled.breakdown' class='xs12 sm12 md11 d-flex disabled-label mb-2'>
+        <sub>
+          <v-icon color='white' small left>mdi-information-outline</v-icon>
+          Reduce the time range to at most 4 weeks to see lineages breakdown </sub>
       </v-flex>
 
       <!-- Breakdown plot -->
@@ -48,6 +51,20 @@
         <LineagesBreakdown :lineages-data='lineagesData' />
       </v-flex>
     </template>
+    <v-flex v-if='showPlot.breakdown' justify-center class='xs12 d-flex'>
+      <v-btn outlined depressed rounded small color='white'
+             @click.native='emitAnalysisPeriod()'>
+        <v-icon left>mdi-calendar</v-icon>
+        <v-tooltip bottom max-width='400' color="white" open-delay='0'>
+          <template v-slot:activator="{ on, attrs }">
+            <span v-bind="attrs" v-on="on">
+              Consider these 4 weeks
+            </span>
+          </template>
+          <span style='color: rgb(68, 68, 68)'>Fill the form using the currently selected 4 weeks as analysis period. </span>
+        </v-tooltip>
+      </v-btn>
+    </v-flex>
   </v-layout>
 </template>
 
@@ -192,6 +209,13 @@ export default {
           this.fetchLineageBreakdownInfo()
         }
       }
+    },
+
+    /**
+     * Emit the selected 4 weeks analysis period
+     */
+    emitAnalysisPeriod () {
+      this.$emit('weekSelection', [null, this.selectedRange[1]])
     }
   },
   beforeMount () {
@@ -216,7 +240,9 @@ export default {
 
     /** Reset lineages data on sequence info reset */
     sequencesData (newVal) {
-      if (newVal.length === 0) { this.lineagesData = {} }
+      if (newVal.length === 0) {
+        this.lineagesData = {}
+      }
     }
   }
 }
@@ -224,7 +250,7 @@ export default {
 
 <style scoped>
 /* Form labels styling */
-.main-label span{
+.main-label span {
   font-size: 23px;
   font-weight: 800;
   text-transform: uppercase;
@@ -234,7 +260,7 @@ export default {
 
 .main-label,
 .sub-label,
-.disabled-label{
+.disabled-label {
   text-align: center;
   justify-content: center;
   padding-top: 5px !important;
@@ -242,7 +268,7 @@ export default {
   color: white;
 }
 
-.disabled-label{
+.disabled-label {
   margin-top: 10px;
 }
 
@@ -251,6 +277,7 @@ export default {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
+
 .lineage-breakdown {
   margin-top: 10px !important;
 }
