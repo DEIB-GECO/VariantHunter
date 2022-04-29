@@ -42,8 +42,8 @@
         mutation.
       </p>
       <p>
-        The main results of both analysis are summarized in a <b>table of mutations</b>, reporting their
-        <i>prevalences</i> over the 4 weeks, their <i>slope</i>, and Chi squared tests <i>p-values</i>.
+        The main results of both analyses are summarized in a <b>table of mutations</b>, reporting their
+        <i>prevalence</i> over the 4 weeks, their <i>slope</i>, and Chi squared tests <i>p-values</i>.
         In addition, different visualizations support the intuition of the observed trends of diffusion:
         a <b>heatmap</b> and various <b>line-plots</b> that represent <i>prevalence</i> or their <i>odd ratios</i>.
       </p>
@@ -119,8 +119,8 @@
               <p>
                 <i>
                   In the example, it is apparent that a group of 10 mutations on top is decreasing (representing
-                  BA.2)
-                  and a group of 8 mutations at the bottom is decreasing together (representing BA.1).
+                  BA.1)
+                  and a group of 8 mutations at the bottom is increasing together (representing BA.2).
                   Other mutations have less clear trends.
                 </i>
               </p>
@@ -134,16 +134,16 @@
               <p>
                 Here, mutations in the legend on the right can be selected and deselected with a click.
               </p>
+              <p>
+                A user may note that, at the bottom of the graph, a couple of mutations are growing from very low
+                prevalence (around 0%) to almost 15%.
+              </p>
             </Paragraph>
 
             <Paragraph :src='linIndOddImg' left larger-img>
               <p>
-                A user may note that, at the bottom of the graph, a couple of mutations are growing from very low
-                prevalences (around 0%) to almost 15%.
-              </p>
-              <p>
                 Such growth can be appreciated more clearly by observing the <b>Diffusion Odd Ratio Plots</b>, where
-                the odd ratio is computed by comparing frequences of each week against the previous one
+                the odd ratio is computed by comparing frequencies of each week against the previous one
                 (first plot) or against the first week of the period (second plot).
               </p>
               <p>
@@ -153,7 +153,7 @@
 
             <Paragraph :src='linIndExpansionImg' right larger-img>
               <p>
-                When selected specifically in the table (by using the Mutation filter), the application allows to
+                When we select these two specific mutations in the table (by using the Mutation filter), the application allows to
                 visualize a heatmap (and other plots) only with those. By expanding each mutation line in the table,
                 it is possible to examine the <b>breakdown of total sequences</b> with that mutation across different
                 lineages, for each single analyzed week.
@@ -189,8 +189,8 @@
                 the selected lineage that are found in each week.
               </p>
               <p>
-                As shown in the figure, in this mode <b>mutations that are typical</b> of the selected
-                lineage (appearing in at least 50% of the sequences of the database assigned to
+                As shown in the figure, in this mode <b>mutations</b> that are <b>typical of the selected
+                lineage</b> (appearing in at least 50% of the sequences of the database assigned to
                 that lineage) are <span class='highlight'>highlighted in yellow</span>.
               </p>
             </Paragraph>
@@ -217,7 +217,7 @@
                 By selecting in the table only the mutations that are
                 <span class='highlight'>highlighted in yellow</span>
                 <i>(i.e., characterizing for BA.2)</i> we observe the following <b>Heatmap</b>,
-                where most mutations are fixed since four weeks, while 8 of them (at the top
+                where most mutations are fixed for four weeks, while 8 of them (at the top
                 of the map) have increased from about 75% to almost 100%.
               </p>
             </Paragraph>
@@ -229,7 +229,7 @@
             <Paragraph :src='linDepOddImg' left larger-img>
               <p>
                 By looking at the <b>Odd Ratio Plots</b> we can appreciate an interesting trend of these 8 mutations
-                (hovering on the dots, it will show the details on the diffusion's growth).
+                (hovering on the dots, the details on the diffusion's growth are shown).
               </p>
             </Paragraph>
 
@@ -258,11 +258,10 @@
 
 import Paragraph from '@/components/general/Paragraph'
 import FunctionGuide from '@/components/general/guides/tool/FunctionGuide'
-import UseCase from '@/components/general/guides/tool/UseCase'
 
 export default {
   name: 'ToolGuide',
-  components: { UseCase, FunctionGuide, Paragraph },
+  components: { FunctionGuide, Paragraph },
   data () {
     return {
       /** Images */
@@ -296,8 +295,8 @@ export default {
 }
 
 .command {
-  text-transform: capitalize !important;
-  font-weight: 400 !important;
+  text-transform: uppercase !important;
+  font-weight: 300 !important;
 }
 
 .highlight {

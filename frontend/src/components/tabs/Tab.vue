@@ -130,7 +130,13 @@ export default {
 
 /* Ensure datepicker menu visibility */
 .single-tab{
-  min-height: 750px;
+  min-height: 740px;
+}
+
+@media only screen and  (max-width: 599px){
+  .single-tab{
+    min-height: 835px !important; /* Prevent datepicker to overflow */
+  }
 }
 
 /* Child tab container styling */

@@ -140,11 +140,11 @@
         <p>
           <i>Full example 3 &nbsp;&nbsp; [ importing an existing database ]:</i><br />
           <CodeBlock v-if='!macGuide'
-                     code='DB_PATH=./folder_with_a_db_file docker-compose up'
+                     code='DB_PATH=./fetch_existing_db_from_here docker-compose up'
                      hover='This loads the <span class="monospaced">varianthunter.db</span> database file located in the specified folder</b>'
           />
           <CodeBlock v-else
-                     code='/bin/zsh ./launcher.sh DB_PATH=./folder_with_db_file'
+                     code='/bin/zsh ./launcher.sh DB_PATH=./fetch_existing_db_from_here'
                      hover='This loads the <span class="monospaced">varianthunter.db</span> database file located in the specified folder</b>'
           />
 

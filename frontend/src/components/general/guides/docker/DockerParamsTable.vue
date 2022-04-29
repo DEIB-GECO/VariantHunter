@@ -123,7 +123,7 @@
           specified, then all the params are ignored and the specified database is loaded.
         </p>
         Example: <span class='pl-3 monospaced'>DB_PATH=/Users/rossi/save_db_here</span><br />
-        Example: <span class='pl-3 monospaced'>DB_PATH=/Users/rossi/fetch_db_from_here</span><br />
+        Example: <span class='pl-3 monospaced'>DB_PATH=/Users/rossi/fetch_existing_db_from_here</span><br />
       </td>
       <td><b>Optional</b>. <br />Default: <span class='monospaced'>internal path</span></td>
     </tr>

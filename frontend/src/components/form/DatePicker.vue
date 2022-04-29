@@ -23,7 +23,15 @@
           <v-text-field v-model='selectedDateText' append-icon='mdi-calendar' hide-details label='Date' readonly
                         clearable solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true' />
         </template>
-        <div class='hint'>Select the end date for the 4 weeks analysis period</div>
+        <div class='hint'>Select the end date for the 4 weeks analysis period
+          <v-row class='tip'>
+            <v-col class='col-2 tip-icon'><v-icon>mdi-lightbulb-on-outline</v-icon></v-col>
+            <v-col class='col-10 tip-text'> use the &nbsp;
+            <v-icon small>mdi-compass</v-icon>
+            DATASET EXPLORER &nbsp; to choose the best analysis period
+              </v-col>
+          </v-row>
+        </div>
         <v-date-picker v-model='selectedDate' :max='today' first-day-of-week='1' no-title range
                        show-adjacent-months @input='menuVisibility = false' />
       </v-menu>
@@ -122,10 +130,28 @@ export default {
   background: white;
   text-align: center;
   max-width: 290px;
-  padding: 10px 14px;
+  padding: 10px 14px 0px;
   line-height: 17px;
   line-break: loose;
   text-transform: initial !important;
+}
+.tip{
+  margin-top:0;
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 11px;
+  line-height: 12px;
+}
+.tip-icon{
+  margin: auto;
+  text-align: right;
+  border-right-style: inset;
+}
+.tip-icon *{
+  font-size: 18px !important;
+}
+.tip-text .v-icon::before{
+  font-size: 14px !important;
 }
 
 /* Menu container style */
