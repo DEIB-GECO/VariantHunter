@@ -130,28 +130,38 @@ export default {
   background: white;
   text-align: center;
   max-width: 290px;
-  padding: 10px 14px 0px;
+  padding: 10px 14px 0;
   line-height: 17px;
   line-break: loose;
   text-transform: initial !important;
 }
 .tip{
-  margin-top:0;
+  margin-top: 15px;
+  margin-bottom: 0;
   text-align: left;
   text-transform: uppercase;
   font-size: 11px;
   line-height: 12px;
+  color:  #000;
 }
 .tip-icon{
+  padding-top: 0;
+  padding-bottom: 0;
   margin: auto;
   text-align: right;
-  border-right-style: inset;
+  border-right: solid 1px #000;
 }
 .tip-icon *{
+  color:  #000;
   font-size: 18px !important;
 }
 .tip-text .v-icon::before{
+  color:  #000;
   font-size: 14px !important;
+}
+.tip-text{
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* Menu container style */

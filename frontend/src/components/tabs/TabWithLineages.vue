@@ -248,6 +248,7 @@ export default {
     deleteQuery (queryIndex) {
       this.isDeleting = true
       this.queriesParams.splice(queryIndex, 1)
+      this.queriesCustomOptions.splice(queryIndex, 1)
       this.queriesResults.splice(queryIndex, 1)
       this.queriesSupport.splice(queryIndex, 1)
       this.isDeleting = false

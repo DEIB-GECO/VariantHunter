@@ -560,19 +560,19 @@ export default {
   mounted () {
     // Apply customization options: restore filters and selection but only if applicable
     if (this.queryCustOpt) {
+      const presKeys = this.queryCustOpt.selectedRowsKeys
       const presMut = this.queryCustOpt.selectedMutation
       const presProt = this.queryCustOpt.selectedProtein
-      const presKeys = this.queryCustOpt.selectedRowsKeys
 
+      this.selectedRows = presKeys
+        ? this.processedQueryResult.filter(row => presKeys.includes(row.item_key))
+        : []
       this.selectedProtein = this.possibleProteins.includes(presProt)
         ? presProt
         : null
       this.selectedMutation = presMut
         ? presMut.filter((m) => this.possibleMutations.includes(m))
         : null
-      this.selectedRows = presKeys
-        ? this.processedQueryResult.filter(row => presKeys.includes(row.item_key))
-        : []
     }
   },
   watch: {
