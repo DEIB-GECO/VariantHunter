@@ -9,6 +9,7 @@
 
 <template>
   <code @click='doCopy()'>
+    <!-- Code with tooltip -->
     <v-tooltip v-if='hover' bottom color='black' max-width='400'>
       <template v-slot:activator="{ on, attrs }">
         <span v-bind="attrs"
@@ -20,6 +21,8 @@
     </v-tooltip>
     <span v-else>{{code}}</span>
     <v-icon small class='ml-3'>mdi-content-copy</v-icon>
+
+    <!-- Copied alert -->
     <v-snackbar v-model='successMessage' timeout='2000' height='5' color='success' transition='scroll-y-transition'>
       <v-icon left>mdi-content-copy</v-icon>
       <span><b>Copied to clipboard!</b></span>
@@ -36,7 +39,7 @@ export default {
     code: { required: true },
 
     /** The tip text to be shown on hover */
-    hover: {}
+    hover: { required: false }
   },
   data () {
     return {

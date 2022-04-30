@@ -1,33 +1,31 @@
 <!--
   Component:    DatePicker
-  Description:  Select input element with embedded date picker
-
-  Props:
-  └── value: Value variable for binding of the date
+  Description:  Select input element with embedded date picker for the analysis period
+                It transfers the date period value to the $store
 -->
 
 <template>
   <v-layout justify-center row wrap>
+
     <!-- Label -->
     <v-flex class='xs12 d-flex field-label'>
       <span>Analysis period</span>
     </v-flex>
 
     <!-- Picker -->
-
     <v-flex class='xs12 d-flex field-element'>
       <v-menu v-model='menuVisibility' :close-on-content-click='false' min-width='auto' offset-y
               transition='scale-transition' content-class='menu-container' attach>
 
         <template v-slot:activator='{ on, attrs }'>
-          <v-text-field v-model='selectedDateText' append-icon='mdi-calendar' hide-details label='Date' readonly
-                        clearable solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true' />
+          <v-text-field v-model='selectedDateText' append-icon='mdi-calendar' hide-details placeholder='Date' readonly
+                        clearable solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true' persistent-placeholder />
         </template>
         <div class='hint'>Select the end date for the 4 weeks analysis period
           <v-row class='tip'>
             <v-col class='col-2 tip-icon'><v-icon>mdi-lightbulb-on-outline</v-icon></v-col>
             <v-col class='col-10 tip-text'> use the &nbsp;
-            <v-icon small>mdi-compass</v-icon>
+            <v-icon small>mdi-compass-outline</v-icon>
             DATASET EXPLORER &nbsp; to choose the best analysis period
               </v-col>
           </v-row>
@@ -41,12 +39,10 @@
 </template>
 
 <script>
+import { mapStateTwoWay } from '@/utils/bindService'
+
 export default {
   name: 'DatePicker',
-  props: {
-    /** Value variable for binding of the date */
-    value: { type: Array }
-  },
   data () {
     return {
       /** Visibility flag of date picker menu */
@@ -57,25 +53,9 @@ export default {
     }
   },
   computed: {
-    /** Selected date */
-    selectedDate: {
-      /**
-       * Getter for the string representing the selected date
-       * @returns {Array}  The selected date
-       */
-      get () {
-        return this.value
-      },
-
-      /**
-       * Setter for the date. Automatically select the analysis period starting from the ending date selection
-       * @param endDate The new value
-       */
-      set ([endDate]) {
-        const startDate = new Date(new Date(endDate).setDate(new Date(endDate).getDate() - 27)).toISOString().slice(0, 10)
-        this.$emit('input', [startDate, endDate])
-      }
-    },
+    ...mapStateTwoWay({
+      selectedDate: 'SET_END_DATE'
+    }),
 
     /** Selected analysis period label */
     selectedDateText: {
@@ -84,7 +64,7 @@ export default {
        * @returns {Array}  The label date
        */
       get () {
-        return this.value ? this.value.join(' ⏐ ') : null
+        return this.selectedDate ? this.selectedDate.join(' ⏐ ') : null
       },
 
       /**
@@ -92,16 +72,7 @@ export default {
        * @param label The new label
        */
       set (label) {
-        this.$emit('input', null)
-      }
-    }
-  },
-  watch: {
-    /** Auto adjust the date range if not appropriately set*/
-    selectedDate (newRange) {
-      if (newRange && newRange[0] == null) {
-        const startDate = new Date(new Date(newRange[1]).setDate(new Date(newRange[1]).getDate() - 27)).toISOString().slice(0, 10)
-        this.$emit('input', [startDate, newRange[1]])
+        this.selectedDate = null
       }
     }
   }
@@ -142,21 +113,21 @@ export default {
   text-transform: uppercase;
   font-size: 11px;
   line-height: 12px;
-  color:  #000;
+  color:  #ffa815;
 }
 .tip-icon{
   padding-top: 0;
   padding-bottom: 0;
   margin: auto;
   text-align: right;
-  border-right: solid 1px #000;
+  border-right: solid 1px #ffa815;
 }
 .tip-icon *{
-  color:  #000;
+  color: #ffa815;
   font-size: 18px !important;
 }
 .tip-text .v-icon::before{
-  color:  #000;
+  color:  #ffa815;
   font-size: 14px !important;
 }
 .tip-text{

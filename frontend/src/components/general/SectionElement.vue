@@ -4,15 +4,16 @@
                 It is equipped with a show/hide section body control.
 
   Props:
-  ├── icon:   Icon name for the title. MDI icon are used.
-  ├── title:  Title for the section.
-  └── tabs:   Array of labels for the tabs of the section
+  ├── icon:       Icon name for the title. MDI icon are used.
+  ├── title:      Title for the section.
+  ├── tabs:       Array of labels for the tabs of the section
+  └── collapsed:  Collapse the section by default
 
   Slots:
   └── default:  The content of the section body
 
-  Emit:
-  └── tabCange:  Emitted on tab change together with the selected tab index
+  Events:
+  └── tabChange:  Emitted on tab change together with the selected tab index
 
 -->
 

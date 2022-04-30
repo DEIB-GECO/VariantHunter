@@ -49,7 +49,7 @@
                         <ul>
                           <li>
                             Consider reducing the amount of data imported into the tool (by specifying more restrictive
-                            <span class='monospaced'>Location</span>,
+                            <span class='monospaced'>LOCATIONS</span>,
                             <span class='monospaced'>START_DATE</span> and
                             <span class='monospaced'>END_DATE</span> parameters).
                           </li>
@@ -69,7 +69,7 @@
                         <ul>
                           <li>
                             Consider reducing the amount of data imported into the tool (by specifying more restrictive
-                            <span class='monospaced'>Location</span>,
+                            <span class='monospaced'>LOCATIONS</span>,
                             <span class='monospaced'>START_DATE</span> and
                             <span class='monospaced'>END_DATE</span> parameters).
                           </li>

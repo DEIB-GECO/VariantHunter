@@ -236,11 +236,11 @@
             <Paragraph :src='linDepOdd2Img' right larger-img>
               <p>By using the <span class='command'>Next/Prev Week</span> buttons below the plot, a user
                 can <b>navigate in time</b> replicating the same analysis using a four-week period shifted of
-                one week ahead or behind (note that chosen mutations need to be re-selected in the new analysis).
+                one week ahead or behind.
               </p>
               <p>
                 <i>
-                  In the figure we show the save mutations when the <span class='command'>Next Week</span>
+                  In the figure, we show the selected mutations when the <span class='command'>Next Week</span>
                   is analyzed, including also the week of March 27th, 2022.
                 </i>
               </p>
@@ -265,7 +265,7 @@ export default {
   data () {
     return {
       /** Images */
-      introImg: require('../../../../assets/guide/intro.jpg'),
+      introImg: require('../../../../assets/guide/intro.png'),
 
       linIndFormImg: require('../../../../assets/guide/li_form.png'),
       linIndExplorerImg: require('../../../../assets/guide/li_explorer.png'),

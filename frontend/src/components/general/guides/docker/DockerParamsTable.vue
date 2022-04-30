@@ -146,9 +146,7 @@ export default {
   name: 'DockerParamsTable',
   props: {
     /** Value variable for binding of the value */
-    value: {},
-
-    type: {}
+    value: {}
   },
   computed: {
     /** Flag to show/hide the advanced optional params */

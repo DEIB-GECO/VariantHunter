@@ -1,5 +1,21 @@
+<!--
+  Component:    ExpansionPanel
+  Description:  Customized expansion panel
+
+  Props:
+  └── doubleIcon: Flag to reserve space for two icons in the name
+
+  Slots:
+  ├── title:    Slot for the title of the expansion panel
+  ├── icons:    Slot for the icons of the expansion panel
+  └── default:  Slot for the content of the expansion panel
+
+-->
+
 <template>
   <v-expansion-panel>
+
+    <!-- Expansion panel header-->
     <v-expansion-panel-header>
       <v-col :class='"pa-0 pa-sm-auto col-auto "+ (doubleIcon?"larger-icon-section":"standard-icon-section")'>
         <slot name='icons'></slot>
@@ -8,9 +24,12 @@
         <slot name='title'></slot>
       </v-col>
     </v-expansion-panel-header>
+
+    <!-- Expansion panel content-->
     <v-expansion-panel-content>
       <slot></slot>
     </v-expansion-panel-content>
+
   </v-expansion-panel>
 </template>
 
@@ -18,6 +37,7 @@
 export default {
   name: 'ExpansionPanel',
   props: {
+    /** Flag to reserve space for two icons in the name */
     doubleIcon: Boolean
   }
 }

@@ -23,7 +23,7 @@
 
         <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1' outlined rounded small>
           <router-link :to="{ name: 'About'}">
-            <v-icon left>mdi-information-outline</v-icon>
+            <v-icon left>mdi-information-variant</v-icon>
             About
           </router-link>
         </v-btn>

@@ -1,10 +1,7 @@
 <!--
   Component:    LocationSelector
   Description:  Select input element for location
-
-  Props:
-  ├── selectedGranularity: Value of the selected granularity
-  └── value: Value variable for binding of the date
+                It transfers the location value to the $store
 
   Events:
   └── error:    Emitted on server errors
@@ -12,16 +9,20 @@
 
 <template>
   <v-layout row wrap>
+
+    <!-- Label -->
     <v-flex class='xs12 d-flex field-label'>
       <span>Location</span>
     </v-flex>
 
     <v-flex class='xs12 d-flex field-element'>
       <v-row dense>
+
         <!-- Continent selector -->
         <v-col class='complex-field-element'>
-          <v-autocomplete v-model='selectedContinent' :disabled='disableContinentSelection' :items='possibleContinents'
-                          :loading='isLoading' hide-details label='Continent' attach solo
+          <v-autocomplete v-model='selectedContinent' :items='possibleContinents'
+                          :disabled='disableContinentSelection' :loading='isLoading'
+                          placeholder='Continent' hide-details attach solo persistent-placeholder
                           @input="updateSelectedLocation('continent')">
             <template v-slot:item='data'>
               <span>{{ getFieldText(data.item) }}</span>
@@ -31,8 +32,9 @@
 
         <!-- Country selector-->
         <v-col v-if='showCountrySelector' class='complex-field-element'>
-          <v-autocomplete v-model='selectedCountry' :disabled='disableCountrySelection' :items='possibleCountries'
-                          :loading='isLoading' hide-details label='Country' attach solo
+          <v-autocomplete v-model='selectedCountry' :items='possibleCountries'
+                          :disabled='disableCountrySelection' :loading='isLoading'
+                          placeholder='Country' hide-details attach solo persistent-placeholder
                           @input="updateSelectedLocation('country')">
             <template v-slot:item='data'>
               <span>{{ getFieldText(data.item) }}</span>
@@ -42,8 +44,9 @@
 
         <!-- Region selector -->
         <v-col v-if='showRegionSelector' class='complex-field-element'>
-          <v-autocomplete v-model='selectedRegion' :disabled='disableRegionSelection' :items='possibleRegions'
-                          :loading='isLoading' hide-details label='Region' attach solo
+          <v-autocomplete v-model='selectedRegion' :items='possibleRegions'
+                          :disabled='disableRegionSelection' :loading='isLoading'
+                          placeholder='Region' hide-details attach solo persistent-placeholder
                           @input="updateSelectedLocation('region')">
             <template v-slot:item='data'>
               <span>{{ getFieldText(data.item) }}</span>
@@ -57,59 +60,31 @@
 
 <script>
 import axios from 'axios'
+import { mapState } from 'vuex'
+import { mapStateTwoWay } from '@/utils/bindService'
 
 export default {
   name: 'LocationSelector',
-  props: {
-    /** Value of the selected granularity */
-    selectedGranularity: { required: true },
-
-    /** Value variable for binding of the location */
-    value: {}
-  },
   data () {
     return {
-      /** Selectable continents */
-      possibleContinents: [],
-
-      /** Selectable countries */
-      possibleCountries: [],
-
-      /** Selectable regions */
-      possibleRegions: [],
-
-      /** Selected continent */
-      selectedContinent: null,
-
-      /** Selected country */
-      selectedCountry: null,
-
-      /** Selected region */
-      selectedRegion: null,
-
       /** Loading progress */
       isLoading: false
     }
   },
   computed: {
-    /** Selected location */
-    selectedLocation: {
-      /**
-       * Getter for the string representing the selected location
-       * @returns {string}  The selected location
-       */
-      get () {
-        return this.value
-      },
+    ...mapState(['selectedGranularity']),
+    ...mapStateTwoWay({
+      possibleContinents: 'SET_ALL_CONTINENTS',
+      selectedContinent: 'SET_CONTINENT',
 
-      /**
-       * Setter for the location
-       * @param val The new value
-       */
-      set (val) {
-        this.$emit('input', val)
-      }
-    },
+      possibleCountries: 'SET_ALL_COUNTRIES',
+      selectedCountry: 'SET_COUNTRY',
+
+      possibleRegions: 'SET_ALL_REGIONS',
+      selectedRegion: 'SET_REGION',
+
+      selectedLocation: 'SET_LOCATION'
+    }),
 
     /** Condition to disable the continent selection. If true is disabled */
     disableContinentSelection () {

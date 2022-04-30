@@ -9,6 +9,8 @@
   ├── possibleValues: Possible values for the selector
   ├── autocomplete: Autocomplete flag. If true, the selector is a v-autocomplete
   ├── multiple: Multiple selector flag. If true, the selector allows multiple selection
+  ├── solo: Solo selector flag. If true, changes the style of the input
+  ├── loading: Loading selector flag. If true, it displays linear progress bar
   └── smallChips: smallChips flag. If true, the selector shows small chips for selected items
 
   Slots:
@@ -24,11 +26,13 @@
     <v-flex class='xs12 d-flex field-element'>
       <!-- Manual selector -->
       <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues'
-                hide-details :label='placeholder' solo='solo' :loading='loading' attach />
+                hide-details :placeholder='placeholder' solo='solo' :loading='loading'
+                attach persistent-placeholder />
 
       <!-- Autocomplete selector -->
       <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable :multiple='multiple'
-                      :small-chips='smallChips' hide-details :label='placeholder' :solo='solo' :loading='loading' attach >
+                      :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder' :solo='solo' :loading='loading'
+                      attach >
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>

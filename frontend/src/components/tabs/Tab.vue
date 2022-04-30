@@ -4,15 +4,15 @@
 
   Props:
   ├── isLoading:    Progress circe flag: true if the progress circle is displayed
-  ├── formError:    Form error flag: true if the form cannot be sent
+  ├── visible:      Visibility flag for the tab: true iff this is the current tab
+  ├── withLineage:  Flag to show/hide lineage selector.
   └── resultLength: Result length
 
   Events:
   └── send:    Emitted on form send
 
   Slots:
-  ├── form:       The tab form fields
-  └── explorer:   The explorer section
+  └── results:   The result section
 -->
 
 <template>
@@ -32,21 +32,50 @@
                 </h2>
               </v-flex>
 
-              <!-- Form fields slot -->
-              <slot name='form'></slot>
+              <!-- Form fields -->
+              <!---- Granularity ---->
+              <v-flex :class='withLineages? "xs12 sm4 md3 d-flex":"xs12 sm4 md2 d-flex"'>
+                <GranularitySelector />
+              </v-flex>
+
+              <!---- Location ---->
+              <v-flex v-if="selectedGranularity !== 'world'"
+                      :class='withLineages? "xs12 sm8 md8 d-flex":"xs12 sm8 md5 d-flex"'>
+                <LocationSelector @error='e=> $emit("error",e)' />
+              </v-flex>
+
+              <!---- Date ---->
+              <v-flex :class='withLineages?"xs12 sm6 md5 d-flex":"xs12 sm6 md4 d-flex"'>
+                <DatePicker />
+              </v-flex>
+
+              <!---- Lineage ---->
+              <v-flex v-if='visible && withLineages'
+                      :class="selectedGranularity === 'world'? 'xs12 sm4 md5 d-flex' : 'xs12 sm6 md6 d-flex'">
+                <LineageSelector @error='e=> $emit("error",e)' />
+              </v-flex>
 
               <!-- Send button -->
               <v-flex class='xs12 sm6 md3 d-flex form-controls'>
-                <v-btn :disabled='formError' class='white--text' color='#011936'
-                       @click="$emit('send'); showExplorer = false">
+                <v-btn :disabled='formError' class='white--text' :color='primary_color'
+                       @click="$emit('send'); showExplorer = false" depressed small>
                   <v-icon left>mdi-magnify</v-icon>
-                  START ANALYSIS
+                  ANALYSE
+                </v-btn>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <v-btn class='white--text delete-action' :color='primary_color'
+                       @click='clearForm(); showExplorer = false' small>
+                  <v-icon left>mdi-close</v-icon>
+                  CLEAR
                 </v-btn>
               </v-flex>
 
               <!-- Explorer slot-->
-              <v-expand-transition>
-                <slot v-if='showExplorer' name='explorer'></slot>
+              <v-expand-transition v-if='visible'>
+                <v-flex v-if='showExplorer' class='xs12 d-flex'>
+                  <DatasetExplorer :with-lineages='withLineages' @weekSelection='onWeekSelection'
+                                   @error='e=> $emit("error",e)' />
+                </v-flex>
               </v-expand-transition>
 
               <!-- Show/hide Explorer controls -->
@@ -88,32 +117,85 @@
 
 <script>
 import { mapState } from 'vuex'
+import LocationSelector from '@/components/form/LocationSelector'
+import DatePicker from '@/components/form/DatePicker'
+import LineageSelector from '@/components/form/LineageSelector'
+import GranularitySelector from '@/components/form/GranularitySelector'
+import { mapStateTwoWay } from '@/utils/bindService'
+import DatasetExplorer from '@/components/DatasetExplorer'
 
 export default {
   name: 'Tab',
+  components: { DatasetExplorer, GranularitySelector, LineageSelector, DatePicker, LocationSelector },
   props: {
-    /** Value variable for binding of the visibility flag for the Dataset Explorer */
-    value: {},
+    /** Visibility flag for the tab: true iff this is the current tab */
+    visible: Boolean,
 
     /** Progress circe flag: true if the progress circle is displayed */
     isLoading: { required: true },
 
-    /** Form error flag: true if the form cannot be sent */
-    formError: { required: true },
-
     /** Result length */
-    resultLength: { required: true }
+    resultLength: { required: true },
+
+    /** Flag to show/hide lineage selector. */
+    withLineages: Boolean
+  },
+  data () {
+    return {
+      /** Visibility flag for the DatasetExplorer */
+      showExplorer: false
+    }
   },
   computed: {
-    ...mapState(['secondary_color']),
+    ...mapState(['primary_color', 'secondary_color']),
+    ...mapStateTwoWay({
+      selectedGranularity: 'SET_GRANULARITY',
+      selectedLocation: 'SET_LOCATION',
+      selectedDate: 'SET_END_DATE',
+      selectedLineage: 'SET_LINEAGE'
+    }),
 
-    /** Flag to show/hide the explorer */
-    showExplorer: {
-      get () {
-        return this.value
-      },
-      set (value) {
-        this.$emit('input', value)
+    /** Form error flag: true if the form cannot be sent */
+    formError () {
+      if (this.withLineages) {
+        return !(
+          (this.selectedGranularity === 'world' && this.selectedDate !== null && this.selectedLineage !== null) ||
+          (this.selectedGranularity !== null && this.selectedLocation !== null && this.selectedDate !== null && this.selectedLineage !== null)
+        )
+      } else {
+        return !(
+          (this.selectedGranularity === 'world' && this.selectedDate != null) ||
+          (this.selectedGranularity !== null && this.selectedLocation !== null && this.selectedDate !== null)
+        )
+      }
+    }
+  },
+  methods: {
+    /** Clears the form */
+    clearForm () {
+      this.selectedDate = null
+      this.selectedLocation = null
+      this.selectedGranularity = null
+      this.selectedLineage = null
+    },
+
+    /**
+     * Handler for weekSelection event from Dataset Explorer
+     * @param range The selected range
+     */
+    onWeekSelection (range) {
+      this.showExplorer = false
+      document.getElementById('top').scrollIntoView()
+      this.selectedDate = range
+      if (!this.formError) {
+        this.$emit('send')
+      }
+    }
+  },
+  watch: {
+    visible (newVal) {
+      if (!newVal) {
+        this.showExplorer = false
       }
     }
   }
@@ -129,12 +211,12 @@ export default {
 }
 
 /* Ensure datepicker menu visibility */
-.single-tab{
+.single-tab {
   min-height: 740px;
 }
 
-@media only screen and  (max-width: 599px){
-  .single-tab{
+@media only screen and  (max-width: 599px) {
+  .single-tab {
     min-height: 835px !important; /* Prevent datepicker to overflow */
   }
 }
@@ -179,5 +261,10 @@ export default {
 .form-controls {
   margin-top: 29px !important;
   justify-content: center !important;
+}
+
+.delete-action:hover{
+  background-color: red !important;
+  border-color: red !important;
 }
 </style>

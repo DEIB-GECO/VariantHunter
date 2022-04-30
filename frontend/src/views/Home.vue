@@ -18,11 +18,11 @@
       </v-tab>
 
       <v-tab-item class='tab-content'>
-        <TabWithoutLineages @error='handleError' />
+        <TabWithoutLineages :visible='selectedTab===0' @error='handleError' />
       </v-tab-item>
 
       <v-tab-item class='tab-content'>
-        <TabWithLineages @error='handleError' />
+        <TabWithLineages :visible='selectedTab===1' @error='handleError' />
       </v-tab-item>
     </v-tabs>
 

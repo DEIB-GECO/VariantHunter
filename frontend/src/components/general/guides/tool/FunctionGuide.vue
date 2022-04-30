@@ -13,12 +13,15 @@
 
 <template>
   <ExpansionPanel>
+
     <template v-slot:icons>
       <v-icon left color='#000000DE'>mdi-star-circle-outline</v-icon>
     </template>
+
     <template v-slot:title>
       {{ title }}
     </template>
+
     <template v-slot:default>
 
       <!-- INTRO -->

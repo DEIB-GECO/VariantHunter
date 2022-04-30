@@ -2,52 +2,20 @@
   Component:    TabWithLineages
   Description:  Tab to perform lineage specific analyses.
 
+  Props:
+  └── visible:      Visibility flag for the tab: true iff this is the current tab
+
   Events:
   └── error:    Emitted on server errors
 -->
 
 <template>
-  <Tab v-model='showExplorer' :is-loading='isLoading' :result-length='queriesResults.length' :form-error='formError'
-       @send='startAnalysis(null)'>
-
-    <!-- Form fields -->
-    <template v-slot:form>
-      <!---- Granularity ---->
-      <v-flex class='xs12 sm4 md3 d-flex'>
-        <FieldSelector v-model='selectedGranularity' label='Granularity' placeholder='Granularity'
-                       :possible-values='possibleGranularity' solo />
-      </v-flex>
-
-      <!---- Location ---->
-      <v-flex v-if="selectedGranularity !== 'world'" class='xs12 sm8 md8 d-flex'>
-        <LocationSelector v-model='selectedLocation' :selectedGranularity='selectedGranularity'
-                          @error='e=> $emit("error",e)' />
-      </v-flex>
-
-      <!---- Date ---->
-      <v-flex class='xs12 sm6 md5 d-flex'>
-        <DatePicker v-model='selectedDate' />
-      </v-flex>
-
-      <!---- Lineage ---->
-      <v-flex :class="selectedGranularity === 'world'? 'xs12 sm4 md5 d-flex' : 'xs12 sm6 md6 d-flex'">
-        <LineageSelector v-model='selectedLineage' :selectedGranularity='selectedGranularity'
-                         :selectedLocation='selectedLocation' :selectedDate='selectedDate'
-                         @error='e=> $emit("error",e)' />
-      </v-flex>
-    </template>
-
-    <!-- Dataset Explorer-->
-    <template v-slot:explorer>
-      <v-flex class='xs12 d-flex'>
-        <DatasetExplorer :granularity='selectedGranularity' :location='selectedLocation' :lineage='selectedLineage'
-                         @weekSelection='onWeekSelection' @error='e=> $emit("error",e)' />
-      </v-flex>
-    </template>
+  <Tab :is-loading='isLoading' :result-length='queriesResults.length' :visible='visible' with-lineages
+       @send='startAnalysis(null)' @error='e=> $emit("error",e)'>
 
     <!-- Panels list -->
     <template v-slot:results>
-      <v-expansion-panels v-model='expandedPanels' :value='expandedPanels' focusable multiple>
+      <v-expansion-panels v-model='expandedPanels' :value='expandedPanels' focusable multiple tile>
         <v-expansion-panel v-for='(element, index) in queriesResults' v-bind:key='index' :ref='"L"+index'
                            class='expansion-panel-result'>
 
@@ -105,45 +73,22 @@ import { mapState } from 'vuex'
 import axios from 'axios'
 import ResultView from '../ResultView'
 import Tab from '@/components/tabs/Tab'
-import DatePicker from '@/components/form/DatePicker'
-import LocationSelector from '@/components/form/LocationSelector'
-import LineageSelector from '@/components/form/LineageSelector'
-import DatasetExplorer from '@/components/DatasetExplorer'
-import FieldSelector from '@/components/form/FieldSelector'
+import { mapStateTwoWay } from '@/utils/bindService'
 
 export default {
   name: 'TabWithLineages',
   components: {
-    FieldSelector,
-    DatasetExplorer,
-    LineageSelector,
-    LocationSelector,
-    DatePicker,
     Tab,
     ResultView
   },
-  props: {},
+  props: {
+    /** Visibility flag for the Tab */
+    visible: Boolean
+  },
   data () {
     return {
       /** Progress circe flag: true if the progress circle is displayed */
       isLoading: false,
-
-      /** Visibility flag for the DatasetExplorer */
-      showExplorer: false,
-
-      /** Granularity: available options */
-      possibleGranularity: [/* 'world',*/'continent', 'country', 'region'],
-      /** Granularity: selected option */
-      selectedGranularity: null,
-
-      /** Location: selected option */
-      selectedLocation: null,
-
-      /** Date: selected date */
-      selectedDate: null,
-
-      /** Lineage: selected option */
-      selectedLineage: null,
 
       /** Panel expansion status array */
       expandedPanels: [],
@@ -169,14 +114,12 @@ export default {
   },
   computed: {
     ...mapState(['secondary_color']),
-
-    /** Form error flag: true if the form cannot be sent */
-    formError () {
-      return !(
-        (this.selectedGranularity === 'world' && this.selectedDate !== null && this.selectedLineage !== null) ||
-        (this.selectedGranularity !== null && this.selectedLocation !== null && this.selectedDate !== null && this.selectedLineage !== null)
-      )
-    }
+    ...mapStateTwoWay({
+      selectedGranularity: 'SET_GRANULARITY',
+      selectedLocation: 'SET_LOCATION',
+      selectedDate: 'SET_END_DATE',
+      selectedLineage: 'SET_LINEAGE'
+    })
   },
   methods: {
     /**
@@ -252,19 +195,6 @@ export default {
       this.queriesResults.splice(queryIndex, 1)
       this.queriesSupport.splice(queryIndex, 1)
       this.isDeleting = false
-    },
-
-    /**
-     * Handler for weekSelection event from Dataset Explorer
-     * @param range The selected range
-     */
-    onWeekSelection (range) {
-      this.showExplorer = false
-      document.getElementById('top').scrollIntoView()
-      this.selectedDate = range
-      if (!this.formError) {
-        this.startAnalysis(null)
-      }
     }
   }
 }

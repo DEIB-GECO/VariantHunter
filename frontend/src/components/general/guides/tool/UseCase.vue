@@ -11,6 +11,7 @@
 
 <template>
   <v-expansion-panel>
+
     <v-expansion-panel-header class='grey lighten-5'>
       <v-col class='col-auto'>
         <v-icon left color='black'>mdi-lightbulb-on-outline</v-icon>
@@ -19,6 +20,7 @@
         {{ name }}
       </v-col>
     </v-expansion-panel-header>
+
     <v-expansion-panel-content class='grey lighten-5'>
       <slot>
       <p>
@@ -31,6 +33,7 @@
       </p>
       </slot>
     </v-expansion-panel-content>
+
   </v-expansion-panel>
 </template>
 

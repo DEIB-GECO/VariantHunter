@@ -1,12 +1,7 @@
 <!--
   Component:    LineageSelector
   Description:  Select input element for lineage
-
-  Props:
-  ├── selectedGranularity: Value of the selected granularity
-  ├── selectedLocation: Value of the selected location
-  ├── selectedDate: Value of the selected date
-  └── value: Value variable for binding of the date
+                It transfers the lineage value to the $store
 
   Events:
   └── error:    Emitted on server errors
@@ -19,12 +14,12 @@
     </v-flex>
 
     <v-flex class='xs12 d-flex field-element'>
-      <v-autocomplete v-model='selectedLineage' :loading='isLoading'
+      <v-autocomplete v-model='selectedLineage' :items='possibleLineages' :loading='isLoading'
                       :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world')"
-                      :items='possibleLineages' clearable hide-details label='Lineage' attach solo>
+                      label='Lineage' clearable hide-details attach solo>
         <template v-slot:prepend-item>
           <slot name='prepend-item'>
-            <div class='hint'>{{hint}}</div>
+            <div class='hint'>{{ hint }}</div>
           </slot>
         </template>
       </v-autocomplete>
@@ -34,22 +29,11 @@
 
 <script>
 import axios from 'axios'
+import { mapState } from 'vuex'
+import { mapStateTwoWay } from '@/utils/bindService'
 
 export default {
   name: 'LineageSelector',
-  props: {
-    /** Value of the selected granularity */
-    selectedGranularity: { required: true },
-
-    /** Value of the selected location */
-    selectedLocation: { required: true },
-
-    /** Value of the selected date */
-    selectedDate: { required: true },
-
-    /** Value variable for binding of the location */
-    value: {}
-  },
   data () {
     return {
       /** Lineage: available options (wrt to other params) */
@@ -63,24 +47,8 @@ export default {
     }
   },
   computed: {
-    /** Selected lineage */
-    selectedLineage: {
-      /**
-       * Getter for the string representing the selected lineage
-       * @returns {string}  The selected lineage
-       */
-      get () {
-        return this.value
-      },
-
-      /**
-       * Setter for the lineage
-       * @param val The new value
-       */
-      set (val) {
-        this.$emit('input', val)
-      }
-    },
+    ...mapState(['selectedGranularity', 'selectedLocation', 'selectedDate']),
+    ...mapStateTwoWay({ selectedLineage: 'SET_LINEAGE' }),
 
     /** Hint for the selector  */
     hint () {
@@ -101,6 +69,7 @@ export default {
           location: this.selectedLocation ? this.selectedLocation : null,
           date: this.selectedDate ? this.selectedDate[1] : null
         }
+
         axios
           .post(url, toSend)
           .then(res => {
@@ -127,18 +96,27 @@ export default {
     }
   },
   watch: {
-  /** Adjust the possible lineages according to the selected granularity */
+    /** Adjust the possible lineages according to the selected granularity */
     selectedGranularity (newVal) {
-      if (newVal === 'world') { this.getPossibleLineages() }
+      if (newVal === 'world') {
+        this.getPossibleLineages()
+      }
     },
 
     /** Adjust the possible lineages according to the selected location */
     selectedLocation (newVal) {
-      if (newVal) { this.getPossibleLineages() }
+      if (newVal) {
+        this.getPossibleLineages()
+      }
     },
 
     /** Adjust the possible lineages according to the selected date */
     selectedDate (newVal) {
+      this.getPossibleLineages()
+    }
+  },
+  mounted () {
+    if (this.selectedDate !== null || this.selectedLocation !== null) {
       this.getPossibleLineages()
     }
   }

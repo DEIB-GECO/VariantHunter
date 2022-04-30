@@ -6,7 +6,7 @@
   ├── plotTitle:  Title for the plot. Required.
   ├── plotData:   Data for the plot. Required.
   ├── dateLabel:  Array of data labels for the periods
-  └──
+  └── weekSeq:    Total number of sequences collected per week
 -->
 
 <template>

@@ -2,41 +2,16 @@
   Component:    TabWithoutLineages
   Description:  Tab to perform lineage independent analyses.
 
+  Props:
+  └── visible:      Visibility flag for the tab: true iff this is the current tab
+
   Events:
   └── error:    Emitted on server errors
 -->
 
 <template>
-  <Tab v-model='showExplorer' :form-error='formError' :is-loading='isLoading' :result-length='queriesResults.length'
-       @send='startAnalysis(null)'>
-
-    <!-- Form fields -->
-    <template v-slot:form>
-      <!---- Granularity ---->
-      <v-flex class='xs12 sm4 md2 d-flex'>
-        <FieldSelector v-model='selectedGranularity' label='Granularity' placeholder='Granularity'
-                       :possible-values='possibleGranularity' solo />
-      </v-flex>
-
-      <!---- Location ---->
-      <v-flex v-if="selectedGranularity !== 'world'" class='xs12 sm8 md5 d-flex'>
-        <LocationSelector v-model='selectedLocation' :selectedGranularity='selectedGranularity'
-                          @error='e=> $emit("error",e)' />
-      </v-flex>
-
-      <!---- Date ---->
-      <v-flex class='xs12 sm6 md4 d-flex'>
-        <DatePicker v-model='selectedDate' />
-      </v-flex>
-    </template>
-
-    <!-- Dataset Explorer-->
-    <template v-slot:explorer>
-      <v-flex class='xs12 d-flex'>
-        <DatasetExplorer :granularity='selectedGranularity' :location='selectedLocation'
-                         @weekSelection='onWeekSelection' @error='e=> $emit("error",e)' />
-      </v-flex>
-    </template>
+  <Tab :is-loading='isLoading' :result-length='queriesResults.length' :visible='visible'
+       @send='startAnalysis(null)' @error='e=> $emit("error",e)'>
 
     <!-- Panels list -->
     <template v-slot:results>
@@ -96,39 +71,21 @@ import { mapState } from 'vuex'
 import axios from 'axios'
 import ResultView from '@/components/ResultView'
 import Tab from '@/components/tabs/Tab'
-import DatePicker from '@/components/form/DatePicker'
-import LocationSelector from '@/components/form/LocationSelector'
-import DatasetExplorer from '@/components/DatasetExplorer'
-import FieldSelector from '@/components/form/FieldSelector'
+import { mapStateTwoWay } from '@/utils/bindService'
 
 export default {
   name: 'TabWithoutLineages',
   components: {
-    FieldSelector,
-    DatasetExplorer,
-    LocationSelector,
-    DatePicker,
     Tab,
     ResultView
+  },
+  props: {
+    visible: Boolean
   },
   data () {
     return {
       /** Progress circe flag: true if the progress circle is displayed */
       isLoading: false,
-
-      /** Visibility flag for the DatasetExplorer */
-      showExplorer: false,
-
-      /** Granularity: available options */
-      possibleGranularity: [/* 'world',*/'continent', 'country', 'region'],
-      /** Granularity: selected option */
-      selectedGranularity: null,
-
-      /** Location: selected option */
-      selectedLocation: null,
-
-      /** Date: selected date */
-      selectedDate: null,
 
       /** Panel expansion status array */
       expandedPanels: [],
@@ -151,23 +108,13 @@ export default {
   },
   computed: {
     ...mapState(['secondary_color']),
-
-    /** Form error flag: true if the form cannot be sent */
-    formError () {
-      return !(
-        (this.selectedGranularity === 'world' && this.selectedDate != null) ||
-        (this.selectedGranularity !== null && this.selectedLocation !== null && this.selectedDate !== null)
-      )
-    }
+    ...mapStateTwoWay({
+      selectedGranularity: 'SET_GRANULARITY',
+      selectedLocation: 'SET_LOCATION',
+      selectedDate: 'SET_END_DATE'
+    })
   },
   methods: {
-    /** Clears the form */
-    clearForm () {
-      this.selectedDate = null
-      this.selectedLocation = null
-      this.selectedGranularity = null
-    },
-
     /**
      * Triggers the analysis request to the server
      * @param customOptions   The customization options (filter values, selections) for the new tab
@@ -235,19 +182,6 @@ export default {
       this.queriesResults.splice(queryIndex, 1)
       this.queriesSupport.splice(queryIndex, 1)
       this.isDeleting = false
-    },
-
-    /**
-     * Handler for weekSelection event from Dataset Explorer
-     * @param range The selected range
-     */
-    onWeekSelection (range) {
-      this.showExplorer = false
-      document.getElementById('top').scrollIntoView()
-      this.selectedDate = range
-      if (!this.formError) {
-        this.startAnalysis(null)
-      }
     }
   }
 }

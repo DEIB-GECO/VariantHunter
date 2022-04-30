@@ -1,3 +1,12 @@
+<!--
+  Component:    DockerGuideSteps
+  Description:  Steps of the docker guide
+
+  Props:
+  └── macGuide: Mac guide flag: true iff the guide is for macOS
+
+-->
+
 <template>
   <v-timeline dense align-top class='pr-0 mr-0 pl-0 ml-0'>
 
@@ -192,7 +201,7 @@
         <span class='fake-link' @click.self='showTroubleshooting=true; showAllParams=false'>
             Troubleshooting
           </span>
-        <DockerTroubleshooting v-model='showTroubleshooting' @showContacts='showContacts()' />
+        <DockerTroubleshooting v-model='showTroubleshooting' />
       </v-alert>
     </v-timeline-item>
 
@@ -219,13 +228,6 @@ export default {
 
       /** Flag to show/hide the troubleshooting guide */
       showTroubleshooting: false
-    }
-  },
-  methods: {
-    /** Go to the contact section by hiding all the dialogs */
-    showContacts () {
-      this.showTroubleshooting = false
-      document.getElementById('contributors').scrollIntoView()
     }
   }
 }

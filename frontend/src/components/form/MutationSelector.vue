@@ -1,3 +1,17 @@
+<!--
+  Component:    MutationSelector
+  Description:  Advanced filter for the mutations
+
+  Props:
+  ├── value:              Value variable for binding of the value
+  ├── possibleValues:     Possible values for the selector
+  ├── queryParams:        Object storing the query parameters
+  └── characterizingMuts: Object storing the characterizing mutations (lin.spec. only)
+
+  Events:
+  └── error:    Emitted on server errors
+-->
+
 <template>
   <!-- Decorated Field Selector -->
   <FieldSelector v-model='selectedValue' label='Mutation' placeholder='All'
@@ -19,7 +33,8 @@
       </div>
 
       <!-- Non characterizing mutation selector -->
-      <div v-if="characterizingMuts" class='uploader-opener' @click='selectNonCharMuts()'>
+      <div v-if="characterizingMuts && characterizingMuts.length!==possibleValues.length"
+           class='uploader-opener' @click='selectNonCharMuts()'>
         <v-icon left>mdi-star-off-outline</v-icon>
         All non-characterizing mutations
       </div>
@@ -165,8 +180,8 @@ export default {
     /** Object storing the query parameters */
     queryParams: { required: true },
 
-    /** Object storing the query parameters */
-    characterizingMuts: {}
+    /** Object storing the characterizing mutations (lin.spec. only) */
+    characterizingMuts: { required: false }
   },
   data () {
     return {

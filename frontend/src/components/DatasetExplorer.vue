@@ -3,9 +3,7 @@
   Description:  Component to explore the number of sequences available in the dataset
 
   Props:
-  ├── granularity:  Granularity to be explored
-  ├── location:     Location to be explored
-  └── lineage:      Lineage to be explored
+  └── withLineages: Flag for lineage search
 
   Events:
   ├── weekSelection:  Emitted when the user select the 4 weeks to analyze
@@ -51,6 +49,8 @@
         <LineagesBreakdown :lineages-data='lineagesData' />
       </v-flex>
     </template>
+
+    <!-- Button to fill in the date -->
     <v-flex v-if='showPlot.breakdown' justify-center class='xs12 d-flex'>
       <v-btn outlined depressed rounded small color='white'
              @click.native='emitAnalysisPeriod()'>
@@ -65,6 +65,7 @@
         </v-tooltip>
       </v-btn>
     </v-flex>
+
   </v-layout>
 </template>
 
@@ -73,19 +74,14 @@ import ExplorerHistogram from '@/components/plots/ExplorerHistogram'
 import axios from 'axios'
 import LineagesBreakdown from '@/components/plots/LineagesBreakdown'
 import { dateDiff } from '@/utils/dateService'
+import { mapState } from 'vuex'
 
 export default {
   name: 'DatasetExplorer',
   components: { LineagesBreakdown, ExplorerHistogram },
   props: {
-    /** Granularity to be explored */
-    granularity: { required: true },
-
-    /** Location to be explored */
-    location: { required: true },
-
-    /** Lineage to be explored */
-    lineage: { default: null }
+    /** Flag for lineage search. */
+    withLineages: Boolean
   },
   data () {
     return {
@@ -111,10 +107,12 @@ export default {
     }
   },
   computed: {
+    ...mapState(['selectedGranularity', 'selectedLocation', 'selectedLineage']),
+
     /** Visibility flag for the plots */
     hasResult () {
       return (
-        (this.granularity === 'world' || this.location !== null)
+        (this.selectedGranularity === 'world' || this.selectedLocation !== null)
       )
     },
 
@@ -139,8 +137,8 @@ export default {
       } else {
         return (
           'Sequence availability per day for: ' +
-          (this.location ? this.location : this.granularity) +
-          (this.lineage ? ', lineage ' + this.lineage : '')
+          (this.selectedLocation ? this.selectedLocation : this.selectedGranularity) +
+          (this.selectedLineage && this.withLineages ? ', lineage ' + this.selectedLineage : '')
         )
       }
     }
@@ -148,14 +146,15 @@ export default {
   methods: {
     /** Fetches from the server the info on the available sequences for the selected parameters */
     fetchSequenceInfo () {
-      if (this.granularity === 'world' || this.location) {
+      if (this.selectedGranularity === 'world' || this.selectedLocation) {
         this.isLoading.histogram = true
         const sequenceAPI = `/explorer/getSequenceInfo`
         const toSend = {
-          granularity: this.granularity,
-          location: this.location,  // possibly it has no value
-          lineage: this.lineage     // possibly it has no value
+          granularity: this.selectedGranularity,
+          location: this.selectedLocation,                          // possibly it has no value
+          lineage: this.withLineages ? this.selectedLineage : null   // possibly it has no value
         }
+
         axios
           .post(sequenceAPI, toSend)
           .then(res => {
@@ -174,12 +173,12 @@ export default {
 
     /** Fetches from the server the info on lineage breakdown for the selected parameters */
     fetchLineageBreakdownInfo () {
-      if ((this.granularity === 'world' || this.location) && this.selectedRange) {
+      if ((this.selectedGranularity === 'world' || this.selectedLocation) && this.selectedRange) {
         this.isLoading.breakdown = true
         const sequenceAPI = `/explorer/getLineagesBreakdown`
         const toSend = {
-          granularity: this.granularity,
-          location: this.location,    // possibly it has no value
+          granularity: this.selectedGranularity,
+          location: this.selectedLocation,    // possibly it has no value
           range: this.selectedRange
         }
         axios
@@ -224,17 +223,17 @@ export default {
   },
   watch: {
     /** Reset sequence info on granularity value changes */
-    granularity () {
+    selectedGranularity () {
       this.sequencesData = []
     },
 
     /** Fetch sequence info on location value changes */
-    location () {
+    selectedLocation () {
       this.fetchSequenceInfo()
     },
 
     /** Fetch sequence info on lineage value changes */
-    lineage () {
+    selectedLineage () {
       this.fetchSequenceInfo()
     },
 

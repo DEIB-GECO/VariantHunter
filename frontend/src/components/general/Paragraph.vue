@@ -7,6 +7,7 @@
   ├── right:        If true, the text is on the right side
   ├── left:         If true, the text is on the left side
   ├── alt:          Alt attribute for the image
+  ├── largerImg:    If true, the image is larger
   └── imgMaxHeight: Max height attribute for the image
 
   Slots:
@@ -68,5 +69,3 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>

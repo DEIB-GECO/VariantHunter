@@ -36,7 +36,8 @@
           <!-- Mutation filter -->
           <v-flex justify-center class='xs12 sm7 md4 d-flex '>
             <MutationSelector v-model='selectedMutation' :possible-values='possibleMutations'
-                              :queryParams='queryParams' :characterizing-muts='querySupport.characterizingMuts'/>
+                              :queryParams='queryParams' :characterizing-muts='querySupport.characterizingMuts'
+                              @error='e => $emit("error",e)' />
           </v-flex>
         </v-layout>
       </v-container>
@@ -122,12 +123,12 @@
 
     <!-- Next/prev week button ------------------------------------------------>
     <v-flex class='xs12 d-flex'>
-      <v-btn class='white--text' color='#011936' @click="$emit('askAnalysis', -7,status)">
+      <v-btn class='white--text' :color='primary_color' @click="$emit('askAnalysis', -7,status)" depressed>
         <v-icon left>mdi-chevron-left</v-icon>
         PREV WEEK
       </v-btn>
       <v-spacer></v-spacer>
-      <v-btn class='white--text' color='#011936' @click="$emit('askAnalysis', +7,status)">
+      <v-btn class='white--text' :color='primary_color' @click="$emit('askAnalysis', +7,status)" depressed>
         NEXT WEEK
         <v-icon right>mdi-chevron-right</v-icon>
       </v-btn>
@@ -214,7 +215,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['secondary_color']),
+    ...mapState(['primary_color', 'secondary_color']),
 
     /** The current customization status */
     status () {

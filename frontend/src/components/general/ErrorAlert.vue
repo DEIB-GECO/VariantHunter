@@ -5,7 +5,7 @@
 
   Props:
   ├── errorMessage: The external error event
-  └── v-model:      Error flag. True iff an external error has occurred.
+  └── value:      Error flag. True iff an external error has occurred.
 -->
 
 <template>
