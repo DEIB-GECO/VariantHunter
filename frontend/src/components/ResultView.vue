@@ -65,7 +65,7 @@
         </template>
 
         <!-- Customized mutation column style for lineage specific search -->
-        <template v-if="withLineages" v-slot:item.mut="{ item }">
+        <template v-if='withLineages' v-slot:item.mut='{ item }'>
           <div :class="isCharacterizingMut(item)? 'char-mut':''">{{ item.mut }}</div>
         </template>
 
@@ -122,17 +122,8 @@
     </SectionElement>
 
     <!-- Next/prev week button ------------------------------------------------>
-    <v-flex class='xs12 d-flex'>
-      <v-btn class='white--text' :color='primary_color' @click="$emit('askAnalysis', -7,status)" depressed>
-        <v-icon left>mdi-chevron-left</v-icon>
-        PREV WEEK
-      </v-btn>
-      <v-spacer></v-spacer>
-      <v-btn class='white--text' :color='primary_color' @click="$emit('askAnalysis', +7,status)" depressed>
-        NEXT WEEK
-        <v-icon right>mdi-chevron-right</v-icon>
-      </v-btn>
-    </v-flex>
+    <WeekSlider @moveForward="$emit('askAnalysis', +7,status)"
+                @moveBackward="$emit('askAnalysis', -7,status)" />
   </v-layout>
 </template>
 
@@ -149,10 +140,13 @@ import OddRatioChart from '@/components/plots/OddRatioChart'
 import SectionElement from '@/components/general/SectionElement'
 import MutationSelector from '@/components/form/MutationSelector'
 import { json2csv } from '@/utils/parserService'
+import WeekSlider from '@/components/form/WeekSlider'
 
 export default {
   name: 'ResultView',
-  components: { MutationSelector, SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart },
+  components: {
+    WeekSlider, MutationSelector, SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart
+  },
   props: {
     /**
      * Array of raw data fetched from the server of the form:
@@ -615,7 +609,7 @@ export default {
 }
 
 /* Special formatting for characterizing muts*/
-.char-mut{
+.char-mut {
   background: rgba(255, 255, 0, 0.45);
 }
 
@@ -643,7 +637,7 @@ td.expanded-td tr:hover {
   display: inherit;
 }
 
-td.table-append{
+td.table-append {
   padding: 6px;
   font-size: 0.875rem;
   color: rgba(0, 0, 0, 0.87);

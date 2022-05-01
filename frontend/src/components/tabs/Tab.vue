@@ -64,7 +64,7 @@
                 </v-btn>
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <v-btn class='white--text delete-action' :color='primary_color'
-                       @click='clearForm(); showExplorer = false' small>
+                       @click='clearForm(); showExplorer = false' depressed small>
                   <v-icon left>mdi-close</v-icon>
                   CLEAR
                 </v-btn>
