@@ -22,7 +22,7 @@
         deleted</i> at the user's choice).
       </p>
 
-      <Paragraph :src='introImg' img-max-height='230' left>
+      <Paragraph :src='introImg' img-max-height='230' left no-zoom>
         <p>
           The underlying mechanism of both methodologies is the same: each amino acid mutation is analyzed for a
           <b>time period of 4 weeks</b>.<br />

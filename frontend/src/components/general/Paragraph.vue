@@ -8,6 +8,7 @@
   ├── left:         If true, the text is on the left side
   ├── alt:          Alt attribute for the image
   ├── largerImg:    If true, the image is larger
+  ├── noZoom:       If true, the image cannot be opened in a popup
   └── imgMaxHeight: Max height attribute for the image
 
   Slots:
@@ -39,8 +40,14 @@
       </slot>
     </v-col>
     <v-col v-if='src' :class='(largerImg? "col-md-8 col-sm-12": "col-md-6 col-sm-7")+" mb-5 mt-5"'>
-      <v-img :src='src' :alt='alt' contain :max-height='imgMaxHeight' eager />
+      <v-img :src='src' :alt='alt' contain :max-height='imgMaxHeight' :class='noZoom? "":"zoom-in-action"' eager
+             @click='manageImgZoom' />
     </v-col>
+
+    <!-- Dialog element for image -->
+    <v-dialog v-model="showImg" transition="dialog-bottom-transition" >
+      <v-img :src='src' :alt='alt' contain eager class='zoom-out-action' @click='showImg=false' />
+    </v-dialog>
   </v-row>
 </template>
 
@@ -64,8 +71,36 @@ export default {
     right: Boolean,
 
     /** If true, the image is larger */
-    largerImg: Boolean
+    largerImg: Boolean,
+
+    /** If true, the image cannot be opened in a popup */
+    noZoom: Boolean
+  },
+  data () {
+    return {
+      /** Visibility flag for the img dialog */
+      showImg: false
+    }
+  },
+  methods: {
+    manageImgZoom () {
+      if (!this.noZoom) {
+        this.showImg = true
+      }
+    }
   }
 }
 </script>
+
+<style scoped>
+
+/** Cursor behavior */
+.zoom-out-action{
+  cursor: zoom-out !important;
+}
+.zoom-in-action{
+  cursor: zoom-in;
+}
+
+</style>
 
