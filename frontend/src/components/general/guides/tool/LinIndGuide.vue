@@ -135,8 +135,8 @@
           Heatmap</b>, 6 amino acid changes in the <i>Spike glycoprotein</i> are singled out due
           to <i>remarkable increase in frequency</i> (from 1% to 11%).
         </p>
-        <Picture :src='uc1.img2' :alt='uc1.alt2' />
-        <Picture :src='uc1.img3' :alt='uc1.alt3' />
+        <Picture :src='uc1.img2' />
+        <Picture :src='uc1.img3' />
         <p class='mt-5'>
           Similar patterns of <i>increase in frequency</i> of the 6 selected amino acid changes
           can be observed also from the <b>Diffusion Trend Chart</b> and <b>Diffusion Odds Ratio</b> plots.
@@ -145,8 +145,8 @@
           Importantly, the 6 amino acid changes highlighted in the plot account for the complete
           set of amino-acid changes in Spike of the <b>Alpha SARS-CoV-2 variant</b>.
         </p>
-        <Picture :src='uc1.img4' :alt='uc1.alt4' />
-        <Picture :src='uc1.img5' :alt='uc1.alt5' />
+        <Picture :src='uc1.img4' />
+        <Picture :src='uc1.img5' />
       </UseCase>
 
       <!-- UC2 -->
@@ -213,7 +213,7 @@
           <i>The greater uniformity of plots describing mutation trends in Europe vs
             North America may indicate greater accuracy in sequencing processes.</i>
         </p>
-        <Collage :src1='uc3.img1' :alt1='uc3.alt1' :src2='uc3.img2' :alt2='uc3.alt2'></Collage>
+        <Collage :src1='uc3.img1' :src2='uc3.img2' ></Collage>
       </UseCase>
     </template>
 
@@ -244,41 +244,22 @@ export default {
 
       uc1: {
         img1: require('../../../../assets/guide/lin_ind/uc/uc1/img1.png'),
-        alt1: '',
-
         img2: require('../../../../assets/guide/lin_ind/uc/uc1/img2.png'),
-        alt2: '',
-
         img3: require('../../../../assets/guide/lin_ind/uc/uc1/img3.png'),
-        alt3: '',
-
         img4: require('../../../../assets/guide/lin_ind/uc/uc1/img4.png'),
-        alt4: '',
-
-        img5: require('../../../../assets/guide/lin_ind/uc/uc1/img5.png'),
-        alt5: ''
+        img5: require('../../../../assets/guide/lin_ind/uc/uc1/img5.png')
       },
 
       uc2: {
         img1: require('../../../../assets/guide/lin_ind/uc/uc2/img1.png'),
-        alt1: '',
-
         img2: require('../../../../assets/guide/lin_ind/uc/uc2/img2.png'),
-        alt2: '',
-
         img3: require('../../../../assets/guide/lin_ind/uc/uc2/img3.png'),
-        alt3: '',
-
-        img4: require('../../../../assets/guide/lin_ind/uc/uc2/img4.png'),
-        alt4: ''
+        img4: require('../../../../assets/guide/lin_ind/uc/uc2/img4.png')
       },
 
       uc3: {
         img1: require('../../../../assets/guide/lin_ind/uc/uc3/img1.png'),
-        alt1: '',
-
-        img2: require('../../../../assets/guide/lin_ind/uc/uc3/img2.png'),
-        alt2: ''
+        img2: require('../../../../assets/guide/lin_ind/uc/uc3/img2.png')
       }
 
     }

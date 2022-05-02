@@ -99,9 +99,9 @@
           in the <i>spike glycoprotein</i> according to the submitter.
         </p>
         <div class='with-borders'>
-          <Picture :src='uc1.img1' :alt='uc1.img1' img-max-height='300' />
-          <Collage :src1='uc1.img2' :alt1='uc1.alt2' :src2='uc1.img3' :alt2='uc1.alt3' img-max-height='300' />
-          <Picture :src='uc1.img4' :alt='uc1.img4' img-max-height='300' />
+          <Picture :src='uc1.img1' img-max-height='300' />
+          <Collage :src1='uc1.img2' :src2='uc1.img3' img-max-height='300' />
+          <Picture :src='uc1.img4' img-max-height='300' />
         </div>
         <Paragraph :src='uc1.img5' left larger-img>
           <p class='mt-sm-5'>
@@ -110,7 +110,7 @@
             <i>(March 2022)</i> where the novel lineage first emerged.
           </p>
         </Paragraph>
-        <Picture :src='uc1.img6' :alt='uc1.img6' />
+        <Picture :src='uc1.img6' />
         <p class='mt-5'>
           A clear <i>increase</i> in the prevalence of <span class='monospaced'>L452Q</span>
           within <b>lineage BA.2.12.2</b> is observed both from the <b>Diffusion Odds Ratio</b> plot
@@ -118,8 +118,8 @@
           As outlined from the <b>Diffusion Odds Ratio</b> plot the amino acid change that defines
           the new lineage seems to be associated with a clear <i>growth advantage</i>.
         </p>
-        <Picture :src='uc1.img7' :alt='uc1.img7' />
-        <Picture :src='uc1.img8' :alt='uc1.img8' />
+        <Picture :src='uc1.img7' />
+        <Picture :src='uc1.img8' />
         <p class='mt-5'>
           <i>Please note that in this plot values
             <span class='monospaced'>around 1</span> indicate a steady state:
@@ -143,9 +143,9 @@
           in the <i>spike glycoprotein</i> according to the submitter.
         </p>
         <div class='with-borders'>
-          <Picture :src='uc2.img1' :alt='uc2.img1' img-max-height='300' />
-          <Collage :src1='uc2.img2' :alt1='uc2.alt2' :src2='uc2.img3' :alt2='uc2.alt3' img-max-height='300' />
-          <Picture :src='uc2.img4' :alt='uc2.img4' img-max-height='300' />
+          <Picture :src='uc2.img1' img-max-height='300' />
+          <Collage :src1='uc2.img2' :src2='uc2.img3' img-max-height='300' />
+          <Picture :src='uc2.img4' img-max-height='300' />
         </div>
         <Paragraph :src='uc2.img5' left larger-img>
           <p class='mt-sm-5'>
@@ -154,13 +154,13 @@
             <i>(March 2022)</i> where the novel lineage first emerged.
           </p>
         </Paragraph>
-        <Picture :src='uc2.img6' :alt='uc2.img6' />
+        <Picture :src='uc2.img6' />
         <p class='mt-5'>
           A clear <i>increase</i> in the prevalence of <span class='monospaced'>Q628K</span>
           within <b>lineage BA.1.15.2</b> is observed both from the <b>Diffusion Odds Ratio</b> plot
           and the <b>Diffusion Heatmap</b>.
         </p>
-        <Paragraph :src='uc2.img7' :alt='uc2.img7' right larger-img>
+        <Paragraph :src='uc2.img7' right larger-img>
           <p>
             Interestingly, we also observe a similar increase in the prevalence of
             <span class='monospaced'>S:V320I</span>, an amino acid change that to the best of
@@ -168,7 +168,7 @@
             <b>BA.1.15</b>.
           </p>
         </Paragraph>
-        <Paragraph :src='uc2.img8' :alt='uc2.img8' left larger-img>
+        <Paragraph :src='uc2.img8' left larger-img>
           <p>
             Both <span class='monospaced'>S:V320I</span> and <span class='monospaced'>S:Q628K</span>
             show a similar relative growth advantage according to the <b>Diffusion Odds Ratio</b> plot
@@ -203,9 +203,9 @@
           in <i>France</i> compared to the parental <b>lineage AY.122</b>.
         </p>
         <div class='with-borders'>
-          <Picture :src='uc3.img1' :alt='uc3.img1' img-max-height='300' />
-          <Collage :src1='uc3.img2' :alt1='uc3.alt2' :src2='uc3.img3' :alt2='uc3.alt3' img-max-height='300' />
-          <Picture :src='uc3.img4' :alt='uc3.img4' img-max-height='300' />
+          <Picture :src='uc3.img1' img-max-height='300' />
+          <Collage :src1='uc3.img2' :src2='uc3.img3' img-max-height='300' />
+          <Picture :src='uc3.img4' img-max-height='300' />
         </div>
         <Paragraph :src='uc3.img5' left larger-img>
           <p class='mt-sm-5'>
@@ -220,20 +220,20 @@
             using a dump of the <b>GISAID database as of on 06/02/2022</b>
           </i>
         </p>
-        <Picture :src='uc3.img6' :alt='uc3.img6' />
+        <Picture :src='uc3.img6' />
         <p class='mt-5'>
           A clear increase in the prevalence of <span class='monospaced'>S:E484A</span>
           and of another amino acid change in spike, <span class='monospaced'>S:181V</span>
           can be clearly observed within <b>lineage AY.122</b> from the main output of Variant Hunter.
         </p>
-        <Paragraph :src='uc3.img7' :alt='uc3.img7' right larger-img>
+        <Paragraph :src='uc3.img7' right larger-img>
           <p>
             According to the <b>Diffusion Heatmap</b> both changes show a <i>consistent increase</i>
             in prevalence <span class='monospaced'>(from 10 to 26%)</span> in the interval of
             time included in the analysis.
           </p>
         </Paragraph>
-        <Paragraph :src='uc3.img8' :alt='uc3.img8' left larger-img>
+        <Paragraph :src='uc3.img8' left larger-img>
           <p>
             The <b>Diffusion Odds Ratio</b> plot is consistent with a relative advantage
             in growth for both amino acid changes, as demonstrated by the <i>constant increase</i>
@@ -269,80 +269,35 @@ export default {
 
       uc1: {
         img1: require('../../../../assets/guide/lin_dep/uc/uc1/img1.png'),
-        alt1: '',
-
         img2: require('../../../../assets/guide/lin_dep/uc/uc1/img2.png'),
-        alt2: '',
-
         img3: require('../../../../assets/guide/lin_dep/uc/uc1/img3.png'),
-        alt3: '',
-
         img4: require('../../../../assets/guide/lin_dep/uc/uc1/img4.png'),
-        alt4: '',
-
         img5: require('../../../../assets/guide/lin_dep/uc/uc1/img5.png'),
-        alt5: '',
-
         img6: require('../../../../assets/guide/lin_dep/uc/uc1/img6.png'),
-        alt6: '',
-
         img7: require('../../../../assets/guide/lin_dep/uc/uc1/img7.png'),
-        alt7: '',
-
-        img8: require('../../../../assets/guide/lin_dep/uc/uc1/img8.png'),
-        alt8: ''
+        img8: require('../../../../assets/guide/lin_dep/uc/uc1/img8.png')
       },
 
       uc2: {
         img1: require('../../../../assets/guide/lin_dep/uc/uc2/img1.png'),
-        alt1: '',
-
         img2: require('../../../../assets/guide/lin_dep/uc/uc2/img2.png'),
-        alt2: '',
-
         img3: require('../../../../assets/guide/lin_dep/uc/uc2/img3.png'),
-        alt3: '',
-
         img4: require('../../../../assets/guide/lin_dep/uc/uc2/img4.png'),
-        alt4: '',
-
         img5: require('../../../../assets/guide/lin_dep/uc/uc2/img5.png'),
-        alt5: '',
-
         img6: require('../../../../assets/guide/lin_dep/uc/uc2/img6.png'),
-        alt6: '',
-
         img7: require('../../../../assets/guide/lin_dep/uc/uc2/img7.png'),
-        alt7: '',
-
-        img8: require('../../../../assets/guide/lin_dep/uc/uc2/img8.png'),
-        alt8: ''
+        img8: require('../../../../assets/guide/lin_dep/uc/uc2/img8.png')
       },
 
       uc3: {
         img1: require('../../../../assets/guide/lin_dep/uc/uc3/img1.png'),
-        alt1: '',
-
         img2: require('../../../../assets/guide/lin_dep/uc/uc3/img2.png'),
-        alt2: '',
-
         img3: require('../../../../assets/guide/lin_dep/uc/uc3/img3.png'),
-        alt3: '',
-
         img4: require('../../../../assets/guide/lin_dep/uc/uc3/img4.png'),
-        alt4: '',
-
         img5: require('../../../../assets/guide/lin_dep/uc/uc3/img5.png'),
-        alt5: '',
-
         img6: require('../../../../assets/guide/lin_dep/uc/uc3/img6.png'),
-        alt6: '',
-
         img7: require('../../../../assets/guide/lin_dep/uc/uc3/img7.png'),
-        alt7: '',
-
-        img8: require('../../../../assets/guide/lin_dep/uc/uc3/img8.png'),
-        alt8: ''
+        img8: require('../../../../assets/guide/lin_dep/uc/uc3/img8.png')
       }
     }
   }
