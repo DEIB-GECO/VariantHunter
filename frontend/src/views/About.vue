@@ -45,7 +45,7 @@
     </v-row>
 
     <!-- Tool info -->
-    <v-row  class='with-separator'>
+    <v-row  class='with-separator underlined-links'>
       <ToolGuide />
     </v-row>
 
@@ -292,6 +292,7 @@ h4 {
   font-family: monospace !important;
   padding-left: 5px;
   padding-right: 5px;
+  text-transform: initial !important;
 }
 
 /** Full width expand-collapse button */

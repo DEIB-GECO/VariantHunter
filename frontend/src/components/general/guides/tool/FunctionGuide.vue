@@ -19,7 +19,7 @@
     </template>
 
     <template v-slot:title>
-      {{ title }}
+      <span v-html='title'></span>
     </template>
 
     <template v-slot:default>
@@ -29,7 +29,7 @@
       </slot>
 
       <!-- USE CASES -->
-      <v-row v-if='!noUseCases' class='ma-10'>
+      <v-row v-if='!noUseCases' class='mt-10 mb-10 ml-0 mr-0'>
         <v-expansion-panels class='mt-3' flat>
 
           <slot name='use-cases'>

@@ -174,11 +174,27 @@
 
       <!-- TIME/MEMORY ALERT -->
       <v-alert class='mt-4' type='warning' icon='mdi-exclamation-thick' outlined dense>
-        Depending on the amount of data imported into the tool from the <span class='monospaced'>.tsv</span> file, the
-        process may take some time and tens of GB (10M sequences may require even 30 GB to be processed). <b>It is
-        strongly recommended to import only the data of interest
-        for the analysis,</b> by specifying <span class='monospaced'>LOCATIONS</span>, <span class='monospaced'>
-          START_DATE</span> and <span class='monospaced'>END_DATE</span>.
+        <p>
+          <b>It is strongly recommended to import into the tool only the data of interest for the intended analysis</b>
+          (by specifying
+          <span class='monospaced'>LOCATIONS</span>,
+          <span class='monospaced'>START_DATE</span> and
+          <span class='monospaced'>END_DATE</span>),
+          as the database generation may require <u>significant time and storage resources</u>.
+        </p>
+        <p>
+          <i>Consider that generating a database starting from ~10M sequences (size of
+          GISAID <span class='monospaced'>metadata.tsv</span> as of April 2022) may require
+          ~30GB (during processing) and ~2 hours on a standard machine (macOS, 4 cores, 16GB RAM).
+          In this case, after the processing, the Docker container requires ~8GB.</i>
+        </p>
+        </v-alert>
+        <v-alert class='mt-4' type='warning' icon='mdi-exclamation-thick' outlined dense>
+        <p>
+          <b>It is also suggested to always export the database file</b> by specifying the <span class='monospaced'>DB_PATH</span>
+          parameter, so that the Docker container can be restarted instantaneously in the next sessions
+          (no need to regenerate the database from the <span class='monospaced'>.tsv</span> file).
+        </p>
       </v-alert>
     </v-timeline-item>
 

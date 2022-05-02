@@ -10,18 +10,17 @@
 -->
 
 <template>
-  <v-expansion-panel>
+  <ExpansionPanel>
 
-    <v-expansion-panel-header class='grey lighten-5'>
-      <v-col class='col-auto'>
-        <v-icon left color='black'>mdi-lightbulb-on-outline</v-icon>
-      </v-col>
-      <v-col>
-        {{ name }}
-      </v-col>
-    </v-expansion-panel-header>
+    <template v-slot:icons>
+      <v-icon left color='#000000DE'>mdi-lightbulb-on-outline</v-icon>
+    </template>
 
-    <v-expansion-panel-content class='grey lighten-5'>
+    <template v-slot:title>
+      <span v-html='name'></span>
+    </template>
+
+    <template v-slot:default>
       <slot>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
@@ -32,17 +31,19 @@
         cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </p>
       </slot>
-    </v-expansion-panel-content>
+    </template>
 
-  </v-expansion-panel>
+  </ExpansionPanel>
 </template>
 
 <script>
+import ExpansionPanel from '@/components/general/ExpansionPanel'
 export default {
   name: 'UseCase',
+  components: { ExpansionPanel },
   props: {
     /** Title for the use case */
-    name: {}
+    name: { required: true }
   }
 }
 </script>

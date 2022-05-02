@@ -40,20 +40,16 @@
       </slot>
     </v-col>
     <v-col v-if='src' :class='(largerImg? "col-md-8 col-sm-12": "col-md-6 col-sm-7")+" mb-5 mt-5"'>
-      <v-img :src='src' :alt='alt' contain :max-height='imgMaxHeight' :class='noZoom? "":"zoom-in-action"' eager
-             @click='manageImgZoom' />
+      <Picture :src='src' :alt='alt' :max-height='imgMaxHeight' :no-zoom='noZoom' />
     </v-col>
-
-    <!-- Dialog element for image -->
-    <v-dialog v-model="showImg" transition="dialog-bottom-transition" >
-      <v-img :src='src' :alt='alt' contain eager class='zoom-out-action' @click='showImg=false' />
-    </v-dialog>
   </v-row>
 </template>
 
 <script>
+import Picture from '@/components/general/Picture'
 export default {
   name: 'Paragraph',
+  components: { Picture },
   props: {
     /** Image for the paragraph */
     src: {},
@@ -75,32 +71,11 @@ export default {
 
     /** If true, the image cannot be opened in a popup */
     noZoom: Boolean
-  },
-  data () {
-    return {
-      /** Visibility flag for the img dialog */
-      showImg: false
-    }
-  },
-  methods: {
-    manageImgZoom () {
-      if (!this.noZoom) {
-        this.showImg = true
-      }
-    }
   }
 }
 </script>
 
 <style scoped>
-
-/** Cursor behavior */
-.zoom-out-action{
-  cursor: zoom-out !important;
-}
-.zoom-in-action{
-  cursor: zoom-in;
-}
 
 </style>
 

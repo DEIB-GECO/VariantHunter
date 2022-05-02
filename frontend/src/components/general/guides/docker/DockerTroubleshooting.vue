@@ -58,7 +58,8 @@
                             go to <i> Preferences > Resources: Advanced </i> and increase the value for (maximum) <i>"Disk
                             image size"</i>. Then press <i>"Apply & Restart"</i>.<br />
                             Notice that this amount of storage space must then also be actually available on the device.
-                            <v-img :src='dockerSettingsImg' alt='Screenshot to illustrate the steps to be performed' contain max-height='300'/>
+                            <v-img :src='dockerSettingsImg' alt='Screenshot to illustrate the steps to be performed'
+                                   contain max-height='300' />
                           </li>
                         </ul>
 
@@ -136,12 +137,25 @@
               <v-expansion-panel-content class='blue-grey lighten-5 steps'>
 
                 <p>
-                  Depending on the amount of data imported into the tool from the <span class='monospaced'>.tsv</span>
-                  file, the process may take some time and tens of GB. <b>It is strongly recommended to
-                  import only the data of interest for the analysis,</b>by specifying
+                  <b>It is strongly recommended to import into the tool only the data of interest for the intended
+                    analysis</b>
+                  (by specifying
                   <span class='monospaced'>LOCATIONS</span>,
                   <span class='monospaced'>START_DATE</span> and
-                  <span class='monospaced'>END_DATE</span>.
+                  <span class='monospaced'>END_DATE</span>),
+                  as the database generation may require <u>significant time and storage resources</u>.
+                </p>
+                <p>
+                  <i>Consider that generating a database starting from ~10M sequences (size of
+                    GISAID <span class='monospaced'>metadata.tsv</span> as of April 2022) may require
+                    ~30GB (during processing) and ~2 hours on a standard machine (macOS, 4 cores, 16GB RAM).
+                    Instead, after startup, the Docker container may require ~8GB.</i>
+                </p>
+                <p>
+                  <b>It is also suggested to always export the database file</b> by specifying the <span
+                  class='monospaced'>DB_PATH</span>
+                  parameter, so that the Docker container can be restarted instantaneously in the next sessions
+                  (no need to regenerate the database from the <span class='monospaced'>.tsv</span> file).
                 </p>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -159,12 +173,25 @@
               <v-expansion-panel-content class='blue-grey lighten-5 steps'>
 
                 <p>
-                  Depending on the amount of data imported into the tool from the <span class='monospaced'>.tsv</span>
-                  file, the process may take some time and tens of GB. <b>It is strongly recommended to
-                  import only the data of interest for the analysis,</b>by specifying
+                  <b>It is strongly recommended to import into the tool only the data of interest for the intended
+                    analysis</b>
+                  (by specifying
                   <span class='monospaced'>LOCATIONS</span>,
                   <span class='monospaced'>START_DATE</span> and
-                  <span class='monospaced'>END_DATE</span>.
+                  <span class='monospaced'>END_DATE</span>),
+                  as the database generation may require <u>significant time and storage resources</u>.
+                </p>
+                <p>
+                  <i>Consider that generating a database starting from ~10M sequences (size of
+                    GISAID <span class='monospaced'>metadata.tsv</span> as of April 2022) may require
+                    ~30GB (during processing) and ~2 hours on a standard machine (macOS, 4 cores, 16GB RAM).
+                    Instead, after startup, the Docker container may require ~8GB.</i>
+                </p>
+                <p>
+                  <b>It is also suggested to always export the database file</b> by specifying the <span
+                  class='monospaced'>DB_PATH</span>
+                  parameter, so that the Docker container can be restarted instantaneously in the next sessions
+                  (no need to regenerate the database from the <span class='monospaced'>.tsv</span> file).
                 </p>
 
               </v-expansion-panel-content>
@@ -183,12 +210,12 @@
               <v-expansion-panel-content class='blue-grey lighten-5 steps'>
 
                 <p>
-                  If your problem is not listed above, then please contact us. <br/>
+                  If your problem is not listed above, then please contact us. <br />
                   Let us know your problem and we will try to fix it as soon as possible.
                 </p>
                 <v-btn color='success' small depressed outlined rounded @click.native='showContacts()'>
                   <v-icon left>mdi-email-fast</v-icon>
-                  go to the  contact list
+                  go to the contact list
                 </v-btn>
               </v-expansion-panel-content>
             </v-expansion-panel>
