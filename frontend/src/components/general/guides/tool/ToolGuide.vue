@@ -51,7 +51,7 @@
 
     <v-container class='pl-0 pl-sm-10 pr-0 pr-sm-10 pb-5'>
 
-      <v-expansion-panels class='mt-3' flat>
+      <v-expansion-panels multiple class='mt-3' flat>
 
         <!-- LINEAGE INDEPENDENT -->
         <LinIndGuide/>

@@ -149,7 +149,7 @@
                   <i>Consider that generating a database starting from ~10M sequences (size of
                     GISAID <span class='monospaced'>metadata.tsv</span> as of April 2022) may require
                     ~30GB (during processing) and ~2 hours on a standard machine (macOS, 4 cores, 16GB RAM).
-                    Instead, after startup, the Docker container may require ~8GB.</i>
+                    In this case, after the processing, the Docker container requires ~8GB.</i>
                 </p>
                 <p>
                   <b>It is also suggested to always export the database file</b> by specifying the <span
@@ -185,7 +185,7 @@
                   <i>Consider that generating a database starting from ~10M sequences (size of
                     GISAID <span class='monospaced'>metadata.tsv</span> as of April 2022) may require
                     ~30GB (during processing) and ~2 hours on a standard machine (macOS, 4 cores, 16GB RAM).
-                    Instead, after startup, the Docker container may require ~8GB.</i>
+                    In this case, after the processing, the Docker container requires ~8GB.</i>
                 </p>
                 <p>
                   <b>It is also suggested to always export the database file</b> by specifying the <span

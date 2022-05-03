@@ -30,7 +30,7 @@
 
       <!-- USE CASES -->
       <v-row v-if='!noUseCases' class='mt-10 mb-10 ml-0 mr-0'>
-        <v-expansion-panels class='mt-3' flat>
+        <v-expansion-panels multiple class='mt-3' flat>
 
           <slot name='use-cases'>
           </slot>
