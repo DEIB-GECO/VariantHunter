@@ -217,7 +217,7 @@
         <p>
           <i>
             In this case all the analyses were executed by means of the Docker implementation of Variant Hunter,
-            using a dump of the <b>GISAID database as of on 06/02/2022</b>
+            using a dump of the <b>GISAID database obtained on 06/02/2022</b>
           </i>
         </p>
         <Picture :src='uc3.img6' />
