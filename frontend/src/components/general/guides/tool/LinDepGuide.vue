@@ -180,9 +180,9 @@
           </p>
         </Paragraph>
         <p>
-          <i>Please note that in this plot values
+          <i>In this plot values
             <span class='monospaced'>around 1</span> indicate a steady state:
-            (no increase or decrease in frequency),
+            no increase or decrease in frequency,
             values <span class='monospaced'>below 1</span> indicate a decrease,
             and values <span class='monospaced'>> 1</span> are indicative of
             rapid increase/relative growth advantage.</i>
@@ -217,28 +217,38 @@
         <p>
           <i>
             In this case all the analyses were executed by means of the Docker implementation of Variant Hunter,
-            using a dump of the <b>GISAID database obtained on 06/02/2022</b>
+            using a dump of the <b>GISAID database obtained on 06/02/2022</b>.
           </i>
         </p>
         <Picture :src='uc3.img6' />
         <p class='mt-5'>
-          A clear increase in the prevalence of <span class='monospaced'>S:E484A</span>
-          and of another amino acid change in spike, <span class='monospaced'>S:181V</span>
-          can be clearly observed within <b>lineage AY.122</b> from the main output of Variant Hunter.
+          From the main output of Variant Hunter a clear increase in the prevalence
+          of <span class='monospaced'>S:E484A</span> and of another amino acid change in spike,
+          <span class='monospaced'>S:181V</span> can be observed within <b>lineage AY.122</b>.
         </p>
         <Paragraph :src='uc3.img7' right larger-img>
           <p>
             According to the <b>Diffusion Heatmap</b> both changes show a <i>consistent increase</i>
-            in prevalence <span class='monospaced'>(from 10 to 26%)</span> in the interval of
+            in prevalence <span class='monospaced'>(from 10% to 26%)</span> in the interval of
             time included in the analysis.
           </p>
         </Paragraph>
         <Paragraph :src='uc3.img8' left larger-img>
           <p>
             The <b>Diffusion Odds Ratio</b> plot is consistent with a relative advantage
-            in growth for both amino acid changes, as demonstrated by the <i>constant increase</i>
-            in the "diffusion" odd ratio and by the fact that values of odd ratio > 1 are
-            recovered at every time point of the 4 weeks interval considered in the analysis
+            in growth for both amino acid changes (<span class='monospaced'>S:E484A</span> and
+            <span class='monospaced'>S:G181V</span>), as illustrated by the
+            <i>constant increase</i> of the "diffusion" odd ratio in the corresponding plot;
+            and by the fact that values of odd ratio > 1 are recovered at every time point of
+            the 4 weeks interval considered in the analysis.<br />
+            <i>
+              Indeed, in this plot values
+              <span class='monospaced'>around 1</span> indicate a steady state:
+              no increase or decrease in frequency,
+              values <span class='monospaced'>below 1</span> indicate a decrease,
+              and values <span class='monospaced'>> 1</span> are indicative of
+              rapid increase/relative growth advantage.
+            </i>
           </p>
         </Paragraph>
       </UseCase>
