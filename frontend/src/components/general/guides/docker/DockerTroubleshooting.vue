@@ -137,26 +137,39 @@
               <v-expansion-panel-content class='blue-grey lighten-5 steps'>
 
                 <p>
-                  <b>It is strongly recommended to import into the tool only the data of interest for the intended
-                    analysis</b>
-                  (by specifying
+                  <b>It is strongly recommended to import into the tool only the data of
+                    interest for the intended analysis</b> (by specifying
                   <span class='monospaced'>LOCATIONS</span>,
                   <span class='monospaced'>START_DATE</span> and
                   <span class='monospaced'>END_DATE</span>),
                   as the database generation may require <u>significant time and storage resources</u>.
                 </p>
-                <p>
-                  <i>Consider that generating a database starting from ~10M sequences (size of
-                    GISAID <span class='monospaced'>metadata.tsv</span> as of April 2022) may require
-                    ~30GB (during processing) and ~2 hours on a standard machine (macOS, 4 cores, 16GB RAM).
-                    In this case, after the processing, the Docker container requires ~8GB.</i>
-                </p>
+
+                <i>Consider that, on a standard machine (macOS, 4 cores, 16GB RAM), generating a database starting
+                  from:</i>
+                <ul>
+                  <li>
+                    <i>~10M sequences (size of GISAID <span class='monospaced'>metadata.tsv</span>
+                      as of April 2022) may require ~30GB (during processing) and ~2 hrs.
+                      In this case, after the processing, the Docker container requires ~8GB;</i>
+                  </li>
+                  <li>
+                    <i>~1M sequences may require ~5GB (during processing) and ~30 min.</i>
+                  </li>
+                </ul>
+
                 <p>
                   <b>It is also suggested to always export the database file</b> by specifying the <span
                   class='monospaced'>DB_PATH</span>
                   parameter, so that the Docker container can be restarted instantaneously in the next sessions
-                  (no need to regenerate the database from the <span class='monospaced'>.tsv</span> file).
+                  (no need to regenerate the database from the <span class='monospaced'>.tsv</span> file).</p>
+                <p>
+                  This operation may slow down the procedure <i>(order of 3 hrs on the above configuration
+                  involving ~10M sequences)</i>.
+                  For complex analyses, it is suggested to generate the database when the machine is not in use
+                  (e.g. overnight).
                 </p>
+
               </v-expansion-panel-content>
             </v-expansion-panel>
 
@@ -173,25 +186,37 @@
               <v-expansion-panel-content class='blue-grey lighten-5 steps'>
 
                 <p>
-                  <b>It is strongly recommended to import into the tool only the data of interest for the intended
-                    analysis</b>
-                  (by specifying
+                  <b>It is strongly recommended to import into the tool only the data of
+                    interest for the intended analysis</b> (by specifying
                   <span class='monospaced'>LOCATIONS</span>,
                   <span class='monospaced'>START_DATE</span> and
                   <span class='monospaced'>END_DATE</span>),
                   as the database generation may require <u>significant time and storage resources</u>.
                 </p>
-                <p>
-                  <i>Consider that generating a database starting from ~10M sequences (size of
-                    GISAID <span class='monospaced'>metadata.tsv</span> as of April 2022) may require
-                    ~30GB (during processing) and ~2 hours on a standard machine (macOS, 4 cores, 16GB RAM).
-                    In this case, after the processing, the Docker container requires ~8GB.</i>
-                </p>
+
+                <i>Consider that, on a standard machine (macOS, 4 cores, 16GB RAM), generating a database starting
+                  from:</i>
+                <ul>
+                  <li>
+                    <i>~10M sequences (size of GISAID <span class='monospaced'>metadata.tsv</span>
+                      as of April 2022) may require ~30GB (during processing) and ~2 hrs.
+                      In this case, after the processing, the Docker container requires ~8GB;</i>
+                  </li>
+                  <li>
+                    <i>~1M sequences may require ~5GB (during processing) and ~30 min.</i>
+                  </li>
+                </ul>
+
                 <p>
                   <b>It is also suggested to always export the database file</b> by specifying the <span
                   class='monospaced'>DB_PATH</span>
                   parameter, so that the Docker container can be restarted instantaneously in the next sessions
-                  (no need to regenerate the database from the <span class='monospaced'>.tsv</span> file).
+                  (no need to regenerate the database from the <span class='monospaced'>.tsv</span> file).</p>
+                <p>
+                  This operation may slow down the procedure <i>(order of 3 hrs on the above configuration
+                  involving ~10M sequences)</i>.
+                  For complex analyses, it is suggested to generate the database when the machine is not in use
+                  (e.g. overnight).
                 </p>
 
               </v-expansion-panel-content>
