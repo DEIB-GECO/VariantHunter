@@ -13,11 +13,28 @@
       <p>
         <i>VariantHunter</i> analyzes the frequencies of amino acid mutations of <i>SARS-CoV-2</i> in order to <b>observe
         interesting variant trends</b> or <b>identify novel emerging variants</b>.
+      </p>
+      <p>
+        The
+        <router-link to='/variant_hunter'>
+          <v-btn :color='secondary_color' x-small depressed outlined rounded>
+            <v-icon x-small>mdi-link</v-icon>
+            &nbsp;online version of the tool
+          </v-btn>
+        </router-link>
+        contains updated data from
+        <i>GenBank</i>,
+        curated and made openly available by <i>Nextstrain</i> at
+        <a href='https://nextstrain.org/ncov/open/global' target='_blank' class='link-alt'>this link</a> ,
+        and regularly imported within <i>VariantHunter</i>.
 
+        If users wish to use <i>private</i> data or <i>GISAID</i> data, they may employ our
+        <i>Docker implementation</i>, as explained below in the
+        <a href='#docker' class='link-alt'>dedicated section</a>.
+      </p>
+      <p>
         <i>VariantHunter</i> supports two modes of analysis: <b>Lineage Independent</b> and <b>Lineage
         Dependent</b>.
-      <p />
-      <p>
         Each mode allows to open several analysis sessions (managed in panels that can be <i>expanded, collapsed, or
         deleted</i> at the user's choice).
       </p>
@@ -54,10 +71,10 @@
       <v-expansion-panels multiple class='mt-3' flat>
 
         <!-- LINEAGE INDEPENDENT -->
-        <LinIndGuide/>
+        <LinIndGuide />
 
         <!-- LINEAGE SPECIFIC -->
-        <LinDepGuide/>
+        <LinDepGuide />
 
       </v-expansion-panels>
     </v-container>
@@ -70,6 +87,7 @@
 import Paragraph from '@/components/general/Paragraph'
 import LinIndGuide from '@/components/general/guides/tool/LinIndGuide'
 import LinDepGuide from '@/components/general/guides/tool/LinDepGuide'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ToolGuide',
@@ -79,6 +97,9 @@ export default {
       /** Images */
       introImg: require('../../../../assets/guide/intro.png')
     }
+  },
+  computed: {
+    ...mapState(['secondary_color'])
   }
 }
 </script>
@@ -96,6 +117,10 @@ export default {
 
 .highlight {
   background: rgba(255, 255, 0, .45);
+}
+
+.linkk-alt{
+  color: darkgrey !important;
 }
 
 </style>

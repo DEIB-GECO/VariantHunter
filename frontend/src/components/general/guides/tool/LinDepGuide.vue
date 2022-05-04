@@ -87,7 +87,8 @@
     <template v-slot:use-cases>
 
       <!-- UC1 -->
-      <UseCase name='<b>Use case 1</b>: Omicron BA.2.12.2 lineage'>
+      <UseCase source-name='Nextstrain' source-date='19/04/2022'
+               name='<b>Use case 1</b>: Omicron BA.2.12.2 lineage'>
         <p>
           Here we report a collection of screenshots from <b>Pango designation</b>
           <span class='monospaced'>issue 499</span>
@@ -131,7 +132,8 @@
       </UseCase>
 
       <!-- UC2 -->
-      <UseCase name='<b>Use case 2</b>: Omicron BA.1.15.2 lineage'>
+      <UseCase source-name='Nextstrain' source-date='19/04/2022'
+               name='<b>Use case 2</b>: Omicron BA.1.15.2 lineage'>
         <p>
           Here we report a collection of screenshots from <b>Pango designation</b>
           <span class='monospaced'>issue 508</span>
@@ -190,7 +192,8 @@
       </UseCase>
 
       <!-- UC3 -->
-      <UseCase name='<b>Use case 3</b>: Delta AY.122.6 lineage'>
+      <UseCase source-name='Gisaid' source-date='06/02/2022'
+               name='<b>Use case 3</b>: Delta AY.122.6 lineage'>
         <p>
           Here we report a collection of screenshots from <b>Pango designation</b>
           <span class='monospaced'>issue 394</span>

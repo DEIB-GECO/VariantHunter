@@ -121,7 +121,8 @@
     <template v-slot:use-cases>
 
       <!-- UC1 -->
-      <UseCase name='<b>Use case 1:</b> Emergence and spread of the alpha variant in the UK'>
+      <UseCase source-name='Nextstrain' source-date='19/04/2022'
+               name='<b>Use case 1:</b> Emergence and spread of the alpha variant in the UK'>
         <Paragraph :src='uc1.img1' left larger-img>
           <p>
             The following panels show a summary of the main outputs of a "lineage-independent"
@@ -150,7 +151,8 @@
       </UseCase>
 
       <!-- UC2 -->
-      <UseCase name='<b>Use case 2</b>: Early spread of the Delta SARS-CoV-2 variant in the UK'>
+      <UseCase source-name='Nextstrain' source-date='19/04/2022'
+               name='<b>Use case 2</b>: Early spread of the Delta SARS-CoV-2 variant in the UK'>
         <Paragraph :src='uc2.img1' left larger-img>
           <p>
             The following panels show a summary of the main outputs of a "lineage-independent"
@@ -193,8 +195,8 @@
       </UseCase>
 
       <!-- UC3 -->
-      <UseCase
-        name='<b>Use case 3</b>: Spread of the Omicron variant and displacement of Delta in Europe and North America'>
+      <UseCase source-name='Nextstrain' source-date='19/04/2022'
+               name='<b>Use case 3</b>: Spread of the Omicron variant and displacement of Delta in Europe and North America'>
         <p>
           A "lineage-independent" analysis was applied to study the prevalence of amino acid
           changes in the Spike glycoprotein in an interval of time spanning
@@ -213,7 +215,7 @@
           <i>The greater uniformity of plots describing mutation trends in Europe vs
             North America may indicate greater accuracy in sequencing processes.</i>
         </p>
-        <Collage :src1='uc3.img1' :src2='uc3.img2' ></Collage>
+        <Collage :src1='uc3.img1' :src2='uc3.img2'></Collage>
       </UseCase>
     </template>
 
