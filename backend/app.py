@@ -85,6 +85,6 @@ log.setLevel(logging.ERROR)
 
 if __name__ == '__main__':
     port = os.getenv('PORT', 5000)
-    print("\n\n\033[01m\033[32m> * STARTUP COMPLETED:\033[0m\033[32m The application is now accessible from your browser at http://0.0.0.0:"
+    print("\n\n\033[01m\033[32m> * STARTUP COMPLETED:\033[0m\033[32m The application is now accessible from your browser at http://localhost:"
           + str(port) + " (PRESS CTRL+C to stop)\033[0m\n")
     my_app.run(host="0.0.0.0", port=5000)

@@ -110,7 +110,9 @@
       <td>DB_PATH</td>
       <td>
         <p>Path to the <span class='monospaced'>varianthunter.db</span> database file or location where to
-          generate it.</p>
+          generate it. <br/>Further information about the structure of the
+          <span class='monospaced'>.db</span> file can be found in the
+          <a href='https://www.sqlite.org/fileformat.html#the_database_file' target='_blank'>SQLite documentation</a>.</p>
         Usage:
         <ul>
           <li>export the database file</li>

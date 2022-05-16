@@ -96,13 +96,44 @@
 
     <v-timeline-item flat small color='success'>
       <b>Download</b> the <span class='monospaced'>docker-compose.yml</span> file from <a
-      href='https://github.com/DEIB-GECO/VariantHunter/blob/master/docker-compose.yml' target='_blank'> this link</a>
+      href='https://github.com/DEIB-GECO/VariantHunter/blob/master/docker-compose.yml' target='_blank'> this</a> link
+      <br />
+      <v-tooltip bottom color='black' max-width='400'>
+        <template v-slot:activator='{ on, attrs }'>
+        <span v-bind='attrs'
+              v-on='on'>
+          <a class='direct-link' target='_blank'
+             href='https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/DEIB-GECO/VariantHunter/blob/master/docker-compose.yml'>
+            <v-icon left x-small :color='secondary_color'>mdi-monitor-arrow-down-variant</v-icon>DIRECT DOWNLOAD
+          </a>
+        </span>
+        </template>
+        <span>
+        Download docker-compose.yml file as zip arhcive. <br />
+        If you use this link, then you also <b>need to unzip the archive</b>.
+        </span>
+      </v-tooltip>
     </v-timeline-item>
 
     <v-timeline-item v-if='macGuide' flat small color='success'>
       <b>Download</b> the <span class='monospaced'>launcher.sh</span> file from <a
-      href='https://github.com/DEIB-GECO/VariantHunter/blob/master/launcher.sh' target='_blank'> this
-      link</a> and move it into the same folder of the <span class='monospaced'>docker-compose.yml</span> file
+      href='https://github.com/DEIB-GECO/VariantHunter/blob/master/launcher.sh' target='_blank'> this</a>
+      link and move it into the same folder of the <span class='monospaced'>docker-compose.yml</span> file<br />
+      <v-tooltip bottom color='black' max-width='400'>
+        <template v-slot:activator='{ on, attrs }'>
+        <span v-bind='attrs'
+              v-on='on'>
+          <a class='direct-link' target='_blank'
+             href='https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/DEIB-GECO/VariantHunter/blob/master/launcher.sh'>
+            <v-icon left x-small :color='secondary_color'>mdi-monitor-arrow-down-variant</v-icon>DIRECT DOWNLOAD
+          </a>
+        </span>
+        </template>
+        <span>
+        Download launcher.sh file as zip arhcive. <br />
+        If you use this link, then you also <b>need to unzip the archive</b>.
+      </span>
+      </v-tooltip>
     </v-timeline-item>
 
     <v-timeline-item flat small color='success'>
@@ -183,12 +214,12 @@
           as the database generation may require <u>significant time and storage resources</u>.
         </p>
 
-          <i>Consider that, on a standard machine (macOS, 4 cores, 16GB RAM), generating a database starting from:</i>
+        <i>Consider that, on a standard machine (macOS, 4 cores, 16GB RAM), generating a database starting from:</i>
         <ul>
           <li>
-             <i>~10M sequences (size of GISAID <span class='monospaced'>metadata.tsv</span>
-               as of April 2022) may require ~30GB (during processing) and ~2 hrs.
-            In this case, after the processing, the Docker container requires ~8GB;</i>
+            <i>~10M sequences (size of GISAID <span class='monospaced'>metadata.tsv</span>
+              as of April 2022) may require ~30GB (during processing) and ~2 hrs.
+              In this case, after the processing, the Docker container requires ~8GB;</i>
           </li>
           <li>
             <i>~1M sequences may require ~5GB (during processing) and ~30 min.</i>
@@ -213,7 +244,7 @@
     <v-timeline-item flat color='success' icon='mdi-check-bold'>
       Once the setup is <b>completed</b> the log on the terminal shows the following message:<br />
       <span class='monospaced'> * STARTUP COMPLETED: The application is now accessible from your browser at
-              http://0.0.0.0:&lt;PORT&gt;</span><br />
+              http://localhost:&lt;PORT&gt;</span><br />
       Now the database has been loaded and the application is accessible from the browser.
     </v-timeline-item>
 
@@ -240,6 +271,7 @@ import CodeBlock from '@/components/general/CodeBlock'
 import DockerTroubleshooting from '@/components/general/guides/docker/DockerTroubleshooting'
 import DockerParamsTable from '@/components/general/guides/docker/DockerParamsTable'
 import ExpansionPanel from '@/components/general/ExpansionPanel'
+import { mapState } from 'vuex'
 
 export default {
   name: 'DockerGuideSteps',
@@ -256,6 +288,9 @@ export default {
       /** Flag to show/hide the troubleshooting guide */
       showTroubleshooting: false
     }
+  },
+  computed: {
+    ...mapState(['secondary_color'])
   }
 }
 </script>
@@ -274,6 +309,16 @@ ul.aligned-list {
 /** Reduce emphasis of code examples*/
 .examples, .examples * {
   font-size: 14px !important;
+}
+
+.direct-link {
+  font-size: 12px !important;
+  border: 1px solid;
+  padding: 0 10px;
+  cursor: copy !important;
+  border-radius: 20px;
+  break-inside: avoid !important;
+  display: inline-block;
 }
 
 </style>

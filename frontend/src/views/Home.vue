@@ -151,4 +151,10 @@ export default {
 .v-snack__content {
   text-align: center !important;
 }
+
+/* Styling for the slider of plotly charts */
+rect.rangeslider-slidebox{
+  stroke: black;
+  stroke-width: 4px;
+}
 </style>
