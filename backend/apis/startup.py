@@ -16,6 +16,7 @@ from flask_restplus import Namespace
 from .parsers.GisaidParser import GisaidParser
 from .parsers.NextstrainParser import NextstrainParser
 from .utils.arg_manager import get_cmd_arguments
+from .utils.automatic_analyzer import run_auto_analyzer
 from .utils.db_manager import connection_preset, clear_db
 from .utils.path_manager import db_paths as paths
 
@@ -197,3 +198,6 @@ startup()
 
 # clean temporary files
 rmtree(paths.temp_tree, ignore_errors=True)
+
+if args.autoanalyzer:
+    run_auto_analyzer()

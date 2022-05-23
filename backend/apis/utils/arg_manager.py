@@ -40,6 +40,10 @@ def get_cmd_arguments():
                         default=False, action='store_true', dest='regenerate',
                         help="boolean flag to overwrite the current database, if present")
 
+    parser.add_argument('--autoanalyzer', '-aa',
+                        default=False, action='store_true', dest='autoanalyzer',
+                        help="run the auto analyzer at startup")
+
     args = parser.parse_args()
     return args
 
