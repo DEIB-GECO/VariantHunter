@@ -35,8 +35,8 @@ def extract_seq_num(location, lineage):
     Returns: an array of (date, seq_count) pairs
 
     """
-    print("\t Extract number of sequences ...", end="")
-    exec_start = time.time()
+    # print("\t Extract number of sequences ...", end="")
+    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -46,20 +46,20 @@ def extract_seq_num(location, lineage):
                             FROM aggr_sequences SQ
                                 JOIN locations LC ON SQ.location_id = LC.location_id
                                 JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                            WHERE location = '{location}' AND lineage = '{lineage}'
+                            WHERE location = "{location}" AND lineage = '{lineage}'
                             GROUP BY date, SQ.location_id, SQ.lineage_id;'''
         else:
             query = f'''    SELECT date,sum(count) 
                             FROM aggr_sequences SQ
                                 JOIN locations LC ON SQ.location_id = LC.location_id
-                            WHERE location = '{location}'
+                            WHERE location = "{location}"
                             GROUP BY date, SQ.location_id;'''
         seqs = cur.execute(query).fetchall()
         return [{'date': x[0], 'seq_count': x[1]} for x in seqs]
 
     daily_sequence_counts = execute_query()
     con.close()
-    print(f'done in {time.time() - exec_start:.5f} seconds.')
+    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return daily_sequence_counts
 
 
@@ -73,8 +73,8 @@ def extract_lineage_breakdown(location, period):
     Returns: an array of (day,data about the lineage breakdown) pairs
 
     """
-    print("\t Extract lineage breakdown of sequences ...", end="")
-    exec_start = time.time()
+    # print("\t Extract lineage breakdown of sequences ...", end="")
+    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -83,7 +83,7 @@ def extract_lineage_breakdown(location, period):
                         FROM aggr_sequences SQ
                             JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
                             JOIN locations LC ON SQ.location_id = LC.location_id
-                        WHERE location='{location}' AND date>={period['begin']} AND date<={period['end']}
+                        WHERE location="{location}" AND date>={period['begin']} AND date<={period['end']}
                         ORDER BY lineage;'''
         return {k: v for k, v in cur.execute(query).fetchall()}
 
@@ -91,7 +91,7 @@ def extract_lineage_breakdown(location, period):
         query = f'''    SELECT 0.10 * sum(count)
                         FROM aggr_sequences SQ
                             JOIN locations LC ON SQ.location_id = LC.location_id
-                        WHERE location='{location}' AND date={day};'''
+                        WHERE location="{location}" AND date={day};'''
         day_threshold = cur.execute(query).fetchone()
         return day_threshold[0] if day_threshold[0] is not None else 0
 
@@ -99,7 +99,7 @@ def extract_lineage_breakdown(location, period):
         query = f'''    SELECT sum(count)
                         FROM aggr_sequences SQ
                             JOIN locations LC ON SQ.location_id = LC.location_id
-                        WHERE lineage_id='{lin_id}' AND location='{location}' and date={day}
+                        WHERE lineage_id='{lin_id}' AND location="{location}" and date={day}
                         GROUP BY date, lineage_id, SQ.location_id;'''
         day_count = cur.execute(query).fetchone()
         return day_count[0] if day_count is not None else 0
@@ -123,7 +123,7 @@ def extract_lineage_breakdown(location, period):
                 lineage_breakdown[key] = {date: seq_count}
 
     con.close()
-    print(f'done in {time.time() - exec_start:.5f} seconds.')
+    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return lineage_breakdown
 
 
@@ -134,8 +134,8 @@ def extract_last_update():
     Returns: tha date of the last update
 
     """
-    print("> Extract last update date ...", end="")
-    exec_start = time.time()
+    # print("> Extract last update date ...", end="")
+    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -144,7 +144,7 @@ def extract_last_update():
     diff = cur.execute(query).fetchall()[0][0]
 
     con.close()
-    print(f'done in {time.time() - exec_start:.5f} seconds.')
+    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return compute_date_from_diff(diff) if diff is not None else None
 
 
@@ -160,8 +160,8 @@ def get_lineage_characterization(lineages):
     Returns: an array of characterizing mutations
 
     """
-    print("\t Extract lineage characterization  ...", end="")
-    exec_start = time.time()
+    # print("\t Extract lineage characterization  ...", end="")
+    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -177,7 +177,7 @@ def get_lineage_characterization(lineages):
     characterizing_muts = extract_muts_from_lineage()
 
     con.close()
-    print(f'done in {time.time() - exec_start:.5f} seconds.')
+    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return characterizing_muts
 
 
@@ -194,10 +194,13 @@ class FieldList(Resource):
         Endpoint to get the sequence counts for each day
         @return:    An array of (date,seq_count) pairs
         """
+        print("\t /getSequenceInfo processing...", end="")
+        exec_start = time.time()
         location = api.payload['location']
         lineage = api.payload['lineage']
 
         info = extract_seq_num(location, lineage)
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
         return info
 
 
@@ -209,6 +212,8 @@ class FieldList(Resource):
         Endpoint to get the lineage breakdown info for each day
         @return:    An array of describing the breakdown
         """
+        print("\t /getLineagesBreakdown processing...", end="")
+        exec_start = time.time()
         location = api.payload['location']
         period = {
             'begin': compute_diff_from_date(api.payload['range'][0]) + 1,
@@ -216,6 +221,7 @@ class FieldList(Resource):
         }
 
         info = extract_lineage_breakdown(location, period)
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
         return info
 
 
@@ -227,6 +233,7 @@ class FieldList(Resource):
         Endpoint to get the date of the last update of the dataset
         @return:    The date of the last sequence collected
         """
+        print("\t /getLastUpdate processing...done.")
         return last_update
 
 
@@ -238,6 +245,10 @@ class FieldList(Resource):
         Endpoint to get the characterizing protein mutations of specified lineages
         @return:    A list of characterizing mutations
         """
+        print("\t /getLineagesCharacteristics processing...", end="")
+        exec_start = time.time()
         lineages = api.payload['lineages']
 
-        return get_lineage_characterization(lineages)
+        characterization = get_lineage_characterization(lineages)
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        return characterization

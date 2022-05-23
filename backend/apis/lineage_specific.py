@@ -32,8 +32,8 @@ def get_all_lineages():
     Returns: An array of lineages
 
     """
-    print("> Extract all lineages ...", end="")
-    exec_start = time.time()
+    # print("> Extract all lineages ...", end="")
+    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -41,7 +41,7 @@ def get_all_lineages():
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
-    print(f"done in {time.time() - exec_start:.5f} seconds.")
+    # print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
 
 
@@ -58,23 +58,23 @@ def get_lineages_from_loc_date(location, date):
     Returns: An array of lineages
 
     """
-    print("\t Extract lineages data given location and date...", end="")
+    # print("\t Extract lineages data given location and date...", end="")
     stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
     start = stop - 7
 
-    exec_start = time.time()
+    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
     query = f'''    SELECT DISTINCT lineage 
                     FROM aggr_sequences SQ
                         JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
                         JOIN locations LC ON SQ.location_id = LC.location_id
-                    WHERE location = '{location}' AND date > {start} AND date <= {stop}
+                    WHERE location = "{location}" AND date > {start} AND date <= {stop}
                     ORDER BY lineage;'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
-    print(f"done in {time.time() - exec_start:.5f} seconds.")
+    # print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
 
 
@@ -87,8 +87,8 @@ def get_lineages_from_loc(location):
     Returns: An array of lineages
 
     """
-    print("\t Extract lineages data given location...", end="")
-    exec_start = time.time()
+    # print("\t Extract lineages data given location...", end="")
+    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -96,12 +96,12 @@ def get_lineages_from_loc(location):
                     FROM aggr_sequences SQ
                         JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
                         JOIN locations LC ON SQ.location_id = LC.location_id
-                    WHERE location = '{location}'
+                    WHERE location = "{location}"
                     ORDER BY lineage;'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
-    print(f"done in {time.time() - exec_start:.5f} seconds.")
+    # print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
 
 
@@ -114,7 +114,7 @@ def get_lineages_from_date(date):
     Returns: An array of lineages
 
     """
-    print("\t Extract lineages data given date...", end="")
+    # print("\t Extract lineages data given date...", end="")
     stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
     start = stop - 7
 
@@ -129,7 +129,7 @@ def get_lineages_from_date(date):
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
 
-    print(f"done in {time.time() - exec_start:.5f} seconds.")
+    # print(f"done in {time.time() - exec_start:.5f} seconds.")
     return extracted_lineages
 
 
@@ -144,8 +144,8 @@ def extract_week_seq_counts(location, lineage, w):
     Returns: An array of sequence counts
 
     """
-    print("\t Extract number of sequences in the four weeks...", end="")
-    exec_start = time.time()
+    # print("\t Extract number of sequences in the four weeks...", end="")
+    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -154,7 +154,7 @@ def extract_week_seq_counts(location, lineage, w):
                         FROM aggr_sequences SQ
                             JOIN locations LC on SQ.location_id = LC.location_id
                             JOIN lineages LN on SQ.lineage_id = LN.lineage_id
-                        WHERE date > {start} and date <= {stop} and location = '{location}' and lineage = '{lineage}' 
+                        WHERE date > {start} and date <= {stop} and location = "{location}" and lineage = '{lineage}' 
                         GROUP BY date, SQ.location_id, SQ.lineage_id;'''
         return sum([x[0] for x in cur.execute(query).fetchall()])
 
@@ -163,7 +163,7 @@ def extract_week_seq_counts(location, lineage, w):
     tot_seq_w2 = extract_week_count(w['w2_begin'], w['w2_end'])
     tot_seq_w1 = extract_week_count(w['w1_begin'], w['w1_end'])
     con.close()
-    print(f'done in {time.time() - exec_start:.5f} seconds.')
+    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return [tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4]
 
 
@@ -179,8 +179,8 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
         Returns: An array describing the mutations for each week
 
         """
-    print("\t Extract mutation data for the four weeks...", end="")
-    exec_start = time.time()
+    # print("\t Extract mutation data for the four weeks...", end="")
+    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -191,7 +191,7 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
                             JOIN proteins PR ON SB.protein_id = PR.protein_id
                             JOIN locations LC ON SB.location_id = LC.location_id
                             JOIN lineages LN ON SB.lineage_id = LN.lineage_id
-                        WHERE date > {start} AND date <= {stop} AND location = '{location}' 
+                        WHERE date > {start} AND date <= {stop} AND location = "{location}" 
                             AND lineage = '{lineage}'
                         GROUP BY SB.protein_id, mut 
                         {having_clause if is_target else ""};'''
@@ -202,7 +202,7 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
     muts_w2 = extract_week_mutation(w['w2_begin'], w['w2_end'])
     muts_w1 = extract_week_mutation(w['w1_begin'], w['w1_end'])
     con.close()
-    print(f'done in {time.time() - exec_start:.5f} seconds.')
+    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return [muts_w1, muts_w2, muts_w3, muts_w4]
 
 
@@ -219,6 +219,7 @@ class FieldList(Resource):
         Endpoint to obtain all the possible lineages
         @return:    An array of lineages
         """
+        print("\t /getAllLineages processing...done.")
         return all_lineages
 
 
@@ -230,6 +231,8 @@ class FieldList(Resource):
         Endpoint to obtain the lineages for a given location and week (if specified)
         @return:    An array of lineages
         """
+        print("\t /getLineages processing...", end="")
+        exec_start = time.time()
         location = api.payload['location']
         date = api.payload['date']
 
@@ -241,6 +244,8 @@ class FieldList(Resource):
             lineages = get_lineages_from_date(date)
         else:
             lineages = get_lineages_from_loc_date(location, date)
+
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
         return lineages
 
 
@@ -252,6 +257,8 @@ class FieldList(Resource):
         Endpoint to perform a lineage specific analysis
         @return:    An object including the results and the support info
         """
+        print("\t /getStatistics processing...", end="")
+        exec_start = time.time()
         location = api.payload['location']
         lineage = api.payload['lineage']
         date = api.payload['date']
@@ -266,4 +273,5 @@ class FieldList(Resource):
         statistics = produce_statistics(location, week_sequence_counts, mutation_data)
         characterizing_muts = get_lineage_characterization([lineage])
 
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
         return {'rows': statistics, 'tot_seq': week_sequence_counts, 'characterizing_muts': characterizing_muts}

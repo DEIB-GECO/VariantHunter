@@ -8,8 +8,6 @@
 
 """
 
-from __future__ import print_function
-
 import sqlite3
 from .utils.path_manager import db_path
 from flask_restplus import Namespace, Resource
