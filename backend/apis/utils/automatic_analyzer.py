@@ -15,12 +15,13 @@ import time
 from functools import partial
 from json import dump
 from math import inf as infinity
+from os.path import exists
 from types import SimpleNamespace
 
 from apis.explorer import get_lineage_characterization
 from apis.lineage_specific import get_lineages_from_loc_date, extract_week_seq_counts, extract_mutation_data
 from apis.utils.path_manager import db_path, create_directory
-from apis.utils.utils import compute_weeks_from_date, produce_statistics, start_date
+from apis.utils.utils import compute_weeks_from_date, start_date, produce_adv_statistics
 
 # ################## CONFIGURATION ##################
 #     use math.inf or -math.inf to remove filters
@@ -28,13 +29,13 @@ from apis.utils.utils import compute_weeks_from_date, produce_statistics, start_
 c = {}
 c['end_date'] = "2022-05-10"
 
-c['slope_min'] = -infinity  # min slope value
+c['slope_min'] = 1.5  # min slope value
 c['f1_max'] = 25  # max frequency for the 1st week
 c['ignore_characterizing'] = True  # ignore the characterizing mutations
 
 c['p_value_with_mut_max'] = infinity  # max value for the p-value-with-mut
-c['p_value_without_mut_max'] = 0.05  # max value for the p-value-without-mut
-c['p_value_comp_max'] = infinity  # max value for the p-value-comp
+c['p_value_without_mut_max'] = infinity  # max value for the p-value-without-mut
+c['p_value_comp_max'] = 0.05  # max value for the p-value-comp
 # NaN p-values values are included in all the cases
 
 c['w1_min'] = 0  # min number of sequences for the 1st week
@@ -96,14 +97,20 @@ def run_auto_analyzer():
     print("\nProcessing started:")
     exec_start = time.time()
     dir_name = 'auto_analyzer_' + c.end_date.replace('-', '_')
-    create_directory(dir_name)
 
-    with open(dir_name + '/config.txt', 'w', encoding='UTF8') as f:
+    i = 0
+    while exists(f"{i if i>0 else ''}{dir_name}"):
+        i += 1
+
+    create_directory(f"{i if i>0 else ''}{dir_name}")
+
+    with open(f"{i if i>0 else ''}{dir_name}/config.txt", 'w', encoding='UTF8') as f:
         dump(vars(c), f)
 
-    with open(dir_name + '/mutations.csv', 'w', encoding='UTF8') as f:
-        fieldnames = ['location', 'lineage', 'protein', 'mut', 'slope',
+    with open(f"{i if i>0 else ''}{dir_name}/mutations.csv", 'w', encoding='UTF8') as f:
+        fieldnames = ['location', 'lineage', 'protein', 'mut', 'slope','std_dev',
                       'f1', 'w1', 'f2', 'w2', 'f3', 'w3', 'f4', 'w4',
+                      'tot_seq', 'slope123', 'slope134', 'slope234',
                       'p_value_with_mut', 'p_value_without_mut', 'p_value_comp']
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
@@ -124,8 +131,7 @@ def run_auto_analyzer():
                 mutation_data = extract_mutation_data(location, lineage, w, min_sequences)
 
                 # list of dictionaries, each representing a mutation
-                statistics = produce_statistics(location, week_sequence_counts, mutation_data)
-
+                statistics = produce_adv_statistics(location, week_sequence_counts, mutation_data)
                 # filter and map
                 statistics = list(filter(partial(check_requirements, lineage=lineage), statistics))
                 statistics = [dict(item, lineage=lineage) for item in statistics]

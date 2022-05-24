@@ -130,3 +130,70 @@ def produce_statistics(location, week_sequence_counts, mutation_data):
         })
 
     return statistics
+
+
+def produce_adv_statistics(location, week_sequence_counts, mutation_data):
+    """
+    Process the statistics values by properly formatting them
+    Args:
+        location:               Location name
+        week_sequence_counts:   Week sequences data
+        mutation_data:          Mutation data
+
+    Returns:    An array of statistics
+
+    """
+    statistics = []
+    tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4 = week_sequence_counts
+    mut_w1, mut_w2, mut_w3, mut_w4 = mutation_data
+
+    for mut, c4 in mut_w4.items():
+        protein, mutation = mut.split("_")
+        c1 = mut_w1.get(mut, 0)
+        c2 = mut_w2.get(mut, 0)
+        c3 = mut_w3.get(mut, 0)
+        f1 = (c1 / tot_seq_w1) * 100 if tot_seq_w1 > 0 else 0
+        f2 = (c2 / tot_seq_w2) * 100 if tot_seq_w2 > 0 else 0
+        f3 = (c3 / tot_seq_w3) * 100 if tot_seq_w3 > 0 else 0
+        f4 = (c4 / tot_seq_w4) * 100 if tot_seq_w4 > 0 else 0
+
+        coefs1234 = np.polyfit([0, 1, 2, 3], [f1, f2, f3, f4], 1)
+        slope = coefs1234[0]
+        yfit = np.polyval(coefs1234, [0, 1, 2, 3])
+        std_dev = np.sqrt(np.mean(([f1, f2, f3, f4] - yfit) ** 2))
+
+        coefs123 = np.polyfit([0, 1, 2], [f1, f2, f3], 1)
+        coefs134 = np.polyfit([0, 2, 3], [f1, f3, f4], 1)
+        coefs234 = np.polyfit([1, 2, 3], [f2, f3, f4], 1)
+
+        statistics.append({
+            'location': location,
+            'protein': protein,
+            'mut': mutation,
+            'slope': slope,
+            'std_dev': std_dev,
+            'f1': f1,
+            'f2': f2,
+            'f3': f3,
+            'f4': f4,
+            'w1': c1,
+            'w2': c2,
+            'w3': c3,
+            'w4': c4,
+            'tot_seq': c1+c2+c3+c4,
+            'slope123': "NEG" if coefs123[0]<0 else "POSN",
+            'slope134': "NEG" if coefs134[0] < 0 else "POSN",
+            'slope234': "NEG" if coefs234[0] < 0 else "POSN",
+            'p_value_with_mut':
+                compute_pvalue([c1, c2, c3, c4], week_sequence_counts),
+            'p_value_without_mut':
+                compute_pvalue(
+                    [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4],
+                    week_sequence_counts),
+            'p_value_comp':
+                compute_pvalue(
+                    [c1, c2, c3, c4],
+                    [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4]),
+        })
+
+    return statistics
