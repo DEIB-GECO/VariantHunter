@@ -8,3 +8,5 @@ docker
 venv2
 /backend/main/
 /backend/data_i/
+__pycache__/
+.DS_Store
