@@ -17,6 +17,8 @@ from .parsers.GisaidParser import GisaidParser
 from .parsers.NextstrainParser import NextstrainParser
 from .utils.arg_manager import get_cmd_arguments
 from .utils.automatic_analyzer import run_auto_analyzer
+from .utils.bulk_analyzer import run_bulk_analyzer
+from .utils.dataset_enricher import run_dataset_enricher
 from .utils.db_manager import connection_preset, clear_db
 from .utils.path_manager import db_paths as paths
 
@@ -201,3 +203,9 @@ rmtree(paths.temp_tree, ignore_errors=True)
 
 if args.autoanalyzer:
     run_auto_analyzer()
+
+if args.bulkanalyzer:
+    run_bulk_analyzer()
+
+if args.datasetenricher:
+    run_dataset_enricher()

@@ -44,6 +44,14 @@ def get_cmd_arguments():
                         default=False, action='store_true', dest='autoanalyzer',
                         help="run the auto analyzer at startup")
 
+    parser.add_argument('--bulkanalyzer', '-ba',
+                        default=False, action='store_true', dest='bulkanalyzer',
+                        help="run the bulk analyzer at startup")
+
+    parser.add_argument('--datasetenricher', '-de',
+                        default=False, action='store_true', dest='datasetenricher',
+                        help="run the dataset enricher at startup")
+
     args = parser.parse_args()
     return args
 

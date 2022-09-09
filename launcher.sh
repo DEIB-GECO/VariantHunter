@@ -25,13 +25,22 @@ RunDocker() {
   bash -c " ${DOCKER_PARAM} Docker-compose up"
 }
 
-DOCKER_PARAM=$*
+for str in "${@}" ; do
+    # try to figure out if quoting was required for the $x
+    if [[ "$str" != "${str%[[:space:]]*}" ]]; then
+        var1=$(echo "$str" | cut -d "=" -f 1)
+        var2=$(echo "$str" | cut -d "=" -f 2)
+        str=${var1}"=""\""${var2}"\""
+    fi
+    _args=$_args" "$str
+done
+DOCKER_PARAM=$_args
 RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No color tag
 
 echo "
-${BLUE}** VARIANT HUNTER DOCKER LAUNCHER UTILITY **
+${BLUE}** VARIANT HUNTER DOCKER LAUNCHER UTILITYYY **
      ${NC}This script will periodically adjust the size of the Docker volumes during the execution of Docker in order to prevent it from filling the disk."
 echo "
      ${RED}WARNING! This may remove all Docker volumes not used by at least one container.
