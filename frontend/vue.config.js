@@ -8,5 +8,5 @@ module.exports = {
       }
     },
   },
-  baseUrl: "/variant_hunter/",
+  publicPath: "/variant_hunter/",
 };

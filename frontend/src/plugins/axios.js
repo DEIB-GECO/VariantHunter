@@ -2,9 +2,9 @@
 
 import Vue from 'vue'
 import axios from 'axios'
-import { baseUrl } from '../../vue.config'
+import { publicPath } from '../../vue.config'
 
-axios.defaults.baseURL = baseUrl + 'api/'
+axios.defaults.baseURL = publicPath + 'api/'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
