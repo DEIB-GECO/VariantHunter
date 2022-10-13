@@ -72,7 +72,8 @@
         <!---- Expanded table element ---->
         <template v-if='!withLineages && !isLoadingDetails' v-slot:expanded-item='{ headers, item }'>
           <td :colspan='5' class='expanded-item-title'>
-            <div>Lineages</div>
+            <ExpansionModeMenu/>
+            <div class="row-name">Lineages</div>
           </td>
           <td class='expanded-td'>
             <v-simple-table>
@@ -95,6 +96,10 @@
             </v-simple-table>
           </td>
         </template>
+        <template v-else-if="isLoadingDetails" v-slot:expanded-item>
+          <td colspan="10" class="py-5"><v-progress-circular indeterminate color="primary"/><span class="pl-4">Loading...</span></td>
+        </template>
+
         <template v-slot:body.append>
           <td :colspan='withLineages? 5: 6' class='table-append' />
           <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append' >
@@ -141,10 +146,12 @@ import SectionElement from '@/components/general/SectionElement'
 import MutationSelector from '@/components/form/MutationSelector'
 import { json2csv } from '@/utils/parserService'
 import WeekSlider from '@/components/form/WeekSlider'
+import ExpansionModeMenu from "@/components/form/menus/ExpansionModeMenu";
 
 export default {
   name: 'ResultView',
   components: {
+    ExpansionModeMenu,
     WeekSlider, MutationSelector, SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart
   },
   props: {
@@ -623,18 +630,21 @@ td.expanded-td tr:hover {
   background: none !important;
 }
 
-.expanded-item-title {
+.expanded-item-title{
+  position: relative;
   text-align: -webkit-right;
   background: var(--tertiary-color-light);
   border-right: thin solid var(--tertiary-color-dark);
 }
 
-.expanded-item-title div {
+.expanded-item-title .row-name {
   color: rgba(0, 0, 0, 0.6);
   font-weight: bold;
   font-size: 12px;
   letter-spacing: 0.019em;
   display: inherit;
+  height: 110px;
+  vertical-align: middle;
 }
 
 td.table-append {
