@@ -43,7 +43,14 @@ def clear_db(db_name=None, db_con=None, db_cur=None):
         close_flag = False
 
     db_con.execute("pragma writable_schema=1;")
-    db_cur.execute("DELETE FROM sqlite_master WHERE type in ('table', 'index', 'trigger')")
+
+    db_cur.execute("SELECT name FROM sqlite_schema WHERE type='table';")
+    tables = db_cur.fetchall()
+    table_param = "{table_param}"
+    drop_query = f"DROP TABLE {table_param};"
+    for table, in tables:
+        sql = drop_query.replace(table_param, table)
+        db_cur.execute(sql)
     db_con.execute("pragma writable_schema=0;")
     db_con.commit()
     db_con.execute("vacuum")

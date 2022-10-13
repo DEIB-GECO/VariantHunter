@@ -37,7 +37,7 @@ def favicon():
                                mimetype='image/vnd.microsoft.icon')
 
 
-@my_app.route(base_url + '/appicon.png')
+@my_app.route(base_url + 'appicon.png')
 def appicon():
     return send_from_directory(os.path.join(my_app.root_path, 'static'), 'appicon.png', mimetype='image/png')
 

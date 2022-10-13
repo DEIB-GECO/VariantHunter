@@ -6,3 +6,4 @@ flask_restplus
 tqdm
 numpy
 scipy
+markupsafe==2.0.1
