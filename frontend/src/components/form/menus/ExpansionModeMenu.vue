@@ -1,11 +1,27 @@
+<!--
+  Component:    ExpasionModeMenu
+  Description:  Component to change modes for the expanded row
+
+  Props:
+  ├── queryResult:  Array of raw data fetched from the server
+  ├── queryParams:  Object storing the query parameters {granularity, location, date, [lineage]}
+  ├── querySupport: Object storing additional info such as total number of sequences collected per week and characterizing muts
+  ├── queryCustOpt: Object storing the custom preselection for the filtering/selection options
+  └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis.
+
+  Events:
+  ├── askAnalysis:  Emitted whenever a next/prev button is pressed
+  └── error:        Emitted on server errors
+-->
+
 <template>
   <v-card width="90%" class="options text-left" color="transparent" flat>
     <div class="options-intro">
       <div class="main">Lineages breakdown </div>
       computed considering {{expansionMode===0?'this line':'the entire dataset'}}
     </div>
-    <MenuButton icon="mdi-pencil" text="Change scope" :options="scopeOptions" @select="e=>expansionMode=e"/>
-    <MenuButton icon="mdi-code-string" :text="(notationMode===0?'Simplify':'Expand') +' notation'" :options="notationOptions" @select="e=>notationMode=e"/>
+    <MenuButton icon="mdi-pencil" text="Change scope" :options="scopeOptions" @select="expansionModeManager"/>
+    <MenuButton icon="mdi-code-string" :text="'Change notation'" :options="notationOptions" @select="notationModeManager"/>
   </v-card>
 </template>
 
@@ -32,13 +48,24 @@ export default {
       notationOptions:[
         { value:0,
           text:'Use complete notation',
-          description:'Differentiate each lineage (e.g.: BA.1, BA.2,...) by avoiding groupings.',
+          description:'Differentiate each lineage (e.g.: B.1.1, B.1.2,...) by avoiding groupings.',
           icon:'mdi-text-long'},
         { value:1,
           text:'Use simplified notation',
-          description:'Summarize the counts using a star notation for the lineages (e.g.: BA.*,...).',
+          description:'Summarize the counts using a star notation for the lineages (e.g.: B.1.*,...).',
           icon:'mdi-minus'}
       ]
+    }
+  },
+  methods:{
+    expansionModeManager(e){
+      this.expansionMode=e
+      this.$emit('changeExpansionMode',e)
+    },
+
+    notationModeManager(e){
+      this.notationMode=e
+      this.$emit('changeNotationMode',e)
     }
   }
 }
