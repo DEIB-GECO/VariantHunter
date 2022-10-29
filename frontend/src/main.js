@@ -5,6 +5,7 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import store from './store'
 import VueClipboard from 'vue-clipboard2'
+import './styles/style.css'
 
 Vue.config.productionTip = false
 

@@ -2,10 +2,10 @@
    <div id="app">
      <v-app>
       <!-- Navbar -->
-      <v-toolbar :color='primary_color' class='navbar' short dark flat>
+      <v-app-bar app :color='primary_color' class='navbar' max-height="56px" short scroll-off-screen  dark flat clipped-left>
 
         <!-- Logo -->
-        <v-img :src='websiteLogo' class='logo' contain max-height='40x' max-width='40px' />
+        <v-img :src='websiteLogo' class='logo' contain max-height='40px' max-width='40px' />
         <v-toolbar-title class='site-title'>
           <router-link to='/variant_hunter/'>
             <span class='emphasis'>Variant</span>
@@ -15,21 +15,15 @@
 
         <v-spacer></v-spacer>
 
-        <!-- Scroll to top button -->
-        <v-btn v-if='showSearchShortcut && $route.name!=="About"' class='hidden-xs-only mr-3' href='#top' outlined rounded small>
-          <v-icon left>mdi-plus</v-icon>
-          New <span class='hidden-sm-and-down'>analysis</span>
-        </v-btn>
-
         <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1' outlined rounded small>
           <router-link :to="{ name: 'About'}">
             <v-icon left>mdi-information-variant</v-icon>
             About
           </router-link>
         </v-btn>
-      </v-toolbar>
+      </v-app-bar>
 
-      <v-main class='main-body' @scroll.native='scrollHandler'>
+      <v-main>
         <router-view />
       </v-main>
      </v-app>
@@ -91,7 +85,7 @@ export default {
   margin-right: 6px;
 }
 
-/* Styling for the website body */
+/* Styling for the website body todo: remove */
 .main-body {
   height: calc(100vh - 57px);
   width: 100%;
@@ -130,7 +124,7 @@ body {
 }
 
 /* Overwrite default Vuetify and Plotly font */
-.v-application, body * {
+.v-application, body #app * {
   font-family: 'Inter', serif !important;
 }
 

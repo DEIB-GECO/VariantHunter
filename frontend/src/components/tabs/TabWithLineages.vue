@@ -48,6 +48,7 @@
 
           <!-- Panel content -->
           <v-expansion-panel-content :color='secondary_color'>
+
             <ResultView v-if='queriesResults[index].length > 0' :queryResult='queriesResults[index]'
                         :queryParams='queriesParams[index]' :querySupport='queriesSupport[index]'
                         :queryCustOpt='queriesCustomOptions[index]' withLineages
