@@ -1,9 +1,18 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import {state} from '@/store/state'
+import {getters} from "@/store/getters";
+import {mutations} from "@/store/mutations";
+import {actions} from "@/store/actions";
 
 Vue.use(Vuex)
 
-const state = {
+const stateOld = {
+  /***NEW STATE***/
+
+
+
+  /*****/
   primary_color: '#014878',
   secondary_color: '#35B1ECFF',
   tertiary_color_light: '#D2ECF8FF',
@@ -39,7 +48,7 @@ const state = {
   selectedLineage: null
 }
 
-const mutations = {
+const mutationsOld = {
   SET_GRANULARITY: (state, newValue) => {
     state.selectedGranularity = newValue
   },
@@ -95,5 +104,7 @@ const mutations = {
 
 export default new Vuex.Store({
   state,
-  mutations
+  mutations,
+  getters,
+  actions
 })
