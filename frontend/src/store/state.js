@@ -22,7 +22,14 @@ export const state = {
      *      lineage: selected lineage for the analysis (ex. 'A.2.5.1'). Null value if N/A
      *      weeks: obj reporting the interested weeks in the following format YYYY/MM/DD - YYYY/MM/DD
      *             {w1:'...',w2:'...', w3:'...', w4:'2021/05/09 - 2021/05/15'}
+     *  },
+     *  useGlobalFilters: true iff global filters must be used instead of local ones
+     *  filteringOpt: {
+     *      protein: string representing the filtered protein or null
+     *      muts: array [] of filtered mutations
+     *      rowKeys: array [] of selected row keys
      *  }
+     *  characterizingMuts: ['protein_mut',...] or null if lineage independent
      *  muts: [{
      *     protein: protein value (ex: 'Spike')
      *     mut: mut value (ex: 'T12I')
@@ -39,29 +46,22 @@ export const state = {
      */
     analyses:[ex1,ex2],
 
+
     /** currentAnalysis: currently shown analysis or null value */
     currentAnalysis: 0,
-
-    /** Granularity: selected option */
-    selectedGranularity: null,
-
-    /** Selected continent */
-    selectedContinent: null,
-
-    /** Selected country */
-    selectedCountry: null,
-
-    /** Selected region */
-    selectedRegion: null,
+    globalFilteringOpt: {protein: '', muts: [], rowKeys: []},
 
     /** Selected location (continent, country or region based on granularity) */
     selectedLocation: null,
+    possibleLocations: [],
+    possibleLocationsInfo: {},
 
     /** Date: selected date */
-    selectedDate: null,
+    selectedDate: [null,'2021-05-18'], // null,
 
     /** Lineage: selected lineage */
     selectedLineage: null,
+    possibleLineages: [],
 
     primary_color: '#014878',
   secondary_color: '#35B1ECFF',

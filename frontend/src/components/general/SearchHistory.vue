@@ -72,7 +72,7 @@
 
     <!-- Actual filtered history-->
     <v-list-item v-for="{id, starred, query} in getAnalysesSummary(filters)" :key="id" link
-                 @click="setCurrentAnalysis(id)" :class="'pl-7 '+(currentAnalysis===id?'v-list-item--active':'')">
+                 @click="elementClickHandler(id)" :class="'pl-7 '+(currentAnalysis===id?'v-list-item--active':'')">
 
       <v-list-item-content>
         <v-list-item-title class="text-body-3 font-weight-medium">
@@ -130,7 +130,7 @@ export default {
         null: ' All granularities',
         continent: 'Continent only',
         country: 'Country only',
-        regional: 'Regional only'
+        region: 'Region only'
       },
 
       filteredStarred: null,
@@ -156,6 +156,11 @@ export default {
       this.filteredMode = null
       this.filteredStarred = null
       this.filteredGranularity = null
+    },
+
+    elementClickHandler(id){
+      this.setCurrentAnalysis(id)
+      this.$emit('select',id)
     }
   }
 }

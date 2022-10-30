@@ -7,10 +7,10 @@
 -->
 
 <template>
-  <div class='plotly-container'>
+  <v-col class='plotly-container'>
     <!-- Lineage Breakdown plot -->
     <Plotly :data='data' :layout='layout' :displaylogo='false' :displayModeBar='false'/>
-  </div>
+  </v-col>
 </template>
 
 <script>
@@ -46,7 +46,7 @@ export default {
     /** Layout data for the plot */
     layout () {
       return {
-        title: '<sub>Daily lineages breakdown</sub>',
+        title: '<sub>Daily lineage breakdown</sub>',
         colorway:
           [
             '#ef5378', '#5ee171', '#f3df67', '#6685f1',
@@ -56,7 +56,7 @@ export default {
             '#bbef39', '#fcb0ca', '#7ed7cd', '#ef479e',
             '#ffbc73', '#fffac8', '#c56100', '#aaffc3',
             '#808000', '#ffd8b1', '#575793', '#29b7d5',
-            '#00c710', '#6b6868', '#b2b2b2', '#000000'
+            '#099917', '#6b6868', '#b2b2b2', '#000000'
           ],
         height: 400,
         xaxis: {

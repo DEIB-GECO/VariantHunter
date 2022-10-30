@@ -25,7 +25,7 @@
     <v-dialog v-model="showDialog" max-width="850" transition="dialog-bottom-transition">
       <v-card>
         <!-- Dialog title -->
-        <v-toolbar :color="primary_color" class="dialog-title" dark flat>
+        <v-toolbar color="primary" class="dialog-title" dark flat>
           <v-icon left large>mdi-help-circle-outline</v-icon>
           {{ title }}
         </v-toolbar>
@@ -76,9 +76,9 @@ export default {
 <style>
 /* Header info dialog styling*/
 .dialog-title {
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 20px;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  font-size: 20px !important;
 }
 
 /* Global style fot the content of the dialog */

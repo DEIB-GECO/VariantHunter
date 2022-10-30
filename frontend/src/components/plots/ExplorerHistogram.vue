@@ -11,11 +11,11 @@
 -->
 
 <template>
-  <div class='plotly-container'>
+  <v-col class='plotly-container'>
     <!-- Explorer Histogram plot -->
     <Plotly :id='_uid.toString()' :data='data' :layout='layout' :displaylogo='false'
             :displayModeBar='false' @afterplot='updateTimeRange'/>
-  </div>
+  </v-col>
 </template>
 
 <script>

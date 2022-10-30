@@ -61,7 +61,7 @@ export default {
 
 /** Navbar overlapping visibility */
 .navbar{
-  z-index: 10 !important;
+  z-index: 15 !important;
 }
 
 /* Site logo */
@@ -123,10 +123,6 @@ body {
   text-transform: capitalize !important;
 }
 
-/* Overwrite default Vuetify and Plotly font */
-.v-application, body #app * {
-  font-family: 'Inter', serif !important;
-}
 
 /* Plotly container */
 .plotly-container {

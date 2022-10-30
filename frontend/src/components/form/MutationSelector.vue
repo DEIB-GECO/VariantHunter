@@ -5,7 +5,6 @@
   Props:
   ├── value:              Value variable for binding of the value
   ├── possibleValues:     Possible values for the selector
-  ├── queryParams:        Object storing the query parameters
   └── characterizingMuts: Object storing the characterizing mutations (lin.spec. only)
 
   Events:
@@ -14,27 +13,27 @@
 
 <template>
   <!-- Decorated Field Selector -->
-  <FieldSelector v-model='selectedValue' label='Mutation' placeholder='All'
+  <FieldSelector v-model='selectedValue' label='Mutations' placeholder='All'
                  :possible-values='possibleValues' autocomplete small-chips
                  multiple solo>
 
     <template v-slot:prepend-item>
 
       <!-- List uploader opener -->
-      <div class='uploader-opener' @click='showListUploader=true'>
+      <div class='uploader-opener text-body-3' @click='showListUploader=true'>
         <v-icon left>mdi-file-upload-outline</v-icon>
         Select from list
       </div>
 
       <!-- Lineage selector opener -->
-      <div class='uploader-opener' @click='showLineageSelector=true'>
+      <div class='uploader-opener text-body-3' @click='showLineageSelector=true'>
         <v-icon left>mdi-shape-outline</v-icon>
         Select from lineages
       </div>
 
       <!-- Non characterizing mutation selector -->
       <div v-if="characterizingMuts && characterizingMuts.length!==possibleValues.length"
-           class='uploader-opener' @click='selectNonCharMuts()'>
+           class='uploader-opener text-body-3' @click='selectNonCharMuts()'>
         <v-icon left>mdi-star-off-outline</v-icon>
         All non-characterizing mutations
       </div>
@@ -43,7 +42,7 @@
       <v-dialog v-model='showListUploader' max-width='500' transition='dialog-bottom-transition'>
         <v-card>
           <!-- Dialog title -->
-          <v-toolbar :color='primary_color' class='dialog-title' dark flat>
+          <v-toolbar color='primary' class='dialog-title' dark flat>
             <v-icon left large>mdi-file-upload-outline</v-icon>
             Select mutations from list
           </v-toolbar>
@@ -176,9 +175,6 @@ export default {
 
     /** Possible values for the selector */
     possibleValues: { required: true },
-
-    /** Object storing the query parameters */
-    queryParams: { required: true },
 
     /** Object storing the characterizing mutations (lin.spec. only) */
     characterizingMuts: { required: false }
@@ -370,8 +366,7 @@ export default {
 <style scoped>
 .uploader-opener {
   color: rgba(0, 0, 0, 0.54);
-  text-align: center;
-  padding: 10px 14px;
+  padding: 5px 14px;
   text-transform: initial;
 }
 

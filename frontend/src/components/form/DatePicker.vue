@@ -5,45 +5,43 @@
 -->
 
 <template>
-  <v-layout justify-center row wrap>
 
-    <!-- Label -->
-    <v-flex class='xs12 d-flex field-label'>
-      <span>Analysis period</span>
-    </v-flex>
+  <v-col>
+    <v-row class="px-5 pb-2">
+      <v-col>
+        <span class="text-body-3 compact-text-3 primary--text d-block">
+          <span class="compact-text-5 font-weight-black">Analysis period</span>:
+          select the 4-weeks analysis period.
+        </span>
+      </v-col>
+    </v-row>
+    <v-row dense class="px-5">
+      <v-col>
+        <v-menu v-model='menuVisibility' :close-on-content-click='false' min-width='auto' offset-y
+                transition='scale-transition' content-class='menu-container' attach nudge-bottom="-30px">
 
-    <!-- Picker -->
-    <v-flex class='xs12 d-flex field-element'>
-      <v-menu v-model='menuVisibility' :close-on-content-click='false' min-width='auto' offset-y
-              transition='scale-transition' content-class='menu-container' attach>
-
-        <template v-slot:activator='{ on, attrs }'>
-          <v-text-field v-model='selectedDateText' append-icon='mdi-calendar' hide-details placeholder='Date' readonly
-                        clearable solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true' persistent-placeholder />
-        </template>
-        <div class='hint'>Select the end date for the 4 weeks analysis period
-          <v-row class='tip'>
-            <v-col class='col-2 tip-icon'><v-icon>mdi-lightbulb-on-outline</v-icon></v-col>
-            <v-col class='col-10 tip-text'> use the &nbsp;
-            <v-icon small>mdi-compass-outline</v-icon>
-            DATASET EXPLORER &nbsp; to choose the best analysis period
-              </v-col>
-          </v-row>
-        </div>
-        <v-date-picker v-model='selectedDate' :max='today' first-day-of-week='1' no-title range
-                       show-adjacent-months @input='menuVisibility = false' />
-      </v-menu>
-    </v-flex>
-
-  </v-layout>
+          <template v-slot:activator='{ on, attrs }'>
+            <v-text-field v-model='selectedDateText' append-icon='mdi-calendar' :hide-details="false"
+                          persistent-hint
+                          hint="Not sure which period to select? Analyze the sequences over time using the Dataset Explorer below."
+                          placeholder='Select the end date of the period' readonly
+                          clearable solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true'
+                          persistent-placeholder/>
+          </template>
+          <v-date-picker v-model='selectedDate' :max='today' first-day-of-week='1' no-title range
+                         show-adjacent-months @input='menuVisibility = false' header-color="primary"/>
+        </v-menu>
+      </v-col>
+    </v-row>
+  </v-col>
 </template>
 
 <script>
-import { mapStateTwoWay } from '@/utils/bindService'
+import {mapStateTwoWay} from '@/utils/bindService'
 
 export default {
   name: 'DatePicker',
-  data () {
+  data() {
     return {
       /** Visibility flag of date picker menu */
       menuVisibility: false,
@@ -54,7 +52,7 @@ export default {
   },
   computed: {
     ...mapStateTwoWay({
-      selectedDate: 'SET_END_DATE'
+      selectedDate: 'setDate'
     }),
 
     /** Selected analysis period label */
@@ -63,7 +61,7 @@ export default {
        * Getter for the label
        * @returns {Array}  The label date
        */
-      get () {
+      get() {
         return this.selectedDate ? this.selectedDate.join(' ⏐ ') : null
       },
 
@@ -71,7 +69,7 @@ export default {
        * Setter for the label.
        * @param label The new label
        */
-      set (label) {
+      set(label) {
         this.selectedDate = null
       }
     }
@@ -80,21 +78,6 @@ export default {
 </script>
 
 <style scoped>
-/* Form labels styling */
-.field-label {
-  justify-content: center;
-  padding-top: 5px !important;
-  padding-bottom: 5px !important;
-  color: white;
-}
-
-/* Form elements styling */
-.field-element {
-  padding-top: 0 !important;
-  padding-bottom: 4px !important;
-  text-transform: capitalize;
-}
-
 /* Hint for date-picker */
 .hint {
   color: rgba(0, 0, 0, 0.54);
@@ -106,31 +89,36 @@ export default {
   line-break: loose;
   text-transform: initial !important;
 }
-.tip{
+
+.tip {
   margin-top: 15px;
   margin-bottom: 0;
   text-align: left;
   text-transform: uppercase;
   font-size: 11px;
   line-height: 12px;
-  color:  #ffa815;
+  color: #ffa815;
 }
-.tip-icon{
+
+.tip-icon {
   padding-top: 0;
   padding-bottom: 0;
   margin: auto;
   text-align: right;
   border-right: solid 1px #ffa815;
 }
-.tip-icon *{
+
+.tip-icon * {
   color: #ffa815;
   font-size: 18px !important;
 }
-.tip-text .v-icon::before{
-  color:  #ffa815;
+
+.tip-text .v-icon::before {
+  color: #ffa815;
   font-size: 14px !important;
 }
-.tip-text{
+
+.tip-text {
   padding-top: 0;
   padding-bottom: 0;
 }

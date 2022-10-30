@@ -18,21 +18,23 @@
 -->
 
 <template>
-  <v-layout row wrap>
-    <v-flex v-if='label' class='xs12 d-flex field-label'>
-      <span>{{ label }}</span>
-    </v-flex>
+  <v-row >
+    <v-col cols="12" sm="4" v-if='label'>
+       <span class="text-body-3 compact-text-3 primary--text d-block text-left text-sm-right align-center">
+          <span class="compact-text-5 font-weight-bold">{{ label }}</span>
+       </span>
+    </v-col>
 
-    <v-flex class='xs12 d-flex field-element'>
+    <v-col cols="12" sm="8"  class='field-element'>
       <!-- Manual selector -->
       <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues'
                 hide-details :placeholder='placeholder' solo='solo' :loading='loading'
-                attach persistent-placeholder />
+                attach persistent-placeholder dense />
 
       <!-- Autocomplete selector -->
-      <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable :multiple='multiple'
+      <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable clear-icon="mdi-backspace-outline" :multiple='multiple'
                       :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder' :solo='solo' :loading='loading'
-                      attach >
+                      attach dense>
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
@@ -45,8 +47,8 @@
             </template>
       </v-autocomplete>
 
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

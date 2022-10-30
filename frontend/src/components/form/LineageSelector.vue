@@ -8,62 +8,62 @@
 -->
 
 <template>
-  <v-layout row wrap>
-    <v-flex class='xs12 d-flex field-label'>
-      <span>Lineage</span>
-    </v-flex>
-
-    <v-flex class='xs12 d-flex field-element'>
-      <v-autocomplete v-model='selectedLineage' :items='possibleLineages' :loading='isLoading'
-                      :disabled="selectedGranularity === null || (selectedLocation === null && selectedGranularity !== 'world')"
-                      label='Lineage' clearable hide-details attach solo>
-        <template v-slot:prepend-item>
-          <slot name='prepend-item'>
-            <div class='hint'>{{ hint }}</div>
-          </slot>
-        </template>
-      </v-autocomplete>
-    </v-flex>
-  </v-layout>
+  <v-col>
+    <v-row class="px-5 pb-2">
+      <v-col>
+        <span class="text-body-3 compact-text-3 primary--text d-block">
+          <span class="compact-text-5 font-weight-black">Lineage</span>:
+          select the lineage you want to analyze.
+        </span>
+      </v-col>
+    </v-row>
+    <v-row dense class="px-5">
+      <v-col>
+        <v-autocomplete v-model='selectedLineage' :items='possibleLineages' :disabled="!selectedLocation"
+                        :loading='isLoading' placeholder='Select a lineage from the list' persistent-hint
+                        :hint="(!selectedLocation)?'You must select at least a location first':''" :hide-details="selectedLocation!==null" attach solo
+                        persistent-placeholder clearable clear-icon="mdi-backspace-outline" :class="(!selectedLocation)?'warning--text cursor-forbidden':''">
+          <template v-slot:prepend-item>
+            <slot name='prepend-item'>
+              <div class='hint'>{{ hint }}</div>
+            </slot>
+          </template>
+        </v-autocomplete>
+      </v-col>
+    </v-row>
+  </v-col>
 </template>
 
 <script>
 import axios from 'axios'
-import { mapState } from 'vuex'
-import { mapStateTwoWay } from '@/utils/bindService'
+import {mapState} from 'vuex'
+import {mapStateTwoWay} from '@/utils/bindService'
 
 export default {
   name: 'LineageSelector',
-  data () {
+  data() {
     return {
-      /** Lineage: available options (wrt to other params) */
-      possibleLineages: [],
-
-      /** All possible values for lineage */
-      allLineages: null,
-
-      /** Loading flag  */
-      isLoading: false
+      isLoading: false,
+      error: undefined,
     }
   },
   computed: {
-    ...mapState(['selectedGranularity', 'selectedLocation', 'selectedDate']),
-    ...mapStateTwoWay({ selectedLineage: 'SET_LINEAGE' }),
+    ...mapState(['selectedLocation', 'selectedDate']),
+    ...mapStateTwoWay({selectedLineage: 'setLineage', possibleLineages: 'setLineages'}),
 
     /** Hint for the selector  */
-    hint () {
+    hint() {
       return (this.selectedLocation)
-        ? 'Lineages in ' + this.selectedLocation + (this.selectedDate ? ' for the last week of the selected analysis period:' : ':')
-        : 'All available lineages:'
+          ? 'Lineages in ' + this.selectedLocation + (this.selectedDate ? ' for the selected analysis period:' : ':')
+          : 'All available lineages:'
     }
   },
   methods: {
     /** Fetch all possible values for lineages (given the other params) */
-    getPossibleLineages () {
-      this.isLoading = true
+    getPossibleLineages() {
+      if (this.selectedDate !== null || this.selectedLocation !== null) {
+        this.isLoading = true
 
-      // Avoid fetching all lineages if already cached
-      if (!this.allLineages || this.selectedLocation || this.selectedDate) {
         const url = `/lineage_specific/getLineages`
         const toSend = {
           location: this.selectedLocation ? this.selectedLocation : null,
@@ -71,74 +71,42 @@ export default {
         }
 
         axios
-          .post(url, toSend)
-          .then(res => {
-            this.possibleLineages = res.data
+            .post(url, toSend)
+            .then(({data}) => {
+              this.possibleLineages = data
 
-            // Cache if all lineages and not already cached
-            if (!this.allLineages && !this.selectedLocation && !this.selectedDate) {
-              this.allLineages = res.data
-            }
-
-            // Keep selected lineage if included in the possible ones
-            if (this.selectedLineage && !this.possibleLineages.includes(this.selectedLineage)) {
-              this.selectedLineage = null
-            }
-          })
-          .catch((e) => {
-            this.$emit('error', e)
-          })
-      } else {
-        this.possibleLineages = this.allLineages
+              // Keep selected lineage if included in the possible ones
+              if (this.selectedLineage && !this.possibleLineages.includes(this.selectedLineage)) {
+                this.selectedLineage = null
+              }
+            })
+            .catch((e) => {
+              this.error = e
+            })
+            .finally(() => {
+              this.isLoading = false
+            })
       }
-
-      this.isLoading = false
     }
   },
   watch: {
-    /** Adjust the possible lineages according to the selected granularity */
-    selectedGranularity (newVal) {
-      if (newVal === 'world') {
-        this.getPossibleLineages()
-      }
-    },
-
     /** Adjust the possible lineages according to the selected location */
-    selectedLocation (newVal) {
-      if (newVal) {
+    selectedLocation(newVal) {
         this.getPossibleLineages()
-      }
     },
 
     /** Adjust the possible lineages according to the selected date */
-    selectedDate (newVal) {
+    selectedDate(newVal) {
       this.getPossibleLineages()
     }
   },
-  mounted () {
-    if (this.selectedDate !== null || this.selectedLocation !== null) {
-      this.getPossibleLineages()
-    }
+  mounted() {
+    this.getPossibleLineages()
   }
 }
 </script>
 
 <style scoped>
-/* Form labels styling */
-.field-label {
-  justify-content: center;
-  padding-top: 8px !important;
-  padding-bottom: 5px !important;
-  color: white;
-}
-
-/* Form elements styling */
-.field-element {
-  padding-top: 0 !important;
-  padding-bottom: 4px !important;
-  text-transform: capitalize;
-}
-
 /* Hint */
 .hint {
   color: rgba(0, 0, 0, 0.54);
