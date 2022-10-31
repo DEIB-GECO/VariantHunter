@@ -9,9 +9,9 @@
     </v-toolbar-title>
 
     <v-spacer/>
-    <icon-with-tooltip hover-color="success" icon="mdi-calendar-minus" tip="Shift the analysis period one week backward" bottom
+    <icon-with-tooltip hover-color="success" icon="mdi-clock-minus-outline" tip="Shift the analysis period one week backward" bottom
                        :click-handler="()=>$emit('moveBackward',-7)" color="primary"/>
-    <icon-with-tooltip hover-color="success" icon="mdi-calendar-plus" tip="Shift the analysis period one week forward"  bottom
+    <icon-with-tooltip hover-color="success" icon="mdi-clock-plus-outline" tip="Shift the analysis period one week forward"  bottom
                        :click-handler="()=>$emit('moveForward',+7)" color="primary"/>
 
     <icon-with-tooltip v-if="isStarred" color="#C2AD07" hover-color="primary" icon="mdi-star"
@@ -52,6 +52,7 @@ export default {
 
 <style scoped>
 .result-bar {
+  border-radius: 4px 0 !important;
   margin-top: 56px !important;
   margin-left: 56px !important;
 }

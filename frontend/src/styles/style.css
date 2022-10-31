@@ -61,3 +61,7 @@
 .cursor-forbidden:hover, .cursor-forbidden *:hover{
     cursor: not-allowed !important;
 }
+
+.no-border{
+    border: none !important;
+}

@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer class="sidebar-sizing" :mini-variant="isCollapsed" clipped permanent expand-on-hover touchless
+  <v-navigation-drawer class="sidebar-sizing no-border" :mini-variant="isCollapsed" clipped permanent expand-on-hover touchless
                        absolute dark color="primary" width="500px" height="100vh">
     <v-list rounded nav dense>
       <list-item icon="mdi-plus" title="New analysis" link subtitle="Perform a new analysis" expand-on-hover

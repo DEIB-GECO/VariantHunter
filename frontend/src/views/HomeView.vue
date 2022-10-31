@@ -43,12 +43,9 @@ export default {
 </script>
 
 <style scoped>
-.home-view-container{
-  background: var(--tertiary-color-light) !important; /* to ensure readable downloadable images */
-}
 .tool-views-container {
   background: var(--tertiary-color-light);
-  margin-left: 56px;
+  margin-left: 55px;
   padding-bottom:200px;
 }
 </style>

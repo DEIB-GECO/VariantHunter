@@ -85,12 +85,10 @@
 
         <!-- Analysis categories -->
         <v-list-item-subtitle class="break-spaces pt-1">
-          <v-chip x-small color="#ff6e3e" class="text-uppercase mr-1 mb-1 text-body-5"
-                  @click.stop="filteredGranularity=query.granularity">
+          <v-chip x-small color="#ff6e3e" class="text-uppercase mr-1 mb-1 text-body-5">
             {{ query.granularity }}
           </v-chip>
-          <v-chip x-small color="#bc7fbf" class="text-uppercase mb-1 text-body-5"
-                  @click.stop="filteredMode=query.lineage?'ls':'li'">
+          <v-chip x-small color="#bc7fbf" class="text-uppercase mb-1 text-body-5">
             {{ query.lineage ? "lineage-specific" : "lineage-independent" }}
           </v-chip>
         </v-list-item-subtitle>

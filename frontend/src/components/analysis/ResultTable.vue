@@ -1,6 +1,6 @@
 <template>
   <section-element icon='mdi-table-multiple' title="Mutations table">
-    <v-col cols="12" class="pa-0">
+    <v-col cols="12" class="pa-0 table-container">
       <v-data-table v-model='selectedRows' :custom-sort='customSort' :headers='tableHeaders'
                     :items='processedQueryResult' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :show-expand='!withLineages' @item-expanded='loadLineageDetails'
@@ -405,6 +405,12 @@ export default {
 </script>
 
 <style>
+
+.table-container{
+  border: solid 1px var(--primary-color);
+  border-radius: 4px;
+}
+
 /* Table size */
 .table-element {
   width: 100% !important;

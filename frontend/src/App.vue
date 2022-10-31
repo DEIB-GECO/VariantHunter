@@ -13,12 +13,11 @@
           </router-link>
         </v-toolbar-title>
 
-        <v-spacer></v-spacer>
+        <v-spacer/>
 
-        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1 app-container' outlined rounded small>
+        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1 app-container primary--text' color="tertiary" elevation="0" rounded small>
           <router-link :to="{ name: 'About'}">
-            <v-icon left>mdi-information-variant</v-icon>
-            About
+            Discover the tool
           </router-link>
         </v-btn>
       </v-app-bar>
