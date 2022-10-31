@@ -19,7 +19,7 @@
         <v-expansion-panel v-for='(element, index) in queriesResults' v-bind:key='index' class='expansion-panel-result'>
 
           <!-- Panel header -->
-          <v-expansion-panel-header :color='secondary_color'>
+          <v-expansion-panel-header :color='secondary_color'  v-if="!deletedIndexes.includes(index)">
             <span :ref='"WOL"+index' class='panel-header'>
               <b>Results for:</b>
               {{ queriesParams[index]['granularity'] }} /
@@ -30,7 +30,7 @@
 
             <!-- Panel delete action -->
             <span class='delete-action'>
-              <v-btn outlined rounded small :loading='isDeleting' @click.native.stop='deleteQuery(index)'>
+              <v-btn outlined rounded small @click.native.stop='deleteQuery(index)'>
                 <v-icon small>mdi-trash-can-outline</v-icon>
                 <div class='hidden-md-and-down'>Delete</div>
               </v-btn>
@@ -45,7 +45,7 @@
           </v-expansion-panel-header>
 
           <!-- Panel content -->
-          <v-expansion-panel-content :color='secondary_color'>
+          <v-expansion-panel-content :color='secondary_color'  v-if="!deletedIndexes.includes(index)">
             <ResultView v-if='queriesResults[index].length > 0' :queryParams='queriesParams[index]'
                         :queryResult='queriesResults[index]' :querySupport='queriesSupport[index]'
                         :queryCustOpt='queriesCustomOptions[index]'
@@ -102,8 +102,8 @@ export default {
       /** Array storing the customization options (filter values, selections) for each query */
       queriesCustomOptions: [],
 
-      /** Deleting processing flag. If true a delete request is being processed */
-      isDeleting: false
+      /** Deleted indexes */
+      deletedIndexes: [],
     }
   },
   computed: {
@@ -176,12 +176,7 @@ export default {
      * @param queryIndex  The index of the expansion panel to be removed
      */
     deleteQuery (queryIndex) {
-      this.isDeleting = true
-      this.queriesParams.splice(queryIndex, 1)
-      this.queriesCustomOptions.splice(queryIndex, 1)
-      this.queriesResults.splice(queryIndex, 1)
-      this.queriesSupport.splice(queryIndex, 1)
-      this.isDeleting = false
+      this.deletedIndexes.push(queryIndex)
     }
   }
 }
