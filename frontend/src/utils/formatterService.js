@@ -3,11 +3,13 @@
  * It provides general purpose formatter services to summarize lineages data
  */
 
-
-export function compactLineagesData (lineagesData){
+export function compactLineagesData (lineagesData,level=1){
 
     // Compute the lineages in star notation
-    const lineagesNames = new Set(lineagesData.map(({name})=>name.match(/^([a-zA-Z0-9]+.[a-zA-Z0-9]+|[[a-zA-Z0-9]+)/gm).at(0)))
+    const regExp=level===1
+        ? (/^([a-zA-Z0-9]+.[a-zA-Z0-9]+|[[a-zA-Z0-9]+)/gm) // aggregate at level 1 (A.1.*)
+        :(/^([a-zA-Z0-9]+.[a-zA-Z0-9]+.[a-zA-Z0-9]+|[a-zA-Z0-9]+.[a-zA-Z0-9]+|[[a-zA-Z0-9]+)/gm)  // aggregate at level 2 (A.1.2.*)
+    const lineagesNames = new Set(lineagesData.map(({name})=>name.match(regExp).at(0)))
 
     const compData=[]
     // Compute the aggregated counts for the lineages in star notation by summing up
