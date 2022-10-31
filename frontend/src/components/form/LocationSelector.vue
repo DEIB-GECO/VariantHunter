@@ -21,7 +21,7 @@
         <!-- Continent selector -->
         <v-col class='complex-field-element'>
           <v-autocomplete v-model='selectedLocation' :items='possibleLocations' :search-input.sync="searchQuery"
-                          :loading='isLoading' placeholder='Start typing the location' attach solo hide-details
+                          :loading='isLoading' placeholder='A continent, country or region' attach solo hide-details
                           persistent-placeholder :hide-no-data="(!searchQuery || searchQuery.length<1)"
                           :no-data-text="(isLoading?'Loading locations...':(searchQuery && searchQuery.length<3?'Continue typing...':'Location not found'))"
                           clearable @update:search-input="fetchLocations">

@@ -17,6 +17,9 @@
 <template>
   <v-layout :ref='fileName' justify-center row class='panel-container' wrap>
 
+    <!-- Next/prev week button ------------------------------------------------>
+    <WeekSlider @moveForward="$emit('askAnalysis', +7,status)" @moveBackward="$emit('askAnalysis', -7,status)" />
+
     <!-- Filtering options -->
     <v-flex class=' xs12 d-flex filter-container' justify-center>
       <v-container>
@@ -122,8 +125,7 @@
     </SectionElement>
 
     <!-- Next/prev week button ------------------------------------------------>
-    <WeekSlider @moveForward="$emit('askAnalysis', +7,status)"
-                @moveBackward="$emit('askAnalysis', -7,status)" />
+    <WeekSlider @moveForward="$emit('askAnalysis', +7,status)" @moveBackward="$emit('askAnalysis', -7,status)" />
   </v-layout>
 </template>
 
