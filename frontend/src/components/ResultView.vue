@@ -51,7 +51,7 @@
       <v-data-table v-model='selectedRows' :custom-sort='customSort' :headers='tableHeaders'
                     :items='processedQueryResult' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :show-expand='!withLineages' @item-expanded='loadLineageDetails'
-                    :loading='isLoadingDetails' :single-expand='true' class='table-element' item-key='item_key'
+                    :loading='isLoadingDetails' single-expand class='table-element' item-key='item_key'
                     :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'
                     @toggle-select-all='handleToggleSelection'>
 
@@ -74,13 +74,14 @@
 
         <!---- Expanded table element ---->
         <template v-if='!withLineages && !isLoadingDetails' v-slot:expanded-item='{ headers, item }'>
-          <td :colspan='4' class='expanded-item-title'>
-            <div>Lineages</div>
+          <td :colspan='4' class='expanded-item-title pr-0'>
+            <ExpansionModeMenu @changeNotationMode="e=>notationMode=e" @changeExapnsionMode="e=>expansionMode=e"/>
+            <div class="row-name">Lineages</div>
           </td>
           <td class='expanded-td'>
             <v-simple-table>
               <tbody>
-              <tr v-for='(lineage, lineage_index) in item.lineages' v-bind:key='lineage_index'>
+              <tr v-for='(lineage, lineage_index) in formatBreakdown(item.lineages)' v-bind:key='lineage_index'>
                 <td>{{ lineage.name }}</td>
               </tr>
               </tbody>
@@ -89,7 +90,7 @@
           <td class='expanded-td' v-for='week in [1, 2, 3, 4]' v-bind:key='week'>
             <v-simple-table>
               <tbody>
-              <tr v-for='(lineage, lineage_index) in item.lineages' v-bind:key='lineage_index'>
+              <tr v-for='(lineage, lineage_index) in formatBreakdown(item.lineages)' v-bind:key='lineage_index'>
                 <td>
                   {{ lineage['f' + week].toPrecision(3) + '% (' + lineage['w' + week] + ')' }}
                 </td>
@@ -98,6 +99,10 @@
             </v-simple-table>
           </td>
         </template>
+        <template v-else-if="isLoadingDetails" v-slot:expanded-item>
+          <td colspan="10" class="py-5"><v-progress-circular indeterminate color="primary"/><span class="pl-4">Loading...</span></td>
+        </template>
+
         <template v-slot:body.append>
           <td :colspan='withLineages? 4: 5' class='table-append' />
           <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append' >
@@ -143,10 +148,13 @@ import SectionElement from '@/components/general/SectionElement'
 import MutationSelector from '@/components/form/MutationSelector'
 import { json2csv } from '@/utils/parserService'
 import WeekSlider from '@/components/form/WeekSlider'
+import ExpansionModeMenu from "@/components/form/menus/ExpansionModeMenu";
+import {compactLineagesData} from "@/utils/formatterService";
 
 export default {
   name: 'ResultView',
   components: {
+    ExpansionModeMenu,
     WeekSlider, MutationSelector, SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart
   },
   props: {
@@ -182,6 +190,12 @@ export default {
 
       /** Array of expanded rows (relevant for lineage-indep only)*/
       expandedRows: [],
+
+      /** Mode of the breakdown view. 0=consider the expanded line only; 1= consider the whole dataset */
+      expansionMode:0,
+
+      /** Notation mode of the breakdown view. 0=full notation; 1,2= start notation (level) */
+      notationMode:0,
 
       /** Array of columns selected for sorting data */
       sortingIndexes: [],
@@ -516,7 +530,8 @@ export default {
           location: item.item.location,
           date: this.queryParams.date,
           prot: item.item.protein,
-          mut: item.item.mut
+          mut: item.item.mut,
+          mode: this.expansionMode===0?'line':'full'
         }
 
         axios
@@ -532,6 +547,15 @@ export default {
             this.$emit('error', e)
           })
       }
+    },
+
+    /**
+     * Reformat breakdown data based on the notation mode selected. Either using full notation or star notation.
+     * @param lineagesData  The lineages data in full notation
+     * @returns {*}         Lineages data in the correct notation
+     */
+    formatBreakdown(lineagesData){
+      return (this.notationMode===0 || !lineagesData)? lineagesData : compactLineagesData(lineagesData,this.notationMode)
     },
 
     /**
@@ -624,18 +648,25 @@ td.expanded-td tr:hover {
   background: none !important;
 }
 
-.expanded-item-title {
+.expanded-item-title{
+  position: relative;
   text-align: -webkit-right;
   background: var(--tertiary-color-light);
   border-right: thin solid var(--tertiary-color-dark);
 }
 
-.expanded-item-title div {
+.expanded-item-title .row-name {
   color: rgba(0, 0, 0, 0.6);
   font-weight: bold;
   font-size: 12px;
   letter-spacing: 0.019em;
   display: inherit;
+  width: 110px;
+  height: 100px;
+  text-align: center;
+  vertical-align: bottom;
+  rotate: -90deg;
+  padding-right: 5px;
 }
 
 td.table-append {
