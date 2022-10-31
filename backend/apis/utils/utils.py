@@ -74,7 +74,7 @@ def compute_pvalue(freq1, freq2):
 
     """
     try:
-        return scipy.stats.chi2_contingency([freq1, freq2])[1]
+        return scipy.stats.chi2_contingency(observed=[freq1, freq2], correction=True)[1]
     except:
         return "NaN"
 
