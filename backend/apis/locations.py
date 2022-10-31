@@ -4,7 +4,8 @@
     Endpoints:
     ├── getContinents: endpoint to get all the continents
     ├── getCountries: endpoint to get all the countries of given a continent
-    └── getRegions: endpoint to get all the regions of given a country
+    ├── getRegions: endpoint to get all the regions of given a country
+    └── getLocations: endpoint to get the locations
 
 """
 

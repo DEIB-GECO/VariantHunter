@@ -17,7 +17,7 @@
     <template v-slot:results>
       <v-expansion-panels v-model='expandedPanels' :value='expandedPanels' focusable multiple tile>
         <v-expansion-panel v-for='(element, index) in queriesResults' v-bind:key='index' :ref='"L"+index'
-                           class='expansion-panel-result'>
+                           :class="'expansion-panel-result '+(deletedIndexes.includes(index)?' d-none':'')">
 
           <!-- Panel header -->
           <v-expansion-panel-header :color='secondary_color' v-if="!deletedIndexes.includes(index)">

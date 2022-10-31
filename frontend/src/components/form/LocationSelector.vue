@@ -23,7 +23,7 @@
           <v-autocomplete v-model='selectedLocation' :items='possibleLocations' :search-input.sync="searchQuery"
                           :loading='isLoading' placeholder='A continent, country or region' attach solo hide-details
                           persistent-placeholder :hide-no-data="(!searchQuery || searchQuery.length<1)"
-                          :no-data-text="(isLoading?'Loading locations...':(searchQuery && searchQuery.length<3?'Continue typing...':'Location not found'))"
+                          :no-data-text="(isLoading?'Loading locations...':(searchQuery && searchQuery.length<2?'Continue typing...':'Location not found'))"
                           clearable @update:search-input="fetchLocations">
             <template v-slot:selection="{item}">
               <v-chip dark small class="text-uppercase mr-3 hidden-xs-only" :color="getLocationColor(item)">granularity:
@@ -78,7 +78,7 @@ export default {
   methods: {
     /** Fetch all possible values for locations */
     fetchLocations() {
-      if (this.searchQuery?.length >= 3) {
+      if (this.searchQuery?.length >= 2) {
         this.isLoading = true
         const locationsAPI = `/locations/getLocations`
         axios
