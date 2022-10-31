@@ -170,7 +170,7 @@ export default {
 }
 
 .section-container{
-  padding: 2px;
+  padding: 8px;
   border-radius: 8px;
   background: white;
 }

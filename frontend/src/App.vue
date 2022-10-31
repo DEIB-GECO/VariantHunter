@@ -17,12 +17,12 @@
 
         <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1 app-container primary--text' color="tertiary" elevation="0" rounded small>
           <router-link :to="{ name: 'About'}">
-            Discover the tool
+            About this tool
           </router-link>
         </v-btn>
       </v-app-bar>
 
-      <v-main>
+      <v-main :class="$route.name==='About'?'white':''">
         <router-view />
       </v-main>
      </v-app>
