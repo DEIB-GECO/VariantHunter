@@ -74,7 +74,7 @@
 
         <!---- Expanded table element ---->
         <template v-if='!withLineages && !isLoadingDetails' v-slot:expanded-item='{ headers, item }'>
-          <td :colspan='5' class='expanded-item-title'>
+          <td :colspan='4' class='expanded-item-title'>
             <div>Lineages</div>
           </td>
           <td class='expanded-td'>
@@ -263,6 +263,7 @@ export default {
         const row = {}
 
         row['item_key'] = rawRow['protein'] + '_' + rawRow['mut']
+        row['location'] = rawRow['location']
         row['protein'] = rawRow['protein']
         row['mut'] = rawRow['mut']
 
