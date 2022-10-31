@@ -33,14 +33,9 @@
               </v-flex>
 
               <!-- Form fields -->
-              <!---- Granularity ---->
-              <v-flex :class='withLineages? "xs12 sm4 md3 d-flex":"xs12 sm4 md2 d-flex"'>
-                <GranularitySelector />
-              </v-flex>
-
               <!---- Location ---->
               <v-flex v-if="selectedGranularity !== 'world'"
-                      :class='withLineages? "xs12 sm8 md8 d-flex":"xs12 sm8 md5 d-flex"'>
+                      :class='withLineages? "xs12 sm12 md11 d-flex":"xs12 sm12 md7 d-flex"'>
                 <LocationSelector @error='e=> $emit("error",e)' />
               </v-flex>
 

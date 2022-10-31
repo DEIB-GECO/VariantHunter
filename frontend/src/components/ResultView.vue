@@ -96,7 +96,7 @@
           </td>
         </template>
         <template v-slot:body.append>
-          <td :colspan='withLineages? 5: 6' class='table-append' />
+          <td :colspan='withLineages? 4: 5' class='table-append' />
           <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append' >
             Tot. seq.: {{querySupport.totSeq[week-1]}}
           </td>
@@ -223,7 +223,6 @@ export default {
     /** Array of objects describing header columns */
     tableHeaders () {
       let headers = [
-        { text: 'Location', value: 'location', divider: true, align: 'center' },
         { text: 'Protein', value: 'protein', divider: true, align: 'center' },
         { text: 'Mut', value: 'mut', divider: true, align: 'center' },
         { text: 'Slope', value: 'slope', divider: true, align: 'center' },
@@ -262,7 +261,6 @@ export default {
         const row = {}
 
         row['item_key'] = rawRow['protein'] + '_' + rawRow['mut']
-        row['location'] = rawRow['location']
         row['protein'] = rawRow['protein']
         row['mut'] = rawRow['mut']
 

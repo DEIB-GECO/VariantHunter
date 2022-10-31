@@ -126,7 +126,7 @@ export default {
 <style scoped>
 /* Form labels styling */
 .field-label {
-  justify-content: center;
+  padding-left:24px !important;
   padding-top: 8px !important;
   padding-bottom: 5px !important;
   color: white;

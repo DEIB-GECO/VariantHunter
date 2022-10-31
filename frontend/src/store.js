@@ -9,25 +9,14 @@ const state = {
   tertiary_color_light: '#D2ECF8FF',
   tertiary_color_dark: '#1976D2FF',
 
-  /** Granularity: available options */
-  possibleGranularity: [/* 'world',*/'continent', 'country', 'region'],
   /** Granularity: selected option */
   selectedGranularity: null,
 
-  /** Selectable continents */
-  possibleContinents: [],
-  /** Selected continent */
-  selectedContinent: null,
+  /** Possible locations */
+  possibleLocations: [],
 
-  /** Selectable countries */
-  possibleCountries: [],
-  /** Selected country */
-  selectedCountry: null,
-
-  /** Selectable regions */
-  possibleRegions: [],
-  /** Selected region */
-  selectedRegion: null,
+  /** Possible locations info*/
+  possibleLocationsInfo: [],
 
   /** Selected location (continent, country or region based on granularity) */
   selectedLocation: null,
@@ -40,29 +29,17 @@ const state = {
 }
 
 const mutations = {
-  SET_GRANULARITY: (state, newValue) => {
+
+   SET_GRANULARITY: (state, newValue) => {
     state.selectedGranularity = newValue
   },
 
-  SET_ALL_CONTINENTS: (state, newValue) => {
-    state.possibleContinents = newValue
-  },
-  SET_CONTINENT: (state, newValue) => {
-    state.selectedContinent = newValue
+  SET_ALL_LOCATIONS: (state, newValue) => {
+    state.possibleLocations = newValue
   },
 
-  SET_ALL_COUNTRIES: (state, newValue) => {
-    state.possibleCountries = newValue
-  },
-  SET_COUNTRY: (state, newValue) => {
-    state.selectedCountry = newValue
-  },
-
-  SET_ALL_REGIONS: (state, newValue) => {
-    state.possibleRegions = newValue
-  },
-  SET_REGION: (state, newValue) => {
-    state.selectedRegion = newValue
+  SET_ALL_LOCATIONS_INFO: (state, newValue) => {
+    state.possibleLocationsInfo = newValue
   },
 
   SET_LOCATION: (state, newValue) => {

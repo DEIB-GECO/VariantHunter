@@ -124,10 +124,6 @@ body {
   border-radius: 4px 0 4px 4px;
 }
 
-/* Capitalize select items */
-.v-select-list {
-  text-transform: capitalize !important;
-}
 
 /* Overwrite default Vuetify and Plotly font */
 .v-application, body * {
