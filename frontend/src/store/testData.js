@@ -3128,9 +3128,10 @@ export const ex1 = {
         },
     },
     useGlobalFilters: true,
-    filteringOpt: {protein: '', muts: [], rowKeys: []},
+    filteringOpt: {protein: null, muts: [], rowKeys: []},
+    orderingOpt: {sortingIndexes:[], isDescSorting:[]},
     characterizingMuts: null,
-    muts: muts1,
+    rows: muts1,
     totSeq: {
         w1: 29944, w2: 22106, w3: 14510, w4: 1531
     }
@@ -3157,9 +3158,10 @@ export const ex2 = {
         },
     },
     useGlobalFilters: true,
-    filteringOpt: {protein: '', muts: [], rowKeys: []},
+    filteringOpt: {protein: null, muts: [], rowKeys: []},
+    orderingOpt: {sortingIndexes:[], isDescSorting:[]},
     characterizingMuts: ['NS7a_V82A'],
-    muts: muts1,
+    rows: muts1,
     totSeq: {
         w1: 29944, w2: 22106, w3: 14510, w4: 1531
     }

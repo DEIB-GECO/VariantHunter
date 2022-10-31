@@ -18,11 +18,11 @@
 
       <!---- Show/hide p-values info button ---->
       <v-flex justify-center class='xs12 sm6 md3 d-flex'>
-        <v-btn v-if='!showPValues' outlined depressed rounded small color='primary' @click='$emit("showPValues",true)'>
+        <v-btn v-if='!showPValues' outlined depressed rounded small color='primary' @click='showPValues=false'>
           <v-icon left>mdi-plus-circle-outline</v-icon>
           Show p-values
         </v-btn>
-        <v-btn v-else depressed rounded small color='primary' @click='$emit("showPValues",false)'>
+        <v-btn v-else depressed rounded small color='primary' @click='showPValues=false'>
           <v-icon left>mdi-minus-circle-outline</v-icon>
           Hide p-values
         </v-btn>
@@ -117,12 +117,18 @@ import DialogOpener from '@/components/general/DialogOpener'
 export default {
   name: 'TableControls',
   components: { DialogOpener },
-  props: {
-    /* Download flag: true if a file download is in progress */
-    downloadLoading: { required: true },
-
-    /** Flag to show the p_values in the table */
-    showPValues: { required: true }
+  data(){
+    return {
+      /** Flag to show the p_values in the table */
+      showPValues: false,
+      /* Download flag: true if a file download is in progress */
+      downloadLoading:false,
+    }
+  },
+  watch:{
+    showPValues(newVal){
+      this.$emit("showPValues",newVal)
+    }
   }
 }
 </script>

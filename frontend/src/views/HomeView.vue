@@ -6,10 +6,10 @@
   <div class="height-100">
     <sidebar />
     <div class="tool-views-container height-100">
-      <v-scroll-reverse-transition>
+      <v-scroll-y-reverse-transition>
         <new-search-view v-if="currentView==='new-search'"/>
         <result-view v-if="currentView==='result'"/>
-      </v-scroll-reverse-transition>
+      </v-scroll-y-reverse-transition>
     </div>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
   },
   watch: {
     currentAnalysis(newVal){
-      if(newVal)
+      if(newVal!==null)
         this.currentView='result'
       else
         this.currentView='new-search'
@@ -43,6 +43,9 @@ export default {
 </script>
 
 <style scoped>
+.home-view-container{
+  background: var(--tertiary-color-light) !important; /* to ensure readable downloadable images */
+}
 .tool-views-container {
   background: var(--tertiary-color-light);
   margin-left: 56px;

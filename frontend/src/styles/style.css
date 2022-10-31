@@ -54,6 +54,10 @@
     text-transform: initial !important;
 }
 
+#app .spaced-5{
+    word-spacing: 5px !important;
+}
+
 .cursor-forbidden:hover, .cursor-forbidden *:hover{
     cursor: not-allowed !important;
 }

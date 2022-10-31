@@ -18,50 +18,52 @@
 -->
 
 <template>
-  <v-flex class='xs12 d-flex' justify-center>
-    <v-layout justify-center row wrap>
+  <v-row>
+    <v-col>
 
       <!-- Section Heading -->
-      <v-flex class='xs12 d-flex' justify-center>
-        <div>
-          <h2 class='result-heading'>
-            <v-icon left color='white'>{{ icon }}</v-icon>
+      <v-row>
+        <v-col>
+          <div :class="'text-h5 compact-h5 font-weight-black primary--text mt-8  spaced-5 mb-'+(tabs.length>0?'4':'2')">
+            <v-icon left color="primary">{{ icon }}</v-icon>
             {{ title }}
-          </h2>
+          </div>
 
           <!-- Section Options -->
-          <div class='section-options'>
+          <div class="options-container">
+            <div class='section-options'>
 
-            <!-- Tabs-->
-            <span v-for='(tab, index) in tabs' v-bind:key='index'
-                  :class='tabLabelClass + (currentTab!==index?" current-tab":"")' @click='currentTab=index' >
+              <!-- Tabs-->
+              <span v-for='(tab, index) in tabs' v-bind:key='index'
+                    :class='tabLabelClass + (currentTab!==index?" current-tab":"")' @click='currentTab=index'>
               {{ tab }}
-            </span>
+              </span>
 
-            <!-- Expand/collapse option-->
-            <span class='expand-collapse-icon'>
+              <!-- Expand/collapse option-->
+              <span class='expand-collapse-icon'>
               <v-icon v-if='showSectionBody' small color='primary' @click='invertVisibility'>mdi-arrow-collapse</v-icon>
               <v-icon v-else small color='primary' @click='invertVisibility'>mdi-arrow-expand</v-icon>
             </span>
 
+            </div>
           </div>
-        </div>
-      </v-flex>
+        </v-col>
+      </v-row>
 
       <!-- Section Body Collapsed -->
-      <v-flex v-if='!showSectionBody' class='xs12 d-flex section-container' justify-center>
-        <div class='collapsed-element' />
-      </v-flex>
+      <v-row v-if='!showSectionBody' class='section-container' justify-center>
+        <div class='collapsed-element'/>
+      </v-row>
 
       <!-- Section Body Expanded -->
       <v-expand-transition>
-        <v-flex v-if='showSectionBody' class='xs12 d-flex section-container' justify-center>
+        <v-row v-if='showSectionBody' class='section-container' justify-center>
           <slot></slot>
-        </v-flex>
+        </v-row>
       </v-expand-transition>
 
-    </v-layout>
-  </v-flex>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -69,18 +71,18 @@ export default {
   name: 'SectionElement',
   props: {
     /** Title for the section */
-    title: { required: true },
+    title: {required: true},
 
     /** Icon name for the title. MDI icon are used. */
-    icon: { required: true },
+    icon: {required: true},
 
     /** Array of labels for the tabs of the section */
-    tabs: { default () { return [] } },
+    tabs: {default() {return []}},
 
     /** Collapse the section by default */
     collapsed: Boolean
   },
-  data () {
+  data() {
     return {
       /** Flag for the visibility of the section body */
       showSectionBody: !this.collapsed,
@@ -90,19 +92,19 @@ export default {
     }
   },
   computed: {
-    tabLabelClass () {
+    tabLabelClass() {
       return 'tab-icon ' + (this.showSectionBody ? '' : 'hidden-tab ')
     }
   },
   methods: {
     /** Change the visibility flag value for the section body*/
-    invertVisibility () {
+    invertVisibility() {
       this.showSectionBody = !this.showSectionBody
     }
   },
   watch: {
     /** Emit tabChange when tab is changed */
-    currentTab () {
+    currentTab() {
       this.$emit('tabChange', this.currentTab)
     }
   }
@@ -113,9 +115,14 @@ export default {
 
 /** Section options labels */
 .section-options {
-  right: 24px;
-  left: 24px;
+  right: 0;
+  left: 0;
   position: absolute;
+}
+
+.options-container {
+  top: -13px;
+  position: relative;
 }
 
 .section-options span {
@@ -146,29 +153,26 @@ export default {
   margin-right: 10px;
 }
 
-.hidden-tab{
+.hidden-tab {
   display: none;
 }
-.current-tab{
+
+.current-tab {
   background: #e3e3e3 !important;
 }
 
 /* Collapse body element */
 .collapsed-element {
   width: 100%;
-  border-radius: 4px 0 4px 4px;
+  border-radius: 4px;
   height: 5px;
   background: white;
 }
 
-/* Heading of table and graphs */
-.result-heading {
-  color: white;
-  font-weight: 800;
-  word-spacing: 5px;
-  margin-top: 25px;
-  border-bottom: solid 4px white;
-  margin-bottom: 4px;
+.section-container{
+  padding: 2px;
+  border-radius: 8px;
+  background: white;
 }
 
 </style>

@@ -17,6 +17,30 @@ export const mutations = {
         state.currentAnalysis = id
     },
 
+    setFilterOpt(state,{global= true, opt,value}){
+        console.log("setFilter of "+opt+" to "+value)
+        if(global){
+            state.globalFilteringOpt[opt]=value
+        }else {
+            const index = state.analyses.findIndex(({id: analysisId}) => state.currentAnalysis === analysisId);
+            if (index > -1) {
+                state.analyses[index].filteringOpt[opt]=value
+            }
+        }
+    },
+
+    setOrderOpt(state,{global= true, opt,value}){
+        console.log("setOrder of "+opt+" to "+value)
+        if(global){
+            state.globalFilteringOpt[opt]=value
+        }else {
+            const index = state.analyses.findIndex(({id: analysisId}) => state.currentAnalysis === analysisId);
+            if (index > -1) {
+                state.analyses[index].orderingOpt[opt]=value
+            }
+        }
+    },
+
     setStarredAnalysis(state, {id, starred = true}) {
         console.log("setStarredAnalysis of " + id + " to " + starred)
         const index = state.analyses.findIndex(({id: analysisId}) => id === analysisId);
@@ -54,7 +78,7 @@ export const mutations = {
             useGlobalFilters: true,
             filteringOpt: {protein:null, muts:[],rowKeys:[]},
             characterizingMuts: characterizing_muts,
-            muts: rows,
+            rows: rows,
             totSeq: {
                 w1: tot_seq[0], w2: tot_seq[1], w3: tot_seq[2], w4: tot_seq[3]
             }

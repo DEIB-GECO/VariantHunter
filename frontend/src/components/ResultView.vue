@@ -603,9 +603,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
-/* Panel container styling */
+/* Panel container styling  todo: all these were not scoped*/
 .panel-container {
   background: var(--secondary-color); /* to ensure readable downloadable images */
   padding-top: 30px;

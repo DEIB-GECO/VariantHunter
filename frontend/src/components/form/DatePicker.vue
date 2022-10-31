@@ -25,7 +25,7 @@
                           persistent-hint
                           hint="Not sure which period to select? Analyze the sequences over time using the Dataset Explorer below."
                           placeholder='Select the end date of the period' readonly
-                          clearable solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true'
+                          clearable clear-icon="mdi-backspace-outline" solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true'
                           persistent-placeholder/>
           </template>
           <v-date-picker v-model='selectedDate' :max='today' first-day-of-week='1' no-title range

@@ -30,3 +30,11 @@ export function json2csv (jsonData, headersInfo) {
   csv.unshift(fieldsHeaders.join(','))
   return csv.join('\r\n')
 }
+
+/** Name for downloaded files:  Lin[<LINEAGE>|"Indep"]_<GRANULARITY>_[<LOCATION>]_<DATE> */
+export function getFileName(query) {
+  return (
+      query.location[query.granularity]+"_"+query.endDate+
+      (query.lineage? "_"+query.lineage: '')
+  )
+}

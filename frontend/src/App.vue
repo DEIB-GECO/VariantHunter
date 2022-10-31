@@ -15,7 +15,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1' outlined rounded small>
+        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1 app-container' outlined rounded small>
           <router-link :to="{ name: 'About'}">
             <v-icon left>mdi-information-variant</v-icon>
             About
@@ -108,6 +108,9 @@ export default {
 /* Body background color */
 body {
   background: var(--primary-color);
+}
+#app {
+  background: var(--primary-color); /* to ensure readable downloadable images */
 }
 
 /* Border radius for the graph plots*/

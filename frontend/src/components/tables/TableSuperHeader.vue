@@ -13,7 +13,6 @@
     <th :colspan='withLineages ? 2 : 3' class='empty-main-header' />
     <th colspan='1' class='empty-main-header' />
     <th colspan='1' class='empty-main-header' />
-    <th colspan='1' class='empty-main-header' />
     <th colspan='4'>
       Mutation diffusion in % &nbsp;&nbsp; (num of affected sequences)
     </th>
@@ -46,7 +45,7 @@ export default {
   letter-spacing: 0.05em;
   word-spacing: 0.1em;
   text-align: center !important;
-  border-top: var(--tertiary-color-dark) solid 1px !important;
+  border-top: var(--primary-color) solid 1px !important;
   padding-top: 7px !important;
   padding-bottom: 7px !important;
   height: fit-content !important;

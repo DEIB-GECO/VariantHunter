@@ -28,6 +28,8 @@ export const state = {
      *      protein: string representing the filtered protein or null
      *      muts: array [] of filtered mutations
      *      rowKeys: array [] of selected row keys
+     *      sortingIndexes: array []  of sorting columns
+     *      isDescSorting: array [] of boolean representing the sorting directions
      *  }
      *  characterizingMuts: ['protein_mut',...] or null if lineage independent
      *  muts: [{
@@ -49,7 +51,8 @@ export const state = {
 
     /** currentAnalysis: currently shown analysis or null value */
     currentAnalysis: 0,
-    globalFilteringOpt: {protein: '', muts: [], rowKeys: []},
+    globalFilteringOpt: {protein: null, muts: [], rowKeys: []},
+    globalOrderingOpt: {sortingIndexes:[], isDescSorting:[]},
 
     /** Selected location (continent, country or region based on granularity) */
     selectedLocation: null,

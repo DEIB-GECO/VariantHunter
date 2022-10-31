@@ -27,21 +27,21 @@
 
     <v-col cols="12" sm="8"  class='field-element'>
       <!-- Manual selector -->
-      <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues'
+      <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues' no-data-text="Not found"
                 hide-details :placeholder='placeholder' solo='solo' :loading='loading'
                 attach persistent-placeholder dense />
 
       <!-- Autocomplete selector -->
       <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable clear-icon="mdi-backspace-outline" :multiple='multiple'
                       :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder' :solo='solo' :loading='loading'
-                      attach dense>
+                      attach dense no-data-text="Not found">
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
         <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
 
-              <v-chip v-if="index<5" small>{{ item }}</v-chip>
-              <v-chip v-else-if="index===5" small outlined>
+              <v-chip v-if="index<5" class="mr-1 my-1" small>{{ item }}</v-chip>
+              <v-chip v-else-if="index===5" class="mr-1 my-1" small outlined>
                 +{{ value.length - 5 }} others
               </v-chip>
             </template>
