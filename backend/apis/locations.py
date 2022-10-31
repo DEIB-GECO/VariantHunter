@@ -4,14 +4,13 @@
     Endpoints:
     ├── getContinents: endpoint to get all the continents
     ├── getCountries: endpoint to get all the countries of given a continent
-    └── getRegions: endpoint to get all the regions of given a country
+    ├── getRegions: endpoint to get all the regions of given a country
+    └── getLocations: endpoint to get the locations
 
 """
 
 import sqlite3
-
 from flask import request
-
 from .utils.path_manager import db_path
 from flask_restplus import Namespace, Resource
 
@@ -85,20 +84,22 @@ def get_locations(string):
     con = sqlite3.connect(db_path)
     cur = con.cursor()
     locations=[]
+    string=[string+'%','% '+string+'%']
+
     # Fetch continents
     query = f'''    SELECT LO.location
                     FROM locations AS LO JOIN continents AS CO ON LO.location_id=CO.continent_id
-                    WHERE (upper(LO.location) LIKE upper('{string}%'))
-                    OR (upper(LO.location) LIKE upper('% {string}%'));'''
-    locations.extend([{'value': x[0], 'type': 'continent', 'country':None, 'continent':None} for x in cur.execute(query).fetchall()])
+                    WHERE (upper(LO.location) LIKE upper(?))
+                    OR (upper(LO.location) LIKE upper(?));'''
+    locations.extend([{'value': x[0], 'type': 'continent', 'country':None, 'continent':None} for x in cur.execute(query,string).fetchall()])
 
     # Fetch countries
     query = f'''    SELECT LO.location, CON.location
                     FROM locations AS LO
                     JOIN countries AS CO ON LO.location_id=CO.country_id
                     JOIN locations AS CON ON CON.location_id=CO.continent_id
-                    WHERE (upper(LO.location) LIKE upper('{string}%')) OR (upper(LO.location) LIKE upper('% {string}%'));'''
-    locations.extend([{'value': x[0], 'type': 'country', 'country':None, 'continent':x[1]} for x in cur.execute(query).fetchall()])
+                    WHERE (upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?));'''
+    locations.extend([{'value': x[0], 'type': 'country', 'country':None, 'continent':x[1]} for x in cur.execute(query,string).fetchall()])
 
     # Fetch regions
     query = f'''    SELECT LO.location, COU.location, CON.location
@@ -107,8 +108,8 @@ def get_locations(string):
                     JOIN locations AS COU ON COU.location_id=RE.country_id
                     JOIN countries AS CC ON CC.country_id=RE.country_id
                     JOIN locations AS CON ON CON.location_id=CC.continent_id
-                    WHERE (upper(LO.location) LIKE upper('{string}%')) OR (upper(LO.location) LIKE upper('% {string}%'));'''
-    locations.extend([{'value': x[0], 'type': 'region', 'country':x[1], 'continent':x[2]} for x in cur.execute(query).fetchall()])
+                    WHERE (upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?));'''
+    locations.extend([{'value': x[0], 'type': 'region', 'country':x[1], 'continent':x[2]} for x in cur.execute(query,string).fetchall()])
 
     con.close()
     return locations
