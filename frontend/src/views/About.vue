@@ -11,14 +11,14 @@
       <v-col cols='col-xs-12 col-sm-3 col-lg-2'>
         <div class='huge-title'>
           <div class='huge-logo hidden-xs-only'>
-            <v-img :src='websiteLogo' contain height='150px' width='150px' />
+            <v-img :src='websiteLogo' contain height='150px' width='150px'/>
           </div>
-          <v-img :src='websiteLogo' class='hidden-sm-and-up' contain height='80px' width='80px' />
+          <v-img :src='websiteLogo' class='hidden-sm-and-up' contain height='80px' width='80px'/>
         </div>
       </v-col>
       <v-col cols='col-xs-12 col-sm-5 col-lg-3'>
         <div class='site-title huge-site-title'>
-          <span class='emphasis'>Variant</span><br />
+          <span class='emphasis'>Variant</span><br/>
           <span>Hunter</span>
         </div>
       </v-col>
@@ -45,18 +45,18 @@
     </v-row>
 
     <!-- Tool info -->
-    <v-row  class='with-separator underlined-links'>
-      <ToolGuide />
+    <v-row class='with-separator underlined-links'>
+      <ToolGuide/>
     </v-row>
 
     <!-- Docker info -->
     <v-row class='underlined-links'>
-      <DockerGuide />
+      <DockerGuide/>
     </v-row>
 
     <v-row class='justify-center mt-5'>
       <v-col cols='col-xs-12 col-sm-12 col-lg-6'>
-        <v-container class='mt-10'>
+        <v-container class='mt-5'>
 
           <h3 id='contributors'>
             <v-icon left color='#000000DE' large>mdi-account-supervisor</v-icon>
@@ -85,21 +85,38 @@
         </v-container>
       </v-col>
       <v-col cols='col-xs-12 col-sm-12 col-lg-6'>
-        <v-container class='mt-10'>
+        <v-container class='mt-5'>
           <h3>
             <v-icon left color='#000000DE' large>mdi-account-box-outline</v-icon>
             Contacts
           </h3>
           <p class='pa-5'>
-            Dipartimento di Elettronica, Informazione e Bioingegneria <br />
-            <a href='tel:+39 02 2399 3655' target='_blank'>+39 02 2399 3655</a><br />
-            Politecnico di Milano<br />
-            Via Ponzio 34/5<br />
-            20133 Milano<br />
+            Dipartimento di Elettronica, Informazione e Bioingegneria <br/>
+            <a href='tel:+39 02 2399 3655' target='_blank'>+39 02 2399 3655</a><br/>
+            Politecnico di Milano<br/>
+            Via Ponzio 34/5<br/>
+            20133 Milano<br/>
             Italy
           </p>
         </v-container>
-        <v-container class='mt-10'>
+
+        <v-container class='mt-5'>
+
+          <h3>
+            <v-icon left color='#000000DE' large>mdi-shield-star-outline</v-icon>
+            License
+          </h3>
+          <p class='pa-5'>
+            Variant Hunter is licensed under the <span class="font-weight-black">Apache License 2.0</span><br/>
+            <span class="underlined-links text-uppercase text-caption">
+              <a href="https://github.com/DEIB-GECO/VariantHunter/blob/master/LICENSE" target="_blank">
+                more info...
+              </a>
+            </span>
+          </p>
+        </v-container>
+
+        <v-container class='mt-5'>
 
           <h3>
             <v-icon left color='#000000DE' large>mdi-account-heart</v-icon>
@@ -131,8 +148,8 @@ import DockerGuide from '@/components/general/guides/docker/DockerGuide'
 
 export default {
   name: 'About',
-  components: { ToolGuide, DockerGuide },
-  data () {
+  components: {ToolGuide, DockerGuide},
+  data() {
     return {
       /** VariantHunter logo */
       websiteLogo: require('../assets/logo.png'),
@@ -153,7 +170,7 @@ export default {
           name: 'Valeria Micheli',
           img: require('../assets/contributors/person.png'),
           associate: 'Laboratory of Clinical Microbiology, Virology and Bioemergencies, \n' +
-            'ASST Fatebenefratelli, Sacco, Milan, Italy'
+              'ASST Fatebenefratelli, Sacco, Milan, Italy'
         }
       ],
 
@@ -282,6 +299,7 @@ h3 {
   font-weight: 900;
   text-transform: uppercase;
 }
+
 h4 {
   font-weight: 900;
   text-transform: uppercase;
@@ -301,7 +319,7 @@ h4 {
 }
 
 /* Expansion panel header style */
-.about .v-expansion-panel-header, .v-dialog .v-expansion-panel-header{
+.about .v-expansion-panel-header, .v-dialog .v-expansion-panel-header {
   font-weight: 600;
   padding-top: 3px;
   padding-bottom: 3px;
