@@ -94,7 +94,7 @@ export default {
       /** Mode of the breakdown view. 0=consider the expanded line only; 1= consider the whole dataset */
       expansionMode: 0,
 
-      /** Notation mode of the breakdown view. 0=full notation; 1= start notation */
+      /** Notation mode of the breakdown view.  0=full notation; 1,2= start notation (level)  */
       notationMode: 0,
 
       /** Default sorting options */
@@ -375,8 +375,8 @@ export default {
      * @param lineagesData  The lineages data in full notation
      * @returns {*}         Lineages data in the correct notation
      */
-    formatBreakdown(lineagesData) {
-      return (this.notationMode === 0 || !lineagesData) ? lineagesData : compactLineagesData(lineagesData)
+    formatBreakdown(lineagesData){
+      return (this.notationMode===0 || !lineagesData)? lineagesData : compactLineagesData(lineagesData,this.notationMode)
     },
 
     /**
@@ -444,8 +444,12 @@ td.expanded-td tr:hover {
   font-size: 12px;
   letter-spacing: 0.019em;
   display: inherit;
+  width: 110px;
   height: 110px;
-  vertical-align: middle;
+  text-align: center;
+  vertical-align: bottom;
+  rotate: -90deg;
+  padding-bottom: 4px;
 }
 
 td.table-append {

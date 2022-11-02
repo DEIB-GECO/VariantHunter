@@ -18,9 +18,9 @@
   <v-card width="90%" class="options text-left" color="transparent" flat>
     <div class="options-intro">
       <div class="main">Lineages breakdown </div>
-      computed considering {{expansionMode===0?'this line':'the entire dataset'}}
+      computed considering {{expansionMode===0?'the expanded mutation in the 4 weeks and location':'the entire dataset'}}
     </div>
-    <MenuButton icon="mdi-pencil" text="Change scope" :options="scopeOptions" @select="expansionModeManager"/>
+    <!--<MenuButton icon="mdi-pencil" text="Change scope" :options="scopeOptions" @select="expansionModeManager"/>-->
     <MenuButton icon="mdi-code-string" :text="'Change notation'" :options="notationOptions" @select="notationModeManager"/>
   </v-card>
 </template>
@@ -36,7 +36,7 @@ export default {
       scopeOptions:[
         { value:0,
           text:'Consider this line only',
-          description:'Compute the diffusion of each lineage considering the expanded line only.',
+          description:'Compute the diffusion of each lineage considering the expanded mutation in the 4 weeks and location.',
           icon:'mdi-city-variant-outline'},
         { value:1,
           text:'Consider the entire dataset',
@@ -46,14 +46,20 @@ export default {
 
       notationMode:0,
       notationOptions:[
-        { value:0,
+        { value:1,
+          text:'Use simplified notation (level 1)',
+          description:'Summarize the counts using a level-1 star notation for the lineages (e.g., B.1.*). \n' +
+              'In any case, lineages exceeding 10% spread will not be aggregated',
+          icon:'mdi-minus'},
+          { value:2,
+          text:'Use simplified notation (level 2)',
+          description:'Summarize the counts using a level-2 star notation for the lineages (e.g., B.1.1.*). ' +
+              'In any case, lineages exceeding 10% spread will not be aggregated',
+          icon:'mdi-equal'},
+          { value:0,
           text:'Use complete notation',
           description:'Differentiate each lineage (e.g.: B.1.1, B.1.2,...) by avoiding groupings.',
           icon:'mdi-text-long'},
-        { value:1,
-          text:'Use simplified notation',
-          description:'Summarize the counts using a star notation for the lineages (e.g.: B.1.*,...).',
-          icon:'mdi-minus'}
       ]
     }
   },
@@ -79,6 +85,7 @@ export default {
 }
 
 .options-intro{
+  max-width: 170px;
   padding-top: 13px;
   margin-bottom: 10px;
   color: rgba(0, 0, 0, 0.6);
