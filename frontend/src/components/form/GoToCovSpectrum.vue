@@ -1,12 +1,14 @@
 <template>
-  <div class="px-4">
+  <v-container>
+    <v-row no-gutters><v-col class="text-center text-sm-left">
     <btn-with-tooltip size="small" outlined top color="primary" :click-handler="generateAnalysis">
 
       <template v-slot:default>
         <v-icon left>mdi-open-in-new</v-icon>
-        Analyze the selected mutations with
-        <span class="pl-1"><v-img max-height="14px" width="115px" contain
-                                  :src="require('@/assets/others/CovSpecturm.svg')"></v-img></span>
+        Analyze <span class="hidden-xs-only">the selected mutations</span> with
+        <span class="pl-1">
+          <v-img max-height="14px" width="115px" contain :src="require('@/assets/others/CovSpecturm.svg')"/>
+        </span>
       </template>
 
       <template v-slot:tip>
@@ -33,7 +35,8 @@
       </template>
 
     </btn-with-tooltip>
-  </div>
+    </v-col></v-row>
+  </v-container>
 </template>
 
 <script>
