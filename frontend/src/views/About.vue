@@ -90,14 +90,21 @@
             <v-icon left color='#000000DE' large>mdi-account-box-outline</v-icon>
             Contacts
           </h3>
-          <p class='pa-5'>
-            Dipartimento di Elettronica, Informazione e Bioingegneria <br/>
-            <a href='tel:+39 02 2399 3655' target='_blank'>+39 02 2399 3655</a><br/>
-            Politecnico di Milano<br/>
-            Via Ponzio 34/5<br/>
-            20133 Milano<br/>
-            Italy
-          </p>
+          <v-row>
+          <v-col cols="12" sm="5" >
+            <div class='pa-5 pb-0'><v-img alt="Logo of Politecnico di Milano" :src="require('@/assets/others/deib_logo.png')" contain max-width="250px"/></div>
+          </v-col>
+            <v-col cols="12" sm="7">
+              <p class='pa-5'>
+                <span class="font-weight-medium">Dipartimento di Elettronica, Informazione e Bioingegneria</span> <br/>
+                <span class="font-weight-bold"> Politecnico di Milano</span><br/>
+                <a href='tel:+39 02 2399 3655' target='_blank'>+39 02 2399 3655</a><br/>
+                Via Ponzio 34/5<br/>
+                20133 Milano<br/>
+                Italy
+              </p>
+            </v-col>
+          </v-row>
         </v-container>
 
         <v-container class='mt-5'>
@@ -107,7 +114,7 @@
             License
           </h3>
           <p class='pa-5'>
-            Variant Hunter is licensed under the <span class="font-weight-black">Apache License 2.0</span><br/>
+            Variant Hunter is licensed under the <span class="font-weight-bold">Apache License 2.0</span><br/>
             <span class="underlined-links text-uppercase text-caption">
               <a href="https://github.com/DEIB-GECO/VariantHunter/blob/master/LICENSE" target="_blank">
                 more info...
@@ -188,7 +195,7 @@ export default {
           name: 'Luca Minotti',
           associate: 'Politecnico di Milano',
           img: require('../assets/contributors/minotti.jpeg'),
-          mail: 'luca2.minotti@mail.polimi.it'
+          mail: 'minottiluca@icloud.com'
         },
         {
           name: 'Anna Bernasconi',
