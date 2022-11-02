@@ -1,10 +1,10 @@
 <template>
-  <v-tooltip :bottom="bottom" :left="left" :right="right" :top="top" allow-overflow z-index="10" max-width="400px">
+  <v-tooltip :bottom="bottom" content-class="rounded-xl tooltip"  :left="left" :right="right" :top="top" allow-overflow z-index="10" max-width="400px">
     <template v-slot:activator="{ on, attrs }">
       <v-btn depressed :outlined="outlined" rounded :small="size==='small'" :dark="dark"
              :color="(isHover && hoverColor)?hoverColor:color" v-bind="attrs" v-on="on" @click.stop="onClick()"
              @mouseenter="isHover=true" @mouseleave="isHover=false">
-        <slot>
+        <slot name="btn">
           <v-icon v-if="!appendIcon" left :size="size" :dark="dark">
             {{ icon }}
           </v-icon>
@@ -16,7 +16,8 @@
       </v-btn>
     </template>
     <span class="compact-tooltip">
-      <slot name="tip" v-html="tip">
+      <slot name="tip">
+        <span v-html="tip"/>
       </slot>
     </span>
   </v-tooltip>
@@ -62,7 +63,11 @@ export default {
 <style>
 #app .v-tooltip__content{
     line-height: 15px !important;
+    background-color: rgba(1, 72, 120, 0.96) !important;
+    border: solid 1px white;
+    border-radius: 24px !important;
+    color: white !important;
+    padding: 10px 15px;
 }
 
 </style>
-

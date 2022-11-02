@@ -3,7 +3,7 @@
     <v-row no-gutters><v-col class="text-center text-sm-left">
     <btn-with-tooltip size="small" outlined top color="primary" :click-handler="generateAnalysis">
 
-      <template v-slot:default>
+      <template v-slot:btn>
         <v-icon left>mdi-open-in-new</v-icon>
         Analyze <span class="hidden-xs-only">the selected mutations</span> with
         <span class="pl-1">
@@ -46,9 +46,9 @@ export default {
   name: "GoToCovSpectrum",
   components: {BtnWithTooltip},
   props: {
-    selectedRows: {},
-    selectedLocation: {},
-    selectedPeriod: {}
+    selectedRows: {default(){return []}},
+    selectedLocation: {default(){return []}},
+    selectedPeriod: {default(){return []}},
   },
   computed:{
     /** True iff NSP proteins have been selected */

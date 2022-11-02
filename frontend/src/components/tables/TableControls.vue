@@ -82,7 +82,7 @@
 
       <!---- Download data button ---->
       <v-flex justify-center class='xs12 sm6 md3 d-flex'>
-        <v-tooltip bottom max-width='400' color='white' open-delay='0'>
+        <v-tooltip bottom max-width='400'  open-delay='0'>
           <template v-slot:activator='{ on, attrs }'>
             <v-btn v-bind='attrs' v-on='on' :loading='downloadLoading' color='primary'
                    outlined depressed rounded small @click='$emit("downloadData")'>
@@ -90,13 +90,13 @@
               Download data
             </v-btn>
           </template>
-          <span style='color: rgb(68, 68, 68)'>Download this table as a .csv file</span>
+          <span>Download this table as a .csv file</span>
         </v-tooltip>
       </v-flex>
 
       <!---- Print result button ---->
       <v-flex justify-center class='xs12 sm6 md3 d-flex'>
-        <v-tooltip bottom max-width='400' color='white' open-delay='0'>
+        <v-tooltip bottom max-width='400' open-delay='0'>
           <template v-slot:activator='{ on, attrs }'>
             <v-btn v-bind='attrs' v-on='on' :loading='downloadLoading' color='primary'
                    outlined depressed rounded small @click='$emit("downloadAll")'>
@@ -104,7 +104,7 @@
               Download all
             </v-btn>
           </template>
-          <span style='color: rgb(68, 68, 68)'>Download the entire tab as a .png file</span>
+          <span>Download the entire tab as a .png file</span>
         </v-tooltip>
       </v-flex>
     </v-layout>
