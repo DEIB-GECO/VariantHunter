@@ -138,7 +138,7 @@ export default {
           this.queriesParams.push(toSend)
           this.queriesCustomOptions.push(customOptions)
           this.queriesResults.push(res['rows'])
-          const panelIndex = this.queriesSupport.push({ totSeq: res['tot_seq'] }) - 1
+          const panelIndex = this.queriesSupport.push({ totSeq: res['tot_seq'], locationData: res['location'] }) - 1
 
           // Open the new panel and jump to the result container
           this.expandedPanels = [panelIndex]

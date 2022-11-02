@@ -18,7 +18,7 @@
   <v-card width="90%" class="options text-left" color="transparent" flat>
     <div class="options-intro">
       <div class="main">Lineages breakdown </div>
-      computed considering {{expansionMode===0?'this line':'the entire dataset'}}
+      computed considering {{expansionMode===0?'the expanded mutation in the 4 weeks and location':'the entire dataset'}}
     </div>
     <!--<MenuButton icon="mdi-pencil" text="Change scope" :options="scopeOptions" @select="expansionModeManager"/>-->
     <MenuButton icon="mdi-code-string" :text="'Change notation'" :options="notationOptions" @select="notationModeManager"/>

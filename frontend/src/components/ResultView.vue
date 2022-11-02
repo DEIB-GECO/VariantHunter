@@ -109,6 +109,9 @@
             Tot. seq.: {{querySupport.totSeq[week-1]}}
           </td>
         </template>
+
+        <template v-slot:footer.prepend>
+      <go-to-cov-spectrum :selected-period="queryParams.date" :selected-location="querySupport.locationData" :selected-rows="selectedRows"/></template>
       </v-data-table>
     </SectionElement>
 
@@ -150,10 +153,12 @@ import { json2csv } from '@/utils/parserService'
 import WeekSlider from '@/components/form/WeekSlider'
 import ExpansionModeMenu from "@/components/form/menus/ExpansionModeMenu";
 import {compactLineagesData} from "@/utils/formatterService";
+import GoToCovSpectrum from "@/components/form/GoToCovSpectrum";
 
 export default {
   name: 'ResultView',
   components: {
+    GoToCovSpectrum,
     ExpansionModeMenu,
     WeekSlider, MutationSelector, SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart
   },
@@ -662,11 +667,11 @@ td.expanded-td tr:hover {
   letter-spacing: 0.019em;
   display: inherit;
   width: 110px;
-  height: 100px;
+  height: 110px;
   text-align: center;
   vertical-align: bottom;
   rotate: -90deg;
-  padding-right: 5px;
+  padding-bottom: 4px;
 }
 
 td.table-append {

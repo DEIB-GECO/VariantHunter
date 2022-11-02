@@ -77,20 +77,20 @@ def get_regions(country):
     return regions
 
 
-def get_locations(string):
+def get_locations(string, exact=False):
     """
     Fetch all the locations starting with a given string
     """
     con = sqlite3.connect(db_path)
     cur = con.cursor()
-    locations=[]
-    string=[string+'%','% '+string+'%']
+    locations = []
+    string = string if exact else [string+'%','% '+string+'%']
 
     # Fetch continents
     query = f'''    SELECT LO.location
                     FROM locations AS LO JOIN continents AS CO ON LO.location_id=CO.continent_id
-                    WHERE (upper(LO.location) LIKE upper(?))
-                    OR (upper(LO.location) LIKE upper(?));'''
+                    WHERE { 'LO.location=?' if exact 
+                            else '(upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?))'};'''
     locations.extend([{'value': x[0], 'type': 'continent', 'country':None, 'continent':None} for x in cur.execute(query,string).fetchall()])
 
     # Fetch countries
@@ -98,7 +98,8 @@ def get_locations(string):
                     FROM locations AS LO
                     JOIN countries AS CO ON LO.location_id=CO.country_id
                     JOIN locations AS CON ON CON.location_id=CO.continent_id
-                    WHERE (upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?));'''
+                    WHERE { 'LO.location=?' if exact 
+                            else '(upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?))'};'''
     locations.extend([{'value': x[0], 'type': 'country', 'country':None, 'continent':x[1]} for x in cur.execute(query,string).fetchall()])
 
     # Fetch regions
@@ -108,7 +109,8 @@ def get_locations(string):
                     JOIN locations AS COU ON COU.location_id=RE.country_id
                     JOIN countries AS CC ON CC.country_id=RE.country_id
                     JOIN locations AS CON ON CON.location_id=CC.continent_id
-                    WHERE (upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?));'''
+                    WHERE { 'LO.location=?' if exact 
+                            else '(upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?))'};'''
     locations.extend([{'value': x[0], 'type': 'region', 'country':x[1], 'continent':x[2]} for x in cur.execute(query,string).fetchall()])
 
     con.close()

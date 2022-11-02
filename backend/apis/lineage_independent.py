@@ -14,6 +14,7 @@ import time
 
 from flask_restplus import Namespace, Resource
 
+from .locations import get_locations
 from .utils.path_manager import db_path
 from .utils.utils import compute_weeks_from_date, produce_statistics
 
@@ -190,6 +191,7 @@ class FieldList(Resource):
         w = compute_weeks_from_date(date)
 
         week_sequence_counts = extract_week_seq_counts(location, w)
+        location_data = get_locations(location)
 
         min_sequences = int(week_sequence_counts[-1] * 0.005 + 1)
         mutation_data = extract_mutation_data(location, w, min_sequences)
@@ -197,7 +199,7 @@ class FieldList(Resource):
         statistics = produce_statistics(location, week_sequence_counts, mutation_data)
 
         print(f'done in {time.time() - exec_start:.5f} seconds.')
-        return {'rows': statistics, 'tot_seq': week_sequence_counts}
+        return {'rows': statistics, 'tot_seq': week_sequence_counts, 'location' : location_data[0]}
 
 
 @api.route('/getLineagesStatistics')

@@ -17,6 +17,7 @@ from datetime import datetime
 from flask_restplus import Namespace, Resource
 
 from .explorer import get_lineage_characterization
+from .locations import get_locations
 from .utils.path_manager import db_path
 from .utils.utils import start_date, compute_weeks_from_date, produce_statistics
 
@@ -266,6 +267,7 @@ class FieldList(Resource):
         w = compute_weeks_from_date(date)
 
         week_sequence_counts = extract_week_seq_counts(location, lineage, w)
+        location_data = get_locations(location)
 
         min_sequences = int(week_sequence_counts[-1] * 0.005 + 1)
         mutation_data = extract_mutation_data(location, lineage, w, min_sequences)
@@ -274,4 +276,5 @@ class FieldList(Resource):
         characterizing_muts = get_lineage_characterization([lineage])
 
         print(f'done in {time.time() - exec_start:.5f} seconds.')
-        return {'rows': statistics, 'tot_seq': week_sequence_counts, 'characterizing_muts': characterizing_muts}
+        return {'rows': statistics, 'tot_seq': week_sequence_counts,
+                'characterizing_muts': characterizing_muts, 'location' : location_data[0]}

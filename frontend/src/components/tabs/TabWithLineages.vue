@@ -148,7 +148,8 @@ export default {
           this.queriesResults.push(res['rows'])
           const supportInfo = {
             totSeq: res['tot_seq'],
-            characterizingMuts: res['characterizing_muts']
+            characterizingMuts: res['characterizing_muts'],
+            locationData: res['location']
           }
           const panelIndex = this.queriesSupport.push(supportInfo) - 1
 
