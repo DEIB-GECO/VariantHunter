@@ -62,6 +62,10 @@
             Tot. seq.: {{ getCurrentAnalysis.totSeq['w' + week] }}
           </td>
         </template>
+
+        <template v-slot:footer.prepend>
+          <go-to-cov-spectrum/>
+        </template>
       </v-data-table>
     </v-col>
   </section-element>
@@ -75,10 +79,11 @@ import ExpansionModeMenu from "@/components/form/menus/ExpansionModeMenu";
 import {mapGetters, mapMutations, mapState} from "vuex";
 import axios from "axios";
 import {compactLineagesData} from "@/utils/formatterService";
+import GoToCovSpectrum from "@/components/tables/GoToCovSpectrum";
 
 export default {
   name: "ResultTable",
-  components: {ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement},
+  components: {GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement},
   props: {
     withLineages: {},
   },
