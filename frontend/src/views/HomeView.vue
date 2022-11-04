@@ -29,10 +29,10 @@ export default {
     }
   },
   computed:{
-    ...mapState(['currentAnalysis']),
+    ...mapState(['currentAnalysisId']),
   },
   watch: {
-    currentAnalysis(newVal){
+    currentAnalysisId(newVal){
       if(newVal!==null)
         this.currentView='result'
       else

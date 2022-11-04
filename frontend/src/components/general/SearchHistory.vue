@@ -47,9 +47,8 @@
                        :activator-outlined="!filteredStarred" hide-on-leave>
               <v-list color="transparent">
                 <v-list-item link v-for="([value, title], index) in Object.entries(starredOptions)" :key="index">
-                  <v-list-item-title @click="filteredStarred=(value==='null'?null:value)">{{
-                      title
-                    }}
+                  <v-list-item-title @click="filteredStarred=(value==='null'?null:value)">
+                    {{ title }}
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -72,7 +71,7 @@
 
     <!-- Actual filtered history-->
     <v-list-item v-for="{id, starred, query} in getAnalysesSummary(filters)" :key="id" link
-                 @click="elementClickHandler(id)" :class="'pl-7 '+(currentAnalysis===id?'v-list-item--active':'')">
+                 @click="elementClickHandler(id)" :class="'pl-7 '+(currentAnalysisId===id?'v-list-item--active':'')">
 
       <v-list-item-content>
         <v-list-item-title class="text-body-3 font-weight-medium">
@@ -136,7 +135,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['currentAnalysis']),
+    ...mapState(['currentAnalysisId']),
     ...mapGetters(['getAnalysesSummary']),
 
     filters() {

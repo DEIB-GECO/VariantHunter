@@ -3127,9 +3127,6 @@ export const ex1 = {
             w4: '2021/05/09 - 2021/05/15'
         },
     },
-    useGlobalFilters: true,
-    filteringOpt: {protein: null, muts: [], rowKeys: []},
-    orderingOpt: {sortingIndexes:[], isDescSorting:[]},
     characterizingMuts: null,
     rows: muts1,
     totSeq: {
@@ -3157,9 +3154,6 @@ export const ex2 = {
             w4: '2021/05/09 - 2021/05/15'
         },
     },
-    useGlobalFilters: true,
-    filteringOpt: {protein: null, muts: [], rowKeys: []},
-    orderingOpt: {sortingIndexes:[], isDescSorting:[]},
     characterizingMuts: ['NS7a_V82A'],
     rows: muts1,
     totSeq: {

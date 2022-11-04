@@ -61,3 +61,8 @@
 .cursor-forbidden:hover, .cursor-forbidden *:hover{
     cursor: not-allowed !important;
 }
+
+/* Overwrite the default ordering icon with a more intuitive one */
+.v-data-table-header__icon::before {
+  content: '\F033C' !important;
+}

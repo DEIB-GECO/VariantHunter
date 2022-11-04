@@ -12,90 +12,127 @@ import {computeDateLabel} from "@/store/utils/utils";
 let nextAnalysisId = 2
 
 export const mutations = {
+    /**
+     * Sets the current analysis id
+     * @param state
+     * @param id    Id to be set
+     */
     setCurrentAnalysis(state, id) {
         console.log("setCurrentAnalysis to " + id)
-        state.currentAnalysis = id
+        state.currentAnalysisId = id
     },
 
-    setFilterOpt(state,{global= true, opt,value}){
-        console.log("setFilter of "+opt+" to "+value)
-        if(global){
-            state.globalFilteringOpt[opt]=value
-        }else {
-            const index = state.analyses.findIndex(({id: analysisId}) => state.currentAnalysis === analysisId);
-            if (index > -1) {
-                state.analyses[index].filteringOpt[opt]=value
-            }
+    /**
+     * Add a filtering option
+     * @param state
+     * @param global    True iff the filtering option has global scope
+     * @param opt       Filtering parameter to be set
+     * @param value     Value to be filtered
+     */
+    setFilterOpt(state, {global = true, opt, value}) {
+        console.log("setFilter of " + opt + " to " + value)
+        if (global) {
+            state.globalFilteringOpt[opt] = value
+        } else {
+            state.localFilteringOpt[opt] = value
         }
     },
 
-    setOrderOpt(state,{global= true, opt,value}){
-        console.log("setOrder of "+opt+" to "+value)
-        if(global){
-            state.globalFilteringOpt[opt]=value
-        }else {
-            const index = state.analyses.findIndex(({id: analysisId}) => state.currentAnalysis === analysisId);
-            if (index > -1) {
-                state.analyses[index].orderingOpt[opt]=value
-            }
+    /**
+     * Add an ordering option
+     * @param state
+     * @param global    True iff the ordering option has global scope
+     * @param opt       Ordering parameter to be set
+     * @param value     Value to be ordering
+     */
+    setOrderOpt(state, {global = true, opt, value}) {
+        console.log("setOrder of " + opt + " to " + value)
+        if (global) {
+            state.globalOrderingOpt[opt] = value
+        } else {
+            state.localOrderingOpt[opt] = value
         }
     },
 
+    /**
+     * Sets the starred flag of an analysis
+     * @param state
+     * @param id        Analysis id
+     * @param starred   Boolean value for the starred flag
+     */
     setStarredAnalysis(state, {id, starred = true}) {
         console.log("setStarredAnalysis of " + id + " to " + starred)
-        const index = state.analyses.findIndex(({id: analysisId}) => id === analysisId);
-        if (index > -1) {
-            state.analyses[index].starred = starred
-        }
+        state.analyses[id].starred = starred
 
     },
 
-    addAnalysis(state, {rows, tot_seq, characterizing_muts, mode}) {
-        console.log("addAnalysis "+nextAnalysisId)
-        console.log(tot_seq)
-        console.log(characterizing_muts)
-        console.log(mode)
+    /**
+     * Add a new analysis
+     * @param state
+     * @param rows                      Mutations rows
+     * @param tot_seq                   Tot seq collected in the weeks
+     * @param characterizing_muts       Characterizing mutations for the specific lineage
+     * @param mode                      Mode of analysis. Either 'ls' or 'li'.
+     */
+    addAnalysis(state, {rows, tot_seq, characterizing_muts=null, mode}) {
+        // Save current analysis data
+        const locationInfo = state.possibleLocationsInfo[state.selectedLocation]
+        const endDate = state.selectedDate[1]
 
-        const locationInfo=state.possibleLocationsInfo[state.selectedLocation]
-        const endDate=state.selectedDate[1]
-        console.log(state.analyses.push({
-            id: nextAnalysisId,
+        const assignedId = nextAnalysisId
+        nextAnalysisId++
+
+        state.analyses[assignedId] = {
+            id: assignedId,
             starred: false,
             query: {
                 granularity: locationInfo.type,
                 location: {
-                    continent: locationInfo.type==='continent'?state.selectedLocation:locationInfo.continent,
-                    country: locationInfo.type==='country'?state.selectedLocation:locationInfo.country,
-                    region: locationInfo.type==='region'?state.selectedLocation:null,
+                    continent: locationInfo.type === 'continent' ? state.selectedLocation : locationInfo.continent,
+                    country: locationInfo.type === 'country' ? state.selectedLocation : locationInfo.country,
+                    region: locationInfo.type === 'region' ? state.selectedLocation : null,
                 },
                 endDate: endDate,
-                lineage: mode==='ls'?state.selectedLineage:null,
+                lineage: mode === 'ls' ? state.selectedLineage : null,
                 weeks: {
-                    w1: computeDateLabel(endDate,27, 21), w2: computeDateLabel(endDate,20, 14),
-                    w3: computeDateLabel(endDate,13, 7), w4: computeDateLabel(endDate,6, 0)
+                    w1: computeDateLabel(endDate, 27, 21), w2: computeDateLabel(endDate, 20, 14),
+                    w3: computeDateLabel(endDate, 13, 7), w4: computeDateLabel(endDate, 6, 0)
                 }
             },
-            useGlobalFilters: true,
-            filteringOpt: {protein:null, muts:[],rowKeys:[]},
             characterizingMuts: characterizing_muts,
             rows: rows,
             totSeq: {
                 w1: tot_seq[0], w2: tot_seq[1], w3: tot_seq[2], w4: tot_seq[3]
             }
-        }))
-        state.currentAnalysis=nextAnalysisId
-        nextAnalysisId++
+        }
+
+        // Preset filtering and ordering options
+        state.localFilteringOpt[assignedId]= {
+            useGlobalFilters: true, protein: null, muts: [], rowKeys: []
+        }
+        state.localOrderingOpt[assignedId] = {
+            sortingIndexes:[], isDescSorting:[]
+        }
+
+        // Show the newly created analysis
+        state.currentAnalysisId = assignedId
     },
 
+    /**
+     * Remove an analysis given its id
+     * @param state
+     * @param id        Analysis id
+     */
     removeAnalysis(state, id) {
         console.log("removeAnalysis " + id)
-        if(id===state.currentAnalysis) state.currentAnalysis=null
+        if (id === state.currentAnalysisId)
+            state.currentAnalysisId = null
 
-        const index = state.analyses.findIndex(({id: analysisId}) => id === analysisId);
-        if (index > -1) {
-            state.analyses.splice(index, 1);
-        }
+        delete state.analyses[id]
+        delete state.localFilteringOpt[id]
+        delete state.localOrderingOpt[id]
     },
+
 
     setLocation(state, newValue) {
         console.log("setLocation " + newValue)

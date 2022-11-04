@@ -8,7 +8,7 @@ import {ex1,ex2} from "@/store/testData";
 export const state = {
 
     /**
-     * Analysis: array of objects defining the performed analysis. Each obj has the following structure
+     * Analysis: object defining the performed analysis. Each obj has the following structure
      *  id: unique identifier (ex: 0)
      *  starred: star status flag
      *  query: {
@@ -46,11 +46,13 @@ export const state = {
      *      w1,w2,w3,w4: overall number of sequences collected in the weeks
      *  }
      */
-    analyses:[ex1,ex2],
+    analyses:{0:ex1, 1:ex2},
+    localFilteringOpt: {0:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []},1:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []}},
+    localOrderingOpt: {0:{sortingIndexes:[], isDescSorting:[]}, 1:{sortingIndexes:[], isDescSorting:[]}},
 
 
-    /** currentAnalysis: currently shown analysis or null value */
-    currentAnalysis: 0,
+    /** currentAnalysisId: id of the currently shown analysis or null value */
+    currentAnalysisId: 0,
     globalFilteringOpt: {protein: null, muts: [], rowKeys: []},
     globalOrderingOpt: {sortingIndexes:[], isDescSorting:[]},
 

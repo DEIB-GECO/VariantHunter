@@ -8,38 +8,57 @@
  **/
 
 export const getters = {
+    /**
+     * Gets a summary of the past analysis filtered by mode, granularity and/or starred flag
+     */
     getAnalysesSummary: (state) => ({mode = null, granularity = null, starred = null}) => {
         console.log("getAnalysesSummary")
-        let analyses = state.analyses
+        let analyses = Object.values(state.analyses)
+
+        // Apply filtering parameters
         if (starred)
             analyses = analyses.filter(({starred}) => starred)
         if (mode)
             analyses = analyses.filter(({query}) => (mode === 'li' && !query.lineage) || (mode === 'ls' && query.lineage))
         if (granularity)
             analyses = analyses.filter(({query}) => !granularity || granularity === query.granularity)
-        return analyses.map(({id, starred, query}) => {
-            return {id, starred, query}
-        }).sort(({id1}, {id2}) => id1 - id2).reverse()
+
+        // Returns a time-sorted summary for each analysis
+        return analyses
+            .map(({id, starred, query}) => ({id, starred, query}))
+            .sort(({id1}, {id2}) => id1 - id2).reverse()
     },
 
+    /** Gets the currently displayed analysis */
     getCurrentAnalysis: (state) => {
         console.log("getCurrentAnalysis")
-        return state.analyses.find(({id}) => id === state.currentAnalysis)
+        return state.analyses[state.currentAnalysisId]
+    },
+
+    /** Gets the local filtering opts of the currently displayed analysis */
+    getCurrentLocalFilteringOpt: (state) => {
+        console.log("getCurrentLocalFilteringOpt")
+        return state.localFilteringOpt[state.currentAnalysisId]
+    },
+
+    /** Gets the local ordering opts of the currently displayed analysis */
+    getCurrentLocalOrderingOpt: (state) => {
+        console.log("getCurrentLocalOrderingOpt")
+        return state.localOrderingOpt[state.currentAnalysisId]
     },
 
     getCurrentFilteredRows: (state, getters) => {
-        return getters.getCurrentAnalysis.rows
-        // console.log("getCurrentFilteredRows")
-        // const {useGlobalFilters, filteringOpt} = getters.getCurrentAnalysis
-        // const filteredProtein = useGlobalFilters ? state.globalFilteringOpt.protein : filteringOpt.protein
-        // const filteredMuts = useGlobalFilters ? state.globalFilteringOpt.muts : filteringOpt.muts
-        //
-        // return getters.getCurrentAnalysis.rows.filter(({protein, mut}) =>
-        //     (filteredProtein === null || protein === filteredProtein) &&
-        //     (filteredMuts === null || filteredMuts.length === 0 || filteredMuts.includes(protein + '_' + mut))
-        // )
+        console.log("getCurrentFilteredRows")
+        const {useGlobalFilters, ...localFilteringOpt} = getters.getCurrentLocalFilteringOpt
+        const filteredProtein = useGlobalFilters ? state.globalFilteringOpt.protein : localFilteringOpt.protein
+        const filteredMuts = useGlobalFilters ? state.globalFilteringOpt.muts : localFilteringOpt.muts
+
+        return getters.getCurrentAnalysis.rows.filter(({protein, mut}) =>
+            (filteredProtein === null || protein === filteredProtein) &&
+            (filteredMuts === null || filteredMuts.length === 0 || filteredMuts.includes(protein + '_' + mut))
+        )
     },
-/*
+
     getCurrentProcessedRows: (state, getters) => {
         const rows = []
         console.log("getCurrentProcessedRows")
@@ -75,9 +94,10 @@ export const getters = {
     },
 
     getCurrentSelectedRows: (state,getters) =>{
-        const {useGlobalFilters, filteringOpt} = getters.getCurrentAnalysis
+        const {useGlobalFilters, rowKeys} = getters.getCurrentLocalFilteringOpt
+        const filteredRowKeys = useGlobalFilters ? state.globalFilteringOpt.rowKeys : rowKeys
+
         const rows=getters.getCurrentProcessedRows
-        const filteredRowKeys = useGlobalFilters ? state.globalFilteringOpt.rowKeys : filteringOpt.rowKeys
         let selectedRows=[]
         if (filteredRowKeys.length > 0)
             selectedRows= rows.filter(({protein, mut}) => filteredRowKeys.includes(protein + '_' + mut))
@@ -93,7 +113,7 @@ export const getters = {
             // return the selected rows
             return rows.filter(({protein, mut}) => filteredRowKeys.includes(protein + '_' + mut))
         else
-            return
+            return []
 
-    },*/
+    },
 }

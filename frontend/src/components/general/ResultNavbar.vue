@@ -16,9 +16,9 @@
 
     <icon-with-tooltip v-if="isStarred" color="#C2AD07" hover-color="primary" icon="mdi-star"
                        tip="Mark as not relevant" bottom
-                       :click-handler="()=>setStarredAnalysis({id:currentAnalysis,starred:false})" />
+                       :click-handler="()=>setStarredAnalysis({id:currentAnalysisId,starred:false})" />
     <icon-with-tooltip v-else hover-color="#C2AD07" color="primary" icon="mdi-star-outline" tip="Mark as relevant"
-                       bottom :click-handler="()=>setStarredAnalysis({id:currentAnalysis,starred:true})"/>
+                       bottom :click-handler="()=>setStarredAnalysis({id:currentAnalysisId,starred:true})"/>
 
     <icon-with-tooltip hover-color="error" icon="mdi-trash-can-outline" tip="Delete analysis" bottom
                        :click-handler="()=>removeAnalysis(currentAnalysis)" color="primary"/>
@@ -34,7 +34,7 @@ export default {
   name: "ResultNavbar",
   components: {IconWithTooltip},
   computed: {
-    ...mapState(['currentAnalysis']),
+    ...mapState(['currentAnalysisId']),
     ...mapGetters(['getCurrentAnalysis']),
 
     isStarred() {

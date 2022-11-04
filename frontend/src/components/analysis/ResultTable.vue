@@ -89,9 +89,6 @@ export default {
   },
   data() {
     return {
-      selectedRows: [],
-      sortingIndexes:[],
-      isDescSorting:[],
 
       /** Array of expanded rows (relevant for lineage-indep only )*/
       expandedRows: [],
@@ -118,61 +115,51 @@ export default {
 
       /** Download flag: true if a file download is in progress */
       downloadLoading: false,
-    }
+      }
   },
   computed: {
     ...mapState(['globalFilteringOpt','globalOrderingOpt']),
-    ...mapGetters(['getCurrentAnalysis','getCurrentFilteredRows']),
+    ...mapGetters(['getCurrentAnalysis','getCurrentLocalFilteringOpt','getCurrentLocalOrderingOpt',
+      'getCurrentFilteredRows','getCurrentSelectedRows']),
 
     characterizingMuts() {
       console.log("# characterizingMuts=" + this.getCurrentAnalysis.characterizingMuts)
       return this.withLineages ? this.getCurrentAnalysis.characterizingMuts : null
     },
 
-    globalFiltering() {
-      console.log("# globalFiltering=" + this.getCurrentAnalysis.useGlobalFilters)
-      return this.getCurrentAnalysis.useGlobalFilters
+    useGlobalFilters() {
+      console.log("# useGlobalFilters=" + this.getCurrentLocalFilteringOpt.useGlobalFilters)
+      return this.getCurrentLocalFilteringOpt.useGlobalFilters
     },
 
     filteringOpt() {
-      console.log("# filters=" + JSON.stringify(this.globalFiltering ? this.globalFilteringOpt : this.getCurrentAnalysis.filteringOpt))
-      return (this.globalFiltering ? this.globalFilteringOpt : this.getCurrentAnalysis.filteringOpt)
+      console.log("# filters=" + JSON.stringify((this.useGlobalFilters ? this.globalFilteringOpt : this.getCurrentLocalFilteringOpt)))
+      return (this.useGlobalFilters ? this.globalFilteringOpt : this.getCurrentLocalFilteringOpt)
     },
 
-    orderingOpt() {
-      console.log("# order=" + JSON.stringify(this.globalFiltering ? this.globalOrderingOpt : this.getCurrentAnalysis.orderingOpt))
-      return (this.globalFiltering ? this.globalOrderingOpt : this.getCurrentAnalysis.orderingOpt)
+     orderingOpt() {
+      console.log("# order=" + JSON.stringify((this.useGlobalFilters ? this.globalOrderingOpt : this.getCurrentLocalOrderingOpt)))
+      return (this.useGlobalFilters ? this.globalOrderingOpt : this.getCurrentLocalOrderingOpt)
     },
-
 
     /** Array of selected rows */
-    selectedRowKeys: {
-      set(newVal) {
-        this.setFilterOpt({global: this.globalFiltering, opt: 'rowKeys', value: newVal})
-      },
-      get() {
-        console.log("# selectedRows=" + this.filteringOpt.rowKeys)
-        return this.filteringOpt.rowKeys
-      }
-    },
-
-    /** Array of selected rows *
     selectedRows: {
       set(newVal) {
-        this.setFilterOpt({global: this.globalFiltering, opt: 'rowKeys', value: newVal})
+        const keys = newVal.map(({item_key})=>item_key)
+        this.setFilterOpt({global: this.useGlobalFilters, opt: 'rowKeys', value: keys})
       },
       get() {
         console.log("# selectedRows=" + this.getCurrentSelectedRows)
         return this.getCurrentSelectedRows
       }
     },
-     */
+
 
     /** Array of columns selected for sorting data */
-    sortingIndexesp: {
+    sortingIndexes: {
       set(newVal) {
         console.log("# set sortingIndexes")
-        //this.setOrderOpt({global: this.globalFiltering, opt: 'sortingIndexes', value: newVal})
+        this.setOrderOpt({global: this.useGlobalFilters, opt: 'sortingIndexes', value: newVal})
       },
       get() {
         console.log("# sortingIndexes=" + this.orderingOpt.sortingIndexes)
@@ -181,11 +168,10 @@ export default {
     },
 
     /** Array defining asc(true)/desc(false) order for each column selected for sorting in sortingIndexes */
-
-    isDescSortingp: {
+    isDescSorting: {
       set(newVal) {
         console.log("# set isDescSorting")
-        //this.setOrderOpt({global: this.globalFiltering, opt: 'isDescSorting', value: newVal})
+        this.setOrderOpt({global: this.useGlobalFilters, opt: 'isDescSorting', value: newVal})
       },
       get() {
         console.log("# isDescSorting=" + this.orderingOpt.isDescSorting)
@@ -193,17 +179,21 @@ export default {
       }
     },
 
+    query() {
+      return this.getCurrentAnalysis.query
+    },
 
     /** Array of objects describing header columns */
     tableHeaders() {
+      const {w1,w2,w3,w4}=this.query.weeks
       let headers = [
         {text: 'Protein', value: 'protein', divider: true, align: 'center'},
         {text: 'Mut', value: 'mut', divider: true, align: 'center'},
         {text: 'Slope', value: 'slope', divider: true, align: 'center'},
-        {text: this.dateLabels.w1, value: 'f_w1', divider: true, align: 'center'},
-        {text: this.dateLabels.w2, value: 'f_w2', divider: true, align: 'center'},
-        {text: this.dateLabels.w3, value: 'f_w3', divider: true, align: 'center'},
-        {text: this.dateLabels.w4, value: 'f_w4', divider: true, align: 'center'}
+        {text: w1, value: 'f_w1', divider: true, align: 'center'},
+        {text: w2, value: 'f_w2', divider: true, align: 'center'},
+        {text: w3, value: 'f_w3', divider: true, align: 'center'},
+        {text: w4, value: 'f_w4', divider: true, align: 'center'}
       ]
 
       if (this.showPValues) {
@@ -216,7 +206,6 @@ export default {
       }
       return headers
     },
-
 
     /** Array of (formatted) data actually displayed in the tables  */
     processedQueryResult() {
@@ -252,20 +241,6 @@ export default {
       })
       return rows
     },
-
-
-    query() {
-      return this.getCurrentAnalysis.query
-    },
-
-    /**
-     * Compute all the table labels for the week
-     * @returns {Array} List of all the table labels for the week
-     */
-    dateLabels() {
-      return this.query.weeks
-    },
-
 
   },
   methods: {
@@ -354,6 +329,7 @@ export default {
      * @param item
      */
     loadLineageDetails(item) {
+      console.log("EXPANDED "+JSON.stringify(item))
       // Catch row expansion only
       if (item.value) {
         this.error = undefined
@@ -402,9 +378,6 @@ export default {
         this.selectedRows = []
       }
     }
-  },
-  updated() {
-    this.expandedRows=[]
   }
 }
 </script>
@@ -493,11 +466,6 @@ td.table-append {
 /* Avoid breaking table content across multiple lines */
 .section-container tbody {
   white-space: nowrap !important;
-}
-
-/* Overwrite the default ordering icon with a more intuitive one */
-.v-data-table-header__icon::before {
-  content: '\F04BC' !important;
 }
 
 /* Avoid box shadow for expanded table element */
