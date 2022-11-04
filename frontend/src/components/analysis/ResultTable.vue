@@ -18,9 +18,53 @@
           <table-super-header :with-lineages='withLineages' :show-p-values='showPValues'/>
         </template>
 
-        <!-- Customized mutation column style for lineage specific search -->
+        <!---- Customized columns ---->
+        <!-- Mutation column -->
         <template v-if='withLineages' v-slot:item.mut='{ item }'>
           <div :class="isCharacterizingMut(item)? 'char-mut':''">{{ item.mut }}</div>
+        </template>
+
+        <!-- Slope column -->
+        <template v-slot:item.slope='{ item }'>
+          <div :class="item.slope<=0?'error--text':'success--text'">{{ item.slope.toPrecision(4) }}</div>
+        </template>
+
+        <!-- PValueWithMut column -->
+        <template v-if='showPValues' v-slot:item.p_value_with_mut='{ item }'>
+          <div v-if="isNaN(item.p_value_with_mut)">N / A</div>
+          <div v-else>{{ item.p_value_with_mut.toExponential(3) }}</div>
+        </template>
+
+        <!-- PValueWithoutMut column -->
+        <template v-if='showPValues' v-slot:item.p_value_without_mut='{ item }'>
+          <div v-if="isNaN(item.p_value_without_mut)">N / A</div>
+          <div v-else>{{ item.p_value_without_mut.toExponential(3) }}</div>
+        </template>
+
+        <!-- PValueComp column -->
+        <template v-if='showPValues' v-slot:item.p_value_comp='{ item }'>
+          <div v-if="isNaN(item.p_value_comp)">N / A</div>
+          <div v-else>{{ item.p_value_comp.toExponential(3) }}</div>
+        </template>
+
+        <!-- W1 column -->
+        <template v-slot:item.w1='{ item }'>
+          <span>{{ item.f1.toPrecision(3) + '% ' }}</span><span class="text-body-4">{{ '(' + item.w1 + ')' }}</span>
+        </template>
+
+        <!-- W2 column -->
+        <template v-slot:item.w2='{ item }'>
+          <span>{{ item.f2.toPrecision(3) + '% ' }}</span><span class="text-body-4">{{ '(' + item.w2 + ')' }}</span>
+        </template>
+
+        <!-- W3 column -->
+        <template v-slot:item.w3='{ item }'>
+          <span>{{ item.f3.toPrecision(3) + '% ' }}</span><span class="text-body-4">{{ '(' + item.w3 + ')' }}</span>
+        </template>
+
+        <!-- W4 column -->
+        <template v-slot:item.w4='{ item }'>
+          <span>{{ item.f4.toPrecision(3) + '% ' }}</span><span class="text-body-4">{{ '(' + item.w4 + ')' }}</span>
         </template>
 
         <!---- Expanded table element ---->
@@ -115,12 +159,12 @@ export default {
 
       /** Download flag: true if a file download is in progress */
       downloadLoading: false,
-      }
+    }
   },
   computed: {
-    ...mapState(['globalFilteringOpt','globalOrderingOpt']),
-    ...mapGetters(['getCurrentAnalysis','getCurrentLocalFilteringOpt','getCurrentLocalOrderingOpt',
-      'getCurrentFilteredRows','getCurrentSelectedRows']),
+    ...mapState(['globalFilteringOpt', 'globalOrderingOpt']),
+    ...mapGetters(['getCurrentAnalysis', 'getCurrentLocalFilteringOpt', 'getCurrentLocalOrderingOpt',
+      'getCurrentFilteredRows', 'getCurrentSelectedRows']),
 
     characterizingMuts() {
       console.log("# characterizingMuts=" + this.getCurrentAnalysis.characterizingMuts)
@@ -137,7 +181,7 @@ export default {
       return (this.useGlobalFilters ? this.globalFilteringOpt : this.getCurrentLocalFilteringOpt)
     },
 
-     orderingOpt() {
+    orderingOpt() {
       console.log("# order=" + JSON.stringify((this.useGlobalFilters ? this.globalOrderingOpt : this.getCurrentLocalOrderingOpt)))
       return (this.useGlobalFilters ? this.globalOrderingOpt : this.getCurrentLocalOrderingOpt)
     },
@@ -145,7 +189,7 @@ export default {
     /** Array of selected rows */
     selectedRows: {
       set(newVal) {
-        const keys = newVal.map(({item_key})=>item_key)
+        const keys = newVal.map(({item_key}) => item_key)
         this.setFilterOpt({global: this.useGlobalFilters, opt: 'rowKeys', value: keys})
       },
       get() {
@@ -153,7 +197,6 @@ export default {
         return this.getCurrentSelectedRows
       }
     },
-
 
     /** Array of columns selected for sorting data */
     sortingIndexes: {
@@ -185,15 +228,15 @@ export default {
 
     /** Array of objects describing header columns */
     tableHeaders() {
-      const {w1,w2,w3,w4}=this.query.weeks
+      const {w1, w2, w3, w4} = this.query.weeks
       let headers = [
         {text: 'Protein', value: 'protein', divider: true, align: 'center'},
         {text: 'Mut', value: 'mut', divider: true, align: 'center'},
         {text: 'Slope', value: 'slope', divider: true, align: 'center'},
-        {text: w1, value: 'f_w1', divider: true, align: 'center'},
-        {text: w2, value: 'f_w2', divider: true, align: 'center'},
-        {text: w3, value: 'f_w3', divider: true, align: 'center'},
-        {text: w4, value: 'f_w4', divider: true, align: 'center'}
+        {text: w1, value: 'w1', divider: true, align: 'center'},
+        {text: w2, value: 'w2', divider: true, align: 'center'},
+        {text: w3, value: 'w3', divider: true, align: 'center'},
+        {text: w4, value: 'w4', divider: true, align: 'center'}
       ]
 
       if (this.showPValues) {
@@ -212,31 +255,9 @@ export default {
       const rows = []
       console.log(this.getCurrentFilteredRows)
       this.getCurrentFilteredRows.forEach(rawRow => {
-        const row = {}
+        const row = rawRow
 
         row['item_key'] = rawRow['protein'] + '_' + rawRow['mut']
-        row['protein'] = rawRow['protein']
-        row['mut'] = rawRow['mut']
-        row['location'] = rawRow['location']
-
-        // Convert numeric slope and p-values into a formatted string
-        row['slope'] = rawRow['slope'].toPrecision(4)
-        if (!isNaN(rawRow['p_value_with_mut'])) {
-          row['p_value_with_mut'] = rawRow['p_value_with_mut'].toExponential(3)
-        }
-        if (!isNaN(rawRow['p_value_without_mut'])) {
-          row['p_value_without_mut'] = rawRow['p_value_without_mut'].toExponential(3)
-        }
-        if (!isNaN(rawRow['p_value_comp'])) {
-          row['p_value_comp'] = rawRow['p_value_comp'].toExponential(3)
-        }
-
-        for (let i = 1; i <= 4; i++) {
-          row['f_w' + i] = rawRow['f' + i].toPrecision(3) + '% (' + rawRow['w' + i] + ')'
-          row['f' + i] = rawRow['f' + i] // numeric value for sorting and plots
-          row['w' + i] = rawRow['w' + i] // numeric value for plots
-        }
-
         rows.push(row)
       })
       return rows
@@ -244,7 +265,7 @@ export default {
 
   },
   methods: {
-    ...mapMutations(['setFilterOpt','setOrderOpt']),
+    ...mapMutations(['setFilterOpt', 'setOrderOpt']),
 
     /**
      * Custom sort function for data table
@@ -329,7 +350,7 @@ export default {
      * @param item
      */
     loadLineageDetails(item) {
-      console.log("EXPANDED "+JSON.stringify(item))
+      console.log("EXPANDED " + JSON.stringify(item))
       // Catch row expansion only
       if (item.value) {
         this.error = undefined
@@ -356,8 +377,8 @@ export default {
      * @param lineagesData  The lineages data in full notation
      * @returns {*}         Lineages data in the correct notation
      */
-    formatBreakdown(lineagesData){
-      return (this.notationMode===0 || !lineagesData)? lineagesData : compactLineagesData(lineagesData,this.notationMode)
+    formatBreakdown(lineagesData) {
+      return (this.notationMode === 0 || !lineagesData) ? lineagesData : compactLineagesData(lineagesData, this.notationMode)
     },
 
     /**
@@ -384,7 +405,7 @@ export default {
 
 <style>
 
-.table-container{
+.table-container {
   border: solid 1px var(--primary-color);
   border-radius: 4px;
 }

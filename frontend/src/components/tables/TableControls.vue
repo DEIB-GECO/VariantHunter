@@ -18,7 +18,7 @@
 
       <!---- Show/hide p-values info button ---->
       <v-flex justify-center class='xs12 sm6 md3 d-flex'>
-        <v-btn v-if='!showPValues' outlined depressed rounded small color='primary' @click='showPValues=false'>
+        <v-btn v-if='!showPValues' outlined depressed rounded small color='primary' @click='showPValues=true'>
           <v-icon left>mdi-plus-circle-outline</v-icon>
           Show p-values
         </v-btn>

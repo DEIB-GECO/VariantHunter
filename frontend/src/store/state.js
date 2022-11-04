@@ -48,13 +48,13 @@ export const state = {
      */
     analyses:{0:ex1, 1:ex2},
     localFilteringOpt: {0:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []},1:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []}},
-    localOrderingOpt: {0:{sortingIndexes:[], isDescSorting:[]}, 1:{sortingIndexes:[], isDescSorting:[]}},
+    localOrderingOpt: {0:{sortingIndexes:[ "slope" ], isDescSorting:[true]}, 1:{sortingIndexes:[ "slope" ], isDescSorting:[true]}},
 
 
     /** currentAnalysisId: id of the currently shown analysis or null value */
     currentAnalysisId: 0,
     globalFilteringOpt: {protein: null, muts: [], rowKeys: []},
-    globalOrderingOpt: {sortingIndexes:[], isDescSorting:[]},
+    globalOrderingOpt: {sortingIndexes:[ "slope" ], isDescSorting:[true]},
 
     /** Selected location (continent, country or region based on granularity) */
     selectedLocation: null,

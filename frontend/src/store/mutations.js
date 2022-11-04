@@ -111,7 +111,7 @@ export const mutations = {
             useGlobalFilters: true, protein: null, muts: [], rowKeys: []
         }
         state.localOrderingOpt[assignedId] = {
-            sortingIndexes:[], isDescSorting:[]
+            sortingIndexes:[ "slope" ], isDescSorting:[true]
         }
 
         // Show the newly created analysis
