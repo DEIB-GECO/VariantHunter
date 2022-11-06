@@ -58,23 +58,26 @@
           </li>
           <li class='li-table'>
             <div class='li-name'>P-value with mut</div>
-            <div class='li-content'>Shows if the population «with mutation» is growing
+            <div class='li-content underlined-links'>Shows if the population «with mutation» is growing
               differently compared to everything. Its value is computed using a <i>Chi-square
                 test</i> of independence of variables in a contingency table.
+              The reported values have been <a href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html" target="_blank">corrected</a> for multiple tests.
             </div>
           </li>
           <li class='li-table'>
             <div class='li-name'>P-value without mut</div>
-            <div class='li-content'>Shows if the population «without mutation» is growing
+            <div class='li-content underlined-links'>Shows if the population «without mutation» is growing
               differently compared to everything. Its value is computed using a <i>Chi-square
                 test</i> of independence of variables in a contingency table.
+              The reported values have been <a href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html" target="_blank">corrected</a> for multiple tests.
             </div>
           </li>
           <li class='li-table'>
             <div class='li-name'>P-value comparative</div>
-            <div class='li-content'>Shows if the population «with mutation» is growing
+            <div class='li-content underlined-links'>Shows if the population «with mutation» is growing
               differently compared to the population «without mutation». Its value is computed using a <i>Chi-square
                 test</i> of independence of variables in a contingency table.
+              The reported values have been <a href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html" target="_blank">corrected</a> for multiple tests.
             </div>
           </li>
         </ul>

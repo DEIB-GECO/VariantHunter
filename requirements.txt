@@ -7,3 +7,5 @@ tqdm
 numpy
 scipy
 markupsafe==2.0.1
+statsmodels
+scikit-learn

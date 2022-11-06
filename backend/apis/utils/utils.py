@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import scipy.stats
+import statsmodels.api as sm
 
 start_date = datetime.strptime("2020-01-01", "%Y-%m-%d")
 """ 
@@ -79,6 +80,27 @@ def compute_pvalue(freq1, freq2):
         return "NaN"
 
 
+def correct_pvalues(statistics):
+    """
+    Given a set of statistics including the values for the p-values
+    Args:
+        statistics: object including the p-values to be corrected
+
+    Returns: statistics including the corrected p-values
+    """
+    uncorrected_p_vals = []
+    for s in statistics:
+        uncorrected_p_vals.extend([s['p_value_with_mut'], s['p_value_without_mut'], s['p_value_comp']])
+    corrected_p_vals = sm.stats.multipletests(pvals=uncorrected_p_vals)[1]
+    idx = 0
+    for s in statistics:
+        s['p_value_with_mut'] = corrected_p_vals[idx]
+        s['p_value_without_mut'] = corrected_p_vals[idx + 1]
+        s['p_value_comp'] = corrected_p_vals[idx + 2]
+        idx += 3
+    return statistics
+
+
 def produce_statistics(location, week_sequence_counts, mutation_data):
     """
     Process the statistics values by properly formatting them
@@ -105,7 +127,7 @@ def produce_statistics(location, week_sequence_counts, mutation_data):
         f4 = (c4 / tot_seq_w4) * 100 if tot_seq_w4 > 0 else 0
         slope, intercept = np.polyfit([0, 1, 2, 3], [f1, f2, f3, f4], 1)
         statistics.append({
-            'location': location,
+            'item_key': protein + '_' + mutation,
             'protein': protein,
             'mut': mutation,
             'slope': slope,
@@ -128,5 +150,7 @@ def produce_statistics(location, week_sequence_counts, mutation_data):
                     [c1, c2, c3, c4],
                     [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4]),
         })
+
+    statistics = correct_pvalues(statistics)
 
     return statistics
