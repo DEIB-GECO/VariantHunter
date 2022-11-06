@@ -288,18 +288,6 @@ export default {
 
 <style>
 
-/* Revert usual behavior for links */
-.underlined-links a {
-  color: var(--secondary-color) !important;
-}
-
-/** Fake links styling */
-.fake-link {
-  text-decoration: underline;
-  cursor: pointer;
-  font-weight: 500;
-}
-
 /* Sections styling */
 h3 {
   font-size: 20px;
@@ -332,4 +320,18 @@ h4 {
   padding-bottom: 3px;
 }
 
+</style>
+<style>
+
+/* Revert usual behavior for links */
+.underlined-links a {
+  color: var(--secondary-color) !important;
+}
+
+/** Fake links styling */
+.fake-link {
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+}
 </style>

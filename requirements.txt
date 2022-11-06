@@ -6,3 +6,4 @@ flask_restplus
 tqdm
 numpy
 scipy
+statsmodels
