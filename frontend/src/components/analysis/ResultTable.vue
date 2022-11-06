@@ -1,24 +1,24 @@
 <template>
   <section-element icon='mdi-table-multiple' title="Mutations table">
     <v-col cols="12" class="pa-0 table-container">
-      <v-data-table v-model='selectedRows' :custom-sort='customSort' :headers='tableHeaders'
-                    :items='processedQueryResult' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
+      <v-data-table v-model='selectedRows' :headers='tableHeaders'
+                    :items='getCurrentFilteredRows' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :show-expand='!withLineages' @item-expanded='loadLineageDetails'
                     :loading='isLoadingDetails' single-expand class='table-element' item-key='item_key'
                     :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'
                     @toggle-select-all='handleToggleSelection'>
 
-        <!---- Table controls ---->
+        <!---- TABLE CONTROLS --------------------------------------------->
         <template v-slot:top>
           <table-controls @showPValues='(flag) => showPValues=flag'/>
         </template>
 
-        <!---- Table super headers ---->
+        <!---- TABLE SUPER HEADERS ---------------------------------------->
         <template v-slot:header>
           <table-super-header :with-lineages='withLineages' :show-p-values='showPValues'/>
         </template>
 
-        <!---- Customized columns ---->
+        <!---- CUSTOMIZED CELLS ------------------------------------------->
         <!-- Mutation column -->
         <template v-if='withLineages' v-slot:item.mut='{ item }'>
           <div :class="isCharacterizingMut(item)? 'char-mut':''">{{ item.mut }}</div>
@@ -26,7 +26,7 @@
 
         <!-- Slope column -->
         <template v-slot:item.slope='{ item }'>
-          <div :class="item.slope<=0?'error--text':'success--text'">{{ item.slope.toPrecision(4) }}</div>
+          <div :class="item.slope<=0?'error--text':'success--text'">{{ item.slope.toPrecision(4).replace(/\.0+$/,'') }}</div>
         </template>
 
         <!-- PValueWithMut column -->
@@ -49,28 +49,32 @@
 
         <!-- W1 column -->
         <template v-slot:item.w1='{ item }'>
-          <span>{{ item.f1.toPrecision(3) + '% ' }}</span><span class="text-body-4">{{ '(' + item.w1 + ')' }}</span>
+          <span>{{ (item.f1 === 0 ? 0 : item.f1.toPrecision(3)) + '% ' }}</span>
+          <span class="text-body-4">{{ '(' + item.w1 + ')' }}</span>
         </template>
 
         <!-- W2 column -->
         <template v-slot:item.w2='{ item }'>
-          <span>{{ item.f2.toPrecision(3) + '% ' }}</span><span class="text-body-4">{{ '(' + item.w2 + ')' }}</span>
+          <span>{{ (item.f2 === 0 ? 0 : item.f2.toPrecision(3)) + '% ' }}</span>
+          <span class="text-body-4">{{ '(' + item.w2 + ')' }}</span>
         </template>
 
         <!-- W3 column -->
         <template v-slot:item.w3='{ item }'>
-          <span>{{ item.f3.toPrecision(3) + '% ' }}</span><span class="text-body-4">{{ '(' + item.w3 + ')' }}</span>
+          <span>{{ (item.f3 === 0 ? 0 : item.f3.toPrecision(3)) + '% ' }}</span>
+          <span class="text-body-4">{{ '(' + item.w3 + ')' }}</span>
         </template>
 
         <!-- W4 column -->
         <template v-slot:item.w4='{ item }'>
-          <span>{{ item.f4.toPrecision(3) + '% ' }}</span><span class="text-body-4">{{ '(' + item.w4 + ')' }}</span>
+          <span>{{ (item.f4 === 0 ? 0 : item.f4.toPrecision(3)) + '% ' }}</span>
+          <span class="text-body-4">{{ '(' + item.w4 + ')' }}</span>
         </template>
 
-        <!---- Expanded table element ---->
+        <!---- EXPANDED TABLE ELEMENT ------------------------------------>
         <template v-if='!withLineages && !isLoadingDetails' v-slot:expanded-item='{ item }'>
           <td :colspan='4' class='expanded-item-title'>
-            <expansion-mode-menu @changeNotationMode="e=>notationMode=e" @changeExapnsionMode="e=>expansionMode=e"/>
+            <expansion-mode-menu @changeNotationMode="e=>notationMode=e"/>
             <div class="row-name">Lineages</div>
           </td>
           <td class='expanded-td'>
@@ -87,7 +91,8 @@
               <tbody>
               <tr v-for='(lineage, lineage_index) in formatBreakdown(item.lineages)' v-bind:key='lineage_index'>
                 <td>
-                  {{ lineage['f' + week].toPrecision(3) + '% (' + lineage['w' + week] + ')' }}
+                  <span>{{ (item['f' + week] === 0 ? 0 : item['f' + week].toPrecision(3)) + '% ' }}</span>
+                  <span class="text-body-4">{{ '(' + item['w' + week] + ')' }}</span>
                 </td>
               </tr>
               </tbody>
@@ -95,21 +100,25 @@
           </td>
         </template>
         <template v-else-if="isLoadingDetails" v-slot:expanded-item>
-          <td colspan="9" class="py-5">
-            <v-progress-circular indeterminate color="primary"/>
-            <span class="pl-4">Loading...</span></td>
-        </template>
-
-        <template v-slot:body.append>
-          <td :colspan='withLineages? 4: 5' class='table-append'/>
-          <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append text-center'>
-            Tot. seq.: {{ getCurrentAnalysis.totSeq['w' + week] }}
+          <td colspan="9" class="py-5 text-center secondary--text font-weight-medium">
+            <loading-sticker :standalone="true" :is-loading="true"
+                             :loading-messages="[{text:'Analyzing lineages data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
           </td>
         </template>
 
+        <!-- TOT SEQ COUNTS --------------------------------------------->
+        <template v-slot:body.append>
+          <td :colspan='withLineages? 4: 5' class='table-append'/>
+          <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append text-body-4 text-center'>
+            Tot. seq: {{ getCurrentAnalysis.totSeq['w' + week] }}
+          </td>
+        </template>
+
+        <!-- GO TO COVSPECTURM  ----------------------------------------->
         <template v-slot:footer.prepend>
           <go-to-cov-spectrum/>
         </template>
+
       </v-data-table>
     </v-col>
   </section-element>
@@ -124,21 +133,18 @@ import {mapGetters, mapMutations, mapState} from "vuex";
 import axios from "axios";
 import {compactLineagesData} from "@/utils/formatterService";
 import GoToCovSpectrum from "@/components/tables/GoToCovSpectrum";
+import LoadingSticker from "@/components/general/basic/LoadingSticker";
 
 export default {
   name: "ResultTable",
-  components: {GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement},
+  components: {LoadingSticker, GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement},
   props: {
-    withLineages: {},
+    withLineages: Boolean,
   },
   data() {
     return {
-
-      /** Array of expanded rows (relevant for lineage-indep only )*/
+      /** Array of expanded rows (relevant for li only )*/
       expandedRows: [],
-
-      /** Mode of the breakdown view. 0=consider the expanded line only; 1= consider the whole dataset */
-      expansionMode: 0,
 
       /** Notation mode of the breakdown view.  0=full notation; 1,2= start notation (level)  */
       notationMode: 0,
@@ -156,9 +162,6 @@ export default {
 
       /** Loading flag for the table */
       isLoadingDetails: false,
-
-      /** Download flag: true if a file download is in progress */
-      downloadLoading: false,
     }
   },
   computed: {
@@ -166,24 +169,29 @@ export default {
     ...mapGetters(['getCurrentAnalysis', 'getCurrentLocalFilteringOpt', 'getCurrentLocalOrderingOpt',
       'getCurrentFilteredRows', 'getCurrentSelectedRows']),
 
+    /** query: query value of the current analysis */
+    query() {
+      return this.getCurrentAnalysis.query
+    },
+
+    /** characterizingMuts: characterizing muts for the current analysis */
     characterizingMuts() {
-      console.log("# characterizingMuts=" + this.getCurrentAnalysis.characterizingMuts)
       return this.withLineages ? this.getCurrentAnalysis.characterizingMuts : null
     },
 
+    /** useGlobalFilters: flag for global filter for the current analysis */
     useGlobalFilters() {
-      console.log("# useGlobalFilters=" + this.getCurrentLocalFilteringOpt.useGlobalFilters)
       return this.getCurrentLocalFilteringOpt.useGlobalFilters
     },
 
+    /** filteringOpt: filtering options for the current analysis (either global or local based on preference) */
     filteringOpt() {
-      console.log("# filters=" + JSON.stringify((this.useGlobalFilters ? this.globalFilteringOpt : this.getCurrentLocalFilteringOpt)))
-      return (this.useGlobalFilters ? this.globalFilteringOpt : this.getCurrentLocalFilteringOpt)
+      return this.useGlobalFilters ? this.globalFilteringOpt : this.getCurrentLocalFilteringOpt
     },
 
+    /** orderingOpt: ordering options for the current analysis (either global or local based on preference) */
     orderingOpt() {
-      console.log("# order=" + JSON.stringify((this.useGlobalFilters ? this.globalOrderingOpt : this.getCurrentLocalOrderingOpt)))
-      return (this.useGlobalFilters ? this.globalOrderingOpt : this.getCurrentLocalOrderingOpt)
+      return this.useGlobalFilters ? this.globalOrderingOpt : this.getCurrentLocalOrderingOpt
     },
 
     /** Array of selected rows */
@@ -193,7 +201,6 @@ export default {
         this.setFilterOpt({global: this.useGlobalFilters, opt: 'rowKeys', value: keys})
       },
       get() {
-        console.log("# selectedRows=" + this.getCurrentSelectedRows)
         return this.getCurrentSelectedRows
       }
     },
@@ -201,11 +208,9 @@ export default {
     /** Array of columns selected for sorting data */
     sortingIndexes: {
       set(newVal) {
-        console.log("# set sortingIndexes")
         this.setOrderOpt({global: this.useGlobalFilters, opt: 'sortingIndexes', value: newVal})
       },
       get() {
-        console.log("# sortingIndexes=" + this.orderingOpt.sortingIndexes)
         return this.orderingOpt.sortingIndexes
       }
     },
@@ -213,17 +218,11 @@ export default {
     /** Array defining asc(true)/desc(false) order for each column selected for sorting in sortingIndexes */
     isDescSorting: {
       set(newVal) {
-        console.log("# set isDescSorting")
         this.setOrderOpt({global: this.useGlobalFilters, opt: 'isDescSorting', value: newVal})
       },
       get() {
-        console.log("# isDescSorting=" + this.orderingOpt.isDescSorting)
         return this.orderingOpt.isDescSorting
       }
-    },
-
-    query() {
-      return this.getCurrentAnalysis.query
     },
 
     /** Array of objects describing header columns */
@@ -248,120 +247,27 @@ export default {
         headers = headers.concat(extendedHeaders)
       }
       return headers
-    },
-
-    /** Array of (formatted) data actually displayed in the tables  */
-    processedQueryResult() {
-      const rows = []
-      console.log(this.getCurrentFilteredRows)
-      this.getCurrentFilteredRows.forEach(rawRow => {
-        const row = rawRow
-
-        row['item_key'] = rawRow['protein'] + '_' + rawRow['mut']
-        rows.push(row)
-      })
-      return rows
-    },
+    }
 
   },
   methods: {
     ...mapMutations(['setFilterOpt', 'setOrderOpt']),
 
     /**
-     * Custom sort function for data table
-     * @param items           Array of (processed) rows to be sorted
-     * @param sortingIndexes  Array of field names selected for sorting
-     * @param isDescSorting   Array of boolean values. Element i is true iff index[i] needs to be desc ordered
-     * @returns {Array}       Array of sorted items
-     */
-    customSort(items, sortingIndexes, isDescSorting) {
-      // Num of index selected
-      const len = sortingIndexes.length
-
-      // No elements to be sorted? Nothing to do
-      if (items.length === 0) {
-        return items
-      }
-
-      // No indexes selected to be sort on? Apply default ones
-      if (len === 0) {
-        return this.customSort(
-            items,
-            this.defaultSorting.indexes,
-            this.defaultSorting.isDescSorting
-        )
-      }
-
-      const i = 0
-      const positionOfLastIndex = len - 1
-
-      // Sort via custom cmp fn (returning 0 if A==B equal; 1 if A must appear before B; -1 otherwise)
-      items.sort(function (a, b) {
-        let iLocal = i
-        const consideredIndex = sortingIndexes[iLocal]
-        while (iLocal <= positionOfLastIndex) {
-          // res is computed as follows: 0 if A==B, 1 if A<B, -1 if A>B
-          let res
-
-          if (consideredIndex.startsWith('f_w')) {
-            // Mutation diffusion data must consider only the percentage value
-            const weekNum = consideredIndex[3]
-            res = a['f' + weekNum] - b['f' + weekNum]
-          } else {
-            if (
-                consideredIndex.startsWith('p_value') ||
-                consideredIndex.startsWith('slope')
-            ) {
-              // P_values (possibly NaN valued) and slope must be converted back into numbers to sort them
-              if (!isNaN(a[consideredIndex]) && !isNaN(b[consideredIndex])) {
-                res = Number(a[consideredIndex]) - Number(b[consideredIndex])
-              } else {
-                res = isNaN(a[consideredIndex]) ? 1 : -1
-              }
-            } else {
-              // String are compared as usual
-              res = String(a[consideredIndex]).localeCompare(b[consideredIndex])
-            }
-          }
-
-          // A<B on the current attribute? No need to check the others.
-          if (res > 0) {
-            return isDescSorting[iLocal] ? -1 : 1
-          }
-
-          // A>B on the current attribute. No need to check the others.
-          if (res < 0) {
-            return isDescSorting[iLocal] ? 1 : -1
-          }
-
-          // A==B on the current attribute. Decide on the basis of the other indexes.
-          iLocal++
-        }
-        // No other indexes selected to be sort on? Then, A==B
-        if (iLocal === positionOfLastIndex) {
-          return 0
-        }
-      })
-      return items
-    },
-
-    /**
      * Fetch lineages data when a row of the table is expanded. Lineage independent search only.
      * @param item
      */
     loadLineageDetails(item) {
-      console.log("EXPANDED " + JSON.stringify(item))
       // Catch row expansion only
       if (item.value) {
         this.error = undefined
         this.isLoadingDetails = true
         const url = `/lineage_independent/getLineagesStatistics`
         const toSend = {
-          location: item.item.location,
+          location: this.query.location[this.query.granularity],
           date: this.query.endDate,
           prot: item.item.protein,
           mut: item.item.mut,
-          mode: this.expansionMode === 0 ? 'line' : 'full'
         }
 
         axios
@@ -453,7 +359,6 @@ td.expanded-td tr:hover {
 
 td.table-append {
   padding: 6px;
-  font-size: 0.875rem;
   color: rgba(0, 0, 0, 0.87);
   border-right: thin solid rgba(0, 0, 0, 0.12);
 }

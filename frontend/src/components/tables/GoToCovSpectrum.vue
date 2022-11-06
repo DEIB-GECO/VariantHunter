@@ -6,19 +6,19 @@
       <template v-slot:btn>
         <v-icon left>mdi-open-in-new</v-icon>
         Analyze <span class="hidden-xs-only">the selected mutations</span> with
-        <span class="pl-1">
+        <span class="pl-1 inline-img">
           <v-img max-height="14px" width="115px" contain :src="require('@/assets/others/CovSpecturm.svg')"/>
         </span>
       </template>
 
       <template v-slot:tip>
-        Run a search on <span class="font-weight-black">CovSpecturm</span> for the selected mutations and geographic
+        Run a search on <span class="font-weight-bold">covSPECTRUM</span> for the selected mutations and geographic
         area.
         <div class="mt-3 border-t" v-if="selectedRows.length<1">
           To begin, select the rows you are interested in from the table, then press this button.
         </div>
         <div class="mt-3 border-t" v-else>
-          {{ selectedRows.length }} mutation<span v-if="selectedRows.length>1">s</span> selected. Press this button to proceed.
+          {{ selectedRows.length }} mutation<span v-if="selectedRows.length>1">s</span>&nbsp; selected. Press this button to proceed.
         </div>
         <div class="mt-3 border-t white--text  red rounded-xl px-4 py-1" v-if="nspWarning">
           <v-icon small color="white" left> mdi-alert</v-icon>
@@ -139,6 +139,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+#app .inline-img .v-image{
+  display: inline-block !important;
+}
 </style>

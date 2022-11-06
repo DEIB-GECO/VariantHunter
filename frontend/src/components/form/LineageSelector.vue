@@ -20,7 +20,7 @@
     <v-row dense class="px-5">
       <v-col>
         <v-autocomplete v-model='selectedLineage' :items='possibleLineages' :disabled="!selectedLocation"
-                        :loading='isLoading' placeholder='Select a lineage from the list' persistent-hint
+                        :loading='isLoading' placeholder='Select a lineage from the list' persistent-hint flat
                         :hint="(!selectedLocation)?'You must select at least a location first':''" :hide-details="selectedLocation!==null" attach solo
                         persistent-placeholder clearable clear-icon="mdi-backspace-outline" :class="(!selectedLocation)?'warning--text cursor-forbidden':''">
           <template v-slot:prepend-item>

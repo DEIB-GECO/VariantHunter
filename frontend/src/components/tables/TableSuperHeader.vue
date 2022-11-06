@@ -14,7 +14,7 @@
     <th colspan='1' class='empty-main-header' />
     <th colspan='1' class='empty-main-header' />
     <th colspan='4'>
-      Mutation diffusion in % &nbsp;&nbsp; (num of affected sequences)
+      Mutation diffusion in % &nbsp;&nbsp; (affected sequences)
     </th>
     <th v-if='showPValues' colspan='3'>P-values</th>
   </tr>

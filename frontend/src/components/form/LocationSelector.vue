@@ -21,7 +21,7 @@
       <v-col>
         <v-autocomplete v-model='selectedLocation' :items='possibleLocations' :search-input.sync="searchQuery"
                         :loading='isLoading' placeholder='Start typing the location' attach solo hide-details
-                        persistent-placeholder :hide-no-data="(!searchQuery || searchQuery.length<1)"
+                        persistent-placeholder :hide-no-data="(!searchQuery || searchQuery.length<1)" flat
                         :no-data-text="(isLoading?'Loading locations...':(searchQuery?.length<3?'Continue typing':'Location not found'))"
                         clearable clear-icon="mdi-backspace-outline" @update:search-input="fetchLocations">
           <template v-slot:selection="{item}">

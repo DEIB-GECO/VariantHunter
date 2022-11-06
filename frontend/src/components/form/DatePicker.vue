@@ -22,7 +22,7 @@
 
           <template v-slot:activator='{ on, attrs }'>
             <v-text-field v-model='selectedDateText' append-icon='mdi-calendar' :hide-details="false"
-                          persistent-hint
+                          persistent-hint flat
                           hint="Not sure which period to select? Analyze the sequences over time using the Dataset Explorer below."
                           placeholder='Select the end date of the period' readonly
                           clearable clear-icon="mdi-backspace-outline" solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true'

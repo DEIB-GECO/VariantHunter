@@ -66,3 +66,19 @@
 .v-data-table-header__icon::before {
   content: '\F033C' !important;
 }
+
+/***************************************
+ *  TOOLTIP VUETIFY STYLING OVERWRITE  *
+ ***************************************/
+
+/** Overlay tooltip content */
+.v-snack__wrapper {
+    margin-bottom: 0 !important;
+    border-radius: 24px 24px 0 0 !important;
+}
+
+
+/* Revert usual behavior for links */
+.underlined-links a {
+  color: var(--secondary-color) !important;
+}

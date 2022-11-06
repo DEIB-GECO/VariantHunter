@@ -64,7 +64,6 @@ export default {
 #app .v-tooltip__content{
     line-height: 15px !important;
     background-color: rgba(1, 72, 120, 0.96) !important;
-    border: solid 1px white;
     border-radius: 24px !important;
     color: white !important;
     padding: 10px 15px;

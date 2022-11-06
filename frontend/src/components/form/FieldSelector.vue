@@ -29,12 +29,12 @@
       <!-- Manual selector -->
       <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues' no-data-text="Not found"
                 hide-details :placeholder='placeholder' solo='solo' :loading='loading'
-                attach persistent-placeholder dense />
+                attach persistent-placeholder dense flat />
 
       <!-- Autocomplete selector -->
       <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable clear-icon="mdi-backspace-outline" :multiple='multiple'
                       :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder' :solo='solo' :loading='loading'
-                      attach dense no-data-text="Not found">
+                      attach dense no-data-text="Not found" flat >
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
