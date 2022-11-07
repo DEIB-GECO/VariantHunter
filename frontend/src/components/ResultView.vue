@@ -288,13 +288,13 @@ export default {
 
         // Convert numeric slope and p-values into a formatted string
         row['slope'] = rawRow['slope'].toPrecision(4)
-        if (!isNaN(rawRow['p_value_with_mut'])) {
+        if (rawRow['p_value_with_mut']!==-1) {
           row['p_value_with_mut'] = rawRow['p_value_with_mut'].toExponential(3)
         }
-        if (!isNaN(rawRow['p_value_without_mut'])) {
+        if (rawRow['p_value_without_mut']!==-1) {
           row['p_value_without_mut'] = rawRow['p_value_without_mut'].toExponential(3)
         }
-        if (!isNaN(rawRow['p_value_comp'])) {
+        if (rawRow['p_value_comp']!==-1) {
           row['p_value_comp'] = rawRow['p_value_comp'].toExponential(3)
         }
 
