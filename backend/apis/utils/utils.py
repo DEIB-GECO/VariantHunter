@@ -75,9 +75,9 @@ def compute_pvalue(freq1, freq2):
 
     """
     try:
-        return scipy.stats.chi2_contingency(observed=[freq1, freq2], correction=True)[1]
+        return scipy.stats.chi2_contingency(observed=[freq1, freq2])[1]
     except:
-        return "NaN"
+        return -1
 
 
 def correct_pvalues(statistics):
@@ -90,14 +90,28 @@ def correct_pvalues(statistics):
     """
     uncorrected_p_vals = []
     for s in statistics:
-        uncorrected_p_vals.extend([s['p_value_with_mut'], s['p_value_without_mut'], s['p_value_comp']])
-    corrected_p_vals = sm.stats.multipletests(pvals=uncorrected_p_vals)[1]
-    idx = 0
-    for s in statistics:
-        s['p_value_with_mut'] = corrected_p_vals[idx]
-        s['p_value_without_mut'] = corrected_p_vals[idx + 1]
-        s['p_value_comp'] = corrected_p_vals[idx + 2]
-        idx += 3
+        uncorrected_p_vals.extend([s['p_value_with_mut'] ,s['p_value_without_mut'], s['p_value_comp']])
+    # filter out cases where p-value is unknown (-1) or equal to 1.0 (avoid library exceptions)
+    uncorrected_valid_p_vals = list(filter(lambda p_val: abs(p_val)!=1, uncorrected_p_vals))
+
+    if len(uncorrected_valid_p_vals)>0:
+        corrected_p_vals = sm.stats.multipletests(pvals=uncorrected_valid_p_vals)[1]
+
+        # update statistics by replacing p-values
+        idx = 0
+        for s in statistics:
+            if abs(uncorrected_p_vals[idx])!=1:
+                s['p_value_with_mut'] = corrected_p_vals[idx]
+                idx += 1
+
+            if abs(uncorrected_p_vals[idx])!=1:
+                s['p_value_without_mut'] = corrected_p_vals[idx]
+                idx += 1
+
+            if abs(uncorrected_p_vals[idx])!=1:
+                s['p_value_comp'] = corrected_p_vals[idx]
+                idx += 1
+
     return statistics
 
 
@@ -150,7 +164,7 @@ def produce_statistics(location, week_sequence_counts, mutation_data):
                     [c1, c2, c3, c4],
                     [tot_seq_w1 - c1, tot_seq_w2 - c2, tot_seq_w3 - c3, tot_seq_w4 - c4]),
         })
-
-    statistics = correct_pvalues(statistics)
+    if len(statistics)>0:
+        statistics = correct_pvalues(statistics)
 
     return statistics
