@@ -11,6 +11,7 @@
 
 import sqlite3
 from flask import request
+import time
 from .utils.path_manager import db_path
 from flask_restplus import Namespace, Resource
 
@@ -77,30 +78,35 @@ def get_regions(country):
     return regions
 
 
-def get_locations(string, exact=False):
+def get_locations(o_string):
     """
     Fetch all the locations starting with a given string
     """
     con = sqlite3.connect(db_path)
     cur = con.cursor()
     locations = []
-    string = string if exact else [string+'%','% '+string+'%']
+    string = [o_string + '%', '% ' + o_string + '%']
+    strings = [o_string + '%', '% ' + o_string + '%', o_string + '%', '% ' + o_string + '%']
+    stringss = [o_string + '%', '% ' + o_string + '%', o_string + '%', '% ' + o_string + '%', o_string + '%',
+                '% ' + o_string + '%']
 
     # Fetch continents
     query = f'''    SELECT LO.location
                     FROM locations AS LO JOIN continents AS CO ON LO.location_id=CO.continent_id
-                    WHERE { 'LO.location=?' if exact 
-                            else '(upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?))'};'''
-    locations.extend([{'value': x[0], 'type': 'continent', 'country':None, 'continent':None} for x in cur.execute(query,string).fetchall()])
+                    WHERE (upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?));'''
+    locations.extend([{'value': x[0], 'type': 'continent', 'country': None, 'continent': None} for x in
+                      cur.execute(query, string).fetchall()])
+
 
     # Fetch countries
     query = f'''    SELECT LO.location, CON.location
                     FROM locations AS LO
                     JOIN countries AS CO ON LO.location_id=CO.country_id
                     JOIN locations AS CON ON CON.location_id=CO.continent_id
-                    WHERE { 'LO.location=?' if exact 
-                            else '(upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?))'};'''
-    locations.extend([{'value': x[0], 'type': 'country', 'country':None, 'continent':x[1]} for x in cur.execute(query,string).fetchall()])
+                    WHERE (upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?)) 
+                    OR (upper(CON.location) LIKE upper(?)) OR (upper(CON.location) LIKE upper(?));'''
+    locations.extend([{'value': x[0], 'type': 'country', 'country': None, 'continent': x[1]} for x in
+                      cur.execute(query, strings).fetchall()])
 
     # Fetch regions
     query = f'''    SELECT LO.location, COU.location, CON.location
@@ -109,9 +115,11 @@ def get_locations(string, exact=False):
                     JOIN locations AS COU ON COU.location_id=RE.country_id
                     JOIN countries AS CC ON CC.country_id=RE.country_id
                     JOIN locations AS CON ON CON.location_id=CC.continent_id
-                    WHERE { 'LO.location=?' if exact 
-                            else '(upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?))'};'''
-    locations.extend([{'value': x[0], 'type': 'region', 'country':x[1], 'continent':x[2]} for x in cur.execute(query,string).fetchall()])
+                    WHERE (upper(LO.location) LIKE upper(?)) OR (upper(LO.location) LIKE upper(?)) 
+                    OR (upper(COU.location) LIKE upper(?)) OR (upper(COU.location) LIKE upper(?)) 
+                    OR (upper(CON.location) LIKE upper(?)) OR (upper(CON.location) LIKE upper(?));'''
+    locations.extend([{'value': x[0], 'type': 'region', 'country': x[1], 'continent': x[2]} for x in
+                      cur.execute(query, stringss).fetchall()])
 
     con.close()
     return locations
@@ -165,7 +173,12 @@ class FieldList(Resource):
         Endpoint to get all the locations matching a given string
         @return:    An array of regions
         """
-        args=request.args
+        print("\t /getLocations processing...", end="")
+        exec_start = time.time()
+
+        args = request.args
         args.to_dict()
         locations = get_locations(args.get('string'))
+
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
         return locations
