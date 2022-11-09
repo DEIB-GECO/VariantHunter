@@ -10,7 +10,7 @@
 <template>
   <thead class='main-headers'>
   <tr>
-    <th :colspan='withLineages ? 2 : 3' class='empty-main-header' />
+    <th colspan='3' class='empty-main-header' />
     <th colspan='1' class='empty-main-header' />
     <th colspan='1' class='empty-main-header' />
     <th colspan='4'>

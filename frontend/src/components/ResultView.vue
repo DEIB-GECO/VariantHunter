@@ -50,7 +50,7 @@
     <SectionElement icon='mdi-table-multiple' title='MUTATIONS TABLE'>
       <v-data-table v-model='selectedRows' :custom-sort='customSort' :headers='tableHeaders'
                     :items='processedQueryResult' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
-                    :footer-props='footerProps' :show-expand='!withLineages' @item-expanded='loadLineageDetails'
+                    :footer-props='footerProps' @item-expanded='loadLineageDetails' show-expand
                     :loading='isLoadingDetails' single-expand class='table-element' item-key='item_key'
                     :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'
                     @toggle-select-all='handleToggleSelection'>
@@ -71,6 +71,11 @@
         <template v-if='withLineages' v-slot:item.mut='{ item }'>
           <div :class="isCharacterizingMut(item)? 'char-mut':''">{{ item.mut }}</div>
         </template>
+
+        <template v-slot:item.data-table-expand="{expand,item,isExpanded}">
+          <row-options :expandable="!withLineages" :item="item" :isExpanded="isExpanded" :expand="expand"/>
+        </template>
+
 
         <!---- Expanded table element ---->
         <template v-if='!withLineages && !isLoadingDetails' v-slot:expanded-item='{ headers, item }'>
@@ -104,7 +109,7 @@
         </template>
 
         <template v-slot:body.append>
-          <td :colspan='withLineages? 4: 5' class='table-append' />
+          <td :colspan='5' class='table-append' />
           <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append' >
             Tot. seq.: {{querySupport.totSeq[week-1]}}
           </td>
@@ -154,10 +159,12 @@ import WeekSlider from '@/components/form/WeekSlider'
 import ExpansionModeMenu from "@/components/form/menus/ExpansionModeMenu";
 import {compactLineagesData} from "@/utils/formatterService";
 import GoToCovSpectrum from "@/components/form/GoToCovSpectrum";
+import RowOptions from "@/components/tables/RowOptions";
 
 export default {
   name: 'ResultView',
   components: {
+    RowOptions,
     GoToCovSpectrum,
     ExpansionModeMenu,
     WeekSlider, MutationSelector, SectionElement, OddRatioChart, TableSuperHeader, TableControls, FieldSelector, HeatMap, LineChart

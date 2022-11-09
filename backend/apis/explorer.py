@@ -14,6 +14,7 @@ from __future__ import print_function
 import sqlite3
 import time
 
+from flask import request
 from flask_restplus import Namespace, Resource
 
 from .utils.path_manager import db_path
@@ -181,6 +182,65 @@ def get_lineage_characterization(lineages):
     return characterizing_muts
 
 
+def extract_characterized_lineages(prot, mut):
+    """
+    Given a protein mutation pair it retrieves the lineages characterized by that pair
+    Args:
+        prot:   The name of the protein of interest
+        mut:    The mutation of interest
+
+    Returns:    List of characterized lineage names
+
+    """
+    con = sqlite3.connect(db_path)
+    cur = con.cursor()
+
+    query = ''' SELECT L.lineage
+                FROM lineages_characteristics AS LC
+                    JOIN proteins AS P  ON P.protein_id=LC.protein_id
+                    JOIN lineages AS L ON L.lineage_id=LC.lineage_id
+                WHERE P.protein=:prot AND LC.mut=:mut;'''
+    lineages = [lineage for [lineage] in cur.execute(query, {'prot': prot, 'mut': mut}).fetchall()]
+
+    con.close()
+    return lineages
+
+
+def extract_mutation_history(prot, mut):
+    """
+    Given a protein,mutation pair it computes the percentage at which that pair appeared in each lineage, if >0.
+    Args:
+        prot:   The name of the protein of interest
+        mut:    The mutation of interest
+
+    Returns:    A dictionary of lineages storing the percentage of appearance in each lineage, in all times.
+
+    """
+    con = sqlite3.connect(db_path)
+    cur = con.cursor()
+
+    query = ''' SELECT L.lineage, SUM(AA.count)
+                FROM aggr_aa_substitutions AS AA
+                    JOIN proteins AS P  ON P.protein_id = AA.protein_id
+                    JOIN lineages AS L ON AA.lineage_id = L.lineage_id
+                WHERE P.protein=:prot AND AA.mut=:mut
+                GROUP BY L.lineage
+                HAVING SUM(AA.count)>0
+                ORDER BY SUM(AA.count) DESC ;'''
+
+    history = {}
+    total = 0
+    for lineage, count in cur.execute(query, {'prot': prot, 'mut': mut}).fetchall():
+        total += count
+        history[lineage] = {'abs' : count}
+
+    for lineage in history:
+        history[lineage]['percentage'] = 100 * history[lineage]['abs'] / total
+
+    con.close()
+    return history
+
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"                             ENDPOINTS                               """""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -252,3 +312,24 @@ class FieldList(Resource):
         characterization = get_lineage_characterization(lineages)
         print(f'done in {time.time() - exec_start:.5f} seconds.')
         return characterization
+
+
+@api.route('/getMutationHistory')
+class FieldList(Resource):
+    @api.doc('get_mutation_history')
+    def get(self):
+        """
+        Endpoint to obtain statistics about history of a given mutation
+        @return:    An object including the results
+        """
+        print("\t /getMutationHistory processing...", end="")
+        exec_start = time.time()
+        args = request.args
+        protein = args.get('protein')
+        mut = args.get('mut')
+
+        mutation_history = extract_mutation_history(prot=protein, mut=mut)
+        characterized_lineages = extract_characterized_lineages(prot=protein, mut=mut)
+
+        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        return {'history': mutation_history, 'characterized_lineages':characterized_lineages}

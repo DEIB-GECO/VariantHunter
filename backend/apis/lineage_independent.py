@@ -199,7 +199,7 @@ class FieldList(Resource):
         statistics = produce_statistics(location, week_sequence_counts, mutation_data)
 
         print(f'done in {time.time() - exec_start:.5f} seconds.')
-        return {'rows': statistics, 'tot_seq': week_sequence_counts, 'location' : location_data[0]}
+        return {'rows': statistics, 'tot_seq': week_sequence_counts, 'location': location_data[0]}
 
 
 @api.route('/getLineagesStatistics')
