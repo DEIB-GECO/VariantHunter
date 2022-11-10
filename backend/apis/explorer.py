@@ -311,7 +311,6 @@ class FieldList(Resource):
         exec_start = time.time()
         args = request.args
         lineages = args.getlist('lineages')
-        print(lineages)
 
         characterization = get_lineage_characterization(lineages)
         print(f'done in {time.time() - exec_start:.5f} seconds.')
