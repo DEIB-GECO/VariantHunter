@@ -129,18 +129,21 @@ def startup():
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, continent_id AS location_id, protein_id, mut, count(*) AS count 
                             FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            WHERE continent_id IS NOT NULL 
                             GROUP BY date, lineage_id, continent_id, protein_id, mut;''')
 
         print("\t\tProcessing aa substitutions by country ...")
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, country_id AS location_id, protein_id, mut, count(*) AS count 
                             FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            WHERE country_id IS NOT NULL 
                             GROUP BY date, lineage_id, country_id, protein_id, mut;''')
 
         print("\t\tProcessing aa substitutions by region ...")
         run_query('''   INSERT INTO aggr_aa_substitutions 
                             SELECT date, lineage_id, region_id AS location_id, protein_id, mut, count(*) AS count 
                             FROM temp_table1.sequences SQ JOIN temp_table2.aa_substitutions SB ON SQ.sequence_id=SB.sequence_id
+                            WHERE region_id IS NOT NULL 
                             GROUP BY date, lineage_id, region_id, protein_id, mut;''')
 
         run_query('''   DETACH DATABASE 'temp_table2';''')
@@ -150,18 +153,21 @@ def startup():
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, continent_id AS location_id, count(*) AS count 
                             FROM temp_table1.sequences 
+                            WHERE continent_id IS NOT NULL 
                             GROUP BY date, lineage_id, continent_id;''')
 
         print("\t\tProcessing sequences by country ...")
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, country_id AS location_id, count(*) AS count 
                             FROM temp_table1.sequences 
+                            WHERE country_id IS NOT NULL 
                             GROUP BY date, lineage_id, country_id;''')
 
         print("\t\tProcessing sequences by region ...")
         run_query('''   INSERT INTO aggr_sequences 
                             SELECT date, lineage_id, region_id AS location_id, count(*) AS count 
                             FROM temp_table1.sequences 
+                            WHERE region_id IS NOT NULL 
                             GROUP BY date, lineage_id, region_id;''')
 
         run_query('''   DETACH DATABASE 'temp_table1';''')
