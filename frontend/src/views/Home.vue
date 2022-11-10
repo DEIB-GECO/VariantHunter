@@ -47,6 +47,7 @@ import TabWithLineages from '@/components/tabs/TabWithLineages'
 import TabWithoutLineages from '@/components/tabs/TabWithoutLineages'
 import ErrorAlert from '@/components/general/ErrorAlert'
 import axios from 'axios'
+import {mapStateTwoWay} from "@/utils/bindService";
 
 export default {
   name: 'Home',
@@ -64,12 +65,10 @@ export default {
 
       /** Last update snackbar visibility flag */
       showSnackbar: false,
-
-      /** Last update date */
-      lastUpdate: null
     }
   },
   computed: {
+    ...mapStateTwoWay({'lastUpdate': 'SET_LAST_UPDATE'}),
     ...mapState(['primary_color', 'secondary_color'])
   },
   mounted () {

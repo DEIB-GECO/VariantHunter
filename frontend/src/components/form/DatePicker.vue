@@ -30,7 +30,7 @@
               </v-col>
           </v-row>
         </div>
-        <v-date-picker v-model='selectedDate' :max='today' first-day-of-week='1' no-title range
+        <v-date-picker v-model='selectedDate' :max='lastUpdate' first-day-of-week='1' no-title range :show-current="lastUpdate"
                        show-adjacent-months @input='menuVisibility = false' />
       </v-menu>
     </v-flex>
@@ -40,6 +40,7 @@
 
 <script>
 import { mapStateTwoWay } from '@/utils/bindService'
+import {mapState} from "vuex";
 
 export default {
   name: 'DatePicker',
@@ -53,6 +54,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['lastUpdate']),
     ...mapStateTwoWay({
       selectedDate: 'SET_END_DATE'
     }),

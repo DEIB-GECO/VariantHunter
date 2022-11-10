@@ -25,7 +25,10 @@ const state = {
   selectedDate: null,
 
   /** Lineage: selected lineage */
-  selectedLineage: null
+  selectedLineage: null,
+
+  /** Last update date */
+  lastUpdate: null,
 }
 
 const mutations = {
@@ -67,6 +70,10 @@ const mutations = {
 
   SET_LINEAGE: (state, newValue) => {
     state.selectedLineage = newValue
+  },
+
+  SET_LAST_UPDATE: (state, newValue) =>{
+     state.lastUpdate = newValue
   }
 }
 
