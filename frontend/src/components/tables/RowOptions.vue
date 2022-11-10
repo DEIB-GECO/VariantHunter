@@ -155,7 +155,6 @@ export default {
           .then(({data}) => {
             this.characterizedLineages = data['characterized_lineages']
             this.mutationHistory = data['history']
-            console.log(this.mutationHistory)
           })
           .catch((e) => {
             this.error = e

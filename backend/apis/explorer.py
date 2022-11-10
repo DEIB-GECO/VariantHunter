@@ -199,7 +199,8 @@ def extract_characterized_lineages(prot, mut):
                 FROM lineages_characteristics AS LC
                     JOIN proteins AS P  ON P.protein_id=LC.protein_id
                     JOIN lineages AS L ON L.lineage_id=LC.lineage_id
-                WHERE P.protein=:prot AND LC.mut=:mut;'''
+                WHERE P.protein=:prot AND LC.mut=:mut
+                ORDER BY  L.lineage;'''
     lineages = [lineage for [lineage] in cur.execute(query, {'prot': prot, 'mut': mut}).fetchall()]
 
     con.close()
