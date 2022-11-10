@@ -131,7 +131,6 @@ export default {
   },
   watch: {
     showMutationHistory(newVal) {
-      console.log("NEW VAL is" + newVal + ", condition is" + (newVal && this.characterizedLineages.length < 1 && Object.keys(this.mutationHistory).length < 1))
       if (newVal && this.characterizedLineages.length < 1 && Object.keys(this.mutationHistory).length < 1)
         this.fetchHistory()
     },
@@ -143,7 +142,6 @@ export default {
   },
   methods: {
     fetchHistory() {
-      console.log(this.item)
       this.error = undefined
       this.isLoadingDetails = true
       const url = `/explorer/getMutationHistory`

@@ -249,15 +249,16 @@ def extract_mutation_history(prot, mut):
 @api.route('/getSequenceInfo')
 class FieldList(Resource):
     @api.doc('get_sequence_info')
-    def post(self):
+    def get(self):
         """
         Endpoint to get the sequence counts for each day
         @return:    An array of (date,seq_count) pairs
         """
         print("\t /getSequenceInfo processing...", end="")
         exec_start = time.time()
-        location = api.payload['location']
-        lineage = api.payload['lineage']
+        args = request.args
+        location = args.get('location')
+        lineage = args.get('lineage')
 
         info = extract_seq_num(location, lineage)
         print(f'done in {time.time() - exec_start:.5f} seconds.')
@@ -267,17 +268,18 @@ class FieldList(Resource):
 @api.route('/getLineagesBreakdown')
 class FieldList(Resource):
     @api.doc('get_lineage_breakdown')
-    def post(self):
+    def get(self):
         """
         Endpoint to get the lineage breakdown info for each day
         @return:    An array of describing the breakdown
         """
         print("\t /getLineagesBreakdown processing...", end="")
         exec_start = time.time()
-        location = api.payload['location']
+        args = request.args
+        location = args.get('location')
         period = {
-            'begin': compute_diff_from_date(api.payload['range'][0]) + 1,
-            'end': compute_diff_from_date(api.payload['range'][1]),
+            'begin': compute_diff_from_date(args.get('begin')) + 1,
+            'end': compute_diff_from_date(args.get('end')),
         }
 
         info = extract_lineage_breakdown(location, period)
@@ -300,14 +302,16 @@ class FieldList(Resource):
 @api.route('/getLineagesCharacteristics')
 class FieldList(Resource):
     @api.doc('get_lineages_characteristics')
-    def post(self):
+    def get(self):
         """
         Endpoint to get the characterizing protein mutations of specified lineages
         @return:    A list of characterizing mutations
         """
         print("\t /getLineagesCharacteristics processing...", end="")
         exec_start = time.time()
-        lineages = api.payload['lineages']
+        args = request.args
+        lineages = args.getlist('lineages')
+        print(lineages)
 
         characterization = get_lineage_characterization(lineages)
         print(f'done in {time.time() - exec_start:.5f} seconds.')
