@@ -120,12 +120,13 @@ export default {
 
       if (mut.startsWith('ins')) {
         // ins214EPE => ins_S:214:EPE
-        return 'ins_'+ this.getProtein(protein) + separator + mut
+        mut = mut.slice(3)
+        return 'ins_'+ this.getProtein(protein) + separator + mut.match(/\d+/) + separator + mut.match(/\D+/)
       } else if (mut.endsWith('del')) {
-        // V70del => V70-
+        // Spike_V70del => S:V70-
         return this.getProtein(protein) + separator + mut.slice(0, -3) + '-'
       } else {
-        return this.getProtein(protein) + separator + mut
+        return this.getProtein(protein) + separator + this.getMut(protein,mut)
       }
     },
 
