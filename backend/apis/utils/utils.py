@@ -4,14 +4,11 @@
     General purpose functions shared by the APIs
 
 """
-import math
 from datetime import datetime, timedelta
 
 import numpy as np
-import pandas as pd
 import scipy.stats
 import statsmodels.api as sm
-import statsmodels.formula.api as smf
 
 start_date = datetime.strptime("2020-01-01", "%Y-%m-%d")
 """ 
