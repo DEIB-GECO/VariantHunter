@@ -1,11 +1,11 @@
 <template>
   <section-element icon='mdi-table-multiple' title="Mutations table">
     <v-col cols="12" class="pa-0 table-container">
-      <v-data-table v-model='selectedRows' :headers='tableHeaders'
+      <v-data-table v-model='selectedRows' :headers='tableHeaders' :custom-sort="customSort" col
                     :items='getCurrentFilteredRows' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
-                    :footer-props='footerProps' :show-expand='!withLineages' @item-expanded='loadLineageDetails'
-                    :loading='isLoadingDetails' single-expand class='table-element' item-key='item_key'
+                    :footer-props='footerProps' :loading='isLoadingDetails' single-expand class='table-element' item-key='item_key'
                     :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'
+                    @item-expanded='loadLineageDetails' show-expand
                     @toggle-select-all='handleToggleSelection'>
 
         <!---- TABLE CONTROLS --------------------------------------------->
@@ -18,6 +18,11 @@
           <table-super-header :with-lineages='withLineages' :show-p-values='showPValues'/>
         </template>
 
+        <!---- TABLE EXPAND/INFO PANEL CONTROLS --------------------------->
+        <template v-slot:item.data-table-expand="{expand,item,isExpanded}">
+          <row-options :expandable="!withLineages" :item="item" :isExpanded="isExpanded" :expand="expand"/>
+        </template>
+
         <!---- CUSTOMIZED CELLS ------------------------------------------->
         <!-- Mutation column -->
         <template v-if='withLineages' v-slot:item.mut='{ item }'>
@@ -26,24 +31,27 @@
 
         <!-- Slope column -->
         <template v-slot:item.slope='{ item }'>
-          <div :class="item.slope<=0?'error--text':'success--text'">{{ item.slope.toPrecision(4).replace(/\.0+$/,'') }}</div>
+          <div :class="item.slope<=0?'error--text':'success--text'">{{
+              item.slope.toPrecision(4).replace(/\.0+$/, '')
+            }}
+          </div>
         </template>
 
         <!-- PValueWithMut column -->
         <template v-if='showPValues' v-slot:item.p_value_with_mut='{ item }'>
-          <div v-if="isNaN(item.p_value_with_mut)">N / A</div>
+          <div v-if="item.p_value_with_mut===-1">N / A</div>
           <div v-else>{{ item.p_value_with_mut.toExponential(3) }}</div>
         </template>
 
         <!-- PValueWithoutMut column -->
         <template v-if='showPValues' v-slot:item.p_value_without_mut='{ item }'>
-          <div v-if="isNaN(item.p_value_without_mut)">N / A</div>
+          <div v-if="item.p_value_without_mut===-1">N / A</div>
           <div v-else>{{ item.p_value_without_mut.toExponential(3) }}</div>
         </template>
 
         <!-- PValueComp column -->
         <template v-if='showPValues' v-slot:item.p_value_comp='{ item }'>
-          <div v-if="isNaN(item.p_value_comp)">N / A</div>
+          <div v-if="item.p_value_comp===-1">N / A</div>
           <div v-else>{{ item.p_value_comp.toExponential(3) }}</div>
         </template>
 
@@ -108,7 +116,7 @@
 
         <!-- TOT SEQ COUNTS --------------------------------------------->
         <template v-slot:body.append>
-          <td :colspan='withLineages? 4: 5' class='table-append'/>
+          <td colspan='5' class='table-append'/>
           <td v-for='week in [1,2,3,4]' v-bind:key='week' class='table-append text-body-4 text-center'>
             Tot. seq: {{ getCurrentAnalysis.totSeq['w' + week] }}
           </td>
@@ -132,12 +140,16 @@ import ExpansionModeMenu from "@/components/form/menus/ExpansionModeMenu";
 import {mapGetters, mapMutations, mapState} from "vuex";
 import axios from "axios";
 import {compactLineagesData} from "@/utils/formatterService";
+import {sortItems} from "@/utils/sorterService";
 import GoToCovSpectrum from "@/components/tables/GoToCovSpectrum";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
+import RowOptions from "@/components/tables/RowOptions";
 
 export default {
   name: "ResultTable",
-  components: {LoadingSticker, GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement},
+  components: {
+    RowOptions,
+    LoadingSticker, GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement},
   props: {
     withLineages: Boolean,
   },
@@ -253,6 +265,11 @@ export default {
   methods: {
     ...mapMutations(['setFilterOpt', 'setOrderOpt']),
 
+    /** Custom sorter mapping */
+    customSort(items, sortingIndexes, isDescSorting) {
+      return sortItems(items, sortingIndexes, isDescSorting)
+    },
+
     /**
      * Fetch lineages data when a row of the table is expanded. Lineage independent search only.
      * @param item
@@ -344,7 +361,7 @@ td.expanded-td tr:hover {
 }
 
 .expanded-item-title .row-name {
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--v-text_var1-base);
   font-weight: bold;
   font-size: 12px;
   letter-spacing: 0.019em;
@@ -359,7 +376,7 @@ td.expanded-td tr:hover {
 
 td.table-append {
   padding: 6px;
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--v-text_var1-base);
   border-right: thin solid rgba(0, 0, 0, 0.12);
 }
 
@@ -382,7 +399,7 @@ td.table-append {
 }
 
 .section-container table {
-  background: white !important;
+  background: var(--v-bg_var2-base) !important;
 }
 
 .section-container th span:first-child {
