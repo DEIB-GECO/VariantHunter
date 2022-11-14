@@ -126,7 +126,7 @@ export default {
         // Spike_V70del => S:V70-
         return this.getProtein(protein) + separator + mut.slice(0, -3) + '-'
       } else {
-        return this.getProtein(protein) + separator + mut
+        return this.getProtein(protein) + separator + this.getMut(protein,mut)
       }
     },
 
