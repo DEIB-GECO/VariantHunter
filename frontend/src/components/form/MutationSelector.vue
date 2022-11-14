@@ -313,11 +313,11 @@ export default {
       if (this.selectedLineages.length > 0) {
         this.processing = true
         const classificationAPI = `/explorer/getLineagesCharacteristics`
-        const toSend = {
-          lineages: this.selectedLineages
-        }
+        const queryParams = new URLSearchParams(); // avoid [] conversion of parameter
+        this.selectedLineages.forEach(name => queryParams.append("lineages", name))
+
         axios
-          .post(classificationAPI, toSend)
+          .get(classificationAPI, {params: queryParams})
           .then(res => {
             this.allLinMuts = res.data
 

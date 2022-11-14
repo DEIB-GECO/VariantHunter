@@ -141,14 +141,14 @@ export default {
       if (this.selectedGranularity === 'world' || this.selectedLocation) {
         this.isLoading.histogram = true
         const sequenceAPI = `/explorer/getSequenceInfo`
-        const toSend = {
+        const queryParams = {
           granularity: this.selectedGranularity,
           location: this.selectedLocation,                          // possibly it has no value
           lineage: this.withLineages ? this.selectedLineage : null   // possibly it has no value
         }
 
         axios
-            .post(sequenceAPI, toSend)
+            .get(sequenceAPI, {params: queryParams})
             .then(res => {
               this.sequencesData = res.data
             })
@@ -168,13 +168,13 @@ export default {
       if ((this.selectedGranularity === 'world' || this.selectedLocation) && this.selectedRange) {
         this.isLoading.breakdown = true
         const sequenceAPI = `/explorer/getLineagesBreakdown`
-        const toSend = {
-          granularity: this.selectedGranularity,
+        const queryParams = {
           location: this.selectedLocation,    // possibly it has no value
-          range: this.selectedRange
+          begin: this.selectedRange[0],
+          end: this.selectedRange[1],
         }
         axios
-            .post(sequenceAPI, toSend)
+            .get(sequenceAPI, {params: queryParams})
             .then(res => {
               this.lineagesData = res.data
             })
