@@ -92,7 +92,7 @@ export default {
       if (protein === "Spike") {
         return "S"
       } else if (protein.startsWith("NS")) {
-        return "ORF"+protein.slice(2)
+        return protein==='NS3'? ("ORF3a"):("ORF"+protein.slice(2))
       } else {
         return protein
       }
