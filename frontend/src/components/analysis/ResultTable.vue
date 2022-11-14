@@ -3,7 +3,8 @@
     <v-col cols="12" class="pa-0 table-container">
       <v-data-table v-model='selectedRows' :headers='tableHeaders' :custom-sort="customSort" col
                     :items='getCurrentFilteredRows' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
-                    :footer-props='footerProps' :loading='isLoadingDetails' single-expand class='table-element' item-key='item_key'
+                    :footer-props='footerProps' :loading='isLoadingDetails' single-expand class='table-element'
+                    item-key='item_key'
                     :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'
                     @item-expanded='loadLineageDetails' show-expand
                     @toggle-select-all='handleToggleSelection'>
@@ -31,9 +32,11 @@
 
         <!-- Slope column -->
         <template v-slot:item.slope='{ item }'>
-          <div :class="item.slope<=0?'error--text':'success--text'">{{
-              item.slope.toPrecision(4).replace(/\.0+$/, '')
-            }}
+          <div :class="(item.slope===0?'warning--text':(item.slope<=0?'error--text':'success--text'))">
+            <v-icon :color="(item.slope===0?'warning':(item.slope<=0?'error':'success'))">
+              {{ item.slope === 0 ? 'mdi-circle-small' : (item.slope < 0 ? 'mdi-menu-down' : 'mdi-menu-up') }}
+            </v-icon>
+            {{ item.slope.toPrecision(4).replace(/\.0+$/, '') }}
           </div>
         </template>
 
@@ -149,7 +152,8 @@ export default {
   name: "ResultTable",
   components: {
     RowOptions,
-    LoadingSticker, GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement},
+    LoadingSticker, GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement
+  },
   props: {
     withLineages: Boolean,
   },
