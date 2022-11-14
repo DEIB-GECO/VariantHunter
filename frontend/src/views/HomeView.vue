@@ -18,7 +18,9 @@
 import Sidebar from "@/components/general/Sidebar";
 import NewSearchView from "@/views/NewSearchView";
 import ResultView from "@/views/ResultView";
+import axios from 'axios'
 import {mapState} from "vuex";
+import {mapStateTwoWay} from "@/utils/bindService";
 
 export default {
   name: "HomeView",
@@ -28,8 +30,20 @@ export default {
       currentView: 'result'//'new-search'
     }
   },
+  methods:{
+    /** Fetch the last update date of the dataset */
+    fetchLastUpdate () {
+      const urlAPI = `/explorer/getLastUpdate`
+
+      axios
+        .get(urlAPI)
+        .then(({data})=> { this.lastUpdate = data})
+        .catch(() => {})
+    }
+  },
   computed:{
     ...mapState(['currentAnalysisId']),
+    ...mapStateTwoWay({'lastUpdate':'setLastUpdate'}),
   },
   watch: {
     currentAnalysisId(newVal){
@@ -39,12 +53,15 @@ export default {
         this.currentView='new-search'
     }
   },
+  mounted() {
+    this.fetchLastUpdate()
+  }
 }
 </script>
 
 <style scoped>
 .tool-views-container {
-  background: var(--tertiary-color-light);
+  background: var(--v-bg_var1-base);
   margin-left: 55px;
   padding-bottom:200px;
 }

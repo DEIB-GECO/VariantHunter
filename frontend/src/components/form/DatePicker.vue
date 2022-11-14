@@ -28,8 +28,8 @@
                           clearable clear-icon="mdi-backspace-outline" solo v-bind='attrs' v-on='on' @click:append='menuVisibility = true'
                           persistent-placeholder/>
           </template>
-          <v-date-picker v-model='selectedDate' :max='today' first-day-of-week='1' no-title range
-                         show-adjacent-months @input='menuVisibility = false' header-color="primary"/>
+          <v-date-picker v-model='selectedDate' :max='lastUpdate' first-day-of-week='1' no-title range :show-current="lastUpdate"
+                          @input='menuVisibility = false' header-color="f_primary" color="f_primary"/>
         </v-menu>
       </v-col>
     </v-row>
@@ -38,6 +38,7 @@
 
 <script>
 import {mapStateTwoWay} from '@/utils/bindService'
+import {mapState} from "vuex";
 
 export default {
   name: 'DatePicker',
@@ -45,12 +46,10 @@ export default {
     return {
       /** Visibility flag of date picker menu */
       menuVisibility: false,
-
-      /** Today date */
-      today: new Date().toISOString().slice(0, 10)
     }
   },
   computed: {
+    ...mapState(['lastUpdate']),
     ...mapStateTwoWay({
       selectedDate: 'setDate'
     }),

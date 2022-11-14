@@ -68,6 +68,9 @@ export const state = {
     selectedLineage: null,
     possibleLineages: [],
 
+    /** lastUpdate: last update date */
+    lastUpdate: null,
+
     primary_color: '#014878',
   secondary_color: '#35B1ECFF',
   tertiary_color_light: '#D2ECF8FF',
