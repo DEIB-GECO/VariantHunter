@@ -88,7 +88,7 @@ export default {
   max-width: 170px;
   padding-top: 13px;
   margin-bottom: 10px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--v-text_var1-base);
   font-weight: normal;
   font-size: 12px;
   line-height: 13px;

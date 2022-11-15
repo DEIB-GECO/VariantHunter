@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar dense hide-on-scroll scroll-threshold="50" app flat fixed class="result-bar primary--text" color="tertiary">
+  <v-app-bar dense hide-on-scroll scroll-threshold="50" app flat fixed class="result-bar primary--text" color="bg_var1">
     <v-toolbar-title class="text-body-1 font-weight-black compact-text-2 primary--text">
       {{
         query.location[query.granularity] + " / " +

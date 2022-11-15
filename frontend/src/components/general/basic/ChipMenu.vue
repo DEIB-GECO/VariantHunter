@@ -7,7 +7,7 @@
         {{ activatorText }}
       </v-chip>
     </template>
-    <v-card rounded max-width="300px" color="tertiary" @mouseleave="onMouseLeave">
+    <v-card class="f_text_dark--text" rounded max-width="300px" color="f_tertiary" @mouseleave="onMouseLeave">
       <v-container>
         <slot></slot>
       </v-container>

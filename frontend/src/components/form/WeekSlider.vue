@@ -9,10 +9,10 @@
 
 <template>
   <v-col cols="12" class='d-flex'>
-    <btn-with-tooltip bottom :click-handler="()=>$emit('moveBackward')" color="primary" text="Prev week"
+    <btn-with-tooltip bottom :click-handler="()=>$emit('moveBackward')" color="primary" text="Prev week" content-class="text_var2--text"
                       icon="mdi-clock-minus-outline" tip="Shift the analysis period one week backward"/>
     <v-spacer></v-spacer>
-    <btn-with-tooltip bottom :click-handler="()=>$emit('moveForward')" color="primary" append-icon text="Next week"
+    <btn-with-tooltip bottom :click-handler="()=>$emit('moveForward')" color="primary" append-icon text="Next week" content-class="text_var2--text"
                       icon="mdi-clock-plus-outline" tip="Shift the analysis period one week forward"/>
   </v-col>
 </template>

@@ -6,6 +6,7 @@
  *  Definition:   getterName:(state,getters)=>(payload)=>{}
  *
  **/
+import {sortItems} from "@/utils/sorterService";
 
 export const getters = {
     /**
@@ -47,6 +48,9 @@ export const getters = {
         return state.localOrderingOpt[state.currentAnalysisId]
     },
 
+    /**
+     * Gets the rows of the current analysis that satisfy protein and mutations filters. To be shown on the table
+     */
     getCurrentFilteredRows: (state, getters) => {
         console.log("getCurrentFilteredRows")
         const {useGlobalFilters, ...localFilteringOpt} = getters.getCurrentLocalFilteringOpt
@@ -59,61 +63,53 @@ export const getters = {
         )
     },
 
-    getCurrentProcessedRows: (state, getters) => {
-        const rows = []
-        console.log("getCurrentProcessedRows")
-        getters.getCurrentFilteredRows.forEach(rawRow => {
-            const row = {}
-
-            row['item_key'] = rawRow['protein'] + '_' + rawRow['mut']
-            row['location'] = rawRow['location']
-            row['protein'] = rawRow['protein']
-            row['mut'] = rawRow['mut']
-
-            // Convert numeric slope and p-values into a formatted string
-            row['slope'] = rawRow['slope'].toPrecision(4)
-            if (!isNaN(rawRow['p_value_with_mut'])) {
-                row['p_value_with_mut'] = rawRow['p_value_with_mut'].toExponential(3)
-            }
-            if (!isNaN(rawRow['p_value_without_mut'])) {
-                row['p_value_without_mut'] = rawRow['p_value_without_mut'].toExponential(3)
-            }
-            if (!isNaN(rawRow['p_value_comp'])) {
-                row['p_value_comp'] = rawRow['p_value_comp'].toExponential(3)
-            }
-
-            for (let i = 1; i <= 4; i++) {
-                row['f_w' + i] = rawRow['f' + i].toPrecision(3) + '% (' + rawRow['w' + i] + ')'
-                row['f' + i] = rawRow['f' + i] // numeric value for sorting and plots
-                row['w' + i] = rawRow['w' + i] // numeric value for plots
-            }
-
-            rows.push(row)
-        })
-        return rows
-    },
-
+    /**
+     * Gets the currently selected rows of the table. They must also satisfy the protein and muts filtering options.
+     */
     getCurrentSelectedRows: (state,getters) =>{
         const {useGlobalFilters, rowKeys} = getters.getCurrentLocalFilteringOpt
         const filteredRowKeys = useGlobalFilters ? state.globalFilteringOpt.rowKeys : rowKeys
 
-        const rows=getters.getCurrentProcessedRows
         let selectedRows=[]
-        if (filteredRowKeys.length > 0)
-            selectedRows= rows.filter(({protein, mut}) => filteredRowKeys.includes(protein + '_' + mut))
-        else
+        if (filteredRowKeys.length > 0) {
+            const rows=getters.getCurrentFilteredRows
+            selectedRows = rows.filter(({protein, mut}) => filteredRowKeys.includes(protein + '_' + mut))
+        } else
             selectedRows=[]
         return selectedRows
     },
 
-    getCurrentPlotRows: (state, getters) => {
-        const {useGlobalFilters, filteringOpt, rows} = getters.getCurrentAnalysis
-        const filteredRowKeys = useGlobalFilters ? state.globalFilteringOpt.rowKeys : filteringOpt.rowKeys
-        if (filteredRowKeys.length > 0)
-            // return the selected rows
-            return rows.filter(({protein, mut}) => filteredRowKeys.includes(protein + '_' + mut))
-        else
-            return []
+    getCurrentPlotInfo: (state, getters) => {
+        const {useGlobalFilters, rowKeys} = getters.getCurrentLocalFilteringOpt
+        const filteredRowKeys = useGlobalFilters ? state.globalFilteringOpt.rowKeys : rowKeys
+        const {sortingIndexes, isDescSorting} = useGlobalFilters ? state.globalOrderingOpt : getters.getCurrentLocalOrderingOpt
+        let title, rows
 
+        if (filteredRowKeys.length > 0){
+            // User selected rows only (keep same ordering criteria)
+            title = `Selected mutations (${filteredRowKeys.length})`
+            rows = sortItems(getters.getCurrentSelectedRows,sortingIndexes,isDescSorting).reverse()
+        } else{
+            // Top 10 mutations only
+
+             const sortedRows = sortItems(getters.getCurrentFilteredRows, ['slope'], [false])
+            if (sortedRows.length >= 10) {
+              title = 'Top 5 <span class="success--text font-weight-bold">increasing</span> and top 5 <span class="error--text font-weight-bold">decreasing</span> mutations'
+              rows = sortedRows.slice(0, 5).concat(sortedRows.slice(-5))
+            } else {
+              title = `All mutations (${sortedRows.length})`
+              rows = sortedRows
+            }
+        }
+        return {title,rows}
     },
+
+    getCurrentPlotRows: (state, getters) => {
+        return getters.getCurrentPlotInfo.rows
+    },
+
+    getCurrentPlotTitle: (state, getters) => {
+        return getters.getCurrentPlotInfo.title
+    },
+
 }

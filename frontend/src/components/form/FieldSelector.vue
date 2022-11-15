@@ -18,33 +18,56 @@
 -->
 
 <template>
-  <v-row >
+  <v-row>
     <v-col cols="12" sm="4" v-if='label'>
        <span class="text-body-3 compact-text-3 primary--text d-block text-left text-sm-right align-center">
           <span class="compact-text-5 font-weight-bold">{{ label }}</span>
        </span>
     </v-col>
 
-    <v-col cols="12" sm="8"  class='field-element'>
+    <v-col cols="12" sm="8" class='field-element'>
       <!-- Manual selector -->
       <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues' no-data-text="Not found"
                 hide-details :placeholder='placeholder' solo='solo' :loading='loading'
-                attach persistent-placeholder dense flat />
+                attach persistent-placeholder dense flat/>
 
-      <!-- Autocomplete selector -->
-      <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable clear-icon="mdi-backspace-outline" :multiple='multiple'
-                      :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder' :solo='solo' :loading='loading'
-                      attach dense no-data-text="Not found" flat >
+      <!-- Combobox selector -->
+      <v-combobox v-else-if="combobox" v-model='selectedValue' :items='possibleValues' clearable
+                  clear-icon="mdi-backspace-outline" :multiple='multiple'
+                  :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder' :solo='solo'
+                  :loading='loading'
+                  attach dense no-data-text="Not found" flat>
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
         <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
 
-              <v-chip v-if="index<5" class="mr-1 my-1" small>{{ item }}</v-chip>
-              <v-chip v-else-if="index===5" class="mr-1 my-1" small outlined>
-                +{{ value.length - 5 }} others
-              </v-chip>
-            </template>
+          <v-chip v-if="index<5" class="mr-1 my-1" small>{{ item }}</v-chip>
+          <v-chip v-else-if="index===5" class="mr-1 my-1" small outlined>
+            +{{ value.length - 5 }} others
+          </v-chip>
+        </template>
+        <template v-slot:no-data>
+          <slot name="no-data"></slot>
+        </template>
+      </v-combobox>
+
+      <!-- Autocomplete selector -->
+      <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable
+                      clear-icon="mdi-backspace-outline" :multiple='multiple'
+                      :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder'
+                      :solo='solo' :loading='loading'
+                      attach dense no-data-text="Not found" flat>
+        <template v-slot:prepend-item>
+          <slot name='prepend-item'></slot>
+        </template>
+        <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
+
+          <v-chip v-if="index<5" class="mr-1 my-1" small>{{ item }}</v-chip>
+          <v-chip v-else-if="index===5" class="mr-1 my-1" small outlined>
+            +{{ value.length - 5 }} others
+          </v-chip>
+        </template>
       </v-autocomplete>
 
     </v-col>
@@ -59,16 +82,18 @@ export default {
     value: {},
 
     /** Label for the field */
-    label: { required: false },
+    label: {required: false},
 
     /** Placeholder for the selector */
-    placeholder: { required: true },
+    placeholder: {required: true},
 
     /** Possible values for the selector */
-    possibleValues: { required: true },
+    possibleValues: {required: true},
 
     /** Autocomplete flag. If true, the selector is a v-autocomplete */
     autocomplete: Boolean,
+
+    combobox: Boolean,
 
     /** Multiple selector flag. If true, the selector allows multiple selection */
     multiple: Boolean,
@@ -89,7 +114,7 @@ export default {
        * Getter for the string representing the selected value
        * @returns {string}  The selected value
        */
-      get () {
+      get() {
         return this.value
       },
 
@@ -97,7 +122,7 @@ export default {
        * Setter for the value
        * @param val The new value
        */
-      set (val) {
+      set(val) {
         this.$emit('input', val)
       }
     }

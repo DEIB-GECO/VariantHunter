@@ -8,8 +8,17 @@
     font-size: 20px !important;
 }
 
+#app .text-body-0{
+    font-size: 19px !important;
+}
+#app .compact-text-0{
+    line-height: 19px !important;
+}
 #app .text-body-1{
     font-size: 17px !important;
+}
+#app .compact-text-1{
+    line-height: 17px !important;
 }
 
 #app .text-body-2{
@@ -27,7 +36,10 @@
 #app .text-body-4{
     font-size: 13px !important;
 }
-#app .text-body-4{
+#app .compact-text-4{
+    line-height: 13px !important;
+}
+#app .text-body-5{
     font-size: 12px !important;
 }
 
@@ -67,9 +79,11 @@
   content: '\F033C' !important;
 }
 
-/***************************************
- *  TOOLTIP VUETIFY STYLING OVERWRITE  *
- ***************************************/
+#app .break-spaces{
+    white-space: break-spaces !important;
+}
+
+
 
 /** Overlay tooltip content */
 .v-snack__wrapper {
@@ -81,4 +95,20 @@
 /* Revert usual behavior for links */
 .underlined-links a {
   color: var(--secondary-color) !important;
+}
+
+/***************************************
+ *  TOOLTIP VUETIFY STYLING OVERWRITE  *
+ ***************************************/
+
+#app .v-tooltip__content{
+    line-height: 15px !important;
+    background-color: rgba(1, 72, 120, 0.97) !important;
+    border-radius: 15px !important;
+    color: white !important;
+    padding: 7px 13px;
+}
+
+#app .v-dialog{
+    border-radius: 24px !important;
 }

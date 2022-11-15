@@ -175,4 +175,8 @@ export const mutations = {
             }
         }
     },
+
+    setLastUpdate(state,newVal){
+        state.lastUpdate=newVal
+    }
 }

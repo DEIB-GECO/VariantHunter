@@ -1,8 +1,8 @@
 <template>
    <div id="app">
-     <v-app>
+     <v-app >
       <!-- Navbar -->
-      <v-app-bar app :color='primary_color' class='navbar' max-height="56px" short scroll-off-screen  dark flat clipped-left>
+      <v-app-bar app color='f_primary' class='navbar' max-height="56px" short scroll-off-screen  dark flat clipped-left>
 
         <!-- Logo -->
         <v-img :src='websiteLogo' class='logo' contain max-height='40px' max-width='40px' />
@@ -15,14 +15,14 @@
 
         <v-spacer/>
 
-        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1 app-container primary--text' color="tertiary" elevation="0" rounded small>
+        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1 app-container f_primary--text' color="f_tertiary" elevation="0" rounded small>
           <router-link :to="{ name: 'About'}">
             About this tool
           </router-link>
         </v-btn>
       </v-app-bar>
 
-      <v-main :class="$route.name==='About'?'white':''">
+      <v-main :class="$route.name==='About'?'bg_var2':''">
         <router-view />
       </v-main>
      </v-app>
@@ -30,7 +30,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 
 export default {
   name: 'App',
@@ -39,20 +38,13 @@ export default {
     return {
       /** VariantHunter logo */
       websiteLogo: require('./assets/logo.png'),
-
-      /** Flag to show the new search shortcut */
-      showSearchShortcut: false
     }
   },
-  computed: {
-    ...mapState(['primary_color'])
+    computed: {
+    darkMode() {
+      return this.$vuetify.theme.dark
+    },
   },
-  methods: {
-    /** Scroll event handler to hide/show the search shortcut */
-    scrollHandler (e) {
-      this.showSearchShortcut = e.target.scrollTop > 440
-    }
-  }
 }
 </script>
 
@@ -97,19 +89,20 @@ export default {
 <style>
 /* Global variables for color palette and border radius */
 :root {
-  --primary-color: #014878;
-  --secondary-color: #35b1ecff;
-  --tertiary-color-light: #d2ecf8ff;
-  --tertiary-color-dark: #1976d2ff;
+  --primary-color: var(--v-primary-base);
+  --secondary-color: var(--v-secondary-base);
+  --tertiary-color-light: var(--v-tertiary-base);
+  --tertiary-color-dark: var(--v-accent-base);
   --border-radius: 4px;
 }
 
+
 /* Body background color */
 body {
-  background: var(--primary-color);
+  background: var(--v-f_primary-base);
 }
 #app {
-  background: var(--primary-color); /* to ensure readable downloadable images */
+  background: var(--v-bg_var1-base); /* to ensure readable downloadable images */
 }
 
 /* Border radius for the graph plots*/

@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer class="sidebar-sizing" :mini-variant="isCollapsed" clipped permanent expand-on-hover touchless
-                       absolute dark color="primary" width="500px" height="100vh">
+                       absolute dark color="f_primary" width="500px" height="100vh">
     <v-list rounded nav dense>
       <list-item icon="mdi-plus" title="New analysis" link subtitle="Perform a new analysis" expand-on-hover
                  :class="currentView==='new-search'?'v-list-item--active':''" @click.native="newAnalysisHandler()"/>
@@ -17,8 +17,12 @@
       <v-expand-transition>
         <search-history v-if="showHistory" type="all" @select="currentView='result'"/>
       </v-expand-transition>
-
     </v-list>
+
+    <template v-slot:append>
+      <app-preferences/>
+    </template>
+
   </v-navigation-drawer>
 </template>
 
@@ -27,10 +31,11 @@ import ListItem from "@/components/general/basic/ListItem";
 import SearchHistory from "@/components/general/SearchHistory";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 import {mapMutations, mapState} from "vuex";
+import AppPreferences from "@/components/general/basic/AppPreferences";
 
 export default {
   name: "Sidebar",
-  components: {IconWithTooltip, SearchHistory, ListItem},
+  components: {AppPreferences, IconWithTooltip, SearchHistory, ListItem},
   data() {
     return {
       showSidebar: true,
@@ -39,13 +44,13 @@ export default {
       currentView: 'new-search'
     }
   },
-  computed:{
+  computed: {
     ...mapState(['currentAnalysisId'])
   },
   watch: {
-    currentAnalysisId(newVal){
-      if(newVal)
-        this.currentView='result'
+    currentAnalysisId(newVal) {
+      if (newVal)
+        this.currentView = 'result'
     }
   },
   methods: {

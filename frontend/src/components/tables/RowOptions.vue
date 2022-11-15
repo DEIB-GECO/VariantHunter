@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Expand option -->
-    <v-tooltip bottom allow-overflow z-index="10" max-width="400px" v-if="expandable">
+    <v-tooltip bottom nudge-bottom="-3" allow-overflow z-index="10" max-width="400px" v-if="expandable">
       <template v-slot:activator="{ on }">
         <v-btn icon small @click="expand(!isExpanded)" v-on="on">
           <v-icon>{{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -11,7 +11,7 @@
     </v-tooltip>
 
     <!-- Mutation history option -->
-    <v-tooltip bottom allow-overflow z-index="10" max-width="400px">
+    <v-tooltip bottom nudge-bottom="-3" allow-overflow z-index="10" max-width="400px">
       <template v-slot:activator="{ on }">
         <v-btn icon small @click="showMutationHistory=true" v-on="on">
           <v-icon>mdi-information-variant</v-icon>

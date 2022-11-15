@@ -2,9 +2,9 @@
   <div class="filter-area">
     <div id="filtering-area" class="text-body-3 mb-2">
       <chip-menu attach="#filtering-area" :close-on-content-click="false" small activator-icon="mdi-filter" activator-text="Filter by"
-                 :color="(isFiltering?'secondary':'tertiary')" :activator-outlined="!isFiltering" :closable="isFiltering"
+                 :color="(isFiltering?'f_secondary':'f_tertiary')" :activator-outlined="!isFiltering" :closable="isFiltering"
                  :activator-close-action="clearFilters">
-        <div id="filtering-menu" class="text-body-4 pb-2 text-center">
+        <div id="filtering-menu" class="text-body-4 pb-2 text-center f_text_dark--text">
           <v-icon small left>mdi-eye</v-icon>
           Showing:
         </div>

@@ -4,7 +4,7 @@
         <v-icon>{{icon}}</v-icon>
       </v-list-item-icon>
       <v-list-item-content>
-        <v-list-item-title class="text-body-3">{{title}}</v-list-item-title>
+        <v-list-item-title class="text-body-2 font-weight-bold">{{title}}</v-list-item-title>
         <v-expand-transition>
           <v-list-item-subtitle v-if="showTip || !expandOnHover" class="text-body-3">{{subtitle}}</v-list-item-subtitle>
         </v-expand-transition>

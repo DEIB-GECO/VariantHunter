@@ -22,14 +22,14 @@
           <v-icon left>mdi-plus-circle-outline</v-icon>
           Show p-values
         </v-btn>
-        <v-btn v-else depressed rounded small color='primary' @click='showPValues=false'>
+        <v-btn v-else depressed rounded small color='primary' class="text_var2--text" @click='showPValues=false'>
           <v-icon left>mdi-minus-circle-outline</v-icon>
           Hide p-values
         </v-btn>
       </v-flex>
 
       <!---- Show/hide table interpretation button ---->
-      <DialogOpener :button-prefix='false' title='Table interpretation'>
+      <DialogOpener :button-prefix='false' title='Table interpretation' color="primary">
         <p>The mutation table depicts the trend of all and only the <b>mutations detected in
           the last week of the considered analysis period</b>. Only mutations affecting at least 0.5% of
           the sequences collected in the week are shown.</p>
@@ -40,7 +40,7 @@
           </li>
           <li class='li-table'>
             <div class='li-name'>Mut</div>
-            <div class='li-content'>Name of the considered mutation. <br /> In case of <i>lineage specific analysis</i>,
+            <div class='li-content'>Name of the considered mutation. <br/> In case of <i>lineage specific analysis</i>,
               the mutations characterizing the lineage are <span class='char-mut'>highlighted</span></div>
           </li>
           <li class='li-table'>
@@ -61,7 +61,9 @@
             <div class='li-content underlined-links'>Shows if the population «with mutation» is growing
               differently compared to everything. Its value is computed using a <i>Chi-square
                 test</i> of independence of variables in a contingency table.
-              The reported values have been <a href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html" target="_blank">corrected</a> for multiple tests.
+              The reported values have been <a
+                  href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html"
+                  target="_blank">corrected</a> for multiple tests.
             </div>
           </li>
           <li class='li-table'>
@@ -69,7 +71,9 @@
             <div class='li-content underlined-links'>Shows if the population «without mutation» is growing
               differently compared to everything. Its value is computed using a <i>Chi-square
                 test</i> of independence of variables in a contingency table.
-              The reported values have been <a href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html" target="_blank">corrected</a> for multiple tests.
+              The reported values have been <a
+                  href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html"
+                  target="_blank">corrected</a> for multiple tests.
             </div>
           </li>
           <li class='li-table'>
@@ -77,7 +81,9 @@
             <div class='li-content underlined-links'>Shows if the population «with mutation» is growing
               differently compared to the population «without mutation». Its value is computed using a <i>Chi-square
                 test</i> of independence of variables in a contingency table.
-              The reported values have been <a href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html" target="_blank">corrected</a> for multiple tests.
+              The reported values have been <a
+                  href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html"
+                  target="_blank">corrected</a> for multiple tests.
             </div>
           </li>
         </ul>
@@ -85,7 +91,7 @@
 
       <!---- Download data button ---->
       <v-flex justify-center class='xs12 sm6 md3 d-flex'>
-        <v-tooltip bottom max-width='400'  open-delay='0'>
+        <v-tooltip bottom max-width='400' open-delay='0'>
           <template v-slot:activator='{ on, attrs }'>
             <v-btn v-bind='attrs' v-on='on' :loading='downloadLoading' color='primary'
                    outlined depressed rounded small @click='$emit("downloadData")'>
@@ -102,7 +108,7 @@
         <v-tooltip bottom max-width='400' open-delay='0'>
           <template v-slot:activator='{ on, attrs }'>
             <v-btn v-bind='attrs' v-on='on' :loading='downloadLoading' color='primary'
-                   outlined depressed rounded small @click='$emit("downloadAll")'>
+                   outlined depressed rounded small @click='downloadScreen()'>
               <v-icon left>mdi-printer</v-icon>
               Download all
             </v-btn>
@@ -116,22 +122,55 @@
 
 <script>
 import DialogOpener from '@/components/general/DialogOpener'
+import html2canvas from "html2canvas";
+import domtoimage from "dom-to-image-more";
+import {getFileName} from "@/utils/parserService";
+import {mapGetters} from "vuex";
 
 export default {
   name: 'TableControls',
-  components: { DialogOpener },
-  data(){
+  components: {DialogOpener},
+  data() {
     return {
       /** Flag to show the p_values in the table */
       showPValues: false,
       /* Download flag: true if a file download is in progress */
-      downloadLoading:false,
+      downloadLoading: false,
     }
   },
-  watch:{
-    showPValues(newVal){
-      this.$emit("showPValues",newVal)
+  computed: {
+    ...mapGetters(['getCurrentAnalysis']),
+  },
+  watch: {
+    showPValues(newVal) {
+      this.$emit("showPValues", newVal)
     }
+  },
+  methods: {
+    /**
+     * Downloads a screenshot of the table, heatmap and line chart
+     */
+    downloadScreen() {
+      this.downloadLoading = true
+      // Retrieve section to be printed
+      const fileName = getFileName(this.getCurrentAnalysis.query)
+      const sectionToPrint = document.getElementById('app')
+
+      domtoimage
+          .toPng(sectionToPrint)
+          .then((dataUrl) => {
+            // Anchor element to download the file
+            const anchor = document.createElement('a')
+            anchor.download = fileName + '.png'
+            anchor.href = dataUrl
+            document.body.appendChild(anchor)
+
+            // Simulate click and remove element
+            anchor.click()
+            document.body.removeChild(anchor)
+            this.downloadLoading = false
+          });
+    },
   }
 }
 </script>

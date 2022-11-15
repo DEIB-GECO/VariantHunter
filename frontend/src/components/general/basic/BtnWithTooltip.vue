@@ -1,7 +1,7 @@
 <template>
   <v-tooltip :bottom="bottom" content-class="rounded-xl tooltip"  :left="left" :right="right" :top="top" allow-overflow z-index="10" max-width="400px">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn depressed :outlined="outlined" rounded :small="size==='small'" :dark="dark"
+      <v-btn depressed :outlined="outlined" rounded :small="size==='small'" :dark="dark" :class="contentClass"
              :color="(isHover && hoverColor)?hoverColor:color" v-bind="attrs" v-on="on" @click.stop="onClick()"
              @mouseenter="isHover=true" @mouseleave="isHover=false">
         <slot name="btn">
@@ -27,6 +27,7 @@
 export default {
   name: "BtnWithTooltip",
   props: {
+    contentClass:{},
     color: {},
     hoverColor: {},
     text: {},
@@ -61,12 +62,6 @@ export default {
 </style>
 
 <style>
-#app .v-tooltip__content{
-    line-height: 15px !important;
-    background-color: rgba(1, 72, 120, 0.96) !important;
-    border-radius: 24px !important;
-    color: white !important;
-    padding: 10px 15px;
-}
+
 
 </style>

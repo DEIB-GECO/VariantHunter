@@ -27,10 +27,16 @@
           <div :class="'text-h5 compact-h5 font-weight-black primary--text mt-8  spaced-5 mb-'+(tabs.length>0?'4':'2')">
             <v-icon left color="primary">{{ icon }}</v-icon>
             {{ title }}
+            <v-fade-transition hide-on-leave>
+            <div v-if="subtitle && showSectionBody" class="ml-11">
+              <div class="text-body-0 compact-text-0 font-weight-medium " v-html="subtitle"/>
+              <div class="text-body-4 compact-text-2 font-weight-regular">{{ caption }}</div>
+            </div>
+            </v-fade-transition>
           </div>
 
           <!-- Section Options -->
-          <div class="options-container">
+          <div :class="'options-container '+((tabs.length>0 && showSectionBody)?'mt-6':'')">
             <div class='section-options'>
 
               <!-- Tabs-->
@@ -41,8 +47,9 @@
 
               <!-- Expand/collapse option-->
               <span class='expand-collapse-icon'>
-              <v-icon v-if='showSectionBody' small color='primary' @click='invertVisibility'>mdi-arrow-collapse</v-icon>
-              <v-icon v-else small color='primary' @click='invertVisibility'>mdi-arrow-expand</v-icon>
+              <v-icon v-if='showSectionBody' small color='f_primary'
+                      @click='invertVisibility'>mdi-arrow-collapse</v-icon>
+              <v-icon v-else small color='f_primary' @click='invertVisibility'>mdi-arrow-expand</v-icon>
             </span>
 
             </div>
@@ -73,11 +80,19 @@ export default {
     /** Title for the section */
     title: {required: true},
 
+    subtitle: {},
+
+    caption: {},
+
     /** Icon name for the title. MDI icon are used. */
     icon: {required: true},
 
     /** Array of labels for the tabs of the section */
-    tabs: {default() {return []}},
+    tabs: {
+      default() {
+        return []
+      }
+    },
 
     /** Collapse the section by default */
     collapsed: Boolean
@@ -133,7 +148,7 @@ export default {
   background: white;
   text-transform: uppercase;
   letter-spacing: 0.005em;
-  color: #1a76d2;
+  color: var(--v-f_primary-base);
   cursor: pointer;
 }
 
@@ -169,7 +184,7 @@ export default {
   background: white;
 }
 
-.section-container{
+.section-container {
   padding: 8px;
   border-radius: 8px;
   background: white;

@@ -15,7 +15,7 @@
 -->
 
 <template>
-  <div :ref='fileName'>
+  <div>
     <result-navbar @moveForward="shiftAnalysis(+7)" @moveBackward="shiftAnalysis(-7)"/>
     <v-container class="view-sizing">
 
@@ -45,6 +45,15 @@
       <!-- Table -->
       <result-table :with-lineages="withLineages"/>
 
+      <!-- Diffusion Heatmap -->
+      <diffusion-heatmap/>
+
+      <!-- Diffusion Trend -->
+      <diffusion-trend/>
+
+      <!-- Diffusion Trend -->
+      <diffusion-odd-ratio/>
+
       <!-- Next/prev week button -->
       <v-row>
         <WeekSlider @moveForward="shiftAnalysis(+7)" @moveBackward="shiftAnalysis(-7)"/>
@@ -70,7 +79,6 @@
 
 <script>
 import {mapGetters, mapMutations, mapState} from 'vuex'
-import {getFileName} from "@/utils/parserService";
 import FieldSelector from '@/components/form/FieldSelector'
 import MutationSelector from '@/components/form/MutationSelector'
 import WeekSlider from '@/components/form/WeekSlider'
@@ -78,10 +86,16 @@ import ResultNavbar from "@/components/general/ResultNavbar";
 import ResultTable from "@/components/analysis/ResultTable";
 import axios from "axios";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
+import DiffusionHeatmap from "@/components/analysis/DiffusionHeatmap";
+import DiffusionTrend from "@/components/analysis/DiffusionTrend";
+import DiffusionOddRatio from "@/components/analysis/DiffusionOddRatio";
 
 export default {
   name: 'ResultView',
   components: {
+    DiffusionOddRatio,
+    DiffusionTrend,
+    DiffusionHeatmap,
     LoadingSticker,
     ResultTable,
     ResultNavbar,
@@ -96,11 +110,6 @@ export default {
   computed: {
     ...mapState(['currentAnalysisId','globalFilteringOpt',]),
     ...mapGetters(['getCurrentAnalysis','getCurrentLocalFilteringOpt']),
-
-    fileName() {
-      // TODO: verify if necessary
-      return getFileName(this.getCurrentAnalysis.query)
-    },
 
     withLineages() {
       console.log("# withLineages=" + (this.getCurrentAnalysis.query.lineage !== null))

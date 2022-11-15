@@ -1,7 +1,12 @@
 <template>
   <v-container class="view-sizing">
-    <v-row id="top" class="mt-5 px-5">
+    <v-row id="top" class="px-5">
       <v-col>
+        <div class="text-right text-body-4 font-weight-medium py-3 compact-text-3 success--text">
+          <span v-if="lastUpdate"><v-icon left small color="success">mdi-clock-outline</v-icon>Last dataset update: <span class="font-weight-regular d-block d-md-inline-block">{{lastUpdate}}</span></span>
+          <span v-else><v-progress-circular class="mr-2" indeterminate size="15"/> Fetching last dataset update...</span>
+        </div>
+
         <div class="text-h4 font-weight-black primary--text pb-2">Define new analysis</div>
         <div class="text-body-3 compact-text-2">VariantHunter analyzes the frequencies of amino acid mutations of
           SARS-CoV-2 in order to observe interesting variant trends or identify novel emerging variants.
@@ -34,11 +39,11 @@
 
         <v-row class='my-4'>
           <v-col>
-            <v-btn class='delete-action' color='primary  mr-3' @click='clearForm' depressed small rounded>
+            <v-btn class='delete-action mr-2 text_var2--text' color='primary' @click='clearForm' depressed small rounded>
               <v-icon left>mdi-backspace-outline</v-icon>
               CLEAR
             </v-btn>
-            <v-btn class='float-right' color='primary' @click="sendAnalysis" depressed small rounded
+            <v-btn class='float-right text_var2--text' color='primary' @click="sendAnalysis" depressed small rounded
                    :disabled="formError">
               ANALYSE
               <v-icon right>mdi-magnify</v-icon>
@@ -63,7 +68,7 @@
             </v-expand-transition>
             <!-- Show/hide Explorer controls -->
             <div>
-              <v-btn depressed rounded small color='primary' @click='showExplorer = !showExplorer'>
+              <v-btn depressed rounded small color='primary' class="text_var2--text" @click='showExplorer = !showExplorer'>
                 <v-icon left>{{ showExplorer ? 'mdi-close-circle-outline' : 'mdi-compass' }}</v-icon>
                 {{ showExplorer ? 'Hide' : 'Show dataset explorer' }}
               </v-btn>
@@ -107,7 +112,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate']),
+    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate','lastUpdate']),
 
     /** Form error flag: true if the form cannot be sent */
     formError() {

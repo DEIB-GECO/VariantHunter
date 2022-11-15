@@ -15,7 +15,7 @@
   <v-flex class="xs12 sm6 md3 d-flex" justify-center>
 
     <!-- Dialog opener -->
-    <v-btn color='primary' depressed outlined rounded small @click='showDialog = true'>
+    <v-btn :color='color' depressed outlined rounded small @click='showDialog = true'>
       <v-icon left>{{ icon }}</v-icon>
       <div v-if='buttonPrefix'>Show&nbsp;</div>
       {{ title }}
@@ -25,7 +25,7 @@
     <v-dialog v-model="showDialog" max-width="850" transition="dialog-bottom-transition">
       <v-card>
         <!-- Dialog title -->
-        <v-toolbar color="primary" class="dialog-title" dark flat>
+        <v-toolbar color="f_primary" class="dialog-title" dark flat>
           <v-icon left large>mdi-help-circle-outline</v-icon>
           {{ title }}
         </v-toolbar>
@@ -59,7 +59,9 @@ export default {
     icon: { default: 'mdi-help-circle-outline' },
 
     /* Flag to add the prefix "show" on the button */
-    buttonPrefix: { default: true }
+    buttonPrefix: { default: true },
+
+    color:{default:'f_primary'},
   },
   data () {
     return {

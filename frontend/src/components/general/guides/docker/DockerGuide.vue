@@ -6,7 +6,7 @@
 <template>
   <v-container class='ml-0 ml-sm-auto mr-0 mr-sm-auto mt-5'>
     <h3 id='docker'>
-      <v-icon left color='#000000DE' large>mdi-docker</v-icon>
+      <v-icon left large>mdi-docker</v-icon>
       How to run the Docker
     </h3>
     <v-container class='pl-0 pl-sm-10 pr-0 pr-sm-10 pb-5'>
@@ -16,8 +16,8 @@
         <!-- WINDOWS LINUX GUIDE -->
         <ExpansionPanel double-icon>
           <template v-slot:icons>
-            <v-icon color='#000000DE'>mdi-microsoft</v-icon>
-            <v-icon color='#000000DE'>mdi-slash-forward</v-icon>
+            <v-icon >mdi-microsoft</v-icon>
+            <v-icon >mdi-slash-forward</v-icon>
             <v-icon left color='#000000DE'>mdi-penguin</v-icon>
           </template>
           <template v-slot:title>
