@@ -20,7 +20,7 @@
 
     <template v-slot:title>
       <span v-html='name'></span>
-      <v-tooltip bottom max-width='600' :color="primary_color" open-delay='0' content-class='small-hint'>
+      <v-tooltip bottom max-width='600' :color="f_primary" open-delay='0' content-class='small-hint'>
           <template v-slot:activator="{ on, attrs }">
             <div class='source' v-bind="attrs" v-on="on">
              Data from {{sourceName}} dated {{sourceDate}}
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import ExpansionPanel from '@/components/general/ExpansionPanel'
+import ExpansionPanel from '@/components/general/basic/ExpansionPanel'
 import { mapState } from 'vuex'
 export default {
   name: 'UseCase',
@@ -67,9 +67,6 @@ export default {
 
     /** Source information for the use cases: date of the source */
     sourceDate: { required: true }
-  },
-  computed: {
-    ...mapState(['primary_color'])
   }
 }
 </script>

@@ -261,11 +261,11 @@
 </template>
 
 <script>
-import FunctionGuide from '@/components/general/guides/tool/FunctionGuide'
-import UseCase from '@/components/general/guides/tool/UseCase'
-import Paragraph from '@/components/general/Paragraph'
-import Picture from '@/components/general/Picture'
-import Collage from '@/components/general/Collage'
+import FunctionGuide from '@/components/guides/tool/FunctionGuide'
+import UseCase from '@/components/guides/tool/UseCase'
+import Paragraph from '@/components/general/basic/Paragraph'
+import Picture from '@/components/general/basic/Picture'
+import Collage from '@/components/general/basic/Collage'
 
 export default {
   name: 'LinDepGuide',
@@ -273,44 +273,44 @@ export default {
   data () {
     return {
       /** Images */
-      FormImg: require('../../../../assets/guide/lin_dep/form.png'),
-      TableImg: require('../../../../assets/guide/lin_dep/table.png'),
-      HeatmapImg: require('../../../../assets/guide/lin_dep/heatmap.png'),
-      DiffusionImg: require('../../../../assets/guide/lin_dep/diffusion.png'),
-      OddImg: require('../../../../assets/guide/lin_dep/odd.png'),
-      Odd2Img: require('../../../../assets/guide/lin_dep/odd2.png'),
+      FormImg: require('../../../assets/guide/lin_dep/form.png'),
+      TableImg: require('../../../assets/guide/lin_dep/table.png'),
+      HeatmapImg: require('../../../assets/guide/lin_dep/heatmap.png'),
+      DiffusionImg: require('../../../assets/guide/lin_dep/diffusion.png'),
+      OddImg: require('../../../assets/guide/lin_dep/odd.png'),
+      Odd2Img: require('../../../assets/guide/lin_dep/odd2.png'),
 
       uc1: {
-        img1: require('../../../../assets/guide/lin_dep/uc/uc1/img1.png'),
-        img2: require('../../../../assets/guide/lin_dep/uc/uc1/img2.png'),
-        img3: require('../../../../assets/guide/lin_dep/uc/uc1/img3.png'),
-        img4: require('../../../../assets/guide/lin_dep/uc/uc1/img4.png'),
-        img5: require('../../../../assets/guide/lin_dep/uc/uc1/img5.png'),
-        img6: require('../../../../assets/guide/lin_dep/uc/uc1/img6.png'),
-        img7: require('../../../../assets/guide/lin_dep/uc/uc1/img7.png'),
-        img8: require('../../../../assets/guide/lin_dep/uc/uc1/img8.png')
+        img1: require('../../../assets/guide/lin_dep/uc/uc1/img1.png'),
+        img2: require('../../../assets/guide/lin_dep/uc/uc1/img2.png'),
+        img3: require('../../../assets/guide/lin_dep/uc/uc1/img3.png'),
+        img4: require('../../../assets/guide/lin_dep/uc/uc1/img4.png'),
+        img5: require('../../../assets/guide/lin_dep/uc/uc1/img5.png'),
+        img6: require('../../../assets/guide/lin_dep/uc/uc1/img6.png'),
+        img7: require('../../../assets/guide/lin_dep/uc/uc1/img7.png'),
+        img8: require('../../../assets/guide/lin_dep/uc/uc1/img8.png')
       },
 
       uc2: {
-        img1: require('../../../../assets/guide/lin_dep/uc/uc2/img1.png'),
-        img2: require('../../../../assets/guide/lin_dep/uc/uc2/img2.png'),
-        img3: require('../../../../assets/guide/lin_dep/uc/uc2/img3.png'),
-        img4: require('../../../../assets/guide/lin_dep/uc/uc2/img4.png'),
-        img5: require('../../../../assets/guide/lin_dep/uc/uc2/img5.png'),
-        img6: require('../../../../assets/guide/lin_dep/uc/uc2/img6.png'),
-        img7: require('../../../../assets/guide/lin_dep/uc/uc2/img7.png'),
-        img8: require('../../../../assets/guide/lin_dep/uc/uc2/img8.png')
+        img1: require('../../../assets/guide/lin_dep/uc/uc2/img1.png'),
+        img2: require('../../../assets/guide/lin_dep/uc/uc2/img2.png'),
+        img3: require('../../../assets/guide/lin_dep/uc/uc2/img3.png'),
+        img4: require('../../../assets/guide/lin_dep/uc/uc2/img4.png'),
+        img5: require('../../../assets/guide/lin_dep/uc/uc2/img5.png'),
+        img6: require('../../../assets/guide/lin_dep/uc/uc2/img6.png'),
+        img7: require('../../../assets/guide/lin_dep/uc/uc2/img7.png'),
+        img8: require('../../../assets/guide/lin_dep/uc/uc2/img8.png')
       },
 
       uc3: {
-        img1: require('../../../../assets/guide/lin_dep/uc/uc3/img1.png'),
-        img2: require('../../../../assets/guide/lin_dep/uc/uc3/img2.png'),
-        img3: require('../../../../assets/guide/lin_dep/uc/uc3/img3.png'),
-        img4: require('../../../../assets/guide/lin_dep/uc/uc3/img4.png'),
-        img5: require('../../../../assets/guide/lin_dep/uc/uc3/img5.png'),
-        img6: require('../../../../assets/guide/lin_dep/uc/uc3/img6.png'),
-        img7: require('../../../../assets/guide/lin_dep/uc/uc3/img7.png'),
-        img8: require('../../../../assets/guide/lin_dep/uc/uc3/img8.png')
+        img1: require('../../../assets/guide/lin_dep/uc/uc3/img1.png'),
+        img2: require('../../../assets/guide/lin_dep/uc/uc3/img2.png'),
+        img3: require('../../../assets/guide/lin_dep/uc/uc3/img3.png'),
+        img4: require('../../../assets/guide/lin_dep/uc/uc3/img4.png'),
+        img5: require('../../../assets/guide/lin_dep/uc/uc3/img5.png'),
+        img6: require('../../../assets/guide/lin_dep/uc/uc3/img6.png'),
+        img7: require('../../../assets/guide/lin_dep/uc/uc3/img7.png'),
+        img8: require('../../../assets/guide/lin_dep/uc/uc3/img8.png')
       }
     }
   }

@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import MenuButton from "@/components/form/menus/MenuButton";
+import MenuButton from "@/components/menus/MenuButton";
 export default {
   name: "ExpansionModeMenu",
   components: {MenuButton},

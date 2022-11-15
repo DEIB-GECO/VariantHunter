@@ -31,7 +31,7 @@ import ListItem from "@/components/general/basic/ListItem";
 import SearchHistory from "@/components/general/SearchHistory";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 import {mapMutations, mapState} from "vuex";
-import AppPreferences from "@/components/general/basic/AppPreferences";
+import AppPreferences from "@/components/general/AppPreferences";
 
 export default {
   name: "Sidebar",

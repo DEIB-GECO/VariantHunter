@@ -3452,7 +3452,7 @@ export const ex2 = {
         },
     },
     characterizingMuts: ['NS7a_V82A'],
-    rows: muts1.slice(1),
+    rows: muts1,
     totSeq: {
         w1: 29944, w2: 22106, w3: 14510, w4: 1531
     }

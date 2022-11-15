@@ -61,9 +61,9 @@
 </template>
 
 <script>
-import ExplorerHistogram from '@/components/plots/ExplorerHistogram'
+import ExplorerHistogram from '@/components/explorer/ExplorerHistogram'
 import axios from 'axios'
-import LineagesBreakdown from '@/components/plots/LineagesBreakdown'
+import LineagesBreakdown from '@/components/explorer/LineagesBreakdown'
 import {dateDiff} from '@/utils/dateService'
 import {mapState} from 'vuex'
 import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip";
@@ -99,13 +99,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['selectedGranularity', 'selectedLocation', 'selectedLineage']),
+    ...mapState(['selectedLocation', 'selectedLineage']),
 
     /** Visibility flag for the plots */
     hasResult() {
-      return (
-          (this.selectedGranularity === 'world' || this.selectedLocation !== null)
-      )
+      return this.selectedLocation !== null
     },
 
     /** Visibility flag for the plots */
@@ -128,8 +126,7 @@ export default {
             : 'Start exploring the dataset by selecting some parameters... '
       } else {
         return (
-            'Sequence availability per day for: ' +
-            (this.selectedLocation ? this.selectedLocation : this.selectedGranularity) +
+            'Sequence availability per day for: ' + this.selectedLocation +
             (this.selectedLineage && this.withLineages ? ', lineage ' + this.selectedLineage : '')
         )
       }
@@ -138,11 +135,10 @@ export default {
   methods: {
     /** Fetches from the server the info on the available sequences for the selected parameters */
     fetchSequenceInfo() {
-      if (this.selectedGranularity === 'world' || this.selectedLocation) {
+      if (this.selectedLocation) {
         this.isLoading.histogram = true
         const sequenceAPI = `/explorer/getSequenceInfo`
         const queryParams = {
-          granularity: this.selectedGranularity,
           location: this.selectedLocation,                          // possibly it has no value
           lineage: this.withLineages ? this.selectedLineage : null   // possibly it has no value
         }
@@ -165,7 +161,7 @@ export default {
 
     /** Fetches from the server the info on lineage breakdown for the selected parameters */
     fetchLineageBreakdownInfo() {
-      if ((this.selectedGranularity === 'world' || this.selectedLocation) && this.selectedRange) {
+      if (this.selectedLocation && this.selectedRange) {
         this.isLoading.breakdown = true
         const sequenceAPI = `/explorer/getLineagesBreakdown`
         const queryParams = {
@@ -214,10 +210,6 @@ export default {
     this.fetchSequenceInfo()
   },
   watch: {
-    /** Reset sequence info on granularity value changes */
-    selectedGranularity() {
-      this.sequencesData = []
-    },
 
     /** Fetch sequence info on location value changes */
     selectedLocation() {

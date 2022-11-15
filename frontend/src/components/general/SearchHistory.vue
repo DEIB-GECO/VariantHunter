@@ -70,7 +70,7 @@
     </div>
 
     <!-- Actual filtered history-->
-    <v-list-item v-for="{id, starred, query} in getAnalysesSummary(filters)" :key="id" link
+    <v-list-item v-for="{id, starred, query} in filteredAnalysesSummary" :key="id" link
                  @click="elementClickHandler(id)" :class="'pl-7 '+(currentAnalysisId===id?'v-list-item--active':'')">
 
       <v-list-item-content>
@@ -104,7 +104,7 @@
                            bottom :click-handler="()=>setStarredAnalysis({id,starred:true})"/>
       </v-list-item-action>
     </v-list-item>
-    <div class="filter-area text-body-4 pt-2" v-if="getAnalysesSummary(filters).length<1">No recent analysis yet</div>
+    <div class="filter-area text-body-4 pt-2" v-if="filteredAnalysesSummary.length<1">No recent analysis yet</div>
 
   </div>
 </template>
@@ -138,12 +138,27 @@ export default {
     ...mapState(['currentAnalysisId']),
     ...mapGetters(['getAnalysesSummary']),
 
-    filters() {
-      return {mode: this.filteredMode, granularity: this.filteredGranularity, starred: this.filteredStarred}
-    },
-
     isFiltering() {
       return this.filteredMode !== null || this.filteredStarred !== null || this.filteredGranularity !== null
+    },
+
+    filteredAnalysesSummary(){
+      console.log("filteredAnalysesSummary")
+      const mode= this.filteredMode
+      const granularity= this.filteredGranularity
+      const starred= this.filteredStarred
+
+        let analyses = this.getAnalysesSummary
+
+        // Apply filtering parameters
+        if (starred)
+            analyses = analyses.filter(({starred}) => starred)
+        if (mode)
+            analyses = analyses.filter(({query}) => (mode === 'li' && !query.lineage) || (mode === 'ls' && query.lineage))
+        if (granularity)
+            analyses = analyses.filter(({query}) => !granularity || granularity === query.granularity)
+
+        return analyses
     }
   },
   methods: {

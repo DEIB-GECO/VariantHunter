@@ -16,8 +16,8 @@
 
 <script>
 import Sidebar from "@/components/general/Sidebar";
-import NewSearchView from "@/views/NewSearchView";
-import ResultView from "@/views/ResultView";
+import NewSearchView from "@/components/views/NewSearchView";
+import ResultView from "@/components/views/ResultView";
 import axios from 'axios'
 import {mapState} from "vuex";
 import {mapStateTwoWay} from "@/utils/bindService";
@@ -27,7 +27,7 @@ export default {
   components: {ResultView, NewSearchView, Sidebar},
   data() {
     return {
-      currentView: 'result'//'new-search'
+      currentView: 'new-search'
     }
   },
   methods:{

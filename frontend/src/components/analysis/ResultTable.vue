@@ -130,27 +130,33 @@
           <go-to-cov-spectrum/>
         </template>
 
+        <template v-slot:no-data>
+          <empty-table/>
+        </template>
+
       </v-data-table>
     </v-col>
   </section-element>
 </template>
 
 <script>
-import SectionElement from "@/components/general/SectionElement";
-import TableControls from "@/components/tables/TableControls";
-import TableSuperHeader from "@/components/tables/TableSuperHeader";
-import ExpansionModeMenu from "@/components/form/menus/ExpansionModeMenu";
+import SectionElement from "@/components/analysis/SectionElement";
+import TableControls from "@/components/analysis/tables/TableControls";
+import TableSuperHeader from "@/components/analysis/tables/TableSuperHeader";
+import ExpansionModeMenu from "@/components/menus/ExpansionModeMenu";
 import {mapGetters, mapMutations, mapState} from "vuex";
 import axios from "axios";
 import {compactLineagesData} from "@/utils/formatterService";
 import {sortItems} from "@/utils/sorterService";
-import GoToCovSpectrum from "@/components/tables/GoToCovSpectrum";
+import GoToCovSpectrum from "@/components/analysis/tables/GoToCovSpectrum";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
-import RowOptions from "@/components/tables/RowOptions";
+import RowOptions from "@/components/analysis/tables/RowOptions";
+import EmptyTable from "@/components/analysis/tables/EmptyTable";
 
 export default {
   name: "ResultTable",
   components: {
+    EmptyTable,
     RowOptions,
     LoadingSticker, GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement
   },

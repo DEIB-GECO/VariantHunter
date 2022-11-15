@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import ExpansionPanel from '@/components/general/ExpansionPanel'
+import ExpansionPanel from '@/components/general/basic/ExpansionPanel'
 
 export default {
   name: 'FunctionGuide',

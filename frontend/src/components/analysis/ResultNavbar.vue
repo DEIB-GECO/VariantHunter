@@ -21,7 +21,7 @@
                        bottom :click-handler="()=>setStarredAnalysis({id:currentAnalysisId,starred:true})"/>
 
     <icon-with-tooltip hover-color="error" icon="mdi-trash-can-outline" tip="Delete analysis" bottom
-                       :click-handler="()=>removeAnalysis(currentAnalysis)" color="primary"/>
+                       :click-handler="()=>removeAnalysis(currentAnalysisId)" color="primary"/>
 
   </v-app-bar>
 </template>

@@ -8,6 +8,7 @@
  **/
 
 import {computeDateLabel} from "@/store/utils/utils";
+import Vue from "vue";
 
 let nextAnalysisId = 2
 
@@ -32,9 +33,9 @@ export const mutations = {
     setFilterOpt(state, {global = true, opt, value}) {
         console.log("setFilter of " + opt + " to " + value)
         if (global) {
-            state.globalFilteringOpt[opt] = value
+            Vue.set(state.globalFilteringOpt,opt, value)
         } else {
-            state.localFilteringOpt[opt] = value
+            Vue.set(state.localFilteringOpt,opt, value)
         }
     },
 
@@ -48,9 +49,9 @@ export const mutations = {
     setOrderOpt(state, {global = true, opt, value}) {
         console.log("setOrder of " + opt + " to " + value)
         if (global) {
-            state.globalOrderingOpt[opt] = value
+            Vue.set(state.globalOrderingOpt,opt, value)
         } else {
-            state.localOrderingOpt[opt] = value
+            Vue.set(state.localOrderingOpt,opt, value)
         }
     },
 
@@ -63,7 +64,6 @@ export const mutations = {
     setStarredAnalysis(state, {id, starred = true}) {
         console.log("setStarredAnalysis of " + id + " to " + starred)
         state.analyses[id].starred = starred
-
     },
 
     /**
@@ -82,7 +82,7 @@ export const mutations = {
         const assignedId = nextAnalysisId
         nextAnalysisId++
 
-        state.analyses[assignedId] = {
+        Vue.set(state.analyses,assignedId, {
             id: assignedId,
             starred: false,
             query: {
@@ -104,15 +104,15 @@ export const mutations = {
             totSeq: {
                 w1: tot_seq[0], w2: tot_seq[1], w3: tot_seq[2], w4: tot_seq[3]
             }
-        }
+        })
 
         // Preset filtering and ordering options
-        state.localFilteringOpt[assignedId]= {
+        Vue.set(state.localFilteringOpt,assignedId, {
             useGlobalFilters: true, protein: null, muts: [], rowKeys: []
-        }
-        state.localOrderingOpt[assignedId] = {
+        })
+        Vue.set(state.localOrderingOpt,assignedId,  {
             sortingIndexes:[ "slope" ], isDescSorting:[true]
-        }
+        })
 
         // Show the newly created analysis
         state.currentAnalysisId = assignedId
@@ -128,9 +128,9 @@ export const mutations = {
         if (id === state.currentAnalysisId)
             state.currentAnalysisId = null
 
-        delete state.analyses[id]
-        delete state.localFilteringOpt[id]
-        delete state.localOrderingOpt[id]
+        Vue.delete(state.analyses,id)
+        Vue.delete(state.localFilteringOpt,id)
+        Vue.delete(state.localOrderingOpt,id)
     },
 
 

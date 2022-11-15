@@ -62,7 +62,7 @@
       <loading-sticker :is-loading="isLoading" :error="error"
                        :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
       <div>
-        <v-layout style="height: 1800px">
+        <v-layout>
           GF: {{ $store.state.globalFilteringOpt }} <br/>
           <hr/>
           LF: {{ $store.state.localFilteringOpt }} <br/>
@@ -82,7 +82,7 @@ import {mapGetters, mapMutations, mapState} from 'vuex'
 import FieldSelector from '@/components/form/FieldSelector'
 import MutationSelector from '@/components/form/MutationSelector'
 import WeekSlider from '@/components/form/WeekSlider'
-import ResultNavbar from "@/components/general/ResultNavbar";
+import ResultNavbar from "@/components/analysis/ResultNavbar";
 import ResultTable from "@/components/analysis/ResultTable";
 import axios from "axios";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
@@ -108,8 +108,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(['currentAnalysisId','globalFilteringOpt',]),
-    ...mapGetters(['getCurrentAnalysis','getCurrentLocalFilteringOpt']),
+    ...mapState(['selectedLocation', 'selectedDate', 'selectedLineage', 'currentAnalysisId', 'globalFilteringOpt',]),
+    ...mapGetters(['getCurrentAnalysis', 'getCurrentLocalFilteringOpt']),
 
     withLineages() {
       console.log("# withLineages=" + (this.getCurrentAnalysis.query.lineage !== null))
@@ -164,7 +164,7 @@ export default {
 
   },
   methods: {
-    ...mapMutations(['setFilterOpt', 'setLocations', 'setLineage', 'setDate']),
+    ...mapMutations(['setFilterOpt', 'setLocations', 'setLineage', 'setDate','addAnalysis']),
 
     /**
      * Handle next/prev analysis requests

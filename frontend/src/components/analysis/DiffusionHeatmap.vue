@@ -21,7 +21,7 @@
 
 <script>
 import { Plotly } from 'vue-plotly'
-import SectionElement from "@/components/general/SectionElement";
+import SectionElement from "@/components/analysis/SectionElement";
 import {mapGetters} from "vuex";
 
 export default {

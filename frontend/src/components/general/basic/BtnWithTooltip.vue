@@ -1,7 +1,7 @@
 <template>
   <v-tooltip :bottom="bottom" content-class="rounded-xl tooltip"  :left="left" :right="right" :top="top" allow-overflow z-index="10" max-width="400px">
     <template v-slot:activator="{ on, attrs }">
-      <v-btn depressed :outlined="outlined" rounded :small="size==='small'" :dark="dark" :class="contentClass"
+      <v-btn depressed :outlined="outlined" rounded :small="size==='small'" :x-small="size==='x-small'" :dark="dark" :class="contentClass"
              :color="(isHover && hoverColor)?hoverColor:color" v-bind="attrs" v-on="on" @click.stop="onClick()"
              @mouseenter="isHover=true" @mouseleave="isHover=false">
         <slot name="btn">

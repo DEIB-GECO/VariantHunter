@@ -63,8 +63,8 @@
 
 <script>
 import {Plotly} from 'vue-plotly'
-import DialogOpener from '@/components/general/DialogOpener'
-import SectionElement from "@/components/general/SectionElement";
+import DialogOpener from '@/components/general/basic/DialogOpener'
+import SectionElement from "@/components/analysis/SectionElement";
 import {mapGetters} from "vuex";
 
 export default {

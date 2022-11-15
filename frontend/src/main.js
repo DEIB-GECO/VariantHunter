@@ -3,7 +3,7 @@ import './plugins/axios'
 import router from './router/routes.js'
 import App from './App.vue'
 import vuetify from './plugins/vuetify'
-import store from './store'
+import store from './store/store'
 import VueClipboard from 'vue-clipboard2'
 import './styles/style.css'
 

@@ -223,11 +223,11 @@
 </template>
 
 <script>
-import FunctionGuide from '@/components/general/guides/tool/FunctionGuide'
-import UseCase from '@/components/general/guides/tool/UseCase'
-import Paragraph from '@/components/general/Paragraph'
-import Picture from '@/components/general/Picture'
-import Collage from '@/components/general/Collage'
+import FunctionGuide from '@/components/guides/tool/FunctionGuide'
+import UseCase from '@/components/guides/tool/UseCase'
+import Paragraph from '@/components/general/basic/Paragraph'
+import Picture from '@/components/general/basic/Picture'
+import Collage from '@/components/general/basic/Collage'
 
 export default {
   name: 'LinIndGuide',
@@ -235,33 +235,33 @@ export default {
   data () {
     return {
       /** Images */
-      FormImg: require('../../../../assets/guide/lin_ind/form.png'),
-      ExplorerImg: require('../../../../assets/guide/lin_ind/explorer.png'),
-      TableImg: require('../../../../assets/guide/lin_ind/table.png'),
-      TableFiltersImg: require('../../../../assets/guide/lin_ind/table_filters.png'),
-      HeatmapImg: require('../../../../assets/guide/lin_ind/heatmap.png'),
-      DiffusionImg: require('../../../../assets/guide/lin_ind/diffusion.png'),
-      OddImg: require('../../../../assets/guide/lin_ind/odd.png'),
-      ExpansionImg: require('../../../../assets/guide/lin_ind/expansion.png'),
+      FormImg: require('../../../assets/guide/lin_ind/form.png'),
+      ExplorerImg: require('../../../assets/guide/lin_ind/explorer.png'),
+      TableImg: require('../../../assets/guide/lin_ind/table.png'),
+      TableFiltersImg: require('../../../assets/guide/lin_ind/table_filters.png'),
+      HeatmapImg: require('../../../assets/guide/lin_ind/heatmap.png'),
+      DiffusionImg: require('../../../assets/guide/lin_ind/diffusion.png'),
+      OddImg: require('../../../assets/guide/lin_ind/odd.png'),
+      ExpansionImg: require('../../../assets/guide/lin_ind/expansion.png'),
 
       uc1: {
-        img1: require('../../../../assets/guide/lin_ind/uc/uc1/img1.png'),
-        img2: require('../../../../assets/guide/lin_ind/uc/uc1/img2.png'),
-        img3: require('../../../../assets/guide/lin_ind/uc/uc1/img3.png'),
-        img4: require('../../../../assets/guide/lin_ind/uc/uc1/img4.png'),
-        img5: require('../../../../assets/guide/lin_ind/uc/uc1/img5.png')
+        img1: require('../../../assets/guide/lin_ind/uc/uc1/img1.png'),
+        img2: require('../../../assets/guide/lin_ind/uc/uc1/img2.png'),
+        img3: require('../../../assets/guide/lin_ind/uc/uc1/img3.png'),
+        img4: require('../../../assets/guide/lin_ind/uc/uc1/img4.png'),
+        img5: require('../../../assets/guide/lin_ind/uc/uc1/img5.png')
       },
 
       uc2: {
-        img1: require('../../../../assets/guide/lin_ind/uc/uc2/img1.png'),
-        img2: require('../../../../assets/guide/lin_ind/uc/uc2/img2.png'),
-        img3: require('../../../../assets/guide/lin_ind/uc/uc2/img3.png'),
-        img4: require('../../../../assets/guide/lin_ind/uc/uc2/img4.png')
+        img1: require('../../../assets/guide/lin_ind/uc/uc2/img1.png'),
+        img2: require('../../../assets/guide/lin_ind/uc/uc2/img2.png'),
+        img3: require('../../../assets/guide/lin_ind/uc/uc2/img3.png'),
+        img4: require('../../../assets/guide/lin_ind/uc/uc2/img4.png')
       },
 
       uc3: {
-        img1: require('../../../../assets/guide/lin_ind/uc/uc3/img1.png'),
-        img2: require('../../../../assets/guide/lin_ind/uc/uc3/img2.png')
+        img1: require('../../../assets/guide/lin_ind/uc/uc3/img1.png'),
+        img2: require('../../../assets/guide/lin_ind/uc/uc3/img2.png')
       }
 
     }

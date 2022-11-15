@@ -121,8 +121,7 @@
 </template>
 
 <script>
-import DialogOpener from '@/components/general/DialogOpener'
-import html2canvas from "html2canvas";
+import DialogOpener from '@/components/general/basic/DialogOpener'
 import domtoimage from "dom-to-image-more";
 import {getFileName} from "@/utils/parserService";
 import {mapGetters} from "vuex";

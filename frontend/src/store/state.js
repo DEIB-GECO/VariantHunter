@@ -52,7 +52,7 @@ export const state = {
 
 
     /** currentAnalysisId: id of the currently shown analysis or null value */
-    currentAnalysisId: 0,
+    currentAnalysisId: null,
     globalFilteringOpt: {protein: null, muts: [], rowKeys: []},
     globalOrderingOpt: {sortingIndexes:[ "slope" ], isDescSorting:[true]},
 
@@ -62,7 +62,7 @@ export const state = {
     possibleLocationsInfo: {},
 
     /** Date: selected date */
-    selectedDate: [null,'2021-05-18'], // null,
+    selectedDate: null,
 
     /** Lineage: selected lineage */
     selectedLineage: null,
@@ -70,9 +70,4 @@ export const state = {
 
     /** lastUpdate: last update date */
     lastUpdate: null,
-
-    primary_color: '#014878',
-  secondary_color: '#35B1ECFF',
-  tertiary_color_light: '#D2ECF8FF',
-  tertiary_color_dark: '#1976D2FF',
 }

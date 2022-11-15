@@ -92,7 +92,7 @@
 import LocationSelector from "@/components/form/LocationSelector";
 import DatePicker from "@/components/form/DatePicker";
 import LineageSelector from "@/components/form/LineageSelector";
-import DatasetExplorer from "@/components/DatasetExplorer";
+import DatasetExplorer from "@/components/explorer/DatasetExplorer";
 import {mapMutations, mapState} from "vuex";
 import axios from "axios";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";

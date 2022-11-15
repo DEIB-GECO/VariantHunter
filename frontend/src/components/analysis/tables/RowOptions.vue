@@ -24,7 +24,7 @@
     <v-dialog v-model="showMutationHistory" max-width="850" transition="dialog-bottom-transition">
       <v-card>
         <!-- Dialog title -->
-        <v-toolbar :color="primary_color" class="dialog-title" dark flat>
+        <v-toolbar color="f_primary" class="dialog-title" dark flat>
           <v-icon left large>mdi-information-variant</v-icon>
           <span class="font-weight-regular">Information about</span> &nbsp;{{ item.protein + "_" + item.mut }}
         </v-toolbar>
@@ -129,9 +129,6 @@ export default {
       error: undefined,
       isLoadingDetails: false,
     }
-  },
-  computed: {
-    ...mapState(['primary_color'])
   },
   watch: {
     showMutationHistory(newVal) {

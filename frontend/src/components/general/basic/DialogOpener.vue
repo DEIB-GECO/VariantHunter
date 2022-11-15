@@ -68,9 +68,6 @@ export default {
       /** Flag to show the dialog element */
       showDialog: false
     }
-  },
-  computed: {
-    ...mapState(['primary_color'])
   }
 }
 </script>

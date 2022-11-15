@@ -17,7 +17,7 @@
       <p>
         The
         <router-link to='/variant_hunter'>
-          <v-btn :color='secondary_color' x-small depressed outlined rounded>
+          <v-btn color='secondary' x-small depressed outlined rounded>
             <v-icon x-small>mdi-link</v-icon>
             &nbsp;online version of the tool
           </v-btn>
@@ -84,9 +84,9 @@
 
 <script>
 
-import Paragraph from '@/components/general/Paragraph'
-import LinIndGuide from '@/components/general/guides/tool/LinIndGuide'
-import LinDepGuide from '@/components/general/guides/tool/LinDepGuide'
+import Paragraph from '@/components/general/basic/Paragraph'
+import LinIndGuide from '@/components/guides/tool/LinIndGuide'
+import LinDepGuide from '@/components/guides/tool/LinDepGuide'
 import { mapState } from 'vuex'
 
 export default {
@@ -95,11 +95,8 @@ export default {
   data () {
     return {
       /** Images */
-      introImg: require('../../../../assets/guide/intro.png')
+      introImg: require('../../../assets/guide/intro.png')
     }
-  },
-  computed: {
-    ...mapState(['secondary_color'])
   }
 }
 </script>

@@ -10,22 +10,12 @@ import {sortItems} from "@/utils/sorterService";
 
 export const getters = {
     /**
-     * Gets a summary of the past analysis filtered by mode, granularity and/or starred flag
+     * Gets a summary of the past analysis
      */
-    getAnalysesSummary: (state) => ({mode = null, granularity = null, starred = null}) => {
+    getAnalysesSummary: (state) => {
         console.log("getAnalysesSummary")
-        let analyses = Object.values(state.analyses)
-
-        // Apply filtering parameters
-        if (starred)
-            analyses = analyses.filter(({starred}) => starred)
-        if (mode)
-            analyses = analyses.filter(({query}) => (mode === 'li' && !query.lineage) || (mode === 'ls' && query.lineage))
-        if (granularity)
-            analyses = analyses.filter(({query}) => !granularity || granularity === query.granularity)
-
         // Returns a time-sorted summary for each analysis
-        return analyses
+        return Object.values(state.analyses)
             .map(({id, starred, query}) => ({id, starred, query}))
             .sort(({id1}, {id2}) => id1 - id2).reverse()
     },

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import Picture from '@/components/general/Picture'
+import Picture from '@/components/general/basic/Picture'
 export default {
   name: 'Collage',
   components: { Picture },

@@ -150,8 +150,8 @@
 </template>
 
 <script>
-import ToolGuide from '@/components/general/guides/tool/ToolGuide'
-import DockerGuide from '@/components/general/guides/docker/DockerGuide'
+import ToolGuide from '@/components/guides/tool/ToolGuide'
+import DockerGuide from '@/components/guides/docker/DockerGuide'
 
 export default {
   name: 'About',
@@ -159,23 +159,23 @@ export default {
   data() {
     return {
       /** VariantHunter logo */
-      websiteLogo: require('../assets/logo.png'),
+      websiteLogo: require('../../assets/logo.png'),
 
       /** Ack data */
       acks: [
         {
           name: 'Luca Cilibrasi',
-          img: require('../assets/contributors/person.png'),
+          img: require('../../assets/contributors/person.png'),
           associate: 'Politecnico di Milano, Milan, Italy'
         },
         {
           name: 'Shay Fleishon',
-          img: require('../assets/contributors/person.png'),
+          img: require('../../assets/contributors/person.png'),
           associate: 'Independent Researcher, Jerusalem, Israel'
         },
         {
           name: 'Valeria Micheli',
-          img: require('../assets/contributors/person.png'),
+          img: require('../../assets/contributors/person.png'),
           associate: 'Laboratory of Clinical Microbiology, Virology and Bioemergencies, \n' +
               'ASST Fatebenefratelli, Sacco, Milan, Italy'
         }
@@ -186,7 +186,7 @@ export default {
         {
           name: 'Pietro Pinoli',
           associate: 'Politecnico di Milano',
-          img: require('../assets/contributors/pinoli.png'),
+          img: require('../../assets/contributors/pinoli.png'),
           mail: 'pietro.pinoli@polimi.it',
           role: 'reference',
           roleColor: 'info'
@@ -194,37 +194,37 @@ export default {
         {
           name: 'Luca Minotti',
           associate: 'Politecnico di Milano',
-          img: require('../assets/contributors/minotti.jpeg'),
+          img: require('../../assets/contributors/minotti.jpeg'),
           mail: 'minottiluca@icloud.com'
         },
         {
           name: 'Anna Bernasconi',
           associate: 'Politecnico di Milano',
-          img: require('../assets/contributors/bernasconi.jpg'),
+          img: require('../../assets/contributors/bernasconi.jpg'),
           mail: 'anna.bernasconi@polimi.it'
         },
         {
           name: 'Arif Canakoglu',
           associate: 'Policlinico di Milano',
-          img: require('../assets/contributors/canakoglu.jpeg'),
+          img: require('../../assets/contributors/canakoglu.jpeg'),
           mail: 'arif.canakoglu@polimi.it'
         },
         {
           name: 'Matteo Chiara',
           associate: 'Università degli Studi di Milano Statale',
-          img: require('../assets/contributors/chiara.png'),
+          img: require('../../assets/contributors/chiara.png'),
           mail: 'matteo.chiara@unimi.it'
         },
         {
           name: 'Erika Ferrandi',
           associate: 'IBIOM-CNR Bari',
-          img: require('../assets/contributors/ferrandi.png'),
+          img: require('../../assets/contributors/ferrandi.png'),
           mail: 'e.ferrandi@ibiom.cnr.it'
         },
         {
           name: 'Stefano Ceri',
           associate: 'Politecnico di Milano',
-          img: require('../assets/contributors/ceri.png'),
+          img: require('../../assets/contributors/ceri.png'),
           mail: 'stefano.ceri@polimi.it',
           role: 'leader',
           roleColor: 'success'
