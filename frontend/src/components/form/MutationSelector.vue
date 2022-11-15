@@ -303,7 +303,7 @@ export default {
         this.processing = true
         const url = `/lineage_specific/getLineages`
         axios
-            .post(url, {location: null, date: null})
+            .get(url, {params: {location: undefined, date: undefined}})
             .then(res => {
               this.possibleLineages = res.data
             })

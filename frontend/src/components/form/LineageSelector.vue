@@ -61,17 +61,17 @@ export default {
   methods: {
     /** Fetch all possible values for lineages (given the other params) */
     getPossibleLineages() {
-      if (this.selectedDate !== null || this.selectedLocation !== null) {
+      if (this.selectedLocation !== null) {
         this.isLoading = true
 
         const url = `/lineage_specific/getLineages`
-        const toSend = {
-          location: this.selectedLocation ? this.selectedLocation : null,
-          date: this.selectedDate ? this.selectedDate[1] : null
+        const queryParams = {
+          location: this.selectedLocation,
+          date: this.selectedDate ? this.selectedDate[1] : undefined
         }
 
         axios
-            .post(url, toSend)
+            .get(url, {params: queryParams})
             .then(({data}) => {
               this.possibleLineages = data
 
@@ -91,12 +91,12 @@ export default {
   },
   watch: {
     /** Adjust the possible lineages according to the selected location */
-    selectedLocation(newVal) {
+    selectedLocation() {
         this.getPossibleLineages()
     },
 
     /** Adjust the possible lineages according to the selected date */
-    selectedDate(newVal) {
+    selectedDate() {
       this.getPossibleLineages()
     }
   },
@@ -109,7 +109,7 @@ export default {
 <style scoped>
 /* Hint */
 .hint {
-  color: rgba(0, 0, 0, 0.54);
+  color: var(--v-text_var1-base);
   text-align: center;
   padding: 10px 14px;
   line-height: 17px;

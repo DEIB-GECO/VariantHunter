@@ -14,7 +14,7 @@
                         tip="Use local filters for this analysis instead of the global ones"/>
       <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="error" color="tertiary"
                         icon="mdi-filter-remove" text="Remove filters" bottom
-                        tip="Remove filters for all the performed analysis"/>
+                        tip="Remove filters for all the analysis (past and future)"/>
     </div>
   </div>
 </template>

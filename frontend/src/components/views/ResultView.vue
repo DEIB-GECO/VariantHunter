@@ -189,14 +189,14 @@ export default {
       this.isLoading = true
       this.error = undefined
       const url = (this.withLineages) ? "/lineage_specific/getStatistics" : "/lineage_independent/getStatistics"
-      const toSend = {
+      const queryParams = {
         location: this.selectedLocation,
         date: this.selectedDate[1],
         lineage: this.selectedLineage
       }
 
       axios
-          .post(url, toSend).then(({data}) => data)
+          .get(url, {params: queryParams}).then(({data}) => data)
           .then(({rows, tot_seq, characterizing_muts = null}) => {
             // Save the search parameters and results
             this.addAnalysis({rows, tot_seq, characterizing_muts, mode: (this.withLineages ? 'ls' : 'li')})

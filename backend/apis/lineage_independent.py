@@ -12,6 +12,7 @@ from __future__ import print_function
 import sqlite3
 import time
 
+from flask import request
 from flask_restplus import Namespace, Resource
 
 from .utils.path_manager import db_path
@@ -177,15 +178,16 @@ def extract_lineages_data(location, prot, mut, w):
 @api.route('/getStatistics')
 class FieldList(Resource):
     @api.doc('get_statistics')
-    def post(self):
+    def get(self):
         """
         Endpoint to perform a lineage independent analysis
         @return:    An object including the results and the support info
         """
         print("\t /getStatistics processing...", end="")
         exec_start = time.time()
-        location = api.payload['location']
-        date = api.payload['date']
+        args = request.args
+        location = args.get('location')
+        date = args.get('date')
 
         w = compute_weeks_from_date(date)
 
@@ -203,17 +205,18 @@ class FieldList(Resource):
 @api.route('/getLineagesStatistics')
 class FieldList(Resource):
     @api.doc('get_lineages_statistics')
-    def post(self):
+    def get(self):
         """
         Endpoint to obtain statistics about lineages for given protein, mutation, location and date
         @return:    An object including the results
         """
         print("\t /getLineagesStatistics processing...", end="")
         exec_start = time.time()
-        location = api.payload['location']
-        date = api.payload['date']
-        prot = api.payload['prot']
-        mut = api.payload['mut']
+        args = request.args
+        location = args.get('location')
+        date = args.get('date')
+        prot = args.get('prot')
+        mut = args.get('mut')
 
         w = compute_weeks_from_date(date)
         lineage_data = extract_lineages_data(location, prot, mut, w)

@@ -290,7 +290,7 @@ export default {
         this.error = undefined
         this.isLoadingDetails = true
         const url = `/lineage_independent/getLineagesStatistics`
-        const toSend = {
+        const queryParams = {
           location: this.query.location[this.query.granularity],
           date: this.query.endDate,
           prot: item.item.protein,
@@ -298,7 +298,7 @@ export default {
         }
 
         axios
-            .post(url, toSend)
+            .get(url, {params: queryParams})
             .then(({data}) => item.item.lineages = data)
             .catch((e) => this.error = e)
             .finally(() => this.isLoadingDetails = false)

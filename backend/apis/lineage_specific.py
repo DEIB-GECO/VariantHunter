@@ -14,6 +14,7 @@ import sqlite3
 import time
 from datetime import datetime
 
+from flask import request
 from flask_restplus import Namespace, Resource
 
 from .explorer import get_lineage_characterization
@@ -24,28 +25,6 @@ api = Namespace('lineage_specific', description='lineage_specific')
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-def get_all_lineages():
-    """
-    Extract all the possible values for the lineage from the database
-    Returns: An array of lineages
-
-    """
-    # print("> Extract all lineages ...", end="")
-    # exec_start = time.time()
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    query = "SELECT lineage FROM lineages ORDER BY lineage;"
-    extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
-    con.close()
-
-    # print(f"done in {time.time() - exec_start:.5f} seconds.")
-    return extracted_lineages
-
-
-all_lineages = get_all_lineages()  # At server startup, fetch all the lineages
 
 
 def get_lineages_from_loc_date(location, date):
@@ -211,30 +190,25 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-@api.route('/getAllLineages')
-class FieldList(Resource):
-    @api.doc('get_all_lineages')
-    def get(self):
-        """
-        Endpoint to obtain all the possible lineages
-        @return:    An array of lineages
-        """
-        print("\t /getAllLineages processing...done.")
-        return all_lineages
-
-
 @api.route('/getLineages')
 class FieldList(Resource):
     @api.doc('get_lineages')
-    def post(self):
+    def get(self):
         """
         Endpoint to obtain the lineages for a given location and week (if specified)
         @return:    An array of lineages
         """
         print("\t /getLineages processing...", end="")
         exec_start = time.time()
-        location = api.payload['location']
-        date = api.payload['date']
+        args = request.args
+        location = args.get('location')
+        date = args.get('date')
+
+        print("Location is")
+        print(location)
+
+        print("Date is")
+        print(date)
 
         if location is None and date is None:
             lineages = all_lineages
@@ -252,16 +226,17 @@ class FieldList(Resource):
 @api.route('/getStatistics')
 class FieldList(Resource):
     @api.doc('get_statistics')
-    def post(self):
+    def get(self):
         """
         Endpoint to perform a lineage specific analysis
         @return:    An object including the results and the support info
         """
         print("\t /getStatistics processing...", end="")
         exec_start = time.time()
-        location = api.payload['location']
-        lineage = api.payload['lineage']
-        date = api.payload['date']
+        args = request.args
+        location = args.get('location')
+        lineage = args.get('lineage')
+        date = args.get('date')
 
         w = compute_weeks_from_date(date)
 

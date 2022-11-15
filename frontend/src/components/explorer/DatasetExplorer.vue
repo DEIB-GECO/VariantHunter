@@ -18,44 +18,44 @@
       <v-col>{{ title }}</v-col>
     </v-row>
 
-    <!-- Histogram loading animation -->
-    <v-row v-if='isLoading.histogram'>
-      <v-col>
-        <v-skeleton-loader width='100%' type='image'/>
-      </v-col>
-    </v-row>
+      <!-- Histogram loading animation -->
+      <v-row v-if='isLoading.histogram'>
+        <v-col>
+          <v-skeleton-loader width='100%' type='image'/>
+        </v-col>
+      </v-row>
 
-    <!-- Histogram plot -->
-    <v-row v-if='showPlot.histogram'>
-      <explorer-histogram :sequence-data='sequencesData' @timeRangeChange='(tr) => onTimeRangeChanges(tr)'/>
-    </v-row>
+      <!-- Histogram plot -->
+      <v-row v-if='showPlot.histogram'>
+        <explorer-histogram :sequence-data='sequencesData' @timeRangeChange='(tr) => onTimeRangeChanges(tr)'/>
+      </v-row>
 
-    <!-- Breakdown loading animation -->
-    <v-row v-if='isLoading.breakdown'>
-      <v-col>
-        <v-skeleton-loader width='100%' type='image'/>
-      </v-col>
-    </v-row>
+      <!-- Breakdown loading animation -->
+      <v-row v-if='isLoading.breakdown'>
+        <v-col>
+          <v-skeleton-loader width='100%' type='image'/>
+        </v-col>
+      </v-row>
 
-    <v-row v-if='isDisabled.breakdown' class='disabled-label'>
-      <v-col><sub>
-        <v-icon color='white' small left>mdi-information-outline</v-icon>
-        Reduce the time range to at most 4 weeks to see lineages breakdown </sub></v-col>
-    </v-row>
+      <v-row v-if='isDisabled.breakdown' class='disabled-label'>
+        <v-col><sub>
+          <v-icon color='white' small left>mdi-information-outline</v-icon>
+          Reduce the time range to at most 4 weeks to see lineages breakdown </sub></v-col>
+      </v-row>
 
-    <!-- Breakdown plot -->
-    <v-row v-if='showPlot.breakdown' class='lineage-breakdown'>
-      <lineages-breakdown :lineages-data='lineagesData'/>
-    </v-row>
+      <!-- Breakdown plot -->
+      <v-row v-if='showPlot.breakdown' class='lineage-breakdown'>
+        <lineages-breakdown :lineages-data='lineagesData'/>
+      </v-row>
 
-    <!-- Button to fill in the date -->
-    <v-row v-if='showPlot.breakdown' class='text-center'>
-      <v-col>
-        <btn-with-tooltip bottom color="primary" text="Consider these 4 weeks" icon="mdi-calendar"
-                          :click-handler="()=>emitAnalysisPeriod()"
-                          tip="Fill the form using the currently selected 4 weeks as analysis period."/>
-      </v-col>
-    </v-row>
+      <!-- Button to fill in the date -->
+      <v-row v-if='showPlot.breakdown' class='text-center'>
+        <v-col>
+          <btn-with-tooltip bottom color="primary" text="Consider these 4 weeks" icon="mdi-calendar"
+                            :click-handler="()=>emitAnalysisPeriod()" content-class="text_var2--text"
+                            tip="Fill the form using the currently selected 4 weeks as analysis period."/>
+        </v-col>
+      </v-row>
 
   </v-col>
 </template>
@@ -139,8 +139,8 @@ export default {
         this.isLoading.histogram = true
         const sequenceAPI = `/explorer/getSequenceInfo`
         const queryParams = {
-          location: this.selectedLocation,                          // possibly it has no value
-          lineage: this.withLineages ? this.selectedLineage : null   // possibly it has no value
+          location: this.selectedLocation,
+          lineage: this.withLineages ? this.selectedLineage : undefined   // possibly it has no value
         }
 
         axios
