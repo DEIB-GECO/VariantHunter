@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import {mapState} from 'vuex'
 import {mapStateTwoWay} from '@/utils/bindService'
 
@@ -70,7 +69,7 @@ export default {
           date: this.selectedDate ? this.selectedDate[1] : undefined
         }
 
-        axios
+        this.$axios
             .get(url, {params: queryParams})
             .then(({data}) => {
               this.possibleLineages = data

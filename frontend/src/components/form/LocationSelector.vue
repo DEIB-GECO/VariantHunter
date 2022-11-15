@@ -65,7 +65,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import {mapStateTwoWay} from "@/utils/bindService";
 import Vue from "vue";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
@@ -169,7 +168,7 @@ export default {
       const queryString = this.searchQuery.match(/[^/][^/]/m)[0]
       this.isLoading = true
       const locationsAPI = `/locations/getLocations`
-      axios
+      this.$axios
           .get(locationsAPI, {params: {string: queryString}})
           .then(({data}) => {
             this.isLoading = false

@@ -143,7 +143,7 @@ export default {
         lineage: this.selectedLineage
       }
 
-      axios
+      this.$axios
         .get(url, {params: queryParams}).then(({data})=>data)
         .then(({rows,tot_seq,characterizing_muts=null}) => {
           // Save the search parameters and results

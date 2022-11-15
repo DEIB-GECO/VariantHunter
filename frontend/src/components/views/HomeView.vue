@@ -18,7 +18,6 @@
 import Sidebar from "@/components/general/Sidebar";
 import NewSearchView from "@/components/views/NewSearchView";
 import ResultView from "@/components/views/ResultView";
-import axios from 'axios'
 import {mapState} from "vuex";
 import {mapStateTwoWay} from "@/utils/bindService";
 
@@ -35,7 +34,7 @@ export default {
     fetchLastUpdate () {
       const urlAPI = `/explorer/getLastUpdate`
 
-      axios
+      this.$axios
         .get(urlAPI)
         .then(({data})=> { this.lastUpdate = data})
         .catch(() => {})

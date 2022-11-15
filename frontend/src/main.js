@@ -1,13 +1,21 @@
 import Vue from 'vue'
-import './plugins/axios'
+import axios from 'axios';
 import router from './router/routes.js'
 import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import store from './store/store'
 import VueClipboard from 'vue-clipboard2'
 import './styles/style.css'
+import { publicPath } from '../vue.config'
 
 Vue.config.productionTip = false
+
+
+// enhance the original axios adapter with throttle and cache enhancer
+Vue.prototype.$axios = axios.create({
+	baseURL: publicPath + 'api/',
+	headers: { 'Cache-Control': 'no-cache' }
+});
 
 new Vue({
   vuetify,

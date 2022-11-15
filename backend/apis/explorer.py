@@ -42,7 +42,7 @@ def extract_seq_num(location, lineage):
     cur = con.cursor()
 
     def execute_query():
-        if lineage is not None:
+        if lineage is not None and lineage!='':
             query = f'''    SELECT date,sum(count) 
                             FROM aggr_sequences SQ
                                 JOIN locations LC ON SQ.location_id = LC.location_id

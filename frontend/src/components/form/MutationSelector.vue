@@ -177,8 +177,6 @@
 
 <script>
 import FieldSelector from '@/components/form/FieldSelector'
-import {mapState} from 'vuex'
-import axios from 'axios'
 
 export default {
   name: 'MutationSelector',
@@ -302,7 +300,7 @@ export default {
       if (this.possibleLineages.length === 0) {
         this.processing = true
         const url = `/lineage_specific/getLineages`
-        axios
+        this.$axios
             .get(url, {params: {location: undefined, date: undefined}})
             .then(res => {
               this.possibleLineages = res.data
@@ -329,7 +327,7 @@ export default {
         const queryParams = new URLSearchParams(); // avoid [] conversion of parameter
         this.selectedLineages.forEach(name => queryParams.append("lineages", name))
 
-        axios
+        this.$axios
             .get(classificationAPI, {params: queryParams})
             .then(res => {
               this.allLinMuts = res.data

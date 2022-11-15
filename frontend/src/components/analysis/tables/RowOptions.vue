@@ -151,7 +151,7 @@ export default {
         mut: this.item.mut,
       }
 
-      axios
+      this.$axios
           .get(url, {params: queryParams})
           .then(({data}) => {
             this.characterizedLineages = data['characterized_lineages']

@@ -39,12 +39,7 @@ export default {
       /** VariantHunter logo */
       websiteLogo: require('./assets/logo.png'),
     }
-  },
-    computed: {
-    darkMode() {
-      return this.$vuetify.theme.dark
-    },
-  },
+  }
 }
 </script>
 

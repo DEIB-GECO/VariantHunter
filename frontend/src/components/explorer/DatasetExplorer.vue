@@ -62,7 +62,6 @@
 
 <script>
 import ExplorerHistogram from '@/components/explorer/ExplorerHistogram'
-import axios from 'axios'
 import LineagesBreakdown from '@/components/explorer/LineagesBreakdown'
 import {dateDiff} from '@/utils/dateService'
 import {mapState} from 'vuex'
@@ -140,10 +139,10 @@ export default {
         const sequenceAPI = `/explorer/getSequenceInfo`
         const queryParams = {
           location: this.selectedLocation,
-          lineage: this.withLineages ? this.selectedLineage : undefined   // possibly it has no value
+          lineage: this.withLineages? this.selectedLineage : undefined   // possibly it has no value
         }
 
-        axios
+        this.$axios
             .get(sequenceAPI, {params: queryParams})
             .then(res => {
               this.sequencesData = res.data
@@ -169,7 +168,7 @@ export default {
           begin: this.selectedRange[0],
           end: this.selectedRange[1],
         }
-        axios
+        this.$axios
             .get(sequenceAPI, {params: queryParams})
             .then(res => {
               this.lineagesData = res.data
@@ -210,6 +209,11 @@ export default {
     this.fetchSequenceInfo()
   },
   watch: {
+
+    /** Fetch sequence info on tab changes */
+    withLineages(){
+      this.fetchSequenceInfo()
+    },
 
     /** Fetch sequence info on location value changes */
     selectedLocation() {

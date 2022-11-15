@@ -27,6 +27,25 @@ api = Namespace('lineage_specific', description='lineage_specific')
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
+def get_all_lineages():
+    """
+    Extract all the possible values for the lineage from the database
+    Returns: An array of lineages
+
+    """
+    # print("> Extract all lineages ...", end="")
+    # exec_start = time.time()
+    con = sqlite3.connect(db_path)
+    cur = con.cursor()
+
+    query = "SELECT lineage FROM lineages ORDER BY lineage;"
+    extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
+    con.close()
+
+    # print(f"done in {time.time() - exec_start:.5f} seconds.")
+    return extracted_lineages
+
+
 def get_lineages_from_loc_date(location, date):
     """
     Extract the lineages for a given location and week from the database
@@ -204,18 +223,10 @@ class FieldList(Resource):
         location = args.get('location')
         date = args.get('date')
 
-        print("Location is")
-        print(location)
-
-        print("Date is")
-        print(date)
-
-        if location is None and date is None:
-            lineages = all_lineages
+        if (location is None and date is None) or (location == '' and date == ''):
+            lineages = get_all_lineages()
         elif date is None:
             lineages = get_lineages_from_loc(location)
-        elif location is None:
-            lineages = get_lineages_from_date(date)
         else:
             lineages = get_lineages_from_loc_date(location, date)
 

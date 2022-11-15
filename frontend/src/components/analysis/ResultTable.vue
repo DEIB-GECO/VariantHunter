@@ -297,7 +297,7 @@ export default {
           mut: item.item.mut,
         }
 
-        axios
+        this.$axios
             .get(url, {params: queryParams})
             .then(({data}) => item.item.lineages = data)
             .catch((e) => this.error = e)
