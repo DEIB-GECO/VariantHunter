@@ -41,16 +41,18 @@
 
 <script>
 import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip";
+import {mapGetters} from "vuex";
 
 export default {
   name: "GoToCovSpectrum",
   components: {BtnWithTooltip},
-  props: {
-    selectedRows: {default(){return []}},
-    selectedLocation: {default(){return []}},
-    selectedPeriod: {default(){return []}},
-  },
   computed:{
+    ...mapGetters(['getCurrentAnalysis','getCurrentSelectedRows']),
+
+    selectedRows(){
+      return this.getCurrentSelectedRows
+    },
+
     /** True iff NSP proteins have been selected */
     nspWarning(){
       return this.selectedRows.map(({protein})=>protein).find((protein)=>protein.startsWith('NSP')) !== undefined
@@ -64,12 +66,13 @@ export default {
   methods: {
     generateAnalysis() {
       // If granularity is regional, then perform a country-level analysis since CovSpectrum does not support regions
-      const location = this.selectedLocation.type === 'region'
-          ? this.selectedLocation.country
-          : this.selectedLocation.value
+      const {location:locationData, granularity}=this.getCurrentAnalysis.query
+      const location = granularity === 'region'
+          ? locationData['country']
+          : locationData[granularity]
 
-      const endDate = this.selectedPeriod
-      let startDate = new Date(this.selectedPeriod)
+      const endDate = this.getCurrentAnalysis.query.endDate
+      let startDate = new Date(endDate)
       startDate.setDate(new Date(endDate).getDate() - 7)
       startDate = startDate.toISOString().slice(0, 10)
 

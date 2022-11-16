@@ -8,23 +8,56 @@
         <span class="text-body-3 error--text">No mutations matching the selected filters.</span>
       </v-list-item>
     </v-list>
-    <div>
+    <div v-if="useGlobalFilters">
       <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="warning" color="tertiary"
-                        icon="mdi-filter-off" text="Disable filters locally" bottom
+                        icon="mdi-filter-off" text="Disable filters locally" bottom :click-handler="disableGlobalFilters"
                         tip="Use local filters for this analysis instead of the global ones"/>
       <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="error" color="tertiary"
-                        icon="mdi-filter-remove" text="Remove filters" bottom
+                        icon="mdi-filter-remove" text="Clear filters" bottom :click-handler="()=>clearFilters(true)"
                         tip="Remove filters for all the analysis (past and future)"/>
+    </div>
+    <div v-else>
+      <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="error" color="tertiary"
+                        icon="mdi-filter-remove" text="Clear filters" bottom :click-handler="()=>clearFilters(false)"
+                        tip="Remove local filters"/>
     </div>
   </div>
 </template>
 
 <script>
 import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip";
+import {mapGetters, mapMutations} from "vuex";
 
 export default {
   name: "EmptyTable",
-  components: {BtnWithTooltip}
+  components: {BtnWithTooltip},
+  computed:{
+    ...mapGetters(['getCurrentLocalFilteringOpt']),
+
+    useGlobalFilters(){
+      return  this.getCurrentLocalFilteringOpt.useGlobalFilters
+    },
+  },
+  methods:{
+    ...mapMutations(['setFilterOpt']),
+
+    /**
+     * Clear filters of a given scope
+     * @param global  True iff the filtering scope to be cleared is the global one.
+     */
+    clearFilters(global){
+      this.setFilterOpt({global,opt:'protein',value:null})
+      this.setFilterOpt({global,opt:'muts',value:[]})
+      this.setFilterOpt({global,opt:'rowKeys',value:[]})
+    },
+
+    /**
+     * Change the filtering scope of the current analysis from global to local
+     */
+    disableGlobalFilters(){
+      this.setFilterOpt({global:false,opt:'useGlobalFilters',value:false})
+    }
+  }
 }
 </script>
 

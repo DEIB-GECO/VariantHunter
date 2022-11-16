@@ -16,20 +16,8 @@
   <v-container class='table-controls'>
     <v-layout justify-center row wrap>
 
-      <!---- Show/hide p-values info button ---->
-      <v-flex justify-center class='xs12 sm6 md3 d-flex'>
-        <v-btn v-if='!showPValues' outlined depressed rounded small color='primary' @click='showPValues=true'>
-          <v-icon left>mdi-plus-circle-outline</v-icon>
-          Show p-values
-        </v-btn>
-        <v-btn v-else depressed rounded small color='primary' class="text_var2--text" @click='showPValues=false'>
-          <v-icon left>mdi-minus-circle-outline</v-icon>
-          Hide p-values
-        </v-btn>
-      </v-flex>
-
       <!---- Show/hide table interpretation button ---->
-      <DialogOpener :button-prefix='false' title='Table interpretation' color="primary">
+      <DialogOpener :button-prefix='false' title="<span class='d-sm-none'>Info</span><span class='hidden-xs-only'><span class='hidden-sm-and-down'>Table</span> interpretation</span>" color="primary">
         <p>The mutation table depicts the trend of all and only the <b>mutations detected in
           the last week of the considered analysis period</b>. Only mutations affecting at least 0.5% of
           the sequences collected in the week are shown.</p>
@@ -89,33 +77,23 @@
         </ul>
       </DialogOpener>
 
-      <!---- Download data button ---->
-      <v-flex justify-center class='xs12 sm6 md3 d-flex'>
-        <v-tooltip bottom max-width='400' open-delay='0'>
-          <template v-slot:activator='{ on, attrs }'>
-            <v-btn v-bind='attrs' v-on='on' :loading='downloadLoading' color='primary'
-                   outlined depressed rounded small @click='$emit("downloadData")'>
-              <v-icon left>mdi-download-circle-outline</v-icon>
-              Download data
-            </v-btn>
-          </template>
-          <span>Download this table as a .csv file</span>
-        </v-tooltip>
+      <!---- Show/hide p-values info button ---->
+      <v-flex justify-center class='d-flex pa-1'>
+        <v-btn v-if='!showPValues' outlined depressed rounded small color='primary' @click='showPValues=true'>
+          <v-icon left>mdi-plus-circle-outline</v-icon>
+          <span class='hidden-xs-only'>Show&nbsp;</span>p-values
+        </v-btn>
+        <v-btn v-else depressed rounded small color='primary' class="text_var2--text" @click='showPValues=false'>
+          <v-icon left>mdi-minus-circle-outline</v-icon>
+          <span class='hidden-xs-only'>Hide&nbsp;</span>p-values
+        </v-btn>
       </v-flex>
 
-      <!---- Print result button ---->
-      <v-flex justify-center class='xs12 sm6 md3 d-flex'>
-        <v-tooltip bottom max-width='400' open-delay='0'>
-          <template v-slot:activator='{ on, attrs }'>
-            <v-btn v-bind='attrs' v-on='on' :loading='downloadLoading' color='primary'
-                   outlined depressed rounded small @click='downloadScreen()'>
-              <v-icon left>mdi-printer</v-icon>
-              Download all
-            </v-btn>
-          </template>
-          <span>Download the entire tab as a .png file</span>
-        </v-tooltip>
+      <!---- Download data button ---->
+      <v-flex justify-center class='d-flex pa-1'>
+       <download-data control-type="button"/>
       </v-flex>
+
     </v-layout>
   </v-container>
 </template>
@@ -125,10 +103,11 @@ import DialogOpener from '@/components/general/basic/DialogOpener'
 import domtoimage from "dom-to-image-more";
 import {getFileName} from "@/utils/parserService";
 import {mapGetters} from "vuex";
+import DownloadData from "@/components/controls/DownloadData";
 
 export default {
   name: 'TableControls',
-  components: {DialogOpener},
+  components: {DownloadData, DialogOpener},
   data() {
     return {
       /** Flag to show the p_values in the table */

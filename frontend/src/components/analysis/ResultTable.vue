@@ -4,7 +4,7 @@
       <v-data-table v-model='selectedRows' :headers='tableHeaders' :custom-sort="customSort" col
                     :items='getCurrentFilteredRows' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :loading='isLoadingDetails' single-expand class='table-element'
-                    item-key='item_key'
+                    item-key='item_key' :custom-filter="()=>true"
                     :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'
                     @item-expanded='loadLineageDetails' show-expand
                     @toggle-select-all='handleToggleSelection'>
@@ -14,6 +14,8 @@
           <table-controls @showPValues='(flag) => showPValues=flag'/>
         </template>
 
+        
+
         <!---- TABLE SUPER HEADERS ---------------------------------------->
         <template v-slot:header>
           <table-super-header :with-lineages='withLineages' :show-p-values='showPValues'/>
@@ -22,6 +24,16 @@
         <!---- TABLE EXPAND/INFO PANEL CONTROLS --------------------------->
         <template v-slot:item.data-table-expand="{expand,item,isExpanded}">
           <row-options :expandable="!withLineages" :item="item" :isExpanded="isExpanded" :expand="expand"/>
+        </template>
+
+        <!---- TABLE ROW SELECT CONTROL --------------------------->
+        <template v-slot:item.data-table-select="{select,isSelected}">
+          <v-tooltip bottom content-class="rounded-xl tooltip" allow-overflow z-index="10" max-width="400px">
+            <template v-slot:activator='{ on, attrs }'>
+              <v-simple-checkbox v-bind="attrs" v-on="on" :value="isSelected" @click="select(!isSelected)"/>
+            </template>
+            Select to view this mutation in the plots below
+          </v-tooltip>
         </template>
 
         <!---- CUSTOMIZED CELLS ------------------------------------------->
@@ -145,7 +157,6 @@ import TableControls from "@/components/analysis/tables/TableControls";
 import TableSuperHeader from "@/components/analysis/tables/TableSuperHeader";
 import ExpansionModeMenu from "@/components/menus/ExpansionModeMenu";
 import {mapGetters, mapMutations, mapState} from "vuex";
-import axios from "axios";
 import {compactLineagesData} from "@/utils/formatterService";
 import {sortItems} from "@/utils/sorterService";
 import GoToCovSpectrum from "@/components/analysis/tables/GoToCovSpectrum";

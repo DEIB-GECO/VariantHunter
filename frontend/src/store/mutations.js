@@ -32,10 +32,12 @@ export const mutations = {
      */
     setFilterOpt(state, {global = true, opt, value}) {
         console.log("setFilter of " + opt + " to " + value)
+
         if (global) {
             Vue.set(state.globalFilteringOpt,opt, value)
         } else {
-            Vue.set(state.localFilteringOpt,opt, value)
+            const id=state.currentAnalysisId
+            Vue.set(state.localFilteringOpt[id],opt, value)
         }
     },
 
@@ -51,7 +53,8 @@ export const mutations = {
         if (global) {
             Vue.set(state.globalOrderingOpt,opt, value)
         } else {
-            Vue.set(state.localOrderingOpt,opt, value)
+            const id=state.currentAnalysisId
+            Vue.set(state.localOrderingOpt[id],opt, value)
         }
     },
 

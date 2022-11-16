@@ -12,13 +12,13 @@
 -->
 
 <template>
-  <v-flex class="xs12 sm6 md3 d-flex" justify-center>
+  <v-flex class="d-flex pa-1" justify-center>
 
     <!-- Dialog opener -->
     <v-btn :color='color' depressed outlined rounded small @click='showDialog = true'>
       <v-icon left>{{ icon }}</v-icon>
       <div v-if='buttonPrefix'>Show&nbsp;</div>
-      {{ title }}
+      <span v-html="title"></span>
     </v-btn>
 
     <!-- Dialog element-->
@@ -27,7 +27,7 @@
         <!-- Dialog title -->
         <v-toolbar color="f_primary" class="dialog-title" dark flat>
           <v-icon left large>mdi-help-circle-outline</v-icon>
-          {{ title }}
+          <span v-html="title"></span>
         </v-toolbar>
 
         <!-- Dialog content -->
