@@ -1,5 +1,7 @@
 <template>
   <div>
+    <div v-if="isLoading" class="v-overlay__scrim" style="opacity: 0.46; background-color: rgb(33, 33, 33); border-color: rgb(33, 33, 33);"></div>
+
     <v-snackbar v-if="!standalone" max-width="500px" v-model="showSnackbar"
                 :timeout="isLoading?'-1':(error?'10000':'10000')"
                 :color="isLoading?'secondary':(error?'error':'')">
@@ -59,8 +61,9 @@ export default {
     standalone: Boolean(false),
     error: {default: undefined},
 
+
     /** loadingMessages: 4 loading messages to show*/
-    loadingMessages: {default: []},
+    loadingMessages: {default:()=>[]},
   },
   data() {
     return {

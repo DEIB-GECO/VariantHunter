@@ -61,6 +61,9 @@
         </v-autocomplete>
       </v-col>
     </v-row>
+
+    <loading-sticker :error="error" />
+
   </v-col>
 </template>
 
@@ -68,10 +71,11 @@
 import {mapStateTwoWay} from "@/utils/bindService";
 import Vue from "vue";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
+import LoadingSticker from "@/components/general/basic/LoadingSticker";
 
 export default {
   name: 'LocationSelector',
-  components: {IconWithTooltip},
+  components: {LoadingSticker, IconWithTooltip},
   data() {
     return {
       /** Values for locations before an edit of the current selection */
@@ -167,6 +171,7 @@ export default {
     fetchLocations() {
       const queryString = this.searchQuery.match(/[^/][^/]/m)[0]
       this.isLoading = true
+      this.error = undefined
       const locationsAPI = `/locations/getLocations`
       this.$axios
           .get(locationsAPI, {params: {string: queryString}})
@@ -180,6 +185,7 @@ export default {
             })
           })
           .catch((e) => {
+            this.isLoading = false
             this.error = e
           })
 
@@ -205,6 +211,8 @@ export default {
         this.fetchLocations()
       else if (newVal?.length < 2 && oldVal?.length >= 2 && newVal !== '') {
         this.possibleLocations = [] // reset locations when query string is less than 2 characters
+      } else if(newVal?.length >= 2 && this.error){
+        this.fetchLocations()
       }
     }
   }

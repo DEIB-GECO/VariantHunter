@@ -31,15 +31,20 @@
         </v-autocomplete>
       </v-col>
     </v-row>
+
+    <loading-sticker :error="error" />
+
   </v-col>
 </template>
 
 <script>
 import {mapState} from 'vuex'
 import {mapStateTwoWay} from '@/utils/bindService'
+import LoadingSticker from "@/components/general/basic/LoadingSticker";
 
 export default {
   name: 'LineageSelector',
+  components: {LoadingSticker},
   data() {
     return {
       isLoading: false,
@@ -62,6 +67,7 @@ export default {
     getPossibleLineages() {
       if (this.selectedLocation !== null) {
         this.isLoading = true
+        this.error = undefined
 
         const url = `/lineage_specific/getLineages`
         const queryParams = {
@@ -81,6 +87,8 @@ export default {
             })
             .catch((e) => {
               this.error = e
+              this.possibleLineages = []
+              this.selectedLineage = null
             })
             .finally(() => {
               this.isLoading = false

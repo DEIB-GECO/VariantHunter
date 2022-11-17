@@ -1,10 +1,14 @@
 <template>
   <v-container class="view-sizing">
+
     <v-row id="top" class="px-5">
       <v-col>
         <div class="text-right text-body-4 font-weight-medium py-3 compact-text-3 success--text">
-          <span v-if="lastUpdate"><v-icon left small color="success">mdi-clock-outline</v-icon>Last dataset update: <span class="font-weight-regular d-block d-md-inline-block">{{lastUpdate}}</span></span>
-          <span v-else><v-progress-circular class="mr-2" indeterminate size="15"/> Fetching last dataset update...</span>
+          <span v-if="lastUpdate"><v-icon left small
+                                          color="success">mdi-clock-outline</v-icon>Last dataset update: <span
+              class="font-weight-regular d-block d-md-inline-block">{{ lastUpdate }}</span></span>
+          <span v-else><v-progress-circular class="mr-2" indeterminate
+                                            size="15"/> Fetching last dataset update...</span>
         </div>
 
         <div class="text-h4 font-weight-black primary--text pb-2">Define new analysis</div>
@@ -36,10 +40,10 @@
           </v-row>
         </v-expand-transition>
 
-
         <v-row class='my-4'>
           <v-col>
-            <v-btn class='delete-action mr-2 text_var2--text' color='primary' @click='clearForm' depressed small rounded>
+            <v-btn class='delete-action mr-2 text_var2--text' color='primary' @click='clearForm' depressed small
+                   rounded>
               <v-icon left>mdi-backspace-outline</v-icon>
               CLEAR
             </v-btn>
@@ -68,7 +72,8 @@
             </v-expand-transition>
             <!-- Show/hide Explorer controls -->
             <div>
-              <v-btn depressed rounded small color='primary' class="text_var2--text" @click='showExplorer = !showExplorer'>
+              <v-btn depressed rounded small color='primary' class="text_var2--text"
+                     @click='showExplorer = !showExplorer'>
                 <v-icon left>{{ showExplorer ? 'mdi-close-circle-outline' : 'mdi-compass' }}</v-icon>
                 {{ showExplorer ? 'Hide' : 'Show dataset explorer' }}
               </v-btn>
@@ -83,7 +88,10 @@
       </v-container>
     </v-row>
 
-    <loading-sticker :is-loading="isLoading" :error="error" :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
+    <loading-sticker :is-loading="isLoading" :error="error"
+                     :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
+
+    <no-data-alert v-model="noDataWarning" @update:modelValue="v=>noDataWarning=v"/>
 
   </v-container>
 </template>
@@ -94,25 +102,26 @@ import DatePicker from "@/components/form/DatePicker";
 import LineageSelector from "@/components/form/LineageSelector";
 import DatasetExplorer from "@/components/explorer/DatasetExplorer";
 import {mapMutations, mapState} from "vuex";
-import axios from "axios";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
+import NoDataAlert from "@/components/general/NoDataAlert";
 
 export default {
   name: "NewSearchView",
-  components: {LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector},
+  components: {NoDataAlert, LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector},
   data() {
     return {
       mode: 'li',
       modeOptions: {li: 'Lineage independent', ls: 'Lineage specific'},
 
-      isLoading:false,
-      error:undefined,
+      isLoading: false,
+      error: undefined,
+      noDataWarning: true,
 
       showExplorer: false
     }
   },
   computed: {
-    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate','lastUpdate']),
+    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate', 'lastUpdate']),
 
     /** Form error flag: true if the form cannot be sent */
     formError() {
@@ -120,7 +129,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setDate', 'setLineage', 'setLocation', 'setLocations', 'setLineages','addAnalysis','setCurrentAnalysis']),
+    ...mapMutations(['setDate', 'setLineage', 'setLocation', 'setLocations', 'setLineages', 'addAnalysis', 'setCurrentAnalysis']),
 
     clearForm() {
       this.setLineage(null)
@@ -130,13 +139,13 @@ export default {
       this.setLocations([])
     },
 
-     /**
+    /**
      * Triggers the analysis request to the server
      */
-    sendAnalysis () {
+    sendAnalysis() {
       this.isLoading = true
-       this.error=undefined
-      const url = (this.mode==='li')?"/lineage_independent/getStatistics":"/lineage_specific/getStatistics"
+      this.error = undefined
+      const url = (this.mode === 'li') ? "/lineage_independent/getStatistics" : "/lineage_specific/getStatistics"
       const queryParams = {
         location: this.selectedLocation,
         date: this.selectedDate[1],
@@ -144,17 +153,21 @@ export default {
       }
 
       this.$axios
-        .get(url, {params: queryParams}).then(({data})=>data)
-        .then(({rows,tot_seq,characterizing_muts=null}) => {
-          // Save the search parameters and results
-          this.addAnalysis({rows,tot_seq,characterizing_muts,mode:this.mode})
-        })
-        .catch((e) => {
-          this.error=e
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
+          .get(url, {params: queryParams}).then(({data}) => data)
+          .then(({rows, tot_seq, characterizing_muts = null}) => {
+            if (rows.length > 0) {
+              // Save the search parameters and results
+              this.addAnalysis({rows, tot_seq, characterizing_muts, mode: this.mode})
+            }else{
+              this.noDataWarning = true
+            }
+          })
+          .catch((e) => {
+            this.error = e
+          })
+          .finally(() => {
+            this.isLoading = false
+          })
     },
 
     /**
@@ -171,7 +184,7 @@ export default {
     }
   },
   beforeMount() {
-    window.scrollTo({top:0})
+    window.scrollTo({top: 0})
   }
 }
 </script>

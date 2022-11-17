@@ -57,6 +57,8 @@
         </v-col>
       </v-row>
 
+      <loading-sticker :error="error"/>
+
   </v-col>
 </template>
 
@@ -66,10 +68,11 @@ import LineagesBreakdown from '@/components/explorer/LineagesBreakdown'
 import {dateDiff} from '@/utils/dateService'
 import {mapState} from 'vuex'
 import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip";
+import LoadingSticker from "@/components/general/basic/LoadingSticker";
 
 export default {
   name: 'DatasetExplorer',
-  components: {BtnWithTooltip, LineagesBreakdown, ExplorerHistogram},
+  components: {LoadingSticker, BtnWithTooltip, LineagesBreakdown, ExplorerHistogram},
   props: {
     /** Flag for lineage search. */
     withLineages: Boolean
@@ -94,16 +97,13 @@ export default {
       lineagesData: [],
 
       /** Currently selected time range */
-      selectedRange: null
+      selectedRange: null,
+
+      error: undefined,
     }
   },
   computed: {
     ...mapState(['selectedLocation', 'selectedLineage']),
-
-    /** Visibility flag for the plots */
-    hasResult() {
-      return this.selectedLocation !== null
-    },
 
     /** Visibility flag for the plots */
     showPlot() {
@@ -135,6 +135,7 @@ export default {
     /** Fetches from the server the info on the available sequences for the selected parameters */
     fetchSequenceInfo() {
       if (this.selectedLocation) {
+        this.error = undefined
         this.isLoading.histogram = true
         const sequenceAPI = `/explorer/getSequenceInfo`
         const queryParams = {
@@ -148,7 +149,8 @@ export default {
               this.sequencesData = res.data
             })
             .catch((e) => {
-              this.$emit('error', e)
+              this.error = e
+              this.sequencesData = []
             })
             .finally(() => {
               this.isLoading.histogram = false
@@ -161,6 +163,7 @@ export default {
     /** Fetches from the server the info on lineage breakdown for the selected parameters */
     fetchLineageBreakdownInfo() {
       if (this.selectedLocation && this.selectedRange) {
+        this.error = undefined
         this.isLoading.breakdown = true
         const sequenceAPI = `/explorer/getLineagesBreakdown`
         const queryParams = {
@@ -169,12 +172,13 @@ export default {
           end: this.selectedRange[1],
         }
         this.$axios
-            .get(sequenceAPI, {params: queryParams})
+            .get(sequenceAPI, {params: queryParams, cache: false })
             .then(res => {
               this.lineagesData = res.data
             })
             .catch((e) => {
-              this.$emit('error', e)
+              this.error=e
+              this.lineagesData = {}
             })
             .finally(() => {
               this.isLoading.breakdown = false

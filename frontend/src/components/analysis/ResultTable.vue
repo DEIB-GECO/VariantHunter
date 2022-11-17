@@ -14,7 +14,7 @@
           <table-controls @showPValues='(flag) => showPValues=flag'/>
         </template>
 
-        
+
 
         <!---- TABLE SUPER HEADERS ---------------------------------------->
         <template v-slot:header>

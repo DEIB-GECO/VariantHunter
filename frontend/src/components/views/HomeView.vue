@@ -11,6 +11,9 @@
         <result-view v-if="currentView==='result'"/>
       </v-scroll-y-reverse-transition>
     </div>
+
+    <loading-sticker :error="error"/>
+
   </div>
 </template>
 
@@ -20,13 +23,15 @@ import NewSearchView from "@/components/views/NewSearchView";
 import ResultView from "@/components/views/ResultView";
 import {mapState} from "vuex";
 import {mapStateTwoWay} from "@/utils/bindService";
+import LoadingSticker from "@/components/general/basic/LoadingSticker";
 
 export default {
   name: "HomeView",
-  components: {ResultView, NewSearchView, Sidebar},
+  components: {LoadingSticker, ResultView, NewSearchView, Sidebar},
   data() {
     return {
-      currentView: 'new-search'
+      currentView: 'new-search',
+      error: undefined,
     }
   },
   methods:{
@@ -37,7 +42,9 @@ export default {
       this.$axios
         .get(urlAPI)
         .then(({data})=> { this.lastUpdate = data})
-        .catch(() => {})
+        .catch((e) => {
+          this.error=e
+        })
     }
   },
   computed:{
