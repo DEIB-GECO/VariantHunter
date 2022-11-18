@@ -1,88 +1,96 @@
-
 /* Overwrite default Vuetify and Plotly font */
 .v-application, body #app *, * {
-  font-family: 'Inter', serif !important;
+    font-family: 'Inter', serif !important;
 }
 
-#app .compact-h6{
+#app .compact-h6 {
     font-size: 20px !important;
 }
 
-#app .text-body-0{
+#app .text-body-0 {
     font-size: 19px !important;
 }
-#app .compact-text-0{
+
+#app .compact-text-0 {
     line-height: 19px !important;
 }
-#app .text-body-1{
+
+#app .text-body-1 {
     font-size: 17px !important;
 }
-#app .compact-text-1{
+
+#app .compact-text-1 {
     line-height: 17px !important;
 }
 
-#app .text-body-2{
+#app .text-body-2 {
     font-size: 16px !important;
 }
-#app .compact-text-2{
+
+#app .compact-text-2 {
     line-height: 16px !important;
 }
-#app .text-body-3{
+
+#app .text-body-3 {
     font-size: 15px !important;
 }
-#app .compact-text-3{
+
+#app .compact-text-3 {
     line-height: 15px !important;
 }
-#app .text-body-4{
+
+#app .text-body-4 {
     font-size: 13px !important;
 }
-#app .compact-text-4{
+
+#app .compact-text-4 {
     line-height: 13px !important;
 }
-#app .text-body-5{
+
+#app .text-body-5 {
     font-size: 12px !important;
 }
 
-.height-100{
+.height-100 {
     height: 100% !important;
 }
-.width-100{
+
+.width-100 {
     width: 100% !important;
 }
 
-.border{
+.border {
     border: black solid 1px;
 }
 
-.view-sizing{
+.view-sizing {
     max-width: 90vw !important;
 }
 
-.v-window.v-item-group{
+.v-window.v-item-group {
     width: 100% !important;
 }
 
-#app .v-select-list{
+#app .v-select-list {
     text-transform: initial !important;
 }
 
-#app .spaced-5{
+#app .spaced-5 {
     word-spacing: 5px !important;
 }
 
-.cursor-forbidden:hover, .cursor-forbidden *:hover{
+.cursor-forbidden:hover, .cursor-forbidden *:hover {
     cursor: not-allowed !important;
 }
 
 /* Overwrite the default ordering icon with a more intuitive one */
 .v-data-table-header__icon::before {
-  content: '\F033C' !important;
+    content: '\F033C' !important;
 }
 
-#app .break-spaces{
+#app .break-spaces {
     white-space: break-spaces !important;
 }
-
 
 
 /** Overlay tooltip content */
@@ -94,21 +102,23 @@
 
 /* Revert usual behavior for links */
 .underlined-links a {
-  color: var(--secondary-color) !important;
+    color: var(--secondary-color) !important;
 }
 
 /***************************************
  *  TOOLTIP VUETIFY STYLING OVERWRITE  *
  ***************************************/
 
-#app .v-tooltip__content{
+#app .v-tooltip__content {
     line-height: 15px !important;
-    background-color: rgba(1, 72, 120, 0.97) !important;
+    background-color: rgba(1, 72, 120) !important;
+    opacity: 1 !important;
+    box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%) !important;
     border-radius: 15px !important;
     color: white !important;
     padding: 7px 13px;
 }
 
-#app .v-dialog{
+#app .v-dialog {
     border-radius: 24px !important;
 }

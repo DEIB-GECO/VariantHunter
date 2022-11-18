@@ -115,7 +115,7 @@ export default {
 
       isLoading: false,
       error: undefined,
-      noDataWarning: true,
+      noDataWarning: false,
 
       showExplorer: false
     }
@@ -154,11 +154,11 @@ export default {
 
       this.$axios
           .get(url, {params: queryParams}).then(({data}) => data)
-          .then(({rows, tot_seq, characterizing_muts = null}) => {
+          .then(({rows, tot_seq, characterizing_muts = null, metadata}) => {
             if (rows.length > 0) {
               // Save the search parameters and results
-              this.addAnalysis({rows, tot_seq, characterizing_muts, mode: this.mode})
-            }else{
+              this.addAnalysis({rows, tot_seq, characterizing_muts, metadata})
+            } else {
               this.noDataWarning = true
             }
           })

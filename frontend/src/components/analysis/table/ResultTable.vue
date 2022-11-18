@@ -153,16 +153,16 @@
 
 <script>
 import SectionElement from "@/components/analysis/SectionElement";
-import TableControls from "@/components/analysis/tables/TableControls";
-import TableSuperHeader from "@/components/analysis/tables/TableSuperHeader";
+import TableControls from "@/components/analysis/table/TableControls";
+import TableSuperHeader from "@/components/analysis/table/TableSuperHeader";
 import ExpansionModeMenu from "@/components/menus/ExpansionModeMenu";
 import {mapGetters, mapMutations, mapState} from "vuex";
 import {compactLineagesData} from "@/utils/formatterService";
 import {sortItems} from "@/utils/sorterService";
-import GoToCovSpectrum from "@/components/analysis/tables/GoToCovSpectrum";
+import GoToCovSpectrum from "@/components/analysis/table/GoToCovSpectrum";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
-import RowOptions from "@/components/analysis/tables/RowOptions";
-import EmptyTable from "@/components/analysis/tables/EmptyTable";
+import RowOptions from "@/components/analysis/table/RowOptions";
+import EmptyTable from "@/components/analysis/table/EmptyTable";
 
 export default {
   name: "ResultTable",

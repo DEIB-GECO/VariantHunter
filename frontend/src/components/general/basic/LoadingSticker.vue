@@ -4,7 +4,7 @@
 
     <v-snackbar v-if="!standalone" max-width="500px" v-model="showSnackbar"
                 :timeout="isLoading?'-1':(error?'10000':'10000')"
-                :color="isLoading?'secondary':(error?'error':'')">
+                :color="isLoading?'warning':(error?'error':'')">
       <v-list class="text-left transparent tip rounded-xl white--text " two-line>
         <v-list-item class="justify-center">
           <v-list-item-icon class="text-center ma-auto mr-8" >
@@ -32,7 +32,7 @@
     <v-list v-else class="text-left transparent tip rounded-xl white--text mx-5" two-line>
         <v-list-item class="justify-center">
           <v-list-item-icon class="text-center ma-auto mr-8">
-            <v-progress-circular v-if="isLoading" color="secondary" indeterminate/>
+            <v-progress-circular v-if="isLoading" color="warning" indeterminate/>
             <v-icon v-if="error">mdi-exclamation-thick</v-icon>
           </v-list-item-icon>
           <v-list-item-content>

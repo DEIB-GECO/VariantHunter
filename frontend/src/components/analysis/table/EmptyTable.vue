@@ -10,16 +10,16 @@
     </v-list>
     <div v-if="useGlobalFilters">
       <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="warning" color="tertiary"
-                        icon="mdi-filter-off" text="Disable filters locally" bottom :click-handler="disableGlobalFilters"
+                        icon="mdi-filter-off" text="Switch to local filtering scope" bottom :click-handler="disableGlobalFilters"
                         tip="Use local filters for this analysis instead of the global ones"/>
       <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="error" color="tertiary"
                         icon="mdi-filter-remove" text="Clear filters" bottom :click-handler="()=>clearFilters(true)"
-                        tip="Remove filters for all the analysis (past and future)"/>
+                        tip="Clear the global filtering options for all the analysis (this, the others and future ones)"/>
     </div>
     <div v-else>
       <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="error" color="tertiary"
                         icon="mdi-filter-remove" text="Clear filters" bottom :click-handler="()=>clearFilters(false)"
-                        tip="Remove local filters"/>
+                        tip="Clear local filters"/>
     </div>
   </div>
 </template>

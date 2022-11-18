@@ -1,8 +1,8 @@
 <template>
-  <v-tooltip :bottom="bottom" :left="left" :right="right" :top="top" allow-overflow z-index="10">
+  <v-tooltip :disabled="tip===''" :bottom="bottom" :left="left" :right="right" :top="top" allow-overflow z-index="10" :close-delay="0">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn icon :small="size==='small'" :color="(isHover && hoverColor)?hoverColor:color" @click.stop="onClick()" @mouseenter="isHover=true" @mouseleave="isHover=false">
-            <v-icon  :color="(isHover && hoverColor)?hoverColor:color" :size="size" :dark="dark" v-bind="attrs" v-on="on" >
+          <v-btn icon :small="size==='small'" :color="(isHover && hoverColor)?hoverColor:color" v-bind="attrs" v-on="on" @click.stop="onClick()" @mouseenter="isHover=true" @mouseleave="isHover=false">
+            <v-icon  :color="(isHover && hoverColor)?hoverColor:color" :size="size" :dark="dark" >
             {{icon}}
             </v-icon>
           </v-btn>

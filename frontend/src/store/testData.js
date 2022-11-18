@@ -3423,6 +3423,9 @@ export const ex1 = {
             w3: '2021/05/02 - 2021/05/08',
             w4: '2021/05/09 - 2021/05/15'
         },
+        performedOn: new Date().toDateString()+ ", "+ new Date().toTimeString().slice(0,5),
+        datasetAsOf: new Date().toDateString(),
+        datasetType: 'Nextstrain',
     },
     characterizingMuts: null,
     rows: muts1,
@@ -3450,6 +3453,9 @@ export const ex2 = {
             w3: '2021/05/02 - 2021/05/08',
             w4: '2021/05/09 - 2021/05/15'
         },
+        performedOn: new Date().toDateString()+ ", "+ new Date().toTimeString().slice(0,5),
+        datasetAsOf: new Date().toDateString(),
+        datasetType: 'Gisaid',
     },
     characterizingMuts: ['NS7a_V82A'],
     rows: muts1,

@@ -100,8 +100,6 @@
 
 <script>
 import DialogOpener from '@/components/general/basic/DialogOpener'
-import domtoimage from "dom-to-image-more";
-import {getFileName} from "@/utils/parserService";
 import {mapGetters} from "vuex";
 import DownloadData from "@/components/controls/DownloadData";
 
@@ -112,43 +110,12 @@ export default {
     return {
       /** Flag to show the p_values in the table */
       showPValues: false,
-      /* Download flag: true if a file download is in progress */
-      downloadLoading: false,
     }
-  },
-  computed: {
-    ...mapGetters(['getCurrentAnalysis']),
   },
   watch: {
     showPValues(newVal) {
       this.$emit("showPValues", newVal)
     }
-  },
-  methods: {
-    /**
-     * Downloads a screenshot of the table, heatmap and line chart
-     */
-    downloadScreen() {
-      this.downloadLoading = true
-      // Retrieve section to be printed
-      const fileName = getFileName(this.getCurrentAnalysis.query)
-      const sectionToPrint = document.getElementById('app')
-
-      domtoimage
-          .toPng(sectionToPrint)
-          .then((dataUrl) => {
-            // Anchor element to download the file
-            const anchor = document.createElement('a')
-            anchor.download = fileName + '.png'
-            anchor.href = dataUrl
-            document.body.appendChild(anchor)
-
-            // Simulate click and remove element
-            anchor.click()
-            document.body.removeChild(anchor)
-            this.downloadLoading = false
-          });
-    },
   }
 }
 </script>

@@ -16,31 +16,11 @@
 
 <template>
   <div>
-    <result-navbar @moveForward="shiftAnalysis(+7)" @moveBackward="shiftAnalysis(-7)"/>
+    <result-navbar @shiftPeriod="d => shiftPeriod(d)" @shiftArea="a => shiftArea(a)" @shiftType="shiftType"/>
     <v-container class="view-sizing">
 
       <!-- Filtering options -->
-      <v-row id="top" class="mt-5 px-5">
-        <v-col cols="12" class="d-flex">
-          <span class="text-h6 compact-h6 font-weight-black primary--text pb-2 mx-n5 spaced-5">
-            <v-icon color='primary' left>mdi-filter-outline</v-icon>
-            <span>Filters</span>
-          </span>
-          <v-spacer/>
-          <v-icon color="primary">mdi-dots-horizontal</v-icon>
-        </v-col>
-        <!-- Protein filter -->
-        <v-col cols="12" sm="5" md="3">
-          <FieldSelector v-model='selectedProtein' label='Protein' placeholder='All'
-                         :possible-values='possibleProteins' autocomplete solo/>
-        </v-col>
-
-        <!-- Mutation filter -->
-        <v-col cols="12" sm="7" md="7">
-          <MutationSelector v-model='selectedMutation' :possible-values='possibleMutations'
-                            :characterizing-muts='characterizingMuts'/>
-        </v-col>
-      </v-row>
+      <result-filters/>
 
       <!-- Table -->
       <result-table :with-lineages="withLineages"/>
@@ -55,12 +35,17 @@
       <diffusion-odd-ratio/>
 
       <!-- Next/prev week button -->
-      <v-row>
-        <WeekSlider @moveForward="shiftAnalysis(+7)" @moveBackward="shiftAnalysis(-7)"/>
-      </v-row>
+      <week-slider @shiftPeriod="d => shiftPeriod(d)"/>
+
+      <!-- Info -->
+      <result-info/>
 
       <loading-sticker :is-loading="isLoading" :error="error"
                        :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
+
+      <no-data-alert v-model="noDataWarning" @update:modelValue="v=>noDataWarning=v"/>
+
+
       <div>
         <v-layout>
           GF: {{ $store.state.globalFilteringOpt }} <br/>
@@ -79,106 +64,91 @@
 
 <script>
 import {mapGetters, mapMutations, mapState} from 'vuex'
-import FieldSelector from '@/components/form/FieldSelector'
-import MutationSelector from '@/components/form/MutationSelector'
 import WeekSlider from '@/components/form/WeekSlider'
-import ResultNavbar from "@/components/analysis/ResultNavbar";
-import ResultTable from "@/components/analysis/ResultTable";
-import axios from "axios";
+import ResultNavbar from "@/components/analysis/navbar/ResultNavbar";
+import ResultTable from "@/components/analysis/table/ResultTable";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
 import DiffusionHeatmap from "@/components/analysis/DiffusionHeatmap";
 import DiffusionTrend from "@/components/analysis/DiffusionTrend";
 import DiffusionOddRatio from "@/components/analysis/DiffusionOddRatio";
+import NoDataAlert from "@/components/general/NoDataAlert";
+import ResultInfo from "@/components/analysis/ResultInfo";
+import ResultFilters from "@/components/analysis/ResultFilters";
 
 export default {
   name: 'ResultView',
   components: {
+    ResultFilters,
+    ResultInfo,
+    NoDataAlert,
     DiffusionOddRatio,
     DiffusionTrend,
     DiffusionHeatmap,
     LoadingSticker,
     ResultTable,
     ResultNavbar,
-    WeekSlider, MutationSelector, FieldSelector,
+    WeekSlider,
   },
   data() {
     return {
+      noDataWarning: false,
       isLoading: false,
       error: undefined,
     }
   },
   computed: {
-    ...mapState(['selectedLocation', 'selectedDate', 'selectedLineage', 'currentAnalysisId', 'globalFilteringOpt',]),
-    ...mapGetters(['getCurrentAnalysis', 'getCurrentLocalFilteringOpt']),
+    ...mapState(['selectedLocation', 'selectedDate', 'selectedLineage']),
+    ...mapGetters(['getCurrentAnalysis']),
 
     withLineages() {
-      console.log("# withLineages=" + (this.getCurrentAnalysis.query.lineage !== null))
       return this.getCurrentAnalysis.query.lineage !== null
     },
-
-    characterizingMuts() {
-      console.log("# characterizingMuts=" + this.getCurrentAnalysis.characterizingMuts)
-      return this.withLineages ? this.getCurrentAnalysis.characterizingMuts : null
-    },
-
-    useGlobalFilters() {
-      return this.getCurrentLocalFilteringOpt.useGlobalFilters
-    },
-
-    filteringOpt() {
-      return (this.useGlobalFilters ? this.globalFilteringOpt : this.getCurrentLocalFilteringOpt)
-    },
-
-    /** Possible proteins values computed based on data results */
-    possibleProteins() {
-      const set = new Set(this.getCurrentAnalysis.rows.map(({protein}) => protein))
-      return [...set].sort()
-    },
-
-    /** Possible mutations values computed based on data results */
-    possibleMutations() {
-      const set = new Set(this.getCurrentAnalysis.rows.map(({protein, mut}) => protein + '_' + mut))
-      return [...set].sort()
-    },
-
-    /** Selected mutation to further filter the data. Takes the form <PROTEIN>_<MUT> */
-    selectedMutation: {
-      set(newVal) {
-        this.setFilterOpt({global: this.useGlobalFilters, opt: 'muts', value: newVal})
-      },
-      get() {
-        return this.filteringOpt.muts
-      }
-    },
-
-    /** Selected protein to further filter the data */
-    selectedProtein: {
-      set(newVal) {
-        this.setFilterOpt({global: this.useGlobalFilters, opt: 'protein', value: newVal})
-      },
-      get() {
-        return this.filteringOpt.protein
-      }
-    },
-
-
   },
   methods: {
-    ...mapMutations(['setFilterOpt', 'setLocations', 'setLineage', 'setDate','addAnalysis']),
+    ...mapMutations(['setLocations', 'setLocation', 'setLineages', 'setLineage', 'setDate', 'addAnalysis']),
+
+    /**
+     * Restore the current analysis parameters
+     */
+    restoreCurrentAnalysis() {
+      const {location, granularity, lineage, endDate} = this.getCurrentAnalysis.query
+      this.setLocation(location[granularity])
+      if (this.withLineages) {
+        this.setLineage(lineage)
+      }
+      const referenceDate = new Date(endDate)
+      this.setDate([null, referenceDate.toISOString().slice(0, 10)])
+    },
 
     /**
      * Handle next/prev analysis requests
      * @param requestDelay  Delay in days for the new analysis
      */
-    shiftAnalysis(requestDelay) {
-      const currQuery = this.getCurrentAnalysis.query
-      this.setLocations(currQuery.location[currQuery.granularity])
-      if (this.withLineages) this.setLineage(currQuery.lineage)
-
-      const referenceDate = new Date(currQuery.endDate)
+    shiftPeriod(requestDelay) {
+      this.restoreCurrentAnalysis()
+      const {endDate} = this.getCurrentAnalysis.query
+      const referenceDate = new Date(endDate)
       referenceDate.setDate(referenceDate.getDate() + requestDelay)
       this.setDate([null, referenceDate.toISOString().slice(0, 10)])
+      this.sendAnalysis()
+    },
 
+    /**
+     * Handle shift type requests
+     */
+    shiftType() {
+      this.restoreCurrentAnalysis()
+      this.setLineage(null)
+      this.sendAnalysis()
+    },
+
+    /**
+     * Handle shift area requests
+     * @param locationName  Name of the location
+     */
+    shiftArea(locationName) {
+      this.restoreCurrentAnalysis()
+      this.setLocation(locationName)
       this.sendAnalysis()
     },
 
@@ -188,7 +158,7 @@ export default {
     sendAnalysis() {
       this.isLoading = true
       this.error = undefined
-      const url = (this.withLineages) ? "/lineage_specific/getStatistics" : "/lineage_independent/getStatistics"
+      const url = (this.selectedLineage) ? "/lineage_specific/getStatistics" : "/lineage_independent/getStatistics"
       const queryParams = {
         location: this.selectedLocation,
         date: this.selectedDate[1],
@@ -197,9 +167,13 @@ export default {
 
       this.$axios
           .get(url, {params: queryParams}).then(({data}) => data)
-          .then(({rows, tot_seq, characterizing_muts = null}) => {
-            // Save the search parameters and results
-            this.addAnalysis({rows, tot_seq, characterizing_muts, mode: (this.withLineages ? 'ls' : 'li')})
+          .then(({rows, tot_seq, characterizing_muts = null, metadata}) => {
+            if (rows.length > 0) {
+              // Save the search parameters and results
+              this.addAnalysis({rows, tot_seq, characterizing_muts, metadata})
+            } else {
+              this.noDataWarning = true
+            }
           })
           .catch((e) => {
             this.error = e
