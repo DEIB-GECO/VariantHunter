@@ -18,6 +18,37 @@ api = Namespace('locations', description='locations')
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
+def get_location_data(location):
+    """
+    Fetch all the data of a given location
+    """
+    con = sqlite3.connect(db_path)
+    cur = con.cursor()
+    query = '''
+                SELECT LO.location AS region, COU.location AS country, CON.location AS continent
+                FROM locations AS LO
+                JOIN regions AS RE ON LO.location_id=RE.region_id
+                JOIN locations AS COU ON COU.location_id=RE.country_id
+                JOIN countries AS CC ON CC.country_id=RE.country_id
+                JOIN locations AS CON ON CON.location_id=CC.continent_id
+                WHERE LO.location=:loc
+                UNION
+                SELECT null AS region, LO.location AS country, CON.location AS continent
+                FROM locations AS LO
+                JOIN countries AS CO ON LO.location_id=CO.country_id
+                JOIN locations AS CON ON CON.location_id=CO.continent_id
+                WHERE LO.location=:loc
+                UNION
+                SELECT null AS region, null AS country, LO.location as continent
+                FROM locations AS LO JOIN continents AS CO ON LO.location_id=CO.continent_id
+                WHERE LO.location=:loc
+            '''
+    data = cur.execute(query, {'loc':location}).fetchone()
+
+    con.close()
+    return {'region': data[0],'country': data[1], 'continent': data[2]}
+
+
 def get_locations(string):
     """
     Fetch all the locations starting with a given string
@@ -27,7 +58,7 @@ def get_locations(string):
     locations = []
     params = {
         'first_w': string + '%',  # e.g., "Eu" will match "Europe"
-        'middle_w': '% ' + string + '%'   # e.g., "Kin" will match "United Kingdom"
+        'middle_w': '% ' + string + '%'  # e.g., "Kin" will match "United Kingdom"
     }
 
     # Fetch continents
@@ -67,6 +98,7 @@ def get_locations(string):
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"                             ENDPOINTS                               """""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 
 @api.route('/getLocations')
 class FieldList(Resource):

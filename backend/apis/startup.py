@@ -21,6 +21,7 @@ from .utils.path_manager import db_paths as paths
 
 api = Namespace('startup', description='startup')
 args = get_cmd_arguments()
+dataset_type = "Gisaid" if args.file_type != 'nextstrain' else "Nextstrain"
 
 
 def startup():
