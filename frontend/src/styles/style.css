@@ -122,3 +122,7 @@
 #app .v-dialog {
     border-radius: 24px !important;
 }
+
+.v-menu__content {
+    border-radius: 0 0 22px 22px !important;
+}

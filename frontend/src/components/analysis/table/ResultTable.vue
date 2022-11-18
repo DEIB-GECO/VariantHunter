@@ -124,7 +124,7 @@
         </template>
         <template v-else-if="isLoadingDetails" v-slot:expanded-item>
           <td colspan="9" class="py-5 text-center secondary--text font-weight-medium">
-            <loading-sticker :standalone="true" :is-loading="true"
+            <loading-sticker :standalone="true" :is-loading="true" no-overlay
                              :loading-messages="[{text:'Analyzing lineages data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
           </td>
         </template>

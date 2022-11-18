@@ -54,7 +54,7 @@
     <!-- Mutation filter -->
     <v-col cols="12" sm="7" md="7">
       <mutation-selector v-model='selectedMutation' :possible-values='possibleMutations'
-                         :characterizing-muts='characterizingMuts'/>
+                         :characterizing-muts='characterizingMuts' />
     </v-col>
   </v-row>
 </template>

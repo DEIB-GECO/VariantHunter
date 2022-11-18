@@ -39,7 +39,7 @@
       </div>
 
       <!-- List uploader element-->
-      <v-dialog v-model='showListUploader' max-width='500' transition='dialog-bottom-transition'>
+      <v-dialog v-model='showListUploader' max-width='850' transition='dialog-bottom-transition'>
         <v-card>
           <!-- Dialog title -->
           <v-toolbar color='f_primary' class='dialog-title' dark flat>
@@ -54,8 +54,8 @@
 
                 <!-- Help info -->
                 <v-col cols='12'>
-                  Please, paste here the list of mutations to be filtered. <br/>
-                  The list will be automatically parsed to fill in the filter.
+                  Please, write here the list of mutations to be filtered.
+                  The list will be automatically parsed to fill in the filter. See the example below.
                 </v-col>
 
                 <!-- Separator selector -->
@@ -71,9 +71,28 @@
                               :success-messages='successMessages' @input='parseMutationList'/>
                 </v-col>
 
+                <v-col cols="12">
+                  <v-checkbox v-model="excludeAbsent" dense @click="parseMutationList">
+                    <template v-slot:label>
+                      <v-tooltip bottom max-width="400px" allow-overflow>
+                        <template v-slot:activator="{on, attrs}">
+                          <span v-on="on" v-bind="attrs" class="text-body-5 text-uppercase">
+                            Exclude absent mutations</span>
+                        </template>
+                        <div class="mb-2">
+                          If active, mutations not present in the current analysis will not be considered.
+                        </div>
+                        <span class="text-decoration-underline">In case of global scope filtering</span> this implies
+                        that only mutations present in this analysis will be considered for the other analyses too.
+                        Disable to consider them all.
+                      </v-tooltip>
+                    </template>
+                  </v-checkbox>
+                </v-col>
+
                 <!-- Examples section -->
                 <v-col cols='12'>
-                  For example:
+                  Example:
                   <code>M_A63T {{ selectedSeparator ? selectedSeparator : ';' }} M_D3G
                     {{ selectedSeparator ? selectedSeparator : ';' }} M_I76V</code> or
                   <code>M:A63T {{ selectedSeparator ? selectedSeparator : ';' }} M:D3G
@@ -83,7 +102,10 @@
                 <!-- Parsed result -->
                 <v-col v-if='parsedList.length>0' cols='12'>
 
-                  <v-chip v-for='elem in parsedList' :key='elem'>{{ elem }}</v-chip>
+                  <v-chip v-for='elem in parsedList' :key='elem' class="mr-1 mb-1"
+                          :text-color='possibleValues.includes(elem)?"green":"red"'
+                          :color='possibleValues.includes(elem)?"green lighten-5":"red lighten-5"'>{{ elem }}
+                  </v-chip>
 
                 </v-col>
               </v-row>
@@ -100,7 +122,7 @@
       </v-dialog>
 
       <!-- Lineage selector element-->
-      <v-dialog v-model='showLineageSelector' max-width='500' transition='dialog-bottom-transition'>
+      <v-dialog v-model='showLineageSelector' max-width='850' transition='dialog-bottom-transition'>
         <v-card>
           <!-- Dialog title -->
           <v-toolbar color='f_primary' class='dialog-title' dark flat>
@@ -119,33 +141,56 @@
                 </v-col>
 
                 <!-- Lineage selector -->
-                <v-col cols='12'>
-                  <FieldSelector v-model='selectedLineages' :possible-values='possibleLineages' placeholder='Lineages'
-                                 :loading='processing' outlined autocomplete multiple small-chips
-                                 @input='manageLineageSelection'/>
+                <v-col cols="12" class="my-0 py-0">
+                  <field-selector v-model='selectedLineages' :possible-values='possibleLineages' placeholder='Lineages'
+                                  :loading='processing' solo autocomplete multiple small-chips
+                                  @input='manageLineageSelection'/>
+                </v-col>
+                <v-col cols="12">
+                  <v-checkbox v-model="excludeAbsent" dense @click="manageLineageSelection">
+                    <template v-slot:label>
+                      <v-tooltip bottom max-width="400px" allow-overflow>
+                        <template v-slot:activator="{on, attrs}">
+                          <span v-on="on" v-bind="attrs" class="text-body-5 text-uppercase">
+                            Exclude absent mutations</span>
+                        </template>
+                        <div class="mb-2">
+                          If active, mutations not present in the current analysis will not be considered.
+                        </div>
+                        <span class="text-decoration-underline">In case of global scope filtering</span> this implies
+                        that only mutations present in this analysis will be considered for the other analyses too.
+                        Disable to consider them all.
+                      </v-tooltip>
+                    </template>
+                  </v-checkbox>
                 </v-col>
 
                 <!-- Result -->
                 <v-col cols='12' v-if='allLinMuts.length>0'>
+                  <div class="text-body-3 my-2"> Mutation report:</div>
+                  <v-chip x-small class="mb-5 mr-2" text-color='green' color='green lighten-5'>PRESENT MUTATION</v-chip>
+                  <v-chip x-small class="mb-5 mr-2" text-color='red' color='red lighten-5'>ABSENT MUTATION</v-chip>
+                  <br/>
                   <v-chip v-for='elem in allLinMuts' :key='elem' class="mr-1 mb-1"
-                          :text-color='selectedLinMuts.includes(elem)?"green":"red"'
-                          :color='selectedLinMuts.includes(elem)?"green lighten-5":"red lighten-5"'>
+                          :text-color='possibleValues.includes(elem)?"green":"red"'
+                          :color='possibleValues.includes(elem)?"green lighten-5":"red lighten-5"'>
                     {{ elem }}
                   </v-chip>
-                  <br/>
-                  <v-chip x-small class="mt-5 mr-2" text-color='green' color='green lighten-5'>PRESENT MUTATION</v-chip>
-                  <v-chip x-small class="mt-5 mr-2" text-color='red' color='red lighten-5'>ABSENT MUTATION</v-chip>
                 </v-col>
 
                 <!-- Additional info -->
-                <v-col cols='1' class='mt-4'>
-                  <v-icon small left>mdi-information-outline</v-icon>
-                </v-col>
-                <v-col cols='11' class='mt-4'>
-                <span>
-                  The characterizing mutations are identified as those that are
-                  present in at least 50% of the lineage sequences.
-                </span>
+                <v-col cols="12">
+                  <v-row no-gutters>
+                    <v-col cols='1' class='mt-4'>
+                      <v-icon small left>mdi-information-outline</v-icon>
+                    </v-col>
+                    <v-col cols='11' class='mt-4'>
+                      <span>
+                        The characterizing mutations are identified as those that are
+                        present in at least 50% of the lineage sequences.
+                      </span>
+                    </v-col>
+                  </v-row>
                 </v-col>
               </v-row>
             </v-container>
@@ -154,7 +199,7 @@
           <!-- Dialog actions -->
           <v-card-actions class='justify-end'>
             <v-btn text @click='showLineageSelector = false'>
-              Done
+              Apply
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -195,6 +240,9 @@ export default {
     return {
       /** List uploader visibility */
       showListUploader: false,
+
+      /** excludeAbsent: true iff absent muts must be excluded */
+      excludeAbsent: false,
 
       /** Processing flag. If true, the list is being parsed. */
       processing: false,
@@ -263,36 +311,37 @@ export default {
   methods: {
     /**
      * Perform the parsing of the uploadedList
-     * @returns {number}  Number of elements correctly parsed
      */
     parseMutationList() {
       let count = 0
       this.errorMessages = []
       this.successMessages = []
 
-      if (this.selectedSeparator !== '' && this.uploadedList != null) {
+      if (this.selectedSeparator !== '' && this.uploadedList !== null) {
         try {
           this.processing = true
 
-          // Split, trim and remove duplicates
-          let values = this.uploadedList.split(this.selectedSeparator).map(x => x.trim().toLowerCase())
+          // Split, trim, remove duplicates and eventually replace _ with : as separator between prot and mut
+          let values = this.uploadedList.split(this.selectedSeparator).map(x => x.trim()).map(x => x.replace(/:/, '_'))
           values = values.filter((x, index) => x !== '' && values.indexOf(x) === index)
 
-          // Filter the possible ones only. Allow : or _ dividers for prot and mutation
-          const dividers = {':': '_', '_': ':'}
-          this.parsedList = this.possibleValues
-              .filter((x) => values.includes(x.toLowerCase()) ||
-                  values.includes(x.toLowerCase().replace(/([_:])+/g, div => dividers[div])))
+          // Eventually filter the possible ones in the context only.
+          this.parsedList = this.excludeAbsent
+              ? this.possibleValues.filter((x) => values.includes(x))
+              : values
+
           count = this.parsedList.length
-          this.successMessages = ['Parsing completed. Detected ' + (count) + ' valid/allowed mutations.']
+          this.successMessages = ['Parsing completed. Found ' + (count) + ' valid mutations.']
+          this.$emit('input', this.parsedList)
+
         } catch (e) {
           this.errorMessages = ['Invalid input. (Details – ' + e.toString() + ')']
+        } finally {
+          this.processing = false
         }
-        this.processing = false
       } else {
         this.parsedList = []
       }
-      return count
     },
 
     /** Fetch the possible lineages*/
@@ -332,8 +381,10 @@ export default {
             .then(res => {
               this.allLinMuts = res.data
 
-              // Filter only the allowed mutations and emit update
-              this.selectedLinMuts = this.possibleValues.filter((x) => this.allLinMuts.includes(x))
+              //  Eventually filter and emit update
+              this.selectedLinMuts = this.excludeAbsent
+                  ? this.possibleValues.filter((x) => this.allLinMuts.includes(x))
+                  : this.allLinMuts
               this.$emit('input', this.selectedLinMuts)
             })
             .catch((e) => {
@@ -357,10 +408,7 @@ export default {
     /** On uploader close apply filter parsing */
     showListUploader(newVal) {
       if (!newVal) {
-        const valCount = this.parseMutationList()
-        if (valCount > 0) {
-          this.$emit('input', this.parsedList)
-        }
+        this.parseMutationList()
       }
     },
 

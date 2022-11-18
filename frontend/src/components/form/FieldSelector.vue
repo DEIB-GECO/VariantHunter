@@ -35,8 +35,7 @@
       <v-combobox v-else-if="combobox" v-model='selectedValue' :items='possibleValues' clearable
                   clear-icon="mdi-backspace-outline" :multiple='multiple'
                   :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder' :solo='solo'
-                  :loading='loading'
-                  attach dense no-data-text="Not found" flat>
+                  :loading='loading' attach dense no-data-text="Not found" flat>
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
@@ -56,8 +55,7 @@
       <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable
                       clear-icon="mdi-backspace-outline" :multiple='multiple'
                       :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder'
-                      :solo='solo' :loading='loading'
-                      attach dense no-data-text="Not found" flat>
+                      :solo='solo' :loading='loading' attach dense no-data-text="Not found" flat>
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
@@ -105,7 +103,7 @@ export default {
     smallChips: Boolean,
 
     /** loading flag. If true, the selector is loading data */
-    loading: Boolean
+    loading: Boolean,
   },
   computed: {
     /** Selected value */
