@@ -1,11 +1,19 @@
 <template>
-  <v-tooltip bottom max-width='400' open-delay='0'>
+  <v-tooltip bottom max-width='400'>
     <template v-slot:activator='{ on, attrs }'>
       <v-btn v-if="controlType==='button'" v-bind='attrs' v-on='on' :loading='downloadLoading' color='primary'
              outlined depressed rounded small @click='downloadData'>
         <v-icon left class="hidden-xs-only">mdi-download-circle-outline</v-icon>
         Download&nbsp;<span class='hidden-sm-and-down'>data</span>
       </v-btn>
+      <v-list-item v-else link dense @click='downloadData'>
+        <v-icon v-if="!downloadLoading" class="pr-3" color="primary">mdi-download</v-icon>
+        <v-progress-circular v-else indeterminate color="warning"/>
+        <v-list-item-content>
+        <v-list-item-title class="primary--text">Download data</v-list-item-title>
+        <v-list-item-subtitle>Download table data as a .csv file</v-list-item-subtitle>
+          </v-list-item-content>
+      </v-list-item>
     </template>
     <span>Download table data as a .csv file</span>
   </v-tooltip>
