@@ -43,7 +43,7 @@
       <loading-sticker :is-loading="isLoading" :error="error"
                        :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
 
-      <no-data-alert v-model="noDataWarning" @update:modelValue="v=>noDataWarning=v"/>
+      <no-data-alert v-model="noDataWarning"/>
 
 
       <div>

@@ -1,3 +1,4 @@
+
 module.exports = {
   transpileDependencies: ["vuetify"],
   assetsDir: "static", // For simple configuration of static files in Flask (the "static_folder='...../dist/static'" part in app.py)

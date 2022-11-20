@@ -97,13 +97,13 @@
         <!---- EXPANDED TABLE ELEMENT ------------------------------------>
         <template v-if='!withLineages && !isLoadingDetails' v-slot:expanded-item='{ item }'>
           <td :colspan='4' class='expanded-item-title'>
-            <expansion-mode-menu @changeNotationMode="e=>notationMode=e"/>
+            <expansion-mode-menu v-model="notationMode" />
             <div class="row-name">Lineages</div>
           </td>
           <td class='expanded-td'>
             <v-simple-table>
               <tbody>
-              <tr v-for='(lineage, lineage_index) in formatBreakdown(item.lineages)' v-bind:key='lineage_index'>
+              <tr v-for='(lineage, lineage_index) in formatBreakdown' v-bind:key='lineage_index'>
                 <td>{{ lineage.name }}</td>
               </tr>
               </tbody>
@@ -112,10 +112,10 @@
           <td class='expanded-td' v-for='week in [1, 2, 3, 4]' v-bind:key='week'>
             <v-simple-table>
               <tbody>
-              <tr v-for='(lineage, lineage_index) in formatBreakdown(item.lineages)' v-bind:key='lineage_index'>
+              <tr v-for='(lineage, lineage_index) in formatBreakdown' v-bind:key='lineage_index'>
                 <td>
-                  <span>{{ (item['f' + week] === 0 ? 0 : item['f' + week].toPrecision(3)) + '% ' }}</span>
-                  <span class="text-body-4">{{ '(' + item['w' + week] + ')' }}</span>
+                  <span>{{ (lineage['f' + week] === 0 ? 0 : lineage['f' + week].toPrecision(3)) + '% ' }}</span>
+                  <span class="text-body-4">{{ '(' + lineage['w' + week] + ')' }}</span>
                 </td>
               </tr>
               </tbody>
@@ -280,7 +280,17 @@ export default {
         headers = headers.concat(extendedHeaders)
       }
       return headers
-    }
+    },
+
+     /**
+     * Reformat breakdown data based on the notation mode selected. Either using full notation or star notation.
+     */
+    formatBreakdown(){
+      if(this.expandedRows.length===0) return []
+
+      const lineagesData = this.expandedRows[0].lineages // lineages data in full notation
+      return (this.notationMode === 0 || !lineagesData) ? lineagesData : compactLineagesData(lineagesData, this.notationMode)
+    },
 
   },
   methods: {
@@ -314,15 +324,6 @@ export default {
             .catch((e) => this.error = e)
             .finally(() => this.isLoadingDetails = false)
       }
-    },
-
-    /**
-     * Reformat breakdown data based on the notation mode selected. Either using full notation or star notation.
-     * @param lineagesData  The lineages data in full notation
-     * @returns {*}         Lineages data in the correct notation
-     */
-    formatBreakdown(lineagesData) {
-      return (this.notationMode === 0 || !lineagesData) ? lineagesData : compactLineagesData(lineagesData, this.notationMode)
     },
 
     /**

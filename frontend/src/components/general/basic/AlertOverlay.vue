@@ -23,7 +23,7 @@ export default {
   methods: {
     hide() {
       console.log("HIDE")
-      this.$emit('update:modelValue', false)
+      this.$emit('input', false)
     }
   }
 }

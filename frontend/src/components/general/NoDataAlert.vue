@@ -1,5 +1,5 @@
 <template>
-  <alert-overlay :value="value" @update:modelValue="update" icon="mdi-database-remove-outline" type="error">
+  <alert-overlay :value="value" @input="update" icon="mdi-database-remove-outline" type="error">
     <template>
       <div>
         <div class="text-h5 font-weight-black">Sorry,&nbsp;<span
@@ -26,8 +26,7 @@ export default {
   },
   methods: {
     update(newVal) {
-      console.log("CI SONO")
-      this.$emit('update:modelValue', newVal)
+      this.$emit('input', newVal)
     }
   }
 }

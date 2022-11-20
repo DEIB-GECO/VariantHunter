@@ -45,6 +45,11 @@
           <v-toolbar color='f_primary' class='dialog-title' dark flat>
             <v-icon left large>mdi-file-upload-outline</v-icon>
             Select mutations from list
+            <v-spacer/>
+            <icon-with-tooltip hover-color="error" bottom tip="Close without applying filters" icon="mdi-close"
+                               :click-handler="()=>close(false)"/>
+            <icon-with-tooltip hover-color="success" bottom tip="Apply filters and close" icon="mdi-check"
+                               :click-handler="()=> close(true)"/>
           </v-toolbar>
 
           <!-- Dialog content -->
@@ -114,9 +119,8 @@
 
           <!-- Dialog actions -->
           <v-card-actions class='justify-end'>
-            <v-btn text @click='showListUploader = false'>
-              Done
-            </v-btn>
+            <v-btn text rounded @click='close(false)' class="mr-2">Cancel</v-btn>
+            <v-btn text rounded @click="close(true)">Apply</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -128,6 +132,12 @@
           <v-toolbar color='f_primary' class='dialog-title' dark flat>
             <v-icon left large>mdi-shape-outline</v-icon>
             Select mutations from lineages
+            <v-spacer/>
+            <v-spacer/>
+            <icon-with-tooltip hover-color="error" bottom tip="Close without applying filters" icon="mdi-close"
+                               :click-handler="()=>close(false)"/>
+            <icon-with-tooltip hover-color="success" bottom tip="Apply filters and close" icon="mdi-check"
+                               :click-handler="()=> close(true)"/>
           </v-toolbar>
 
           <!-- Dialog content -->
@@ -143,7 +153,7 @@
                 <!-- Lineage selector -->
                 <v-col cols="12" class="my-0 py-0">
                   <field-selector v-model='selectedLineages' :possible-values='possibleLineages' placeholder='Lineages'
-                                  :loading='processing' solo autocomplete multiple small-chips
+                                  :loading='processing' solo autocomplete multiple small-chips outlined
                                   @input='manageLineageSelection'/>
                 </v-col>
                 <v-col cols="12">
@@ -198,9 +208,8 @@
 
           <!-- Dialog actions -->
           <v-card-actions class='justify-end'>
-            <v-btn text @click='showLineageSelector = false'>
-              Apply
-            </v-btn>
+            <v-btn text rounded @click='close(false)' class="mr-2">Cancel</v-btn>
+            <v-btn text rounded @click="close(true)">Apply</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -222,10 +231,11 @@
 
 <script>
 import FieldSelector from '@/components/form/FieldSelector'
+import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 
 export default {
   name: 'MutationSelector',
-  components: {FieldSelector},
+  components: {IconWithTooltip, FieldSelector},
   props: {
     /** Value variable for binding of the value */
     value: {},
@@ -322,17 +332,34 @@ export default {
           this.processing = true
 
           // Split, trim, remove duplicates and eventually replace _ with : as separator between prot and mut
-          let values = this.uploadedList.split(this.selectedSeparator).map(x => x.trim()).map(x => x.replace(/:/, '_'))
+          let values = this.uploadedList.split(this.selectedSeparator).map(x => x.trim())
           values = values.filter((x, index) => x !== '' && values.indexOf(x) === index)
 
-          // Eventually filter the possible ones in the context only.
-          this.parsedList = this.excludeAbsent
-              ? this.possibleValues.filter((x) => values.includes(x))
-              : values
+          // Exclude values not matching mutations of the current analysis?
+          if (this.excludeAbsent) {
+            // We have the "right" format for the mutations: just compare the strings after small format conversions
+            values = values.map(x => x.replace(/:/, '_').toLowerCase())
+            this.parsedList = this.possibleValues.filter((x) => values.includes(x.toLowerCase()))
+
+          } else {
+            // We don't have the "right format" for the mutations: need to reconstruct it using regexp
+            const inputRE = new RegExp(/^(?<pMain>[A-Za-z]+)(?<pNum>[0-9]*)(?<pEnd>[A-Za-z]*)(?<sep>_|:)(?<mutS>[A-Za-z]+)(?<mutP>[0-9]+)(?<mutE>[A-Za-z]+)$/)
+            const legalValues = [] // store only legal values from syntax pov
+            values.map(x => x.replace(inputRE, (match, p1, p2, p3, p4, p5, p6, p7, offset, string, groups) => {
+              const {pMain, pNum, pEnd, mutS, mutP, mutE} = groups
+              let fixedStr = pMain.toUpperCase() + pNum + pEnd + '_' + (mutS + mutP + mutE).toUpperCase()
+              fixedStr = fixedStr
+                  .replace('SPIKE', 'Spike')
+                  .replace('INS', 'ins')
+                  .replace('DEL', 'del')
+                  .replaceAll('STOP', 'stop')
+              legalValues.push(fixedStr)
+            }))
+            this.parsedList = legalValues
+          }
 
           count = this.parsedList.length
-          this.successMessages = ['Parsing completed. Found ' + (count) + ' valid mutations.']
-          this.$emit('input', this.parsedList)
+          this.successMessages = ['Parsing completed. Found ' + (count) + ' legal mutations.']
 
         } catch (e) {
           this.errorMessages = ['Invalid input. (Details – ' + e.toString() + ')']
@@ -355,7 +382,7 @@ export default {
               this.possibleLineages = res.data
             })
             .catch((e) => {
-              this.$emit('error', e)
+              this.error = e
             })
             .finally(() => {
               this.processing = false
@@ -385,10 +412,9 @@ export default {
               this.selectedLinMuts = this.excludeAbsent
                   ? this.possibleValues.filter((x) => this.allLinMuts.includes(x))
                   : this.allLinMuts
-              this.$emit('input', this.selectedLinMuts)
             })
             .catch((e) => {
-              this.$emit('error', e)
+              this.error = e
             })
             .finally(() => {
               this.processing = false
@@ -402,6 +428,16 @@ export default {
     selectNonCharMuts() {
       const nonCharMuts = this.possibleValues.filter((x) => !this.characterizingMuts.includes(x))
       this.$emit('input', nonCharMuts)
+    },
+
+    close(apply) {
+      if (this.showListUploader) {
+        this.showListUploader = false
+        if (apply) this.$emit('input', this.parsedList)
+      } else {
+        this.showLineageSelector = false
+        if (apply) this.$emit('input', this.selectedLinMuts)
+      }
     }
   },
   watch: {
