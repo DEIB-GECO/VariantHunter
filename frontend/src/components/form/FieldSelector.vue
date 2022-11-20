@@ -36,19 +36,28 @@
                   clear-icon="mdi-backspace-outline" :multiple='multiple'
                   :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder' :solo='solo'
                   :loading='loading' attach dense no-data-text="Not found" flat>
+
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
-        <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
 
+        <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
           <v-chip v-if="index<5" class="mr-1 my-1" small>{{ item }}</v-chip>
-          <v-chip v-else-if="index===5" class="mr-1 my-1" small outlined>
+          <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999" max-width="80vw">
+            <template v-slot:activator="{ on, attrs }">
+              <v-chip v-on="on" v-bind="attrs"  class="mr-1 my-1" small outlined>
             +{{ value.length - 5 }} others
           </v-chip>
+            </template>
+            Selected values: <br/>
+            <v-chip v-for="(value,idx) in selectedValue" :key="idx" class="mr-1 my-1" small>{{ value }}</v-chip>
+          </v-tooltip>
         </template>
+
         <template v-slot:no-data>
           <slot name="no-data"></slot>
         </template>
+
       </v-combobox>
 
       <!-- Autocomplete selector -->
@@ -56,16 +65,24 @@
                       clear-icon="mdi-backspace-outline" :multiple='multiple'
                       :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder'
                       :solo='solo' :loading='loading' attach dense no-data-text="Not found" flat>
+
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
         </template>
-        <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
 
+        <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
           <v-chip v-if="index<5" class="mr-1 my-1" small>{{ item }}</v-chip>
-          <v-chip v-else-if="index===5" class="mr-1 my-1" small outlined>
+          <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999" max-width="80vw">
+            <template v-slot:activator="{ on, attrs }">
+              <v-chip v-on="on" v-bind="attrs"  class="mr-1 my-1" small outlined>
             +{{ value.length - 5 }} others
           </v-chip>
+            </template>
+            Selected values: <br/>
+            <v-chip v-for="(value,idx) in selectedValue" :key="idx" class="mr-1 my-1" small>{{ value }}</v-chip>
+          </v-tooltip>
         </template>
+
       </v-autocomplete>
 
     </v-col>
