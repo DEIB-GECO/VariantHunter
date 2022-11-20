@@ -15,7 +15,7 @@
         </template>
       </list-item>
       <v-expand-transition>
-        <search-history v-if="showHistory" type="all" @select="currentView='result'"/>
+        <search-history v-if="showHistory" type="all"/>
       </v-expand-transition>
     </v-list>
 
@@ -41,23 +41,18 @@ export default {
       showSidebar: true,
       isCollapsed: true,
       showHistory: true,
-      currentView: 'new-search'
     }
   },
   computed: {
-    ...mapState(['currentAnalysisId'])
-  },
-  watch: {
-    currentAnalysisId(newVal) {
-      if (newVal)
-        this.currentView = 'result'
+    ...mapState(['currentAnalysisId']),
+    currentView() {
+      return this.currentAnalysisId !== null ? 'result' : 'new-search'
     }
   },
   methods: {
     ...mapMutations(['setCurrentAnalysis']),
 
     newAnalysisHandler() {
-      this.currentView = 'new-search'
       this.setCurrentAnalysis(null)
     }
   }

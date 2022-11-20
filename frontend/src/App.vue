@@ -1,21 +1,22 @@
 <template>
-   <div id="app">
-     <v-app >
+  <div id="app">
+    <v-app>
       <!-- Navbar -->
-      <v-app-bar app color='f_primary' class='navbar' max-height="56px" short scroll-off-screen  dark flat clipped-left>
+      <v-app-bar app color='f_primary' class='navbar' max-height="56px" short scroll-off-screen dark flat clipped-left>
 
         <!-- Logo -->
-        <v-img :src='websiteLogo' class='logo' contain max-height='40px' max-width='40px' />
+        <v-img :src='websiteLogo' class='logo' contain max-height='40px' max-width='40px'/>
         <v-toolbar-title class='site-title'>
           <router-link to='/variant_hunter/'>
             <span class='emphasis'>Variant</span>
-            <span>Hunter</span>
+            <span>Hunter</span>{{this.$store.state.loading}}
           </router-link>
         </v-toolbar-title>
 
         <v-spacer/>
 
-        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1 app-container f_primary--text' color="f_tertiary" elevation="0" rounded small>
+        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1 app-container f_primary--text' color="f_tertiary"
+               elevation="0" rounded small>
           <router-link :to="{ name: 'About'}">
             About this tool
           </router-link>
@@ -23,9 +24,9 @@
       </v-app-bar>
 
       <v-main :class="$route.name==='About'?'bg_var2':''">
-        <router-view />
+        <router-view/>
       </v-main>
-     </v-app>
+    </v-app>
   </div>
 </template>
 
@@ -33,8 +34,7 @@
 
 export default {
   name: 'App',
-
-  data () {
+  data() {
     return {
       /** VariantHunter logo */
       websiteLogo: require('./assets/logo.png'),
@@ -46,12 +46,12 @@ export default {
 <style>
 
 /** Navbar overlapping visibility */
-.navbar{
+.navbar {
   z-index: 15 !important;
 }
 
 /* Site logo */
-.logo{
+.logo {
   border-radius: 12px;
   margin-left: 17px;
 }
@@ -96,6 +96,7 @@ export default {
 body {
   background: var(--v-f_primary-base);
 }
+
 #app {
   background: var(--v-bg_var1-base); /* to ensure readable downloadable images */
 }
@@ -104,6 +105,7 @@ body {
 .main-svg {
   border-radius: 4px;
 }
+
 .regular-plot .main-svg {
   border-radius: 4px 0 4px 4px;
 }
@@ -122,8 +124,8 @@ body {
 }
 
 /* Prevent text-underline for links */
-a, .site-title a{
-    color: inherit !important;
-    text-decoration: none !important;
+a, .site-title a {
+  color: inherit !important;
+  text-decoration: none !important;
 }
 </style>

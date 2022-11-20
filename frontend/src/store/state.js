@@ -70,4 +70,7 @@ export const state = {
 
     /** lastUpdate: last update date */
     lastUpdate: null,
+
+    reset: false,
+    loading:false,
 }

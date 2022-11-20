@@ -96,6 +96,9 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item>
+              <v-icon @click="clearState">mdi-plus</v-icon>
+            </v-list-item>
           </v-list>
         </v-card-text>
 
@@ -110,6 +113,7 @@
 import {version} from '../../../package.json'
 import ListItem from "@/components/general/basic/ListItem"
 import {shortcuts} from "@/utils/keyboardService";
+import {mapMutations} from "vuex";
 
 export default {
   name: "AppPreferences",
@@ -143,11 +147,17 @@ export default {
 
   },
   methods: {
+    ...mapMutations(['resetState']),
     toggleTheme(evt) {
       if (this.autoDarkTheme) {
         this.$vuetify.theme.dark = evt.matches
       }
     },
+
+    clearState(){
+      this.resetState()
+      location.reload()
+    }
   },
 
   /**

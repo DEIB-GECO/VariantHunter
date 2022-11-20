@@ -175,7 +175,6 @@ export default {
 
     elementClickHandler(id){
       this.setCurrentAnalysis(id)
-      this.$emit('select',id)
     }
   }
 }

@@ -30,9 +30,16 @@ export default {
   components: {LoadingSticker, ResultView, NewSearchView, Sidebar},
   data() {
     return {
-      currentView: 'new-search',
       error: undefined,
     }
+  },
+  computed:{
+    ...mapState(['currentAnalysisId']),
+    ...mapStateTwoWay({'lastUpdate':'setLastUpdate'}),
+
+      currentView(){
+          return  this.currentAnalysisId!==null? 'result' : 'new-search'
+      }
   },
   methods:{
     /** Fetch the last update date of the dataset */
@@ -45,18 +52,6 @@ export default {
         .catch((e) => {
           this.error=e
         })
-    }
-  },
-  computed:{
-    ...mapState(['currentAnalysisId']),
-    ...mapStateTwoWay({'lastUpdate':'setLastUpdate'}),
-  },
-  watch: {
-    currentAnalysisId(newVal){
-      if(newVal!==null)
-        this.currentView='result'
-      else
-        this.currentView='new-search'
     }
   },
   mounted() {

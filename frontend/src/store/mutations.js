@@ -207,5 +207,12 @@ export const mutations = {
 
     setLastUpdate(state, newVal) {
         state.lastUpdate = newVal
+    },
+
+    resetState(state){
+        state.reset=true
+    },
+    setLoading(state,newVal){
+        state.loading=newVal
     }
 }
