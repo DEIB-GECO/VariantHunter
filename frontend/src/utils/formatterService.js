@@ -19,7 +19,7 @@ export function compactLineagesData (lineagesData,level=1){
             const initialValue = {name: compName, f1: 0, f2: 0, f3: 0, f4: 0, w1: 0, w2: 0, w3: 0, w4: 0, rows: -1}
             let expName
 
-            const dataToConsider= lineagesData.filter(({name}) => name.startsWith(compName))
+            const dataToConsider= lineagesData.filter(({name}) => name===compName || name.startsWith(compName+'.'))
             const dataToAggregate=[],dataRelevantTrend=[]
             // Aggregate only mutations with non-relevant trend (less than 10% in all the weeks)
             dataToConsider.forEach(data=>{
