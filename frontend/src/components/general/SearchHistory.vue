@@ -106,6 +106,8 @@
     </v-list-item>
     <div class="filter-area text-body-4 pt-2" v-if="filteredAnalysesSummary.length<1">No recent analysis yet</div>
 
+    <keyboard-shortcuts :filtered-analyses="filteredAnalysesSummary.map(({id})=>id)"/>
+
   </div>
 </template>
 
@@ -113,10 +115,11 @@
 import {mapGetters, mapMutations, mapState} from "vuex";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 import ChipMenu from "@/components/general/basic/ChipMenu";
+import KeyboardShortcuts from "@/components/controls/KeyboardShortcuts";
 
 export default {
   name: "SearchHistory",
-  components: {ChipMenu, IconWithTooltip},
+  components: {KeyboardShortcuts, ChipMenu, IconWithTooltip},
   data() {
     return {
       filteredMode: null,
