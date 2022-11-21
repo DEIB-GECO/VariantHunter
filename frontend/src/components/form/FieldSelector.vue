@@ -42,15 +42,22 @@
         </template>
 
         <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
-          <v-chip v-if="index<5" class="mr-1 my-1" small>{{ item }}</v-chip>
-          <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999" max-width="80vw">
+          <v-chip v-if="index<5" class="mr-1 my-1 font-weight-medium" small :color="getChipColor(item)" :text-color="getTextColor(item)">{{ item }}</v-chip>
+          <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999"
+                     max-width="80vw">
             <template v-slot:activator="{ on, attrs }">
-              <v-chip v-on="on" v-bind="attrs"  class="mr-1 my-1" small outlined>
-            +{{ value.length - 5 }} others
-          </v-chip>
+              <v-chip v-on="on" v-bind="attrs" class="mr-1 my-1" small outlined>
+                +{{ value.length - 5 }} others
+              </v-chip>
             </template>
             Selected values: <br/>
-            <v-chip v-for="(value,idx) in selectedValue" :key="idx" class="mr-1 my-1" small>{{ value }}</v-chip>
+            <v-chip v-for="(value,idx) in selectedValue" :key="idx" class="mr-1 my-1 font-weight-medium" small
+                    :color="getChipColor(value)" :text-color="getTextColor(value)">{{ value }}
+            </v-chip>
+            <div class="mt-5">
+              <v-chip x-small class="mr-2 font-weight-medium" text-color='success darken-3' color='success lighten-5'>F O U N D</v-chip>
+              <v-chip x-small class="mr-2 font-weight-medium" text-color='error darken-3' color='error lighten-5'>A B S E N T</v-chip>
+            </div>
           </v-tooltip>
         </template>
 
@@ -71,15 +78,22 @@
         </template>
 
         <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
-          <v-chip v-if="index<5" class="mr-1 my-1" small>{{ item }}</v-chip>
-          <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999" max-width="80vw">
+          <v-chip v-if="index<5" class="mr-1 my-1 font-weight-medium" small :color="getChipColor(item)" :text-color="getTextColor(item)">{{ item }}</v-chip>
+          <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999"
+                     max-width="80vw">
             <template v-slot:activator="{ on, attrs }">
-              <v-chip v-on="on" v-bind="attrs"  class="mr-1 my-1" small outlined>
-            +{{ value.length - 5 }} others
-          </v-chip>
+              <v-chip v-on="on" v-bind="attrs" class="mr-1 my-1" small outlined>
+                +{{ value.length - 5 }} others
+              </v-chip>
             </template>
             Selected values: <br/>
-            <v-chip v-for="(value,idx) in selectedValue" :key="idx" class="mr-1 my-1" small>{{ value }}</v-chip>
+            <v-chip v-for="(value,idx) in selectedValue" :key="idx" class="mr-1 my-1 font-weight-medium" small
+                    :color="getChipColor(value)" :text-color="getTextColor(value)">{{ value }}
+            </v-chip>
+            <div class="mt-5">
+              <v-chip x-small class="mr-2 font-weight-medium" text-color='success darken-3' color='success lighten-5'>F O U N D</v-chip>
+              <v-chip x-small class="mr-2 font-weight-medium" text-color='error darken-3' color='error lighten-5'>A B S E N T</v-chip>
+            </div>
           </v-tooltip>
         </template>
 
@@ -109,6 +123,8 @@ export default {
     autocomplete: Boolean,
 
     combobox: Boolean,
+
+    highlightPossibleValues: Boolean,
 
     /** Multiple selector flag. If true, the selector allows multiple selection */
     multiple: Boolean,
@@ -140,6 +156,19 @@ export default {
       set(val) {
         this.$emit('input', val)
       }
+    }
+  },
+  methods: {
+    getChipColor(value) {
+      return this.highlightPossibleValues
+          ? this.possibleValues.includes(value) ? "success lighten-5" : "error lighten-5"
+          : undefined
+    },
+
+    getTextColor(value) {
+      return this.highlightPossibleValues
+          ? this.possibleValues.includes(value) ? "success darken-3" : "error darken-3"
+          : undefined
     }
   }
 }

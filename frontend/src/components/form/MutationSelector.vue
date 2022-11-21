@@ -15,7 +15,7 @@
   <!-- Decorated Field Selector -->
   <FieldSelector v-model='selectedValue' label='Mutations' placeholder='All'
                  :possible-values='possibleValues' autocomplete small-chips
-                 multiple solo combobox>
+                 multiple solo combobox highlight-possible-values>
 
     <template v-slot:prepend-item>
 
@@ -108,8 +108,8 @@
                 <v-col v-if='parsedList.length>0' cols='12'>
 
                   <v-chip v-for='elem in parsedList' :key='elem' class="mr-1 mb-1"
-                          :text-color='possibleValues.includes(elem)?"green":"red"'
-                          :color='possibleValues.includes(elem)?"green lighten-5":"red lighten-5"'>{{ elem }}
+                          :text-color='possibleValues.includes(elem)?"success darken-3":"error darken-3"'
+                          :color='possibleValues.includes(elem)?"success lighten-5":"error lighten-5"'>{{ elem }}
                   </v-chip>
 
                 </v-col>
@@ -178,12 +178,12 @@
                 <!-- Result -->
                 <v-col cols='12' v-if='allLinMuts.length>0'>
                   <div class="text-body-3 my-2"> Mutation report:</div>
-                  <v-chip x-small class="mb-5 mr-2" text-color='green' color='green lighten-5'>PRESENT MUTATION</v-chip>
-                  <v-chip x-small class="mb-5 mr-2" text-color='red' color='red lighten-5'>ABSENT MUTATION</v-chip>
+                  <v-chip x-small class="mb-5 mr-2" text-color='success darken-3' color='success lighten-5'>PRESENT MUTATION</v-chip>
+                  <v-chip x-small class="mb-5 mr-2" text-color='error darken-3' color='error lighten-5'>ABSENT MUTATION</v-chip>
                   <br/>
                   <v-chip v-for='elem in allLinMuts' :key='elem' class="mr-1 mb-1"
-                          :text-color='possibleValues.includes(elem)?"green":"red"'
-                          :color='possibleValues.includes(elem)?"green lighten-5":"red lighten-5"'>
+                          :text-color='possibleValues.includes(elem)?"success darken-3":"error darken-3"'
+                          :color='possibleValues.includes(elem)?"success lighten-5":"error lighten-5"'>
                     {{ elem }}
                   </v-chip>
                 </v-col>
