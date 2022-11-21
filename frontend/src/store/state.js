@@ -46,10 +46,20 @@ export const state = {
      *      w1,w2,w3,w4: overall number of sequences collected in the weeks
      *  }
      */
-    analyses:{0:ex1, 1:ex2},
-    localFilteringOpt: {0:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []},1:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []}},
-    localOrderingOpt: {0:{sortingIndexes:[ "slope" ], isDescSorting:[true]}, 1:{sortingIndexes:[ "slope" ], isDescSorting:[true]}},
+    analyses:{},//{0:ex1, 1:ex2},
+    localFilteringOpt: {},//{0:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []},1:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []}},
+    localOrderingOpt: {},//{0:{sortingIndexes:[ "slope" ], isDescSorting:[true]}, 1:{sortingIndexes:[ "slope" ], isDescSorting:[true]}},
 
+    /** tags: tags applied to the analysis
+     *  {
+     *      'tagName':{
+     *          tagColor: '#colorCode'
+     *          protein: null, muts: [], rowKeys: [], // custom options
+     *          sortingIndexes:[ "slope" ], isDescSorting:[true]
+     *      }
+     *  }
+     */
+    tags:{},
 
     /** currentAnalysisId: id of the currently shown analysis or null value */
     currentAnalysisId: null,

@@ -1,8 +1,10 @@
 <template>
   <div class="filter-area">
     <div id="filtering-area" class="text-body-3 mb-2 d-flex">
-      <chip-menu attach="#filtering-area" :close-on-content-click="false" small activator-icon="mdi-filter" activator-text="Filter by"
-                 :color="(isFiltering?'f_secondary':'f_tertiary')" :activator-outlined="!isFiltering" :closable="isFiltering"
+      <chip-menu attach="#filtering-area" :close-on-content-click="false" small activator-icon="mdi-filter"
+                 activator-text="Filter by"
+                 :color="(isFiltering?'f_secondary':'f_tertiary')" :activator-outlined="!isFiltering"
+                 :closable="isFiltering"
                  :activator-close-action="clearFilters">
         <div id="filtering-menu" class="text-body-4 pb-2 text-center f_text_dark--text">
           <v-icon small left>mdi-eye</v-icon>
@@ -72,40 +74,46 @@
     </div>
 
     <!-- Actual filtered history-->
-    <v-list-item v-for="{id, starred, query} in filteredAnalysesSummary" :key="id" link
-                 @click="elementClickHandler(id)" :class="'pl-7 '+(currentAnalysisId===id?'v-list-item--active':'')">
+    <div v-for="[date,analysesGroup] in groupedAnalysesSummary" :key="date">
+      <div class="text-body-5 f_tertiary--text text-uppercase text-right mr-4 mb-1 mt-2">
+        {{ date===today? 'Today': date===yesterday? 'Yesterday' : date }}
+      </div>
+      <v-list-item v-for="{id, starred, query} in analysesGroup" :key="id" link
+                   @click="elementClickHandler(id)" :class="'pl-7 '+(currentAnalysisId===id?'v-list-item--active':'')">
 
-      <v-list-item-content>
-        <v-list-item-title class="text-body-3 font-weight-medium">
-          {{
-            query.location[query.granularity] + " / " +
-            query.endDate +
-            (query.lineage ? " / " + query.lineage : "")
-          }}
-        </v-list-item-title>
+        <v-list-item-content>
+          <v-list-item-title class="text-body-3 font-weight-medium">
+            {{
+              query.location[query.granularity] + " / " +
+              query.endDate +
+              (query.lineage ? " / " + query.lineage : "")
+            }}
+          </v-list-item-title>
 
-        <!-- Analysis categories -->
-        <v-list-item-subtitle class="break-spaces pt-1">
-          <v-chip x-small color="#ff6e3e" class="text-uppercase mr-1 mb-1 text-body-5">
-            {{ query.granularity }}
-          </v-chip>
-          <v-chip x-small color="#bc7fbf" class="text-uppercase mb-1 text-body-5">
-            {{ query.lineage ? "lineage-specific" : "lineage-independent" }}
-          </v-chip>
-        </v-list-item-subtitle>
-      </v-list-item-content>
+          <!-- Analysis categories -->
+          <v-list-item-subtitle class="break-spaces pt-1">
+            <v-chip x-small color="#ff6e3e" class="text-uppercase mr-1 mb-1 text-body-5">
+              {{ query.granularity }}
+            </v-chip>
+            <v-chip x-small color="#bc7fbf" class="text-uppercase mb-1 text-body-5">
+              {{ query.lineage ? "lineage-specific" : "lineage-independent" }}
+            </v-chip>
+          </v-list-item-subtitle>
+        </v-list-item-content>
 
-      <!-- Analysis actions -->
-      <v-list-item-action class="pr-4 d-block">
-        <icon-with-tooltip hover-color="error" icon="mdi-close" size="medium" tip="Delete analysis" bottom
-                           :click-handler="()=>removeAnalysis(id)"/>
-        <icon-with-tooltip v-if="starred" color="#C2AD07" hover-color="white" icon="mdi-star" size="medium"
-                           tip="Mark as not relevant" bottom
-                           :click-handler="()=>setStarredAnalysis({id,starred:false})"/>
-        <icon-with-tooltip v-else hover-color="#C2AD07" icon="mdi-star-outline" size="medium" tip="Mark as relevant"
-                           bottom :click-handler="()=>setStarredAnalysis({id,starred:true})"/>
-      </v-list-item-action>
-    </v-list-item>
+        <!-- Analysis actions -->
+        <v-list-item-action class="pr-4 d-block">
+          <icon-with-tooltip hover-color="error" icon="mdi-close" size="medium" tip="Delete analysis" bottom
+                             :click-handler="()=>removeAnalysis(id)"/>
+          <icon-with-tooltip v-if="starred" color="#C2AD07" hover-color="white" icon="mdi-star" size="medium"
+                             tip="Mark as not relevant" bottom
+                             :click-handler="()=>setStarredAnalysis({id,starred:false})"/>
+          <icon-with-tooltip v-else hover-color="#C2AD07" icon="mdi-star-outline" size="medium" tip="Mark as relevant"
+                             bottom :click-handler="()=>setStarredAnalysis({id,starred:true})"/>
+        </v-list-item-action>
+      </v-list-item>
+    </div>
+
     <div class="filter-area text-body-4 pt-2" v-if="filteredAnalysesSummary.length<1">No recent analysis yet</div>
 
     <keyboard-shortcuts :filtered-analyses="filteredAnalysesSummary.map(({id})=>id)"/>
@@ -125,6 +133,9 @@ export default {
   components: {DataManager, KeyboardShortcuts, ChipMenu, IconWithTooltip},
   data() {
     return {
+      today: undefined,
+      yesterday: undefined,
+
       filteredMode: null,
       modeOptions: {null: 'All analysis types', ls: 'Lineage specific only', li: 'Lineage independent only'},
 
@@ -148,24 +159,38 @@ export default {
       return this.filteredMode !== null || this.filteredStarred !== null || this.filteredGranularity !== null
     },
 
-    filteredAnalysesSummary(){
+    filteredAnalysesSummary() {
       console.log("filteredAnalysesSummary")
-      const mode= this.filteredMode
-      const granularity= this.filteredGranularity
-      const starred= this.filteredStarred
+      const mode = this.filteredMode
+      const granularity = this.filteredGranularity
+      const starred = this.filteredStarred
 
-        let analyses = this.getAnalysesSummary
+      let analyses = this.getAnalysesSummary
 
-        // Apply filtering parameters
-        if (starred)
-            analyses = analyses.filter(({starred}) => starred)
-        if (mode)
-            analyses = analyses.filter(({query}) => (mode === 'li' && !query.lineage) || (mode === 'ls' && query.lineage))
-        if (granularity)
-            analyses = analyses.filter(({query}) => !granularity || granularity === query.granularity)
+      // Apply filtering parameters
+      if (starred)
+        analyses = analyses.filter(({starred}) => starred)
+      if (mode)
+        analyses = analyses.filter(({query}) => (mode === 'li' && !query.lineage) || (mode === 'ls' && query.lineage))
+      if (granularity)
+        analyses = analyses.filter(({query}) => !granularity || granularity === query.granularity)
 
-        return analyses
-    }
+      return analyses
+    },
+
+    groupedAnalysesSummary() {
+      const groups = {}
+      this.filteredAnalysesSummary.forEach(data => {
+        const date = data.query.performedOn.slice(4, 10)
+
+        if (!groups[date])
+          groups[date] = [data]
+        else
+          groups[date].push(data)
+      })
+      console.log(groups)
+      return Object.entries(groups)
+    },
   },
   methods: {
     ...mapActions(['clearHistory']),
@@ -177,9 +202,13 @@ export default {
       this.filteredGranularity = null
     },
 
-    elementClickHandler(id){
+    elementClickHandler(id) {
       this.setCurrentAnalysis(id)
     }
+  },
+  mounted() {
+    this.today= new Date().toDateString().slice(4,10)
+    this.yesterday= new Date(Date.now() - 86400000).toDateString().slice(4,10)
   }
 }
 </script>

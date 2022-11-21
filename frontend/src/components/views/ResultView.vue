@@ -46,7 +46,7 @@
       <no-data-alert v-model="noDataWarning"/>
 
 
-      <div>
+      <div v-if="false">
         <v-layout>
           GF: {{ $store.state.globalFilteringOpt }} <br/>
           <hr/>

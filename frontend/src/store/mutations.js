@@ -9,8 +9,9 @@
 
 import {computeDateLabel} from "@/store/utils/utils";
 import Vue from "vue";
+import {getRandomColor} from "@/utils/colorService";
 
-let nextAnalysisId = 2
+let nextAnalysisId = 0//2
 
 export const mutations = {
     /**
@@ -128,6 +129,8 @@ export const mutations = {
                 datasetAsOf: metadata['dataset_date'],
                 datasetType: metadata['dataset_type'],
             },
+            notes: null,
+            tag: null,
             characterizingMuts: characterizing_muts,
             rows: rows,
             totSeq: {
@@ -145,6 +148,25 @@ export const mutations = {
 
         // Show the newly created analysis
         state.currentAnalysisId = assignedId
+    },
+
+    setNotes(state,note){
+      Vue.set(state.analyses[state.currentAnalysisId],'notes',note)
+    },
+
+    addTag(state,tagName){
+        console.log("# Add tag "+tagName)
+        // New tag? save and assign color
+        if(!Object.keys(state.tags).includes(tagName)){
+            Vue.set(state.tags,tagName,{
+                tagColor: getRandomColor()
+            })
+        }
+        state.analyses[state.currentAnalysisId].tag=tagName
+    },
+    removeTag(state,tagName){
+        console.log("# Remove tag "+tagName)
+        state.analyses[state.currentAnalysisId].tag=null
     },
 
     /**

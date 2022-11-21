@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="loading" hide-overlay persistent>
-    <v-overlay :value="true" color="primary" opacity="0.9" class="loading-global">
+    <v-overlay :value="true" color="f_primary" opacity="0.9" class="loading-global">
       <v-list class="text-left transparent tip rounded-xl warning--text mx-5" two-line>
       <v-list-item class="justify-center">
           <v-list-item-icon class="text-center ma-auto mr-8">
