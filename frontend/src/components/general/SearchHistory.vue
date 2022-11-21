@@ -76,7 +76,7 @@
     <!-- Actual filtered history-->
     <div v-for="[date,analysesGroup] in groupedAnalysesSummary" :key="date">
       <div class="text-body-5 f_tertiary--text text-uppercase text-right mr-4 mb-1 mt-2">
-        {{ date===today? 'Today': date===yesterday? 'Yesterday' : date }}
+        {{ date===today? 'Today': date===yesterday? 'Yesterday' : date.slice(4,10) }}
       </div>
       <v-list-item v-for="{id, starred, query} in analysesGroup" :key="id" link
                    @click="elementClickHandler(id)" :class="'pl-7 '+(currentAnalysisId===id?'v-list-item--active':'')">
@@ -181,7 +181,7 @@ export default {
     groupedAnalysesSummary() {
       const groups = {}
       this.filteredAnalysesSummary.forEach(data => {
-        const date = data.query.performedOn.slice(4, 10)
+        const date = data.query.performedOn.slice(4, 15)
 
         if (!groups[date])
           groups[date] = [data]
@@ -207,8 +207,8 @@ export default {
     }
   },
   mounted() {
-    this.today= new Date().toDateString().slice(4,10)
-    this.yesterday= new Date(Date.now() - 86400000).toDateString().slice(4,10)
+    this.today= new Date().toDateString().slice(4,15)
+    this.yesterday= new Date(Date.now() - 86400000).toDateString().slice(4,15)
   }
 }
 </script>
