@@ -1,6 +1,6 @@
 <template>
   <div class="filter-area">
-    <div id="filtering-area" class="text-body-3 mb-2">
+    <div id="filtering-area" class="text-body-3 mb-2 d-flex">
       <chip-menu attach="#filtering-area" :close-on-content-click="false" small activator-icon="mdi-filter" activator-text="Filter by"
                  :color="(isFiltering?'f_secondary':'f_tertiary')" :activator-outlined="!isFiltering" :closable="isFiltering"
                  :activator-close-action="clearFilters">
@@ -65,8 +65,10 @@
           </v-col>
         </v-row>
       </chip-menu>
-      <icon-with-tooltip v-if="isFiltering" bottom size="small" class="ml-1" icon="mdi-close" tip="Clear filters"
-                         :click-handler="clearFilters"></icon-with-tooltip>
+      <icon-with-tooltip v-if="isFiltering" bottom size="small" class="ml-1 mr-2" icon="mdi-close" tip="Clear filters"
+                         :click-handler="clearFilters"/>
+      <v-spacer/>
+      <data-manager mode="icon" class="mr-2"/>
     </div>
 
     <!-- Actual filtered history-->
@@ -112,14 +114,15 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations, mapState} from "vuex";
+import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 import ChipMenu from "@/components/general/basic/ChipMenu";
 import KeyboardShortcuts from "@/components/controls/KeyboardShortcuts";
+import DataManager from "@/components/controls/DataManager";
 
 export default {
   name: "SearchHistory",
-  components: {KeyboardShortcuts, ChipMenu, IconWithTooltip},
+  components: {DataManager, KeyboardShortcuts, ChipMenu, IconWithTooltip},
   data() {
     return {
       filteredMode: null,
@@ -165,6 +168,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['clearHistory']),
     ...mapMutations(["setCurrentAnalysis", "setStarredAnalysis", "removeAnalysis"]),
 
     clearFilters() {

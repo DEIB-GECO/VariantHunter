@@ -1,6 +1,8 @@
 <template>
   <div id="app">
     <v-app>
+      <global-loading/>
+
       <!-- Navbar -->
       <v-app-bar app color='f_primary' class='navbar' max-height="56px" short scroll-off-screen dark flat clipped-left>
 
@@ -9,7 +11,7 @@
         <v-toolbar-title class='site-title'>
           <router-link to='/variant_hunter/'>
             <span class='emphasis'>Variant</span>
-            <span>Hunter</span>{{this.$store.state.loading}}
+            <span>Hunter</span>
           </router-link>
         </v-toolbar-title>
 
@@ -32,8 +34,10 @@
 
 <script>
 
+import GlobalLoading from "@/components/general/basic/GlobalLoading";
 export default {
   name: 'App',
+  components: {GlobalLoading},
   data() {
     return {
       /** VariantHunter logo */

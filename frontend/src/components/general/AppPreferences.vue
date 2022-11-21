@@ -45,11 +45,9 @@
               </v-list-item-action>
             </v-list-item>
           </v-list>
-        </v-card-text>
 
         <v-divider/>
 
-        <v-card-text class="py-3">
           <v-list thwo-line subheader>
             <v-subheader class="text-body-1">Information</v-subheader>
             <v-list-item>
@@ -77,7 +75,11 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
+          </v-list>
 
+        <v-divider/>
+
+          <v-list thwo-line subheader class="mt-5">
             <v-list-item>
               <v-list-item-icon>
                 <v-icon left color="#ffbc00">mdi-keyboard-outline</v-icon>
@@ -96,10 +98,10 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item>
-              <v-icon @click="clearState">mdi-plus</v-icon>
-            </v-list-item>
           </v-list>
+
+        <data-manager/>
+
         </v-card-text>
 
         <div style="flex: 1 1 auto;"></div>
@@ -113,11 +115,11 @@
 import {version} from '../../../package.json'
 import ListItem from "@/components/general/basic/ListItem"
 import {shortcuts} from "@/utils/keyboardService";
-import {mapMutations} from "vuex";
+import DataManager from "@/components/controls/DataManager";
 
 export default {
   name: "AppPreferences",
-  components: {ListItem},
+  components: {DataManager, ListItem},
   data() {
     return {
       showSettings: false,
@@ -147,17 +149,14 @@ export default {
 
   },
   methods: {
-    ...mapMutations(['resetState']),
+
     toggleTheme(evt) {
       if (this.autoDarkTheme) {
         this.$vuetify.theme.dark = evt.matches
       }
     },
 
-    clearState(){
-      this.resetState()
-      location.reload()
-    }
+
   },
 
   /**
