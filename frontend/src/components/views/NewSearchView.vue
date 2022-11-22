@@ -39,6 +39,9 @@
             <lineage-selector/>
           </v-row>
         </v-expand-transition>
+        <v-row>
+          <quick-tag-selector v-model="tag"/>
+        </v-row>
 
         <v-row class='my-4'>
           <v-col>
@@ -101,17 +104,22 @@ import LocationSelector from "@/components/form/LocationSelector";
 import DatePicker from "@/components/form/DatePicker";
 import LineageSelector from "@/components/form/LineageSelector";
 import DatasetExplorer from "@/components/explorer/DatasetExplorer";
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
 import NoDataAlert from "@/components/general/NoDataAlert";
+import QuickTagSelector from "@/components/form/QuickTagSelector";
 
 export default {
   name: "NewSearchView",
-  components: {NoDataAlert, LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector},
+  components: {
+    QuickTagSelector,
+    NoDataAlert, LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector},
   data() {
     return {
       mode: 'li',
       modeOptions: {li: 'Lineage independent', ls: 'Lineage specific'},
+
+      tag: null,
 
       isLoading: false,
       error: undefined,
@@ -129,7 +137,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setDate', 'setLineage', 'setLocation', 'setLocations', 'setLineages', 'addAnalysis', 'setCurrentAnalysis']),
+    ...mapActions(['addAnalysis']),
+    ...mapMutations(['setDate', 'setLineage', 'setLocation', 'setLocations', 'setLineages', 'setCurrentAnalysis']),
 
     clearForm() {
       this.setLineage(null)
@@ -157,7 +166,7 @@ export default {
           .then(({rows, tot_seq, characterizing_muts = null, metadata}) => {
             if (rows.length > 0) {
               // Save the search parameters and results
-              this.addAnalysis({rows, tot_seq, characterizing_muts, metadata})
+              this.addAnalysis({rows, tot_seq, characterizing_muts, metadata, tag: this.tag})
             } else {
               this.noDataWarning = true
             }
