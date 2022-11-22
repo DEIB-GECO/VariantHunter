@@ -12,7 +12,11 @@
               <v-tooltip bottom allow-overflow z-index="10" max-width="400px" :close-delay="0">
                 <template v-slot:activator="{on,attrs}">
                   <span class="mr-1 text_var1--text" v-on="on" v-bind="attrs">
-                    {{ useLocalOpt ? options.local.value : "\'" + getCurrentAnalysis.tag + "\' tag" }}
+                    <span v-if="useLocalOpt">{{ options.local.value}}</span>
+                    <v-chip v-else x-small :color="tags[tag]?.tagColor.color" :light="!tags[tag]?.tagColor.isDark"
+                    :dark="tags[tag]?.tagColor.isDark" class="text-uppercase text-body-5">
+              {{ tag }}
+            </v-chip>
                   </span>
                 </template>
                 <div class="mb-3" v-html="useLocalOpt ? options.local.subtitle : options.tag.subtitle"/>
@@ -70,7 +74,7 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from "vuex";
+import {mapGetters, mapMutations, mapState} from "vuex";
 import MutationSelector from "@/components/form/MutationSelector";
 import FieldSelector from "@/components/form/FieldSelector";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
@@ -100,6 +104,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['tags']),
     ...mapGetters(['getCurrentAnalysis', 'getCurrentOpt', 'useLocalOpt']),
 
     tag() {
