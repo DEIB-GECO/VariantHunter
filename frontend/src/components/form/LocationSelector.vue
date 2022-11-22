@@ -201,7 +201,7 @@ export default {
   },
   watch: {
     selectedLocation(newVal) {
-      if (newVal !== null) {
+      if (newVal !== null && this.possibleLocationsInfo[newVal] ) {
         this.selectedGranularity = this.possibleLocationsInfo[newVal].type
       }
     },

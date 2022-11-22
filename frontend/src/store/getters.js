@@ -26,26 +26,44 @@ export const getters = {
         return state.analyses[state.currentAnalysisId]
     },
 
-    /** Gets the local filtering opts of the currently displayed analysis */
-    getCurrentLocalFilteringOpt: (state) => {
-        console.log("getCurrentLocalFilteringOpt")
-        return state.localFilteringOpt[state.currentAnalysisId]
+    /** Gets the local opts of the currently displayed analysis */
+    getCurrentLocalOpt: (state) => {
+        console.log("getCurrentLocalOpt")
+        return state.localOpt[state.currentAnalysisId]
     },
 
-    /** Gets the local ordering opts of the currently displayed analysis */
-    getCurrentLocalOrderingOpt: (state) => {
-        console.log("getCurrentLocalOrderingOpt")
-        return state.localOrderingOpt[state.currentAnalysisId]
+
+    /** Gets the tag opts of the currently displayed analysis */
+    getCurrentTagOpt: (state) => {
+        if(state.currentAnalysisId===null) return undefined
+
+        console.log("getCurrentTagOpt")
+        const tag = state.analyses[state.currentAnalysisId].tag
+        if(tag)
+            return state.tags[tag]
+    },
+
+    /** Gets the opts of the currently displayed analysis */
+    getCurrentOpt: (state,getters) => {
+        console.log("getCurrentOpt")
+        return (getters.useLocalOpt)? getters.getCurrentLocalOpt : getters.getCurrentTagOpt
+    },
+
+
+    /** Gets the local filtering flag of the currently displayed analysis */
+    useLocalOpt: (state) => {
+        if(state.currentAnalysisId===null) return undefined
+
+        console.log("useLocalOpt")
+        return state.localOpt[state.currentAnalysisId].useLocalOpt
     },
 
     /**
      * Gets the rows of the current analysis that satisfy protein and mutations filters. To be shown on the table
      */
     getCurrentFilteredRows: (state, getters) => {
-        console.log("getCurrentFilteredRows")
-        const {useGlobalFilters, ...localFilteringOpt} = getters.getCurrentLocalFilteringOpt
-        const filteredProtein = useGlobalFilters ? state.globalFilteringOpt.protein : localFilteringOpt.protein
-        const filteredMuts = useGlobalFilters ? state.globalFilteringOpt.muts : localFilteringOpt.muts
+        if(state.currentAnalysisId===null) return undefined
+        const {protein:filteredProtein,muts:filteredMuts} = getters.getCurrentOpt
 
         return getters.getCurrentAnalysis.rows.filter(({protein, mut}) =>
             (filteredProtein === null || protein === filteredProtein) &&
@@ -57,8 +75,8 @@ export const getters = {
      * Gets the currently selected rows of the table. They must also satisfy the protein and muts filtering options.
      */
     getCurrentSelectedRows: (state,getters) =>{
-        const {useGlobalFilters, rowKeys} = getters.getCurrentLocalFilteringOpt
-        const filteredRowKeys = useGlobalFilters ? state.globalFilteringOpt.rowKeys : rowKeys
+        if(state.currentAnalysisId===null) return undefined
+        const {rowKeys:filteredRowKeys} = getters.getCurrentOpt
 
         let selectedRows=[]
         if (filteredRowKeys.length > 0) {
@@ -70,9 +88,8 @@ export const getters = {
     },
 
     getCurrentPlotInfo: (state, getters) => {
-        const {useGlobalFilters, rowKeys} = getters.getCurrentLocalFilteringOpt
-        const filteredRowKeys = useGlobalFilters ? state.globalFilteringOpt.rowKeys : rowKeys
-        const {sortingIndexes, isDescSorting} = useGlobalFilters ? state.globalOrderingOpt : getters.getCurrentLocalOrderingOpt
+        if(state.currentAnalysisId===null) return undefined
+        const {rowKeys:filteredRowKeys,sortingIndexes, isDescSorting} = getters.getCurrentOpt
         let title, rows
 
         if (filteredRowKeys.length > 0){
@@ -95,10 +112,14 @@ export const getters = {
     },
 
     getCurrentPlotRows: (state, getters) => {
+        if(state.currentAnalysisId===null) return undefined
+
         return getters.getCurrentPlotInfo.rows
     },
 
     getCurrentPlotTitle: (state, getters) => {
+        if(state.currentAnalysisId===null) return undefined
+        
         return getters.getCurrentPlotInfo.title
     },
 

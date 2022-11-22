@@ -11,8 +11,6 @@ import {computeDateLabel} from "@/store/utils/utils";
 import Vue from "vue";
 import {getRandomColor} from "@/utils/colorService";
 
-let nextAnalysisId = 0//2
-
 export const mutations = {
     /**
      * Sets the current analysis id
@@ -25,62 +23,23 @@ export const mutations = {
     },
 
     /**
-     * Add a filtering option
+     * Set analysis option
      * @param state
-     * @param global    True iff the filtering option has global scope
-     * @param opt       Filtering parameter to be set
-     * @param value     Value to be filtered
+     * @param local     True iff the option has local scope
+     * @param opt       Parameter to be set
+     * @param value     Value of the parameter
      */
-    setFilterOpt(state, {global = true, opt, value}) {
-        console.log("setFilter of " + opt + " to " + value)
+    setOpt(state, {local = true, opt, value}) {
+        console.log("setOption of " + opt + " to " + value)
+        const id = state.currentAnalysisId
 
-        if (global) {
-            Vue.set(state.globalFilteringOpt, opt, value)
+        if (local) {
+            Vue.set(state.localOpt[id], opt, value)
         } else {
-            const id = state.currentAnalysisId
-            Vue.set(state.localFilteringOpt[id], opt, value)
+            const tagName = state.analyses[id].tag
+            if (tagName)
+                Vue.set(state.tags[tagName], opt, value)
         }
-    },
-
-    /**
-     * Add an ordering option
-     * @param state
-     * @param global    True iff the ordering option has global scope
-     * @param opt       Ordering parameter to be set
-     * @param value     Value to be ordering
-     */
-    setOrderOpt(state, {global = true, opt, value}) {
-        console.log("setOrder of " + opt + " to " + value)
-        if (global) {
-            Vue.set(state.globalOrderingOpt, opt, value)
-        } else {
-            const id = state.currentAnalysisId
-            Vue.set(state.localOrderingOpt[id], opt, value)
-        }
-    },
-
-    /**
-     * Convert the global scope in local ones for analyses
-     * @param state
-     */
-    globalOptToLocal(state) {
-        // Fetch global opts and reset
-        const {protein, muts, rowKeys} = state.globalFilteringOpt
-        const {sortingIndexes, isDescSorting} = state.globalOrderingOpt
-
-        // Convert all (except the current one) to local scopes
-        Object.keys(state.analyses)
-            .filter(k => k !== state.currentAnalysisId && state.localFilteringOpt[k].useGlobalFilters)
-            .forEach(k=>{
-                Vue.set(state.localFilteringOpt[k], 'protein', protein)
-                Vue.set(state.localFilteringOpt[k], 'muts', muts)
-                Vue.set(state.localFilteringOpt[k], 'rowKeys', rowKeys)
-                Vue.set(state.localOrderingOpt[k], 'sortingIndexes', sortingIndexes)
-                Vue.set(state.localOrderingOpt[k], 'isDescSorting', isDescSorting)
-
-                Vue.set(state.localFilteringOpt[k], 'useGlobalFilters', false)
-            })
-
     },
 
     /**
@@ -106,8 +65,8 @@ export const mutations = {
         // Save current analysis data
         const endDate = metadata.date
 
-        const assignedId = nextAnalysisId
-        nextAnalysisId++
+        const pastKeys = Object.keys(state.analyses).map(x=>Number(x))
+        const assignedId = pastKeys.length > 0 ? (Math.max(...pastKeys) + 1) : 0
 
         Vue.set(state.analyses, assignedId, {
             id: assignedId,
@@ -139,34 +98,43 @@ export const mutations = {
         })
 
         // Preset filtering and ordering options
-        Vue.set(state.localFilteringOpt, assignedId, {
-            useGlobalFilters: true, protein: null, muts: [], rowKeys: []
-        })
-        Vue.set(state.localOrderingOpt, assignedId, {
-            sortingIndexes: ["slope"], isDescSorting: [true]
+        Vue.set(state.localOpt, assignedId, {
+            useLocalOpt: true,
+            protein: null,
+            muts: [],
+            rowKeys: [],
+            sortingIndexes: ["slope"],
+            isDescSorting: [true]
         })
 
         // Show the newly created analysis
         state.currentAnalysisId = assignedId
     },
 
-    setNotes(state,note){
-      Vue.set(state.analyses[state.currentAnalysisId],'notes',note)
+    setNotes(state, note) {
+        Vue.set(state.analyses[state.currentAnalysisId], 'notes', note)
     },
 
-    addTag(state,tagName){
-        console.log("# Add tag "+tagName)
+    addTag(state, tagName) {
+        console.log("# Add tag " + tagName)
         // New tag? save and assign color
-        if(!Object.keys(state.tags).includes(tagName)){
-            Vue.set(state.tags,tagName,{
-                tagColor: getRandomColor()
+        if (!Object.keys(state.tags).includes(tagName)) {
+            Vue.set(state.tags, tagName, {
+                tagColor: getRandomColor(),
+                createdAt: new Date(),
+                protein: null,
+                muts: [],
+                rowKeys:[],
+                sortingIndexes:["slope"],
+                isDescSorting:[true]
             })
         }
-        state.analyses[state.currentAnalysisId].tag=tagName
+        state.analyses[state.currentAnalysisId].tag = tagName
     },
-    removeTag(state,tagName){
-        console.log("# Remove tag "+tagName)
-        state.analyses[state.currentAnalysisId].tag=null
+    removeTag(state, tagName) {
+        console.log("# Remove tag " + tagName)
+        state.analyses[state.currentAnalysisId].tag = null
+        state.localOpt[state.currentAnalysisId].useLocalOpt = true
     },
 
     /**
@@ -180,8 +148,7 @@ export const mutations = {
             state.currentAnalysisId = null
 
         Vue.delete(state.analyses, id)
-        Vue.delete(state.localFilteringOpt, id)
-        Vue.delete(state.localOrderingOpt, id)
+        Vue.delete(state.localOpt, id)
     },
 
 
@@ -231,10 +198,10 @@ export const mutations = {
         state.lastUpdate = newVal
     },
 
-    resetState(state){
-        state.reset=true
+    resetState(state) {
+        state.reset = true
     },
-    setLoading(state,newVal){
-        state.loading=newVal
+    setLoading(state, newVal) {
+        state.loading = newVal
     }
 }

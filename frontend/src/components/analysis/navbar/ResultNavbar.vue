@@ -67,7 +67,4 @@ export default {
 .result-bar .v-toolbar__content {
   border-bottom: 2px solid var(--primary-color) !important;
 }
-.navbar-menu {
-  border: 2px solid var(--v-primary-base);
-}
 </style>

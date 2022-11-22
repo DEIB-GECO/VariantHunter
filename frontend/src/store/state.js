@@ -3,7 +3,7 @@
  *  State variables for the vuex state
  */
 
-import {ex1,ex2} from "@/store/testData";
+import {ex1, ex2} from "@/store/testData";
 
 export const state = {
 
@@ -23,14 +23,7 @@ export const state = {
      *      weeks: obj reporting the interested weeks in the following format YYYY/MM/DD - YYYY/MM/DD
      *             {w1:'...',w2:'...', w3:'...', w4:'2021/05/09 - 2021/05/15'}
      *  },
-     *  useGlobalFilters: true iff global filters must be used instead of local ones
-     *  filteringOpt: {
-     *      protein: string representing the filtered protein or null
-     *      muts: array [] of filtered mutations
-     *      rowKeys: array [] of selected row keys
-     *      sortingIndexes: array []  of sorting columns
-     *      isDescSorting: array [] of boolean representing the sorting directions
-     *  }
+     *  tag: 'tagName'
      *  characterizingMuts: ['protein_mut',...] or null if lineage independent
      *  muts: [{
      *     protein: protein value (ex: 'Spike')
@@ -46,25 +39,30 @@ export const state = {
      *      w1,w2,w3,w4: overall number of sequences collected in the weeks
      *  }
      */
-    analyses:{},//{0:ex1, 1:ex2},
-    localFilteringOpt: {},//{0:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []},1:{useGlobalFilters: true, protein: null, muts: [], rowKeys: []}},
-    localOrderingOpt: {},//{0:{sortingIndexes:[ "slope" ], isDescSorting:[true]}, 1:{sortingIndexes:[ "slope" ], isDescSorting:[true]}},
+    analyses: {},//{0:ex1, 1:ex2},
+
+    /** localOpt: local options for the analysis. Each object has:
+     *  {
+     *      useLocalOpt: Boolean
+     *      protein: null, muts: [], rowKeys: [],               // local filtering options
+     *      sortingIndexes:[ "slope" ], isDescSorting:[true]    // local ordering options
+     *  }
+     */
+    localOpt: {},
 
     /** tags: tags applied to the analysis
      *  {
      *      'tagName':{
      *          tagColor: '#colorCode'
-     *          protein: null, muts: [], rowKeys: [], // custom options
-     *          sortingIndexes:[ "slope" ], isDescSorting:[true]
+     *          protein: null, muts: [], rowKeys: [],               // custom filtering options
+     *          sortingIndexes:[ "slope" ], isDescSorting:[true]    // custom ordering options
      *      }
      *  }
      */
-    tags:{},
+    tags: {},
 
     /** currentAnalysisId: id of the currently shown analysis or null value */
     currentAnalysisId: null,
-    globalFilteringOpt: {protein: null, muts: [], rowKeys: []},
-    globalOrderingOpt: {sortingIndexes:[ "slope" ], isDescSorting:[true]},
 
     /** Selected location (continent, country or region based on granularity) */
     selectedLocation: null,
@@ -82,5 +80,5 @@ export const state = {
     lastUpdate: null,
 
     reset: false,
-    loading:false,
+    loading: false,
 }

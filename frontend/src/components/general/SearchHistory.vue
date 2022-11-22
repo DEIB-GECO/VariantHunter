@@ -76,7 +76,7 @@
     <!-- Actual filtered history-->
     <div v-for="[date,analysesGroup] in groupedAnalysesSummary" :key="date">
       <div class="text-body-5 f_tertiary--text text-uppercase text-right mr-4 mb-1 mt-2">
-        {{ date===today? 'Today': date===yesterday? 'Yesterday' : date.slice(4,10) }}
+        {{ date===today? 'Today': date===yesterday? 'Yesterday' : date.slice(0,6) }}
       </div>
       <v-list-item v-for="{id, starred, query} in analysesGroup" :key="id" link
                    @click="elementClickHandler(id)" :class="'pl-7 '+(currentAnalysisId===id?'v-list-item--active':'')">

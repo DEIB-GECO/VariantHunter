@@ -97,7 +97,7 @@ export default {
 
 
 /* Body background color */
-body {
+html, body {
   background: var(--v-f_primary-base);
 }
 

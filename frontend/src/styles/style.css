@@ -126,3 +126,8 @@
 .v-menu__content {
     border-radius: 0 0 22px 22px !important;
 }
+
+.navbar-menu {
+  max-width: min(350px,80vw) !important;
+  border: 2px solid var(--v-primary-base);
+}

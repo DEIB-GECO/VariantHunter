@@ -20,7 +20,7 @@
       <div class="main">Lineages breakdown</div>
       computed considering the expanded mutation in the 4 weeks and location
     </div>
-    <v-menu v-model="showOptions" content-class="rounded-xl navbar-menu" offset-y open-on-click max-width="450px"
+    <v-menu v-model="showOptions" content-class="rounded-xl navbar-menu" offset-y open-on-click width="250px" max-width="80vw"
             :open-on-hover="false" close-on-content-click>
       <template v-slot:activator="{ attrs, on }">
                   <span v-bind="attrs" v-on="on">

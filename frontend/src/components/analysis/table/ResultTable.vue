@@ -198,8 +198,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['globalFilteringOpt', 'globalOrderingOpt']),
-    ...mapGetters(['getCurrentAnalysis', 'getCurrentLocalFilteringOpt', 'getCurrentLocalOrderingOpt',
+    ...mapGetters(['getCurrentAnalysis', 'getCurrentOpt','useLocalOpt',
       'getCurrentFilteredRows', 'getCurrentSelectedRows']),
 
     /** query: query value of the current analysis */
@@ -212,26 +211,11 @@ export default {
       return this.withLineages ? this.getCurrentAnalysis.characterizingMuts : null
     },
 
-    /** useGlobalFilters: flag for global filter for the current analysis */
-    useGlobalFilters() {
-      return this.getCurrentLocalFilteringOpt.useGlobalFilters
-    },
-
-    /** filteringOpt: filtering options for the current analysis (either global or local based on preference) */
-    filteringOpt() {
-      return this.useGlobalFilters ? this.globalFilteringOpt : this.getCurrentLocalFilteringOpt
-    },
-
-    /** orderingOpt: ordering options for the current analysis (either global or local based on preference) */
-    orderingOpt() {
-      return this.useGlobalFilters ? this.globalOrderingOpt : this.getCurrentLocalOrderingOpt
-    },
-
     /** Array of selected rows */
     selectedRows: {
       set(newVal) {
         const keys = newVal.map(({item_key}) => item_key)
-        this.setFilterOpt({global: this.useGlobalFilters, opt: 'rowKeys', value: keys})
+        this.setOpt({local: this.useLocalOpt , opt: 'rowKeys', value: keys})
       },
       get() {
         return this.getCurrentSelectedRows
@@ -241,20 +225,20 @@ export default {
     /** Array of columns selected for sorting data */
     sortingIndexes: {
       set(newVal) {
-        this.setOrderOpt({global: this.useGlobalFilters, opt: 'sortingIndexes', value: newVal})
+        this.setOpt({local: this.useLocalOpt, opt: 'sortingIndexes', value: newVal})
       },
       get() {
-        return this.orderingOpt.sortingIndexes
+        return this.getCurrentOpt.sortingIndexes
       }
     },
 
     /** Array defining asc(true)/desc(false) order for each column selected for sorting in sortingIndexes */
     isDescSorting: {
       set(newVal) {
-        this.setOrderOpt({global: this.useGlobalFilters, opt: 'isDescSorting', value: newVal})
+        this.setOpt({local: this.useLocalOpt, opt: 'isDescSorting', value: newVal})
       },
       get() {
-        return this.orderingOpt.isDescSorting
+        return this.getCurrentOpt.isDescSorting
       }
     },
 
@@ -294,7 +278,7 @@ export default {
 
   },
   methods: {
-    ...mapMutations(['setFilterOpt', 'setOrderOpt']),
+    ...mapMutations(['setOpt']),
 
     /** Custom sorter mapping */
     customSort(items, sortingIndexes, isDescSorting) {

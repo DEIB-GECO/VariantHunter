@@ -36,18 +36,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['globalOrderingOpt']),
-    ...mapGetters(['getCurrentAnalysis', 'getCurrentFilteredRows', 'getCurrentLocalFilteringOpt', 'getCurrentLocalOrderingOpt']),
-
-    /** useGlobalFilters: flag for global filter for the current analysis */
-    useGlobalFilters() {
-      return this.getCurrentLocalFilteringOpt.useGlobalFilters
-    },
-
-    /** orderingOpt: ordering options for the current analysis (either global or local based on preference) */
-    orderingOpt() {
-      return this.useGlobalFilters ? this.globalOrderingOpt : this.getCurrentLocalOrderingOpt
-    },
+    ...mapGetters(['getCurrentAnalysis', 'getCurrentFilteredRows', 'getCurrentOpt'])
   },
   methods: {
 
@@ -58,7 +47,7 @@ export default {
       this.downloadLoading = true
 
       // Sort data
-      const {sortingIndexes, isDescSorting} = this.orderingOpt
+      const {sortingIndexes, isDescSorting} = this.getCurrentOpt
       const sortedData = sortItems(this.getCurrentFilteredRows, sortingIndexes, isDescSorting)
 
       // Columns to download

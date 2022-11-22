@@ -45,25 +45,12 @@
 
       <no-data-alert v-model="noDataWarning"/>
 
-
-      <div v-if="false">
-        <v-layout>
-          GF: {{ $store.state.globalFilteringOpt }} <br/>
-          <hr/>
-          LF: {{ $store.state.localFilteringOpt }} <br/>
-          <hr/>
-          GO: {{ $store.state.globalOrderingOpt }} <br/>
-          <hr/>
-          LO: {{ $store.state.localOrderingOpt }} <br/>
-          <hr/>
-        </v-layout>
-      </div>
     </v-container>
   </div>
 </template>
 
 <script>
-import {mapGetters, mapMutations, mapState} from 'vuex'
+import {mapActions, mapGetters, mapMutations, mapState} from 'vuex'
 import WeekSlider from '@/components/form/WeekSlider'
 import ResultNavbar from "@/components/analysis/navbar/ResultNavbar";
 import ResultTable from "@/components/analysis/table/ResultTable";
@@ -105,7 +92,8 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['setLocations', 'setLocation', 'setLineages', 'setLineage', 'setDate', 'addAnalysis']),
+    ...mapActions(['addGroupAnalysis']),
+    ...mapMutations(['setLocations', 'setLocation', 'setLineages', 'setLineage', 'setDate']),
 
     /**
      * Restore the current analysis parameters
@@ -170,7 +158,7 @@ export default {
           .then(({rows, tot_seq, characterizing_muts = null, metadata}) => {
             if (rows.length > 0) {
               // Save the search parameters and results
-              this.addAnalysis({rows, tot_seq, characterizing_muts, metadata})
+              this.addGroupAnalysis({rows, tot_seq, characterizing_muts, metadata})
             } else {
               this.noDataWarning = true
             }
