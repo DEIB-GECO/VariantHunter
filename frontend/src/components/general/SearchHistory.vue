@@ -76,9 +76,9 @@
     <!-- Actual filtered history-->
     <div v-for="[date,analysesGroup] in groupedAnalysesSummary" :key="date">
       <div class="text-body-5 f_tertiary--text text-uppercase text-right mr-4 mb-1 mt-2">
-        {{ date===today? 'Today': date===yesterday? 'Yesterday' : date.slice(0,6) }}
+        {{ date === today ? 'Today' : date === yesterday ? 'Yesterday' : date.slice(0, 6) }}
       </div>
-      <v-list-item v-for="{id, starred, query} in analysesGroup" :key="id" link
+      <v-list-item v-for="{id, starred, query, tag} in analysesGroup" :key="id" link
                    @click="elementClickHandler(id)" :class="'pl-7 '+(currentAnalysisId===id?'v-list-item--active':'')">
 
         <v-list-item-content>
@@ -90,13 +90,17 @@
             }}
           </v-list-item-title>
 
-          <!-- Analysis categories -->
+          <!-- Analysis categories #bc7fbf -->
           <v-list-item-subtitle class="break-spaces pt-1">
-            <v-chip x-small color="#ff6e3e" class="text-uppercase mr-1 mb-1 text-body-5">
+            <v-chip x-small :color="getLocationColor(query.granularity)" class="text-uppercase mr-1 mb-1 text-body-5">
               {{ query.granularity }}
             </v-chip>
-            <v-chip x-small color="#bc7fbf" class="text-uppercase mb-1 text-body-5">
+            <v-chip x-small :color="query.lineage?'#1f2215':'#3398DC'" class="text-uppercase mr-1 mb-1 text-body-5">
               {{ query.lineage ? "lineage-specific" : "lineage-independent" }}
+            </v-chip>
+            <v-chip v-if="tag" x-small :color="tags[tag]?.tagColor.color" :light="!tags[tag]?.tagColor.isDark"
+                    :dark="tags[tag]?.tagColor.isDark" class="text-uppercase mb-1 text-body-5">
+              {{ tag }}
             </v-chip>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -152,7 +156,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['currentAnalysisId']),
+    ...mapState(['currentAnalysisId', 'tags']),
     ...mapGetters(['getAnalysesSummary']),
 
     isFiltering() {
@@ -188,7 +192,6 @@ export default {
         else
           groups[date].push(data)
       })
-      console.log(groups)
       return Object.entries(groups)
     },
   },
@@ -204,11 +207,19 @@ export default {
 
     elementClickHandler(id) {
       this.setCurrentAnalysis(id)
+    },
+
+    getLocationColor(granularity) {
+      return granularity === 'region'
+          ? '#7CB17B'
+          : granularity === 'country'
+              ? '#ff6e3e'
+              : '#90177d'
     }
   },
   mounted() {
-    this.today= new Date().toDateString().slice(4,15)
-    this.yesterday= new Date(Date.now() - 86400000).toDateString().slice(4,15)
+    this.today = new Date().toDateString().slice(4, 15)
+    this.yesterday = new Date(Date.now() - 86400000).toDateString().slice(4, 15)
   }
 }
 </script>

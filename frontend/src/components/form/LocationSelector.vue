@@ -193,10 +193,10 @@ export default {
 
     getLocationColor(item) {
       return this.possibleLocationsInfo[item].type === 'region'
-          ? '#88c287'
+          ? '#7CB17B'
           : this.possibleLocationsInfo[item].type === 'country'
               ? '#ff6e3e'
-              : '#bc7fbf'
+              : '#90177d'
     }
   },
   watch: {

@@ -16,7 +16,7 @@ export const getters = {
         console.log("getAnalysesSummary")
         // Returns a time-sorted summary for each analysis
         return Object.values(state.analyses)
-            .map(({id, starred, query}) => ({id, starred, query}))
+            .map(({id, starred, query, tag}) => ({id, starred, query, tag}))
             .sort(({id1}, {id2}) => id1 - id2).reverse()
     },
 
