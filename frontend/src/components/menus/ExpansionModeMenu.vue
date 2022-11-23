@@ -33,7 +33,7 @@
       <div @mouseleave="showOptions=false">
         <v-list color="bg_var1" rounded dense width="auto">
           <v-list-item v-for="[key,opt] in Object.entries(notationOptions)" :key="key" link dense
-                       @click="changeNotationMode(key)">
+                       @click="changeNotationMode(key)" :class="(key===notationMode)?'v-list-item--active':''">
             <v-icon class="pr-3" color="primary">{{ opt.icon }}</v-icon>
             <v-list-item-content>
               <v-list-item-title class="primary--text">{{ opt.text }}</v-list-item-title>
@@ -83,10 +83,10 @@ export default {
   computed:{
     notationMode:{
       set(newVal){
-        this.$emit('input',newVal)
+        this.$emit('input',Number(newVal))
       },
       get(){
-        return this.value
+        return String(this.value)
       }
     },
   },

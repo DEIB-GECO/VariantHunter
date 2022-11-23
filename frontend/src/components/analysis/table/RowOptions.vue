@@ -80,7 +80,7 @@
               <span class="font-weight-black">An error occurred. </span> Try again later.
             </v-card-text>
             <v-card-text v-else class="text-center py-5">
-              <loading-sticker :standalone="true" :is-loading="true"
+              <loading-sticker :standalone="true" :is-loading="true" no-overlay
                              :loading-messages="[{text:'Analyzing mutation data',time:3000},{text:'This may take some time',time:6000},{text:'This may take up to 1 minute',time:15000},{text:'Almost done! Hang in there',time:30000}]"/>
             </v-card-text>
           </v-expand-transition>

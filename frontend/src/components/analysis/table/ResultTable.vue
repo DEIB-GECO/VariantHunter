@@ -15,7 +15,6 @@
         </template>
 
 
-
         <!---- TABLE SUPER HEADERS ---------------------------------------->
         <template v-slot:header>
           <table-super-header :with-lineages='withLineages' :show-p-values='showPValues'/>
@@ -97,7 +96,7 @@
         <!---- EXPANDED TABLE ELEMENT ------------------------------------>
         <template v-if='!withLineages && !isLoadingDetails' v-slot:expanded-item='{ item }'>
           <td :colspan='4' class='expanded-item-title'>
-            <expansion-mode-menu v-model="notationMode" />
+            <expansion-mode-menu v-model="notationMode"/>
             <div class="row-name">Lineages</div>
           </td>
           <td class='expanded-td'>
@@ -156,7 +155,7 @@ import SectionElement from "@/components/analysis/SectionElement";
 import TableControls from "@/components/analysis/table/TableControls";
 import TableSuperHeader from "@/components/analysis/table/TableSuperHeader";
 import ExpansionModeMenu from "@/components/menus/ExpansionModeMenu";
-import {mapGetters, mapMutations, mapState} from "vuex";
+import {mapGetters, mapMutations} from "vuex";
 import {compactLineagesData} from "@/utils/formatterService";
 import {sortItems} from "@/utils/sorterService";
 import GoToCovSpectrum from "@/components/analysis/table/GoToCovSpectrum";
@@ -198,7 +197,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCurrentAnalysis', 'getCurrentOpt','useLocalOpt',
+    ...mapGetters(['getCurrentAnalysis', 'getCurrentOpt', 'useLocalOpt',
       'getCurrentFilteredRows', 'getCurrentSelectedRows']),
 
     /** query: query value of the current analysis */
@@ -215,7 +214,7 @@ export default {
     selectedRows: {
       set(newVal) {
         const keys = newVal.map(({item_key}) => item_key)
-        this.setOpt({local: this.useLocalOpt , opt: 'rowKeys', value: keys})
+        this.setOpt({local: this.useLocalOpt, opt: 'rowKeys', value: keys})
       },
       get() {
         return this.getCurrentSelectedRows
@@ -266,11 +265,12 @@ export default {
       return headers
     },
 
-     /**
+    /**
      * Reformat breakdown data based on the notation mode selected. Either using full notation or star notation.
      */
-    formatBreakdown(){
-      if(this.expandedRows.length===0) return []
+    formatBreakdown() {
+      console.log("RECOMPUTE THIS" + this.notationMode)
+      if (this.expandedRows.length === 0) return []
 
       const lineagesData = this.expandedRows[0].lineages // lineages data in full notation
       return (this.notationMode === 0 || !lineagesData) ? lineagesData : compactLineagesData(lineagesData, this.notationMode)

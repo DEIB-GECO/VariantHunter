@@ -2,8 +2,10 @@
  * FORMATTER SERVICE
  * It provides general purpose formatter services to summarize lineages data
  */
+import {NotSupportedError} from "core-js/internals/dom-exception-constants";
 
-export function compactLineagesData(lineagesData, level = 1) {
+export function compactLineagesData(lineagesData, level) {
+    if(level!==1 && level!==2) throw NotSupportedError
 
     // Compute the lineages in star notation
     const regExp = level === 1

@@ -37,9 +37,9 @@
         </v-col>
       </v-row>
 
-      <v-row v-if='isDisabled.breakdown' class='disabled-label'>
+      <v-row v-if='isDisabled.breakdown' class='disabled-label warning--text'>
         <v-col><sub>
-          <v-icon color='white' small left>mdi-information-outline</v-icon>
+          <v-icon color='warning' small left>mdi-information-outline</v-icon>
           Reduce the time range to at most 4 weeks to see lineages breakdown </sub></v-col>
       </v-row>
 
