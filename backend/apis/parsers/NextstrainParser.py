@@ -50,7 +50,7 @@ class NextstrainParser(Parser):
                 sequence_id = self.get_sequence_id()
 
                 self.batch_seqs.append((sequence_id, date, lineage_id, continent_id, country_id, region_id))
-                for aa in s[48].split(","):
+                for aa in s[49].split(","):
                     if aa != '':
                         protein_name, mutation_name = aa.split(":")
                         protein_id = self.get_protein_id(protein_name)
