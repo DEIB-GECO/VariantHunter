@@ -98,8 +98,6 @@
 </template>
 
 <script>
-import {mapState} from "vuex";
-import axios from "axios";
 import {getRandomColor} from "@/utils/colorService";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
 

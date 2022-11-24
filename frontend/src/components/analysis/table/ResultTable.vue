@@ -1,13 +1,12 @@
 <template>
   <section-element icon='mdi-table-multiple' title="Mutations table">
     <v-col cols="12" class="pa-0 table-container">
-      <v-data-table v-model='selectedRows' :headers='tableHeaders' :custom-sort="customSort" col
+      <v-data-table :headers='tableHeaders' :custom-sort="customSort"
                     :items='getCurrentFilteredRows' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :loading='isLoadingDetails' single-expand class='table-element'
                     item-key='item_key' :custom-filter="()=>true"
                     :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'
-                    @item-expanded='loadLineageDetails' show-expand
-                    @toggle-select-all='handleToggleSelection'>
+                    @item-expanded='loadLineageDetails' show-expand>
 
         <!---- TABLE CONTROLS --------------------------------------------->
         <template v-slot:top>
@@ -20,16 +19,54 @@
           <table-super-header :with-lineages='withLineages' :show-p-values='showPValues'/>
         </template>
 
+        <!---- TABLE SELECT ALL OPT  -------------------------------------->
+        <template v-slot:header.data-table-select>
+          <v-tooltip :disabled="showSelectOptions" bottom nudge-bottom="-3" allow-overflow z-index="10"
+                     max-width="400px" close-delay="0">
+            <template v-slot:activator="{ on }">
+              <div class="select-all-opt" v-on="on"  >
+                <v-simple-checkbox  :value="selectedRows.length>0" ref="selectToggle"  @click.capture="manageSelectAll"
+                                   :indeterminate="selectedRows.length>0 && !hasSelectedAll"/>
+              </div>
+              <v-menu v-model="showSelectOptions" :attach="$refs.selectToggle" offset-y min-width="fit-content">
+                <v-list color="bg_var1" rounded dense width="auto">
+                  <v-list-item link dense @click="selectAllRows">
+                    <v-icon class="pr-3" color="primary">mdi-checkbox-marked</v-icon>
+                    <v-list-item-content>
+                      <v-list-item-title class="primary--text">Select all</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item link dense @click="deselectAllRows">
+                    <v-icon class="pr-3" color="primary">mdi-checkbox-blank-outline</v-icon>
+                    <v-list-item-content>
+                      <v-list-item-title class="primary--text">Clear selection</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+            <span v-if="hasSelectedAll">Deselect all mutations</span>
+            <span v-else-if="selectedRows.length===0">
+              Select all {{ getCurrentFilteredRows.length }} mutations <br/>Previously selected rows will be cleared
+            </span>
+            <span v-else>
+              Click to see select/deselect options
+            </span>
+          </v-tooltip>
+
+        </template>
+
         <!---- TABLE EXPAND/INFO PANEL CONTROLS --------------------------->
         <template v-slot:item.data-table-expand="{expand,item,isExpanded}">
           <row-options :expandable="!withLineages" :item="item" :isExpanded="isExpanded" :expand="expand"/>
         </template>
 
         <!---- TABLE ROW SELECT CONTROL --------------------------->
-        <template v-slot:item.data-table-select="{select,isSelected}">
+        <template v-slot:item.data-table-select="{item}">
           <v-tooltip bottom content-class="rounded-xl tooltip" allow-overflow z-index="10" max-width="400px">
             <template v-slot:activator='{ on, attrs }'>
-              <v-simple-checkbox v-bind="attrs" v-on="on" :value="isSelected" @click="select(!isSelected)"/>
+              <v-simple-checkbox :value="selectedRows.includes(item.item_key)" v-bind="attrs" v-on="on"
+                                 @click="manageRowSelect(item.item_key)"/>
             </template>
             Select to view this mutation in the plots below
           </v-tooltip>
@@ -175,8 +212,10 @@ export default {
   },
   data() {
     return {
-      /** Array of expanded rows (relevant for li only )*/
+      /** Array of keys of expanded rows (relevant for li only )*/
       expandedRows: [],
+
+      showSelectOptions: false,
 
       /** Notation mode of the breakdown view.  0=full notation; 1,2= start notation (level)  */
       notationMode: 0,
@@ -210,14 +249,19 @@ export default {
       return this.withLineages ? this.getCurrentAnalysis.characterizingMuts : null
     },
 
+    hasSelectedAll() {
+      return this.selectedRows.length >= this.getCurrentFilteredRows.length &&
+          this.getCurrentFilteredRows.every(({item_key}) => this.selectedRows.includes(item_key))
+    },
+
+
     /** Array of selected rows */
     selectedRows: {
       set(newVal) {
-        const keys = newVal.map(({item_key}) => item_key)
-        this.setOpt({local: this.useLocalOpt, opt: 'rowKeys', value: keys})
+        this.setOpt({local: this.useLocalOpt, opt: 'rowKeys', value: newVal})
       },
       get() {
-        return this.getCurrentSelectedRows
+        return this.getCurrentOpt.rowKeys
       }
     },
 
@@ -234,6 +278,7 @@ export default {
     /** Array defining asc(true)/desc(false) order for each column selected for sorting in sortingIndexes */
     isDescSorting: {
       set(newVal) {
+        console.log("SET to " + newVal)
         this.setOpt({local: this.useLocalOpt, opt: 'isDescSorting', value: newVal})
       },
       get() {
@@ -269,7 +314,6 @@ export default {
      * Reformat breakdown data based on the notation mode selected. Either using full notation or star notation.
      */
     formatBreakdown() {
-      console.log("RECOMPUTE THIS" + this.notationMode)
       if (this.expandedRows.length === 0) return []
 
       const lineagesData = this.expandedRows[0].lineages // lineages data in full notation
@@ -279,6 +323,44 @@ export default {
   },
   methods: {
     ...mapMutations(['setOpt']),
+
+    manageRowSelect(rowKey) {
+      console.log(rowKey)
+      if (this.selectedRows.includes(rowKey)) {
+        // deselect this row only  (keep all the others)
+        this.selectedRows = this.selectedRows.filter(rk => rk !== rowKey)
+      } else {
+        //select this row only (keep all the others)
+        this.selectedRows = [...this.selectedRows, rowKey]
+      }
+    },
+
+
+    /**
+     * Clear all the selected rows on deselect-all table event
+     */
+    manageSelectAll() {
+      console.log("MANAGER ")
+      const isIndeterminate = this.selectedRows.length > 0 && !this.hasSelectedAll
+      if (isIndeterminate) {
+        // Two viable options. Ask.
+        this.showSelectOptions = true
+      } else if (this.hasSelectedAll) {
+        this.deselectAllRows()
+      } else {
+        this.selectAllRows()
+      }
+    },
+
+    deselectAllRows() {
+      console.log("DESELECT ALL")
+      this.selectedRows = []  // clear selected rows
+    },
+
+    selectAllRows() {
+      console.log("SELECT ALL")
+      this.selectedRows = this.getCurrentFilteredRows.map(({item_key}) => item_key) // select all and only these mutations
+    },
 
     /** Custom sorter mapping */
     customSort(items, sortingIndexes, isDescSorting) {
@@ -318,16 +400,6 @@ export default {
     isCharacterizingMut(item) {
       return this.getCurrentAnalysis.characterizingMuts.includes(item.protein + '_' + item.mut)
     },
-
-    /**
-     * Clear all the selected rows on deselect-all table event
-     * @param toggleStatus  Status of the toggle from v-data-table event
-     */
-    handleToggleSelection(toggleStatus) {
-      if (!toggleStatus.value) {
-        this.selectedRows = []
-      }
-    }
   }
 }
 </script>
@@ -426,5 +498,10 @@ tr.v-data-table__expanded__content {
 .v-application .text-start {
   padding-left: 11px !important;
   padding-right: 2px !important;
+}
+
+/** Fix wrong placement of toggle all */
+.select-all-opt i::before {
+  margin-bottom: auto;
 }
 </style>
