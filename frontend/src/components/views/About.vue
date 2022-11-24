@@ -8,15 +8,15 @@
 
     <!-- Website title -->
     <v-row class='justify-center mt-5'>
-      <v-col cols='col-xs-12 col-sm-3 col-lg-2'>
+      <v-col cols="12" sm="3" lg="2">
         <div class='huge-title'>
           <div class='huge-logo hidden-xs-only'>
-            <v-img :src='websiteLogo' contain height='150px' width='150px'/>
+            <v-img :src='websiteLogo' class="about-logo" max-height='150px' max-width='150px' aspect-ratio="1"/>
           </div>
-          <v-img :src='websiteLogo' class='hidden-sm-and-up' contain height='80px' width='80px'/>
+          <v-img :src='websiteLogo' class='about-logo hidden-sm-and-up' max-height='80px' max-width='80px' aspect-ratio="1"/>
         </div>
       </v-col>
-      <v-col cols='col-xs-12 col-sm-5 col-lg-3'>
+      <v-col cols="12" sm="5" lg="3">
         <div class='site-title huge-site-title'>
           <span class='emphasis'>Variant</span><br/>
           <span>Hunter</span>
@@ -26,17 +26,17 @@
 
     <!-- Buttons -->
     <v-row class='justify-center mb-10'>
-      <v-col cols='col-xs-12 col-sm-4 col-lg-3 d-flex justify-center'>
+      <v-col cols="12" sm="4" lg="3" class="text-center">
         <router-link to='/variant_hunter'>
-          <v-btn class='' color='#011936' depressed outlined rounded>
+          <v-btn class='' color='text_var1' depressed outlined rounded>
             <v-icon left>mdi-virus-outline</v-icon>
             Go to the tool
           </v-btn>
         </router-link>
       </v-col>
-      <v-col cols='col-xs-12 col-sm-4 col-lg-3 d-flex justify-center'>
+      <v-col cols="12" sm="4" lg="3" class="text-center">
         <a href='https://github.com/DEIB-GECO/VariantHunter' target='_blank'>
-          <v-btn class='' color='#347D39' depressed outlined rounded>
+          <v-btn class='' color='success' depressed outlined rounded>
             <v-icon left>mdi-github</v-icon>
             View on Github
           </v-btn>
@@ -59,7 +59,7 @@
         <v-container class='mt-5'>
 
           <h3 id='contributors'>
-            <v-icon left color='#000000DE' large>mdi-account-supervisor</v-icon>
+            <v-icon left color='text_var1' large>mdi-account-supervisor</v-icon>
             Contributors
           </h3>
 
@@ -87,7 +87,7 @@
       <v-col cols='col-xs-12 col-sm-12 col-lg-6'>
         <v-container class='mt-5'>
           <h3>
-            <v-icon left color='#000000DE' large>mdi-account-box-outline</v-icon>
+            <v-icon left color='text_var1' large>mdi-account-box-outline</v-icon>
             Contacts
           </h3>
           <v-row>
@@ -110,7 +110,7 @@
         <v-container class='mt-5'>
 
           <h3>
-            <v-icon left color='#000000DE' large>mdi-shield-star-outline</v-icon>
+            <v-icon left color='text_var1' large>mdi-shield-star-outline</v-icon>
             License
           </h3>
           <p class='pa-5'>
@@ -126,7 +126,7 @@
         <v-container class='mt-5'>
 
           <h3>
-            <v-icon left color='#000000DE' large>mdi-account-heart</v-icon>
+            <v-icon left color='text_var1' large>mdi-account-heart</v-icon>
             Acknowledgements
           </h3>
 
@@ -159,7 +159,7 @@ export default {
   data() {
     return {
       /** VariantHunter logo */
-      websiteLogo: require('../../assets/logo.png'),
+      websiteLogo: require('../../assets/logo.svg'),
 
       /** Ack data */
       acks: [
@@ -242,6 +242,8 @@ export default {
   margin: auto;
   justify-content: center;
   display: flex;
+  height: 100%;
+  align-items: center;
 }
 
 .huge-logo {
@@ -276,7 +278,7 @@ export default {
 .contributors-list a {
   font-size: 13px;
   font-weight: normal;
-  color: #0000008a !important;
+  color: var(--v-text_var1-base) !important;
 }
 
 .role {
@@ -332,4 +334,12 @@ h4 {
   padding-bottom: 3px;
 }
 
+.about-logo{
+  background-color: white;
+  border-radius: 22px;
+}
+
+.huge-logo .about-logo{
+  border-radius: 35px;
+}
 </style>

@@ -6,7 +6,7 @@
 <template>
   <v-container class='ml-0 ml-sm-auto mr-0 mr-sm-auto mt-10'>
     <h3>
-      <v-icon left color='#000000DE' large>mdi-human-greeting</v-icon>
+      <v-icon left color='text_var1' large>mdi-human-greeting</v-icon>
       What is VariantHunter
     </h3>
     <div class='pl-6 pl-sm-10 pr-6 pr-sm-10'>

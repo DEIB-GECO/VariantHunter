@@ -99,7 +99,7 @@
           The novel lineage is defined by a <span class='monospaced'>L452Q</span> amino acid change
           in the <i>spike glycoprotein</i> according to the submitter.
         </p>
-        <div class='with-borders'>
+        <div class='with-borders white'>
           <Picture :src='uc1.img1' img-max-height='300' />
           <Collage :src1='uc1.img2' :src2='uc1.img3' img-max-height='300' />
           <Picture :src='uc1.img4' img-max-height='300' />
@@ -144,7 +144,7 @@
           The novel lineage is defined by a <span class='monospaced'>Q628K</span> amino acid change
           in the <i>spike glycoprotein</i> according to the submitter.
         </p>
-        <div class='with-borders'>
+        <div class='with-borders white'>
           <Picture :src='uc2.img1' img-max-height='300' />
           <Collage :src1='uc2.img2' :src2='uc2.img3' img-max-height='300' />
           <Picture :src='uc2.img4' img-max-height='300' />
@@ -205,7 +205,7 @@
           in the <i>spike glycoprotein</i> according to the submitter; and shows a relative growth advantage
           in <i>France</i> compared to the parental <b>lineage AY.122</b>.
         </p>
-        <div class='with-borders'>
+        <div class='with-borders white'>
           <Picture :src='uc3.img1' img-max-height='300' />
           <Collage :src1='uc3.img2' :src2='uc3.img3' img-max-height='300' />
           <Picture :src='uc3.img4' img-max-height='300' />
@@ -320,7 +320,7 @@ export default {
 <style scoped>
 .with-borders {
   border: solid 1px #e3e3e3;
-  border-radius: 30px;
+  border-radius: 4px;
   padding: 28px 3px;
 }
 

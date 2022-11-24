@@ -15,7 +15,7 @@
   <ExpansionPanel>
 
     <template v-slot:icons>
-      <v-icon left color='#000000DE'>mdi-star-circle-outline</v-icon>
+      <v-icon left color='text_var1'>mdi-star-circle-outline</v-icon>
     </template>
 
     <template v-slot:title>

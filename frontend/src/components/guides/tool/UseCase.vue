@@ -15,12 +15,12 @@
   <ExpansionPanel>
 
     <template v-slot:icons>
-      <v-icon left color='#000000DE'>mdi-lightbulb-on-outline</v-icon>
+      <v-icon left color='text_var1'>mdi-lightbulb-on-outline</v-icon>
     </template>
 
     <template v-slot:title>
       <span v-html='name'></span>
-      <v-tooltip bottom max-width='600' :color="f_primary" open-delay='0' content-class='small-hint'>
+      <v-tooltip bottom max-width='600' color="f_primary" open-delay='0' content-class='small-hint'>
           <template v-slot:activator="{ on, attrs }">
             <div class='source' v-bind="attrs" v-on="on">
              Data from {{sourceName}} dated {{sourceDate}}

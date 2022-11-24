@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       /** VariantHunter logo */
-      websiteLogo: require('./assets/logo.png'),
+      websiteLogo: require('./assets/logo.svg'),
     }
   }
 }
@@ -56,6 +56,7 @@ export default {
 
 /* Site logo */
 .logo {
+  background-color: white;
   border-radius: 12px;
   margin-left: 17px;
 }

@@ -11,11 +11,11 @@
 -->
 
 <template>
-    <v-img :src='src' :alt='alt' contain :max-height='imgMaxHeight' :class='(noZoom? "":"zoom-in-action")' eager
+    <v-img :src='src' :alt='alt' contain :max-height='imgMaxHeight' :class='"rounded "+(noZoom? "":"zoom-in-action")' eager
            @click='manageImgZoom' >
     <!-- Dialog element for image -->
     <v-dialog v-model='showImg' transition='dialog-bottom-transition'>
-      <v-img :src='src' :alt='alt' contain eager class='zoom-out-action' @click='showImg=false' />
+      <v-img :src='src' :alt='alt' contain eager class='rounded-xl zoom-out-action' @click='showImg=false' />
     </v-dialog>
     </v-img>
 </template>

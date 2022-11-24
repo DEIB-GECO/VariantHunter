@@ -45,7 +45,7 @@ export default {
 
 <style scoped>
 .v-expansion-panel {
-  border: 1px solid black;
+  border: 1px solid var(--v-text_var1-base);
   border-radius: 30px !important;
   margin-bottom: 10px;
 }

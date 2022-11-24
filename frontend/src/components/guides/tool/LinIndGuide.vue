@@ -37,11 +37,11 @@
           <li>the four following columns report the <b>frequency of the mutation</b> in each of the four weeks;
           </li>
           <li>the &nbsp;
-            <v-icon small color='#000000de'>mdi-plus-circle-outline</v-icon>&nbsp;<span
+            <v-icon small color='text_var1'>mdi-plus-circle-outline</v-icon>&nbsp;<span
               class='command'>SHOW P-VALUES</span>
             button adds, to the end of the table, three columns of <b>Chi squared tests</b> defined in
             &nbsp;
-            <v-icon small color='#000000de'>mdi-help-circle-outline</v-icon>&nbsp;<span class='command'>TABLE INTERPRETATION</span>;
+            <v-icon small color='text_var1'>mdi-help-circle-outline</v-icon>&nbsp;<span class='command'>TABLE INTERPRETATION</span>;
           </li>
           <li>data and all the visuals of the analysis can be <b>downloaded</b>.</li>
         </ul>
