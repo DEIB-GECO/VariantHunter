@@ -398,7 +398,7 @@ export default {
      * @returns {boolean}   True iff the mutation is characterizing the lineage
      */
     isCharacterizingMut(item) {
-      return this.getCurrentAnalysis.characterizingMuts.includes(item.protein + '_' + item.mut)
+      return this.getCurrentAnalysis.characterizingMuts.includes(item.item_key)
     },
   }
 }

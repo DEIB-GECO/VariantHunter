@@ -105,7 +105,9 @@ export default {
    * Add timers
    */
   mounted() {
-    if(this.standalone)
+    this.showSnackbar=this.isLoading || this.error
+
+    if(this.standalone || this.isLoading)
       this.setTimers()
   },
 

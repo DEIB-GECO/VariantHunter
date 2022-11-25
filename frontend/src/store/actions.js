@@ -11,6 +11,7 @@ export const actions={
 
     clearHistory({commit,state}){
         return new Promise(resolve => {
+            commit('setCurrentAnalysis',null)
             Object.keys(state.analyses).forEach(id => commit('removeAnalysis', id))
             resolve()
         })

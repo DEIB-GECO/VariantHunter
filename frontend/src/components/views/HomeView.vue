@@ -6,10 +6,10 @@
   <div class="height-100">
     <sidebar />
     <div class="tool-views-container height-100">
-      <v-scroll-y-reverse-transition>
+      <v-fade-transition hide-on-leave>
         <new-search-view v-if="currentView==='new-search'"/>
         <result-view v-if="currentView==='result'"/>
-      </v-scroll-y-reverse-transition>
+      </v-fade-transition>
     </div>
 
     <loading-sticker :error="error"/>

@@ -177,7 +177,7 @@ export default {
       if (mode)
         analyses = analyses.filter(({query}) => (mode === 'li' && !query.lineage) || (mode === 'ls' && query.lineage))
       if (granularity)
-        analyses = analyses.filter(({query}) => !granularity || granularity === query.granularity)
+        analyses = analyses.filter(({query}) => granularity === query.granularity)
 
       return analyses
     },

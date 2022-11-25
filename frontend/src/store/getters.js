@@ -65,9 +65,9 @@ export const getters = {
         if(state.currentAnalysisId===null) return undefined
         const {protein:filteredProtein,muts:filteredMuts} = getters.getCurrentOpt
 
-        return getters.getCurrentAnalysis.rows.filter(({protein, mut}) =>
+        return getters.getCurrentAnalysis.rows.filter(({protein, item_key}) =>
             (filteredProtein === null || protein === filteredProtein) &&
-            (filteredMuts === null || filteredMuts.length === 0 || filteredMuts.includes(protein + '_' + mut))
+            (filteredMuts === null || filteredMuts.length === 0 || filteredMuts.includes(item_key))
         )
     },
 
@@ -81,7 +81,7 @@ export const getters = {
         let selectedRows=[]
         if (filteredRowKeys.length > 0) {
             const rows=getters.getCurrentFilteredRows
-            selectedRows = rows.filter(({protein, mut}) => filteredRowKeys.includes(protein + '_' + mut))
+            selectedRows = rows.filter(({item_key}) => filteredRowKeys.includes(item_key))
         } else
             selectedRows=[]
         return selectedRows

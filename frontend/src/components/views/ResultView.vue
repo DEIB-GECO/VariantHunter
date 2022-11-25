@@ -20,25 +20,49 @@
     <v-container class="view-sizing">
 
       <!-- Filtering options -->
-      <result-filters/>
+      <v-slide-y-reverse-transition hide-on-leave>
+        <result-filters v-if="sections?.filters"/>
+        <v-skeleton-loader v-else type="card" height="110" class="mt-5" />
+      </v-slide-y-reverse-transition>
 
       <!-- Table -->
-      <result-table :with-lineages="withLineages"/>
+      <v-slide-y-reverse-transition hide-on-leave>
+        <result-table v-if="sections?.table" :with-lineages="withLineages"/>
+        <v-skeleton-loader v-else type="table" height="500" class="mt-8"/>
+      </v-slide-y-reverse-transition>
 
       <!-- Diffusion Heatmap -->
-      <diffusion-heatmap/>
+      <v-slide-y-reverse-transition hide-on-leave>
+        <diffusion-heatmap v-if="sections?.heatmap"/>
+        <v-skeleton-loader v-else type="image" height="200" class="mt-8" />
+      </v-slide-y-reverse-transition>
 
       <!-- Diffusion Trend -->
-      <diffusion-trend/>
+      <v-slide-y-reverse-transition hide-on-leave>
+        <diffusion-trend v-if="sections?.trend"/>
+        <v-skeleton-loader v-else type="image" height="200" class="mt-8"/>
+      </v-slide-y-reverse-transition>
 
       <!-- Diffusion Trend -->
-      <diffusion-odd-ratio/>
+      <v-slide-y-reverse-transition hide-on-leave>
+        <diffusion-odd-ratio v-if="sections?.ratio"/>
+        <v-skeleton-loader v-else type="image" height="200" class="mt-8"/>
+      </v-slide-y-reverse-transition>
+
 
       <!-- Next/prev week button -->
-      <week-slider @shiftPeriod="d => shiftPeriod(d)"/>
+      <v-slide-y-reverse-transition hide-on-leave>
+        <week-slider v-if="sections?.append" @shiftPeriod="d => shiftPeriod(d)"/>
+      </v-slide-y-reverse-transition>
 
       <!-- Info -->
-      <result-info/>
+      <v-slide-y-reverse-transition hide-on-leave>
+        <result-info v-if="sections?.append"/>
+         <v-skeleton-loader v-else type="list-item" height="200" class="mt-8"/>
+      </v-slide-y-reverse-transition>
+
+      <loading-sticker :is-loading="Object.values(sections).some(x=>!x)" no-overlay
+                       :loading-messages="[{text:'Processing',time:3000}]"/>
 
       <loading-sticker :is-loading="isLoading" :error="error"
                        :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
@@ -61,6 +85,7 @@ import DiffusionOddRatio from "@/components/analysis/DiffusionOddRatio";
 import NoDataAlert from "@/components/general/NoDataAlert";
 import ResultInfo from "@/components/analysis/ResultInfo";
 import ResultFilters from "@/components/analysis/ResultFilters";
+import Vue from "vue";
 
 export default {
   name: 'ResultView',
@@ -78,6 +103,14 @@ export default {
   },
   data() {
     return {
+      sections: {
+        'filters': false,
+        'table': false,
+        'heatmap': false,
+        'trend': false,
+        'ratio': false,
+        'append': false
+      },
       noDataWarning: false,
       isLoading: false,
       error: undefined,
@@ -174,6 +207,13 @@ export default {
   },
   beforeMount() {
     window.scrollTo({top: 0})
+  },
+  mounted() {
+    Object.keys(this.sections).forEach((section) => {
+        setTimeout(() => {
+          this.sections[section] = !this.sections[section]
+        }, 1)
+    })
   }
 }
 </script>

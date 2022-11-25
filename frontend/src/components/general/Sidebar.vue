@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer class="sidebar-sizing" :mini-variant="isCollapsed" clipped permanent expand-on-hover touchless
-                       absolute dark color="f_primary" width="500px" height="100vh">
+                       absolute dark color="f_primary" width="500px" height="100vh" floating>
     <v-list rounded nav dense>
       <list-item icon="mdi-plus" title="New analysis" link subtitle="Perform a new analysis" expand-on-hover
                  :class="currentView==='new-search'?'v-list-item--active':''" @click.native="newAnalysisHandler()"/>
@@ -38,7 +38,6 @@ export default {
   components: {AppPreferences, IconWithTooltip, SearchHistory, ListItem},
   data() {
     return {
-      showSidebar: true,
       isCollapsed: true,
       showHistory: true,
     }

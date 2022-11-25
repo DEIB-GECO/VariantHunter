@@ -127,7 +127,7 @@ export default {
 
     /** Possible mutations values computed based on data results */
     possibleMutations() {
-      const set = new Set(this.getCurrentAnalysis.rows.map(({protein, mut}) => protein + '_' + mut))
+      const set = new Set(this.getCurrentAnalysis.rows.map(({item_key}) => item_key))
       return [...set].sort()
     },
 
