@@ -1,5 +1,5 @@
 <template>
-  <v-menu v-model="showMenu"  rounded :attach="attach" offset-y :close-on-content-click="closeOnContentClick" >
+  <v-menu v-model="showMenu"  rounded :attach="attach" offset-y content-class="rounded-xl" :close-on-content-click="closeOnContentClick" >
     <template v-slot:activator="{ on, attrs }">
       <v-chip :small="small" dark :color="color" :outlined="activatorOutlined" :class="'text-uppercase'"
               v-bind="attrs" v-on="on">
@@ -7,7 +7,7 @@
         {{ activatorText }}
       </v-chip>
     </template>
-    <v-card class="f_text_dark--text" rounded max-width="300px" color="f_tertiary" @mouseleave="onMouseLeave">
+    <v-card class="f_text_dark--text" max-width="300px" color="f_tertiary" @mouseleave="onMouseLeave">
       <v-container>
         <slot></slot>
       </v-container>

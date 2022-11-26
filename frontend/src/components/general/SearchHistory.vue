@@ -1,13 +1,13 @@
 <template>
   <div class="filter-area">
-    <div id="filtering-area" class="text-body-3 mb-2 d-flex">
+    <div id="filtering-area" class="text-body-3 mb-2 d-flex text-center">
       <chip-menu attach="#filtering-area" :close-on-content-click="false" small activator-icon="mdi-filter"
-                 activator-text="Filter by"
+                 :activator-text="(isFiltering?'Filtering by':'Filter by')"
                  :color="(isFiltering?'f_secondary':'f_tertiary')" :activator-outlined="!isFiltering"
                  :closable="isFiltering"
                  :activator-close-action="clearFilters">
         <div id="filtering-menu" class="text-body-4 pb-2 text-center f_text_dark--text">
-          <v-icon small left>mdi-eye</v-icon>
+          <v-icon small left color="f_text_dark">mdi-eye</v-icon>
           Showing:
         </div>
         <!-- Filtering options -->
@@ -17,7 +17,7 @@
             <chip-menu attach="#filtering-area" color="#bc7fbf" small activator-icon="mdi-shape"
                        :activator-text="filteredMode?modeOptions[filteredMode]:modeOptions['null']"
                        :activator-outlined="!filteredMode" hide-on-leave>
-              <v-list color="transparent">
+              <v-list color="transparent" light>
                 <v-list-item link v-for="([value, title], index) in Object.entries(modeOptions)" :key="index">
                   <v-list-item-title @click="filteredMode=(value==='null'?null:value)">{{ title }}</v-list-item-title>
                 </v-list-item>
@@ -30,8 +30,8 @@
             <!-- Analysis granularity filtering -->
             <chip-menu attach="#filtering-area" absolute color="#ff6e3e" small activator-icon="mdi-map-outline"
                        :activator-text="filteredGranularity?granularityOptions[filteredGranularity]:granularityOptions['null']"
-                       :activator-outlined="!filteredGranularity" hide-on-leave>
-              <v-list color="transparent">
+                       :activator-outlined="!filteredGranularity" hide-on-leave class="rounded-xl">
+              <v-list color="transparent" light  >
                 <v-list-item link v-for="([value, title], index) in Object.entries(granularityOptions)" :key="index">
                   <v-list-item-title @click="filteredGranularity=(value==='null'?null:value)">
                     {{ title }}
@@ -47,9 +47,25 @@
             <chip-menu attach="#filtering-area" absolute color="#C2AD07" small activator-icon="mdi-star"
                        :activator-text="filteredStarred?starredOptions[filteredStarred]:starredOptions['null']"
                        :activator-outlined="!filteredStarred" hide-on-leave>
-              <v-list color="transparent">
+              <v-list color="transparent" light  class="rounded-xl">
                 <v-list-item link v-for="([value, title], index) in Object.entries(starredOptions)" :key="index">
                   <v-list-item-title @click="filteredStarred=(value==='null'?null:value)">
+                    {{ title }}
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </chip-menu>
+          </v-col>
+        </v-row>
+        <v-row class="pb-2" no-gutters>
+          <v-col>
+            <!-- Tag analysis filtering -->
+            <chip-menu attach="#filtering-area" absolute color="#4252d9" small activator-icon="mdi-tag"
+                       :activator-text="filteredTag?tagOptions[filteredTag]:tagOptions['null']"
+                       :activator-outlined="!filteredTag" hide-on-leave>
+              <v-list color="transparent" light>
+                <v-list-item link v-for="([value, title], index) in Object.entries(tagOptions)" :key="index">
+                  <v-list-item-title @click="filteredTag=(value==='null'?null:value)">
                     {{ title }}
                   </v-list-item-title>
                 </v-list-item>
@@ -90,7 +106,7 @@
             }}
           </v-list-item-title>
 
-          <!-- Analysis categories #bc7fbf -->
+          <!-- Analysis categories -->
           <v-list-item-subtitle class="break-spaces pt-1">
             <v-chip x-small :color="getLocationColor(query.granularity)" class="text-uppercase mr-1 mb-1 text-body-5">
               {{ query.granularity }}
@@ -153,14 +169,23 @@ export default {
 
       filteredStarred: null,
       starredOptions: {null: 'Both starred and not', starred: 'Starred only'},
+
+      filteredTag: null,
     }
   },
   computed: {
     ...mapState(['currentAnalysisId', 'tags']),
     ...mapGetters(['getAnalysesSummary']),
 
+    tagOptions(){
+      const opts = {null: 'All tags'}
+      Object.keys(this.tags).forEach(tag=>opts[tag]=tag)
+      return opts
+    },
+
     isFiltering() {
-      return this.filteredMode !== null || this.filteredStarred !== null || this.filteredGranularity !== null
+      return this.filteredMode !== null || this.filteredStarred !== null ||
+          this.filteredGranularity !== null || this.filteredTag !== null
     },
 
     filteredAnalysesSummary() {
@@ -168,10 +193,13 @@ export default {
       const mode = this.filteredMode
       const granularity = this.filteredGranularity
       const starred = this.filteredStarred
+      const tag = this.filteredTag
 
       let analyses = this.getAnalysesSummary
 
       // Apply filtering parameters
+      if (tag)
+        analyses = analyses.filter(({tag:aTag}) => tag === aTag)
       if (starred)
         analyses = analyses.filter(({starred}) => starred)
       if (mode)
