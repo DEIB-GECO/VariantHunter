@@ -111,7 +111,7 @@ export default {
     },
 
     /** Adjust the possible lineages according to the selected date */
-    selectedDate (newVal) {
+    selectedDate () {
       this.getPossibleLineages()
     }
   },

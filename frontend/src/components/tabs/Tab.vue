@@ -115,13 +115,12 @@ import { mapState } from 'vuex'
 import LocationSelector from '@/components/form/LocationSelector'
 import DatePicker from '@/components/form/DatePicker'
 import LineageSelector from '@/components/form/LineageSelector'
-import GranularitySelector from '@/components/form/GranularitySelector'
 import { mapStateTwoWay } from '@/utils/bindService'
 import DatasetExplorer from '@/components/DatasetExplorer'
 
 export default {
   name: 'Tab',
-  components: { DatasetExplorer, GranularitySelector, LineageSelector, DatePicker, LocationSelector },
+  components: { DatasetExplorer, LineageSelector, DatePicker, LocationSelector },
   props: {
     /** Visibility flag for the tab: true iff this is the current tab */
     visible: Boolean,

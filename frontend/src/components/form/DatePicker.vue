@@ -71,9 +71,8 @@ export default {
 
       /**
        * Setter for the label.
-       * @param label The new label
        */
-      set (label) {
+      set () {
         this.selectedDate = null
       }
     }
