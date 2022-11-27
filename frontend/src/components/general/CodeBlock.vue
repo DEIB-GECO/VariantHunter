@@ -50,10 +50,9 @@ export default {
   methods: {
     /**
      * Copy the element content
-     * @param e The copy event
      */
     doCopy () {
-      this.$copyText(thi  s.code).then(() => { this.successMessage = true })
+      this.$copyText(this.code).then(() => { this.successMessage = true })
     }
   }
 }
