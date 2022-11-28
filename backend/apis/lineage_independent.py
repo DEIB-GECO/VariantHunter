@@ -31,7 +31,7 @@ def extract_week_seq_counts(location, w, prot=None, mut=None):
     """
     Extract weekly sequence counts for the given location and weeks from the database
     Args:
-        location:   String representing the location to be considered
+        location:   String representing the identifier of the location to be considered
         w:          Weeks to be considered
         prot:       If set, the counts consider only the sequences with a given protein
         mut:        If set, the counts consider only the sequences with a given mutation
@@ -49,17 +49,15 @@ def extract_week_seq_counts(location, w, prot=None, mut=None):
             # count the seq collected for a given week and location having a given mutation
             query = f'''    SELECT sum(count)
                             FROM  aggr_aa_substitutions SB
-                                JOIN locations LC ON SB.location_id = LC.location_id
                                 JOIN proteins PR ON SB.protein_id = PR.protein_id
-                            WHERE date > {start} AND date <= {stop} AND location = "{location}" 
+                            WHERE date > {start} AND date <= {stop} AND location_id = "{location}" 
                                 AND mut='{mut}' AND protein='{prot}' 
                             GROUP BY date, SB.location_id;'''
         else:
             # count the seq collected for a given week and location
             query = f'''    SELECT sum(count)
                             FROM  aggr_sequences SQ
-                                JOIN locations LC ON SQ.location_id = LC.location_id
-                            WHERE date > {start} AND date <= {stop} AND location = "{location}" 
+                            WHERE date > {start} AND date <= {stop} AND location_id = "{location}" 
                             GROUP BY date, SQ.location_id;'''
         return sum([x[0] for x in cur.execute(query).fetchall()])
 
@@ -76,7 +74,7 @@ def extract_mutation_data(location, w, min_sequences=0):
     """
     Extract weekly mutation data for the given location and weeks from the database
     Args:
-        location:       String representing the location to be considered
+        location:       String representing the identifier od the location to be considered
         w:              Weeks to be considered
         min_sequences:  Minimum number of sequence
 
@@ -93,8 +91,7 @@ def extract_mutation_data(location, w, min_sequences=0):
         query = f'''    SELECT protein, mut, sum(count) 
                         FROM aggr_aa_substitutions SB
                             JOIN proteins PR ON SB.protein_id = PR.protein_id
-                            JOIN locations LC ON SB.location_id = LC.location_id
-                        WHERE date > {start} AND date <= {stop} AND location = "{location}"
+                        WHERE date > {start} AND date <= {stop} AND location_id = "{location}"
                         GROUP BY SB.protein_id, mut 
                         {having_clause if is_target else ""};'''
         return {p + '_' + m: c for p, m, c in cur.execute(query).fetchall()}
@@ -112,7 +109,7 @@ def extract_lineages_data(location, prot, mut, w):
     """
     Extract lineages data for the given location, mutation and weeks from the database
     Args:
-        location:   String representing the location to be considered
+        location:   String representing the identifier of the location to be considered
         prot:       String representing the protein to be considered
         mut:        String representing the mutation to be considered
         w:          Weeks to be considered
@@ -133,9 +130,8 @@ def extract_lineages_data(location, prot, mut, w):
         query = f'''    SELECT DISTINCT SB.lineage_id, lineage
                         FROM aggr_aa_substitutions SB
                             JOIN lineages LN ON SB.lineage_id = LN.lineage_id
-                            JOIN locations LC ON SB.location_id = LC.location_id
                             JOIN proteins PR ON SB.protein_id = PR.protein_id
-                        WHERE date > {start} AND date <= {stop} AND location = "{location}" 
+                        WHERE date > {start} AND date <= {stop} AND location_id = "{location}" 
                             AND protein = '{prot}' AND mut = '{mut}'
                         ORDER BY lineage;'''
         return {k: v for k, v in cur.execute(query).fetchall()}
@@ -143,9 +139,8 @@ def extract_lineages_data(location, prot, mut, w):
     def extract_week_info(lin_id, start, stop):
         query = f'''    SELECT sum(count) 
                         FROM aggr_aa_substitutions SB
-                            JOIN locations LC ON SB.location_id = LC.location_id
                             JOIN proteins PR ON SB.protein_id = PR.protein_id
-                        WHERE date > {start} AND date <= {stop} AND location = "{location}" 
+                        WHERE date > {start} AND date <= {stop} AND location_id = "{location}" 
                             AND lineage_id = '{lin_id}' AND protein = '{prot}' AND mut = '{mut}'
                         GROUP BY date, SB.location_id, SB.protein_id, mut, lineage_id;'''
         return sum([x[0] for x in cur.execute(query).fetchall()])
@@ -199,7 +194,7 @@ class FieldList(Resource):
         min_sequences = int(week_sequence_counts[-1] * 0.005 + 1)
         mutation_data = extract_mutation_data(location, w, min_sequences)
 
-        statistics = produce_statistics(location, week_sequence_counts, mutation_data)
+        statistics = produce_statistics(week_sequence_counts, mutation_data)
 
         metadata = {
             'date': date,

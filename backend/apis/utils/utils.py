@@ -114,11 +114,10 @@ def correct_pvalues(statistics):
     return statistics
 
 
-def produce_statistics(location, week_sequence_counts, mutation_data):
+def produce_statistics(week_sequence_counts, mutation_data):
     """
     Process the statistics values by properly formatting them
     Args:
-        location:               Location name
         week_sequence_counts:   Week sequences data
         mutation_data:          Mutation data
 

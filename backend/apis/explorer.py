@@ -30,8 +30,8 @@ def extract_seq_num(location, lineage):
     """
     Extract from the database the sequence count for the selected params
     Args:
-        location:       the location
-        lineage:        the lineage
+        location:       The location identifier
+        lineage:        The lineage name
 
     Returns: an array of (date, seq_count) pairs
 
@@ -45,15 +45,13 @@ def extract_seq_num(location, lineage):
         if lineage is not None and lineage!='':
             query = f'''    SELECT date,sum(count) 
                             FROM aggr_sequences SQ
-                                JOIN locations LC ON SQ.location_id = LC.location_id
                                 JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                            WHERE location = "{location}" AND lineage = '{lineage}'
+                            WHERE location_id = "{location}" AND lineage = '{lineage}'
                             GROUP BY date, SQ.location_id, SQ.lineage_id;'''
         else:
             query = f'''    SELECT date,sum(count) 
                             FROM aggr_sequences SQ
-                                JOIN locations LC ON SQ.location_id = LC.location_id
-                            WHERE location = "{location}"
+                            WHERE location_id = "{location}"
                             GROUP BY date, SQ.location_id;'''
         seqs = cur.execute(query).fetchall()
         return [{'date': x[0], 'seq_count': x[1]} for x in seqs]
@@ -68,8 +66,8 @@ def extract_lineage_breakdown(location, period):
     """
     Extract from the database the lineage breakdown info for the selected params
     Args:
-        location:       the location
-        period:          the date range
+        location:       The location identifier
+        period:         The date range
 
     Returns: an array of (day,data about the lineage breakdown) pairs
 
@@ -82,25 +80,21 @@ def extract_lineage_breakdown(location, period):
     def extract_lineages():
         query = f'''    SELECT DISTINCT SQ.lineage_id, lineage
                         FROM aggr_sequences SQ
-                            JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                            JOIN locations LC ON SQ.location_id = LC.location_id
-                        WHERE location="{location}" AND date>={period['begin']} AND date<={period['end']}
+                        WHERE location_id="{location}" AND date>={period['begin']} AND date<={period['end']}
                         ORDER BY lineage;'''
         return {k: v for k, v in cur.execute(query).fetchall()}
 
     def extract_day_threshold(day):
         query = f'''    SELECT 0.10 * sum(count)
                         FROM aggr_sequences SQ
-                            JOIN locations LC ON SQ.location_id = LC.location_id
-                        WHERE location="{location}" AND date={day};'''
+                        WHERE location_id="{location}" AND date={day};'''
         day_threshold = cur.execute(query).fetchone()
         return day_threshold[0] if day_threshold[0] is not None else 0
 
     def extract_lineage_data(lin_id, day):
         query = f'''    SELECT sum(count)
                         FROM aggr_sequences SQ
-                            JOIN locations LC ON SQ.location_id = LC.location_id
-                        WHERE lineage_id='{lin_id}' AND location="{location}" and date={day}
+                        WHERE lineage_id='{lin_id}' AND location_id="{location}" and date={day}
                         GROUP BY date, lineage_id, SQ.location_id;'''
         day_count = cur.execute(query).fetchone()
         return day_count[0] if day_count is not None else 0

@@ -52,7 +52,7 @@ def get_lineages_from_loc_date(location, date):
     """
     Extract the lineages for a given location and week from the database
     Args:
-        location:   String representing the location to be considered
+        location:   String representing the identifier of the location to be considered
         date:       String representing the (week ending) date to be considered.
 
     Returns: An array of lineages
@@ -68,8 +68,7 @@ def get_lineages_from_loc_date(location, date):
     query = f'''    SELECT DISTINCT lineage 
                     FROM aggr_sequences SQ
                         JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                        JOIN locations LC ON SQ.location_id = LC.location_id
-                    WHERE location = "{location}" AND date > {start} AND date <= {stop}
+                    WHERE location_id = "{location}" AND date > {start} AND date <= {stop}
                     ORDER BY lineage;'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
@@ -82,7 +81,7 @@ def get_lineages_from_loc(location):
     """
     Extract the lineages for a given location from the database
     Args:
-        location:   String representing the location to be considered
+        location:   String representing the identifier of the location to be considered
 
     Returns: An array of lineages
 
@@ -95,8 +94,7 @@ def get_lineages_from_loc(location):
     query = f'''    SELECT DISTINCT lineage 
                     FROM aggr_sequences SQ
                         JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                        JOIN locations LC ON SQ.location_id = LC.location_id
-                    WHERE location = "{location}"
+                    WHERE location_id = "{location}"
                     ORDER BY lineage;'''
     extracted_lineages = [x[0] for x in cur.execute(query).fetchall()]
     con.close()
@@ -137,7 +135,7 @@ def extract_week_seq_counts(location, lineage, w):
     """
     Extract weekly sequence counts for the given location, lineage and weeks from the database
     Args:
-        location:   String representing the location to be considered
+        location:   String representing the identifier of location to be considered
         lineage:    String representing the lineage to be considered
         w:          Weeks to be considered
 
@@ -152,9 +150,8 @@ def extract_week_seq_counts(location, lineage, w):
     def extract_week_count(start, stop):
         query = f'''    SELECT sum(count) 
                         FROM aggr_sequences SQ
-                            JOIN locations LC on SQ.location_id = LC.location_id
                             JOIN lineages LN on SQ.lineage_id = LN.lineage_id
-                        WHERE date > {start} and date <= {stop} and location = "{location}" and lineage = '{lineage}' 
+                        WHERE date > {start} and date <= {stop} and location_id = "{location}" and lineage = '{lineage}' 
                         GROUP BY date, SQ.location_id, SQ.lineage_id;'''
         return sum([x[0] for x in cur.execute(query).fetchall()])
 
@@ -171,7 +168,7 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
     """
         Extract weekly mutation data for the given location, lineage and weeks from the database
         Args:
-            location:       String representing the location to be considered
+            location:       String representing the identifier of the location to be considered
             lineage:        String representing the lineage to be considered
             w:              Weeks to be considered
             min_sequences:  Minimum number of sequence
@@ -189,9 +186,8 @@ def extract_mutation_data(location, lineage, w, min_sequences=0):
         query = f'''    SELECT protein, mut, sum(count) 
                         FROM aggr_aa_substitutions SB
                             JOIN proteins PR ON SB.protein_id = PR.protein_id
-                            JOIN locations LC ON SB.location_id = LC.location_id
                             JOIN lineages LN ON SB.lineage_id = LN.lineage_id
-                        WHERE date > {start} AND date <= {stop} AND location = "{location}" 
+                        WHERE date > {start} AND date <= {stop} AND location_id = "{location}" 
                             AND lineage = '{lineage}'
                         GROUP BY SB.protein_id, mut 
                         {having_clause if is_target else ""};'''
@@ -258,7 +254,7 @@ class FieldList(Resource):
         min_sequences = int(week_sequence_counts[-1] * 0.005 + 1)
         mutation_data = extract_mutation_data(location, lineage, w, min_sequences)
 
-        statistics = produce_statistics(location, week_sequence_counts, mutation_data)
+        statistics = produce_statistics(week_sequence_counts, mutation_data)
         characterizing_muts = get_lineage_characterization([lineage])
 
         metadata = {
