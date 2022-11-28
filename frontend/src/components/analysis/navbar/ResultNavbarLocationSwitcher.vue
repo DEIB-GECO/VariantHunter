@@ -10,17 +10,17 @@
     </template>
     <div @mouseleave="showOptions=false">
       <v-list color="bg_var1" rounded dense width="auto">
-        <v-list-item link dense @click="$emit('shiftArea',continent)">
+        <v-list-item link dense @click="$emit('shiftArea',continent.id)">
           <v-icon class="pr-3" color="primary">mdi-earth</v-icon>
           <v-list-item-content>
-            <v-list-item-title class="primary--text">Switch to&nbsp;<span class="font-weight-black">{{continent}}</span></v-list-item-title>
+            <v-list-item-title class="primary--text">Switch to&nbsp;<span class="font-weight-black">{{continent.text}}</span></v-list-item-title>
             <v-list-item-subtitle>Run continental analysis</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if="!isNational" link dense @click="$emit('shiftArea',country)">
+        <v-list-item v-if="!isNational" link dense @click="$emit('shiftArea',country.id)">
           <v-icon class="pr-3" color="primary">mdi-map-outline</v-icon>
           <v-list-item-content>
-            <v-list-item-title class="primary--text">Switch to&nbsp;<span class="font-weight-black">{{country}}</span></v-list-item-title>
+            <v-list-item-title class="primary--text">Switch to&nbsp;<span class="font-weight-black">{{country.text}}</span></v-list-item-title>
             <v-list-item-subtitle>Run national analysis</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>

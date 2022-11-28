@@ -181,7 +181,7 @@ export default {
       this.error = undefined
       const url = (this.selectedLineage) ? "/lineage_specific/getStatistics" : "/lineage_independent/getStatistics"
       const queryParams = {
-        location: this.selectedLocation,
+        location: this.selectedLocation.id,
         date: this.selectedDate[1],
         lineage: this.selectedLineage
       }

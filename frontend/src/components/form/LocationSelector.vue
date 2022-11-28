@@ -25,7 +25,7 @@
         <v-autocomplete v-model='selectedLocation' :items='possibleLocations' :search-input.sync="searchQuery"
                         :loading='isLoading' placeholder='Start typing the location' attach solo hide-details
                         persistent-placeholder :hide-no-data="(!searchQuery || searchQuery.length<1)" flat
-                        :filter="customFilter"
+                        :filter="customFilter" return-object item-text="text" item-value="id"
                         @click.capture="onBoxClick" :menu-props="{closeOnClick: true,closeOnContentClick: true}"
                         :no-data-text="(isLoading?'Loading locations...':(searchQuery && searchQuery.length<2?'Continue typing...':'This location seems not to exist'))"
                         clearable clear-icon="mdi-backspace-outline" v-click-outside="onClickOutside"
@@ -33,36 +33,38 @@
           <!-- Current selection -->
           <template v-slot:selection="{item}">
             <div @click="onBoxClick">
-              <v-chip dark small class="text-uppercase mr-3 hidden-xs-only" :color="getLocationColor(item)">
-                granularity: {{ possibleLocationsInfo[item].type }}
+              <v-chip dark small class="text-uppercase mr-3 hidden-xs-only" :color="getLocationColor(item.id)">
+                granularity: {{ possibleLocationsInfo[item.id].type }}
               </v-chip>
-              <span class="text-uppercase">{{ item }}</span>
+              <span class="text-uppercase">{{ item.text }}</span>
             </div>
           </template>
 
           <!-- Item element -->
           <template v-slot:item="{item}">
               <span class="text-uppercase">
-                <span v-if="possibleLocationsInfo[item].continent">{{ possibleLocationsInfo[item].continent }}&nbsp;/&nbsp;</span>
-                <span v-if="possibleLocationsInfo[item].country">{{
-                    possibleLocationsInfo[item].country
-                  }}&nbsp;/&nbsp;</span>
-                <span class="font-weight-bold">{{ item }}</span>
+                <span v-if="possibleLocationsInfo[item.id].continent">
+                  {{ possibleLocationsInfo[item.id].continent.text }}&nbsp;/&nbsp;
+                </span>
+                <span v-if="possibleLocationsInfo[item.id].country">
+                  {{ possibleLocationsInfo[item.id].country.text }}&nbsp;/&nbsp;
+                </span>
+                <span class="font-weight-bold">{{ item.text }}</span>
               </span>
             <v-spacer/>
-            <icon-with-tooltip v-if="possibleLocationsInfo[item].type!=='region'" icon="mdi-arrow-top-right"
-                               :tip="'Browse locations of '+ item" bottom color="secondary" class="ml-1" size="medium"
-                               :click-handler="()=>fillWith(item)" />
+            <icon-with-tooltip v-if="possibleLocationsInfo[item.id].type!=='region'" icon="mdi-arrow-top-right"
+                               :tip="'Browse locations of '+ item.text" bottom color="secondary" class="ml-1"
+                               size="medium" :click-handler="()=>fillWith(item.text)"/>
 
-            <v-chip dark small class="text-uppercase hidden-xs-only" :color="getLocationColor(item)">
-              {{ possibleLocationsInfo[item].type }}
+            <v-chip dark small class="text-uppercase hidden-xs-only" :color="getLocationColor(item.id)">
+              {{ possibleLocationsInfo[item.id].type }}
             </v-chip>
           </template>
         </v-autocomplete>
       </v-col>
     </v-row>
 
-    <loading-sticker :error="error" />
+    <loading-sticker :error="error"/>
 
   </v-col>
 </template>
@@ -113,7 +115,7 @@ export default {
 
       // Fill the search area with the past selection to enable exploring (eg "Europe/", "Italy/")
       Vue.nextTick(() => {
-        this.searchQuery = this.previousValues.selectedLocation
+        this.searchQuery = this.previousValues.selectedLocation? this.previousValues.selectedLocation.text : null
       });
     },
 
@@ -145,12 +147,12 @@ export default {
       });
     },
 
-    fillWith(item) {
-      this.searchQuery = item + '/'
+    fillWith(itemText) {
+      this.searchQuery = itemText + '/'
     },
 
     customFilter(item, queryText, itemText) {
-      const {type, continent, country} = this.possibleLocationsInfo[itemText]
+      const {type, continent, country} = this.possibleLocationsInfo[item.id]
       queryText = queryText.trim().toLowerCase() // clean the query string
       itemText = itemText.toLowerCase()
 
@@ -159,8 +161,8 @@ export default {
 
       // Otherwise check for indirect search
       const indirect = (type === 'country')
-          ? continent.toLowerCase() + '/' + itemText
-          : continent.toLowerCase() + '/' + country.toLowerCase() + '/' + itemText
+          ? continent.text.toLowerCase() + '/' + itemText
+          : continent.text.toLowerCase() + '/' + country.text.toLowerCase() + '/' + itemText
 
       // Trim spaces near '/'
       const indirectQueryText = queryText.replaceAll(' /', '/').replaceAll('/ ', '/')
@@ -181,7 +183,7 @@ export default {
             this.possibleLocationsInfo = {}
             data.forEach(({value, type, country, continent}) => {
               this.possibleLocations.push(value)
-              this.possibleLocationsInfo[value] = {type, country, continent}
+              this.possibleLocationsInfo[value.id] = {type, country, continent}
             })
           })
           .catch((e) => {
@@ -191,18 +193,18 @@ export default {
 
     },
 
-    getLocationColor(item) {
-      return this.possibleLocationsInfo[item].type === 'region'
+    getLocationColor(itemId) {
+      return this.possibleLocationsInfo[itemId].type === 'region'
           ? '#7CB17B'
-          : this.possibleLocationsInfo[item].type === 'country'
+          : this.possibleLocationsInfo[itemId].type === 'country'
               ? '#ff6e3e'
               : '#90177d'
     }
   },
   watch: {
     selectedLocation(newVal) {
-      if (newVal !== null && this.possibleLocationsInfo[newVal] ) {
-        this.selectedGranularity = this.possibleLocationsInfo[newVal].type
+      if (newVal !== null && this.possibleLocationsInfo[newVal.id]) {
+        this.selectedGranularity = this.possibleLocationsInfo[newVal.id].type
       }
     },
     searchQuery(newVal, oldVal) {
@@ -211,7 +213,7 @@ export default {
         this.fetchLocations()
       else if (newVal?.length < 2 && oldVal?.length >= 2 && newVal !== '') {
         this.possibleLocations = [] // reset locations when query string is less than 2 characters
-      } else if(newVal?.length >= 2 && this.error){
+      } else if (newVal?.length >= 2 && this.error) {
         this.fetchLocations()
       }
     }

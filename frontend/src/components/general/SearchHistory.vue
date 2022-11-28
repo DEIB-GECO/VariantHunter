@@ -100,7 +100,7 @@
         <v-list-item-content>
           <v-list-item-title class="text-body-3 font-weight-medium">
             {{
-              query.location[query.granularity] + " / " +
+              query.location[query.granularity].text + " / " +
               query.endDate +
               (query.lineage ? " / " + query.lineage : "")
             }}

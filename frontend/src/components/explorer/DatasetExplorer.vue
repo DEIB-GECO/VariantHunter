@@ -125,7 +125,7 @@ export default {
             : 'Start exploring the dataset by selecting some parameters... '
       } else {
         return (
-            'Sequence availability per day for: ' + this.selectedLocation +
+            'Sequence availability per day for: ' + this.selectedLocation.text +
             (this.selectedLineage && this.withLineages ? ', lineage ' + this.selectedLineage : '')
         )
       }
@@ -139,7 +139,7 @@ export default {
         this.isLoading.histogram = true
         const sequenceAPI = `/explorer/getSequenceInfo`
         const queryParams = {
-          location: this.selectedLocation,
+          location: this.selectedLocation.id,
           lineage: this.withLineages? this.selectedLineage : undefined   // possibly it has no value
         }
 
@@ -167,7 +167,7 @@ export default {
         this.isLoading.breakdown = true
         const sequenceAPI = `/explorer/getLineagesBreakdown`
         const queryParams = {
-          location: this.selectedLocation,    // possibly it has no value
+          location: this.selectedLocation.id,    // possibly it has no value
           begin: this.selectedRange[0],
           end: this.selectedRange[1],
         }

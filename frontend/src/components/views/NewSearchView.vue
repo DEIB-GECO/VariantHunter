@@ -1,9 +1,12 @@
 <template>
   <v-container class="view-sizing">
 
-    <v-row id="top" class="px-5">
+
+    <v-row id="top" class="px-5 pt-3">
+      <feature-intro/>
+
       <v-col>
-        <div class="text-right text-body-4 font-weight-medium py-3 compact-text-3 success--text">
+        <div class="text-right text-body-4 font-weight-medium pb-3 compact-text-3 success--text">
           <span v-if="lastUpdate"><v-icon left small
                                           color="success">mdi-clock-outline</v-icon>Last dataset update: <span
               class="font-weight-regular d-block d-md-inline-block">{{ lastUpdate }}</span></span>
@@ -108,10 +111,12 @@ import {mapActions, mapMutations, mapState} from "vuex";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
 import NoDataAlert from "@/components/general/NoDataAlert";
 import QuickTagSelector from "@/components/form/QuickTagSelector";
+import FeatureIntro from "@/components/general/basic/FeatureIntro";
 
 export default {
   name: "NewSearchView",
   components: {
+    FeatureIntro,
     QuickTagSelector,
     NoDataAlert, LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector},
   data() {
@@ -156,7 +161,7 @@ export default {
       this.error = undefined
       const url = (this.mode === 'li') ? "/lineage_independent/getStatistics" : "/lineage_specific/getStatistics"
       const queryParams = {
-        location: this.selectedLocation,
+        location: this.selectedLocation.id,
         date: this.selectedDate[1],
         lineage: this.selectedLineage
       }

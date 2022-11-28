@@ -68,8 +68,8 @@ export default {
       // If granularity is regional, then perform a country-level analysis since CovSpectrum does not support regions
       const {location:locationData, granularity}=this.getCurrentAnalysis.query
       const location = granularity === 'region'
-          ? locationData['country']
-          : locationData[granularity]
+          ? locationData['country'].text
+          : locationData[granularity].text
 
       const endDate = this.getCurrentAnalysis.query.endDate
       let startDate = new Date(endDate)

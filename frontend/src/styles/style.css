@@ -3,6 +3,10 @@
     font-family: 'Inter', serif !important;
 }
 
+#app .letter-spacing-1{
+    letter-spacing: 1px !important;
+}
+
 #app .compact-h6 {
     font-size: 20px !important;
 }

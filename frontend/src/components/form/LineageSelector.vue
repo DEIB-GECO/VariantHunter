@@ -58,7 +58,7 @@ export default {
     /** Hint for the selector  */
     hint() {
       return (this.selectedLocation)
-          ? 'Lineages in ' + this.selectedLocation + (this.selectedDate ? ' for the selected analysis period:' : ':')
+          ? 'Lineages in ' + this.selectedLocation.text + (this.selectedDate ? ' for the selected analysis period:' : ':')
           : 'All available lineages:'
     }
   },
@@ -71,7 +71,7 @@ export default {
 
         const url = `/lineage_specific/getLineages`
         const queryParams = {
-          location: this.selectedLocation,
+          location: this.selectedLocation.id,
           date: this.selectedDate ? this.selectedDate[1] : undefined
         }
 

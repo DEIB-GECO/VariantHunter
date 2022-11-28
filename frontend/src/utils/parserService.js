@@ -38,7 +38,7 @@ export function json2csv(jsonData, headersInfo) {
 /** Name for downloaded files:  Lin[<LINEAGE>|"Indep"]_<GRANULARITY>_[<LOCATION>]_<DATE> */
 export function getFileName(query) {
     return (
-        query.location[query.granularity] + "_" + query.endDate +
+        query.location[query.granularity].text + "_" + query.endDate +
         (query.lineage ? "_" + query.lineage : '')
     )
 }
