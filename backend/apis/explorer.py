@@ -80,6 +80,7 @@ def extract_lineage_breakdown(location, period):
     def extract_lineages():
         query = f'''    SELECT DISTINCT SQ.lineage_id, lineage
                         FROM aggr_sequences SQ
+                            JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
                         WHERE location_id="{location}" AND date>={period['begin']} AND date<={period['end']}
                         ORDER BY lineage;'''
         return {k: v for k, v in cur.execute(query).fetchall()}

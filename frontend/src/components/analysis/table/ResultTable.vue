@@ -378,7 +378,7 @@ export default {
         this.isLoadingDetails = true
         const url = `/lineage_independent/getLineagesStatistics`
         const queryParams = {
-          location: this.query.location[this.query.granularity].text,
+          location: this.query.location[this.query.granularity].id,
           date: this.query.endDate,
           prot: item.item.protein,
           mut: item.item.mut,

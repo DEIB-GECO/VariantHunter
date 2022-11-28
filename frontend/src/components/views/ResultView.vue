@@ -165,11 +165,11 @@ export default {
 
     /**
      * Handle shift area requests
-     * @param locationName  Name of the location
+     * @param location  Data of the location
      */
-    shiftArea(locationName) {
+    shiftArea(location) {
       this.restoreCurrentAnalysis()
-      this.setLocation(locationName)
+      this.setLocation(location)
       this.sendAnalysis()
     },
 

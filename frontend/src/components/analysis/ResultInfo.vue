@@ -133,11 +133,11 @@ export default {
 
       switch (granularity) {
         case 'region':
-          return region + ', ' + country + ', ' + continent
+          return region.text + ', ' + country.text + ', ' + continent.text
         case 'country':
-          return country + ', ' + continent
+          return country.text + ', ' + continent.text
         default:
-          return continent
+          return continent.text
       }
     },
 

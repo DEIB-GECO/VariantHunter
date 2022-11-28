@@ -33,7 +33,7 @@ def get_location_data(location):
                 JOIN locations AS COU ON COU.location_id=RE.country_id
                 JOIN countries AS CC ON CC.country_id=RE.country_id
                 JOIN locations AS CON ON CON.location_id=CC.continent_id
-                WHERE LO.location=:loc
+                WHERE LO.location_id=:loc
                 UNION
                 SELECT  null AS reg_name, null AS reg_id, 
                         LO.location AS cou_name, LO.location_id AS cou_id,
@@ -41,18 +41,21 @@ def get_location_data(location):
                 FROM locations AS LO
                 JOIN countries AS CO ON LO.location_id=CO.country_id
                 JOIN locations AS CON ON CON.location_id=CO.continent_id
-                WHERE LO.location=:loc
+                WHERE LO.location_id=:loc
                 UNION
                 SELECT  null AS reg_name, null AS reg_id, 
                         null AS cou_name, null AS cou_id,
                         LO.location AS cont_name, LO.location_id AS cont_id
                 FROM locations AS LO JOIN continents AS CO ON LO.location_id=CO.continent_id
-                WHERE LO.location=:loc
+                WHERE LO.location_id=:loc
             '''
     data = cur.execute(query, {'loc': location}).fetchone()
 
     con.close()
-    return {'region': data[0], 'country': data[1], 'continent': data[2]}
+    return {
+        'region': {'id': data[1], 'text': data[0]} if data[0] is not None else None,
+        'country': {'id': data[3], 'text': data[2]} if data[2] is not None else None,
+        'continent': {'id': data[5], 'text': data[4]}}
 
 
 def get_locations(string):
