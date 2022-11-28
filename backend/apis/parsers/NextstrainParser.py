@@ -24,10 +24,15 @@ class NextstrainParser(Parser):
                 if country_name.lower() not in selected_countries:
                     continue
             continent_name = s[6].strip()
+            if continent_name == country_name:
+                country_name = None
+
             if s[8] == self.missing_info_mark:
                 region_name = None
             else:
                 region_name = s[8].strip()
+                if region_name == country_name:
+                    region_name = None
 
             try:
                 date = (datetime.strptime(s[5], "%Y-%m-%d") - start_date).days
