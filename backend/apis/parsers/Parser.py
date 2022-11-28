@@ -30,12 +30,8 @@ class Parser:
         self.proteins_count = 0
 
         self.lineages_dict = {}
-        self.regions_dict = {}
-        self.countries_dict = {}
-        self.continents_dict = {}
-        self.region_country_dict = {}
-        self.country_continent_dict = {}
         self.proteins_dict = {}
+        self.locations_dict = {}
 
         self.batch_subs = []
         self.batch_seqs = []
@@ -115,30 +111,31 @@ class Parser:
         """
         print(f"\t\t Loading proteins info ... ")
 
-        query = ''' INSERT INTO proteins (protein, protein_id)
-                    VALUES (?,?)'''
+        query = ''' INSERT INTO proteins (protein, protein_id) VALUES (?,?)'''
         self.con.executemany(query, self.proteins_dict.items())
         self.con.commit()
 
         print(f"\t\t Loading locations info ... ")
 
-        query = ''' INSERT INTO continents (continent_id) 
-                    VALUES (?)'''
-        self.con.executemany(query, [(x,) for x in self.continents_dict.values()])
+        query = ''' INSERT INTO continents (continent_id) VALUES (?)'''
+        data = self.locations_dict.items()
+        continents = [(cont_name, cont_data['id']) for (cont_name, cont_data) in data]
+        self.con.executemany(query, [(cont_data['id'],) for (cont_name, cont_data) in data])
 
-        query = ''' INSERT INTO countries (country_id, continent_id) 
-                    VALUES (?,?)'''
-        self.con.executemany(query, self.country_continent_dict.items())
+        query = ''' INSERT INTO countries (country_id, continent_id) VALUES (?,?)'''
+        data = [(cont_data['id'], cou_name, cou_data) for (cont_name, cont_data) in data
+                for cou_name, cou_data in cont_data['countries'].items()]
+        countries = [(cou_name, cou_data['id']) for (cont_id, cou_name, cou_data) in data]
+        self.con.executemany(query, [(cou_data['id'], cont_id) for (cont_id, cou_name, cou_data) in data])
 
-        query = ''' INSERT INTO regions (region_id, country_id)
-                            VALUES (?,?)'''
-        self.con.executemany(query, self.region_country_dict.items())
+        query = ''' INSERT INTO regions (region_id, country_id) VALUES (?,?)'''
+        data = [(cou_data['id'], reg_name, reg_data) for (cont_id, cou_name, cou_data) in data
+                for reg_name, reg_data in cou_data['regions'].items()]
+        regions = [(reg_name, reg_data['id']) for (cou_id, reg_name, reg_data) in data]
+        self.con.executemany(query, [(reg_data['id'], cou_id) for (cou_id, reg_name, reg_data) in data])
 
-        query = ''' INSERT INTO locations (location, location_id)
-                    VALUES (?,?)'''
-        self.con.executemany(
-            query, [*self.regions_dict.items(), *self.countries_dict.items(), *self.continents_dict.items()]
-        )
+        query = ''' INSERT INTO locations (location, location_id) VALUES (?,?)'''
+        self.con.executemany(query, regions + countries + continents)
         self.con.commit()
 
         print(f"\t\t Loading lineages info ...")
@@ -200,64 +197,46 @@ class Parser:
         Returns: Ids of continent, country and region
 
         """
-        region_id = self.get_region_id(region_name)
-        country_id = self.get_country_id(country_name)
-        continent_id = self.get_continent_id(continent_name)
-
-        if self.region_country_dict.get(region_id) is None:
-            self.region_country_dict[region_id] = country_id
-            if self.country_continent_dict.get(country_id) is None:
-                self.country_continent_dict[country_id] = continent_id
-
-        return continent_id, country_id, region_id
-
-    def get_region_id(self, region_name):
-        """
-        Gets the region id from the region name  by updating the dictionary
-        Args:
-            region_name: The name of the region to be considered
-
-        Returns: The id of the region
-
-        """
-        region_id = self.regions_dict.get(region_name)
-        if region_id is None:
-            region_id = self.locations_count
-            self.locations_count += 1
-            self.regions_dict[region_name] = region_id
-        return region_id
-
-    def get_country_id(self, country_name):
-        """
-        Gets the country id from the country name  by updating the dictionary
-        Args:
-            country_name: The name of the country to be considered
-
-        Returns: The id of the country
-
-        """
-        country_id = self.countries_dict.get(country_name)
-        if country_id is None:
-            country_id = self.locations_count
-            self.locations_count += 1
-            self.countries_dict[country_name] = country_id
-        return country_id
-
-    def get_continent_id(self, continent_name):
-        """
-        Gets the continent id from the continent name  by updating the dictionary
-        Args:
-            continent_name: The name of the continent to be considered
-
-        Returns: The id of the continent
-
-        """
-        continent_id = self.continents_dict.get(continent_name)
-        if continent_id is None:
+        continent_data = self.locations_dict.get(continent_name)
+        if continent_data is None:
+            # New continent: add it
             continent_id = self.locations_count
             self.locations_count += 1
-            self.continents_dict[continent_name] = continent_id
-        return continent_id
+            self.locations_dict[continent_name] = {'id': continent_id, 'countries': {}}
+            continent_data = self.locations_dict.get(continent_name)
+        else:
+            # Already seen continent
+            continent_id = continent_data['id']
+
+        if country_name is not None:
+            country_data = continent_data['countries'].get(country_name)
+            if country_data is None:
+                # New country: add it
+                country_id = self.locations_count
+                self.locations_count += 1
+                continent_data['countries'][country_name] = {'id': country_id, 'regions': {}}
+                country_data = continent_data['countries'].get(country_name)
+            else:
+                # Already seen country
+                country_id = country_data['id']
+
+            if region_name is not None:
+                region_data = country_data['regions'].get(region_name)
+                if region_data is None:
+                    # New country: add it
+                    region_id = self.locations_count
+                    self.locations_count += 1
+                    country_data['regions'][region_name] = {'id': region_id}
+                else:
+                    # Already seen country
+                    region_id = region_data['id']
+            else:
+                region_id = None
+        else:
+            country_id = None
+            region_id = None
+
+        return continent_id, country_id, region_id
 
     def get_lineage_id(self, lineage_name):
         """

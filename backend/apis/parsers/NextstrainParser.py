@@ -37,11 +37,16 @@ class NextstrainParser(Parser):
                 if country_name.lower() not in selected_countries:
                     continue
             continent_name = s[self.cols[self.continent_col]].strip()
+            if continent_name == country_name:
+                country_name = None
+
             region_name = s[self.cols[self.region_col]]
             if region_name == self.missing_info_mark:
                 region_name = None
             else:
                 region_name = region_name.strip()
+                if region_name == country_name:
+                    region_name = None
 
             # Parse and filtering of date data
             try:

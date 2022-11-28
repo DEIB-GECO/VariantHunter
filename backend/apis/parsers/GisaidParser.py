@@ -36,10 +36,15 @@ class GisaidParser(Parser):
                 if country_name.lower() not in selected_countries:
                     continue
             continent_name = locs[0].strip()
+            if continent_name == country_name:
+                country_name = None
+
             if len(locs) < 3:
                 region_name = None
             else:
                 region_name = locs[2].strip()
+                if region_name == country_name:
+                    region_name = None
 
             # Parse and filtering of date data
             try:
