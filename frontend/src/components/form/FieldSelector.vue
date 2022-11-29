@@ -29,13 +29,13 @@
       <!-- Manual selector -->
       <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues' no-data-text="Not found"
                 hide-details :placeholder='placeholder' solo='solo' :loading='loading'
-                attach persistent-placeholder dense flat/>
+                attach persistent-placeholder dense flat :id="assignId"/>
 
       <!-- Combobox selector -->
       <v-combobox v-else-if="combobox" v-model='selectedValue' :items='possibleValues' clearable
                   clear-icon="mdi-backspace-outline" :multiple='multiple'
                   :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder' :solo='solo'
-                  :loading='loading' attach dense no-data-text="Not found" flat>
+                  :loading='loading' attach dense no-data-text="Not found" flat :id="assignId">
 
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
@@ -71,7 +71,7 @@
       <v-autocomplete v-else v-model='selectedValue' :items='possibleValues' clearable
                       clear-icon="mdi-backspace-outline" :multiple='multiple'
                       :small-chips='smallChips' hide-details :label='placeholder' :placeholder='placeholder'
-                      :solo='solo' :loading='loading' attach dense no-data-text="Not found" flat>
+                      :solo='solo' :loading='loading' attach dense no-data-text="Not found" flat :id="assignId">
 
         <template v-slot:prepend-item>
           <slot name='prepend-item'></slot>
@@ -137,6 +137,8 @@ export default {
 
     /** loading flag. If true, the selector is loading data */
     loading: Boolean,
+
+    assignId: undefined,
   },
   computed: {
     /** Selected value */

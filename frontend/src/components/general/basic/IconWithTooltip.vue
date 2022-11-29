@@ -28,7 +28,8 @@ export default {
     right:Boolean,
     top:Boolean,
     bottom:Boolean,
-    clickHandler:{}
+    clickHandler:{},
+    assignId:{}
   },
   data(){
     return {

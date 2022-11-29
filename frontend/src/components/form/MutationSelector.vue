@@ -15,7 +15,7 @@
   <!-- Decorated Field Selector -->
   <FieldSelector v-model='selectedValue' label='Mutations' placeholder='All'
                  :possible-values='possibleValues' autocomplete small-chips
-                 multiple solo combobox highlight-possible-values>
+                 multiple solo combobox highlight-possible-values assign-id="mutation-selector">
 
     <template v-slot:prepend-item>
 

@@ -17,8 +17,8 @@
 <template>
   <div>
     <result-navbar @shiftPeriod="d => shiftPeriod(d)" @shiftArea="a => shiftArea(a)" @shiftType="shiftType"/>
-    <v-container class="view-sizing">
-      <result-intro v-if="false"/>
+    <v-container class="view-sizing" id="result-top">
+      <result-intro/>
 
       <!-- Filtering options -->
       <v-slide-y-reverse-transition hide-on-leave>

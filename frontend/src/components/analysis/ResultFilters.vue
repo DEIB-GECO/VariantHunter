@@ -1,6 +1,8 @@
 <template>
   <v-row id="top" class="mt-5 px-5">
     <v-col cols="12" class="d-flex">
+      <filters-intro @showScopeMenu="showOptions=true"/>
+
       <div class="text-h6 compact-h6 font-weight-black primary--text pb-2 mx-n5 spaced-5">
         <v-icon color='primary' left>mdi-filter-outline</v-icon>
         <span>Filters</span>
@@ -27,7 +29,7 @@
                 <template v-slot:activator="{ attrs, on }">
                   <span v-bind="attrs" v-on="on">
                     <icon-with-tooltip bottom color="dark-grey" hover-color="warning" size="medium"
-                                       icon="mdi-swap-vertical"
+                                       icon="mdi-swap-vertical" assign-id="scope-selector"
                                        :tip="showOptions?'':'Change the scope of the filtering options'"
                                        :click-handler="()=>showOptions=!showOptions"/>
                   </span>
@@ -79,10 +81,11 @@ import MutationSelector from "@/components/form/MutationSelector";
 import FieldSelector from "@/components/form/FieldSelector";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 import TagEditor from "@/components/controls/TagEditor";
+import FiltersIntro from "@/components/intros/FiltersIntro";
 
 export default {
   name: "ResultFilters",
-  components: {TagEditor, IconWithTooltip, FieldSelector, MutationSelector},
+  components: {FiltersIntro, TagEditor, IconWithTooltip, FieldSelector, MutationSelector},
   data() {
     return {
       showOptions: false,
