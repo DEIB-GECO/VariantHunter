@@ -1,9 +1,10 @@
 werkzeug==0.16.1
-flask
-flask_cors
-flask_executor
-flask_restplus
-tqdm
-numpy
-scipy
+flask==1.1.4
+flask_cors==3.0.10
+flask_executor==0.10.0
+flask_restplus==0.13.0
+tqdm==4.64.0
+numpy==1.19.5
+scipy==1.5.4
 markupsafe==2.0.1
+statsmodels==0.12.2
