@@ -3,7 +3,7 @@
  *  State variables for the vuex state
  */
 
-import {ex1, ex2} from "@/store/testData";
+import {version} from '../../package.json'
 
 export const state = {
 
@@ -79,6 +79,8 @@ export const state = {
     /** lastUpdate: last update date */
     lastUpdate: null,
 
+    tourStep: 'tour',
     reset: false,
     loading: false,
+    version: version,
 }

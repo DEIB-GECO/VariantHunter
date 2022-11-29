@@ -194,6 +194,11 @@ export const mutations = {
         }
     },
 
+
+    setTourStep(state,newVal){
+        state.tourStep=newVal
+    },
+
     setLastUpdate(state, newVal) {
         state.lastUpdate = newVal
     },

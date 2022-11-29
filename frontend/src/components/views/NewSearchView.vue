@@ -3,7 +3,7 @@
 
 
     <v-row id="top" class="px-5 pt-3">
-      <feature-intro/>
+      <tour-intro/>
 
       <v-col>
         <div class="text-right text-body-4 font-weight-medium pb-3 compact-text-3 success--text">
@@ -23,8 +23,10 @@
         </div>
       </v-col>
     </v-row>
-    <v-row>
-      <v-tabs background-color="transparent" centered active-class="font-weight-black">
+    <v-row >
+      <definition-intro @selectMode="mode='li'" @showExplorer="showExplorer? {} : showExplorer=true"/>
+
+      <v-tabs id="type-tabs" background-color="transparent" centered active-class="font-weight-black">
         <v-tabs-slider color="primary"></v-tabs-slider>
         <v-tab v-for="[value,title] in Object.entries(modeOptions)" :key="value" @click="mode=value">
           {{ title }}
@@ -66,7 +68,7 @@
       <v-container>
         <v-row>
           <v-col>
-            <div class="text-h5 font-weight-black primary--text pb-2">
+            <div class="text-h5 font-weight-black primary--text pb-2" id="explorer">
               Dataset Explorer
             </div>
             <v-expand-transition>
@@ -87,6 +89,7 @@
           </v-col>
         </v-row>
         <v-row no-gutters>
+          <explorer-intro/>
           <v-scroll-y-reverse-transition>
             <dataset-explorer v-if="showExplorer" :with-lineages='mode==="ls"' @weekSelection='onWeekSelection'/>
           </v-scroll-y-reverse-transition>
@@ -97,7 +100,7 @@
     <loading-sticker :is-loading="isLoading" :error="error"
                      :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
 
-    <no-data-alert v-model="noDataWarning" />
+    <no-data-alert v-model="noDataWarning"/>
 
   </v-container>
 </template>
@@ -111,14 +114,19 @@ import {mapActions, mapMutations, mapState} from "vuex";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
 import NoDataAlert from "@/components/general/NoDataAlert";
 import QuickTagSelector from "@/components/form/QuickTagSelector";
-import FeatureIntro from "@/components/general/basic/FeatureIntro";
+import TourIntro from "@/components/intros/TourIntro";
+import DefinitionIntro from "@/components/intros/DefinitionIntro";
+import ExplorerIntro from "@/components/intros/ExplorerIntro";
 
 export default {
   name: "NewSearchView",
   components: {
-    FeatureIntro,
+    ExplorerIntro,
+    DefinitionIntro,
+    TourIntro,
     QuickTagSelector,
-    NoDataAlert, LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector},
+    NoDataAlert, LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector
+  },
   data() {
     return {
       mode: 'li',

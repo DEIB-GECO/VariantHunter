@@ -8,7 +8,7 @@
 }
 
 #app .compact-h6 {
-    font-size: 20px !important;
+    line-height: 20px !important;
 }
 
 #app .text-body-0 {
@@ -83,6 +83,10 @@
     word-spacing: 5px !important;
 }
 
+#app .overflow-scroll{
+    overflow: scroll !important;
+}
+
 .cursor-forbidden:hover, .cursor-forbidden *:hover {
     cursor: not-allowed !important;
 }
@@ -105,8 +109,8 @@
 
 
 /* Revert usual behavior for links */
-.underlined-links a {
-    color: var(--secondary-color) !important;
+#app .underlined-links a, #app .fake-link {
+    color: var(--v-secondary-base) !important;
 }
 
 /***************************************

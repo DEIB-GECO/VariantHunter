@@ -91,6 +91,7 @@ export default {
       isLoading: false,
       error: undefined,
       searchQuery: undefined,
+      externalTriggering: false,
     }
   },
   computed: {
@@ -171,7 +172,8 @@ export default {
 
     /** Fetch all possible values for locations */
     fetchLocations() {
-      const queryString = this.searchQuery.match(/[^/][^/]/m)[0]
+      const fullQueryString = this.searchQuery
+      const queryString = fullQueryString.match(/[^/][^/]/m)[0]
       this.isLoading = true
       this.error = undefined
       const locationsAPI = `/locations/getLocations`
@@ -185,6 +187,12 @@ export default {
               this.possibleLocations.push(value)
               this.possibleLocationsInfo[value.id] = {type, country, continent}
             })
+
+            // If the fetch was caused by external triggering, then select the corresponding value
+            if(this.externalTriggering){
+              this.externalTriggering=false
+              this.selectedLocation=this.possibleLocations.find(({text})=>fullQueryString.toUpperCase()===text.toUpperCase())
+            }
           })
           .catch((e) => {
             this.isLoading = false
@@ -205,6 +213,10 @@ export default {
     selectedLocation(newVal) {
       if (newVal !== null && this.possibleLocationsInfo[newVal.id]) {
         this.selectedGranularity = this.possibleLocationsInfo[newVal.id].type
+      }else if(newVal !== null &&this.possibleLocations.length===0){
+        // location has been set manually: trigger fetch
+        this.searchQuery=newVal
+        this.externalTriggering=true
       }
     },
     searchQuery(newVal, oldVal) {

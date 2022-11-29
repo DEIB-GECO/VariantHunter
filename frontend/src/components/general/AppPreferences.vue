@@ -55,7 +55,7 @@
                 <v-icon left color="success">mdi-check-decagram</v-icon>
               </v-list-item-icon>
               <v-list-item-content class="py-0 my-0">
-                <v-list-item-title class="break-spaces">Version {{ appVersion }}</v-list-item-title>
+                <v-list-item-title class="break-spaces">Version {{ version }}</v-list-item-title>
                 <v-list-item-subtitle class="break-spaces underlined-links">
                   <a href="https://github.com/DEIB-GECO/VariantHunter/releases" target="_blank">More about Variant
                     Hunter releases</a>
@@ -112,10 +112,10 @@
 </template>
 
 <script>
-import {version} from '../../../package.json'
 import ListItem from "@/components/general/basic/ListItem"
 import {shortcuts} from "@/utils/keyboardService";
 import DataManager from "@/components/controls/DataManager";
+import {mapState} from "vuex";
 
 export default {
   name: "AppPreferences",
@@ -129,6 +129,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['version']),
 
     shortcuts() {
       return shortcuts
@@ -141,10 +142,6 @@ export default {
       set() {
         this.$vuetify.theme.dark = !this.$vuetify.theme.dark
       }
-    },
-
-    appVersion() {
-      return version
     },
 
   },

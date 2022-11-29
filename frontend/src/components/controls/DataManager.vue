@@ -4,6 +4,12 @@
       <v-list-item class="mt-5">
         <v-list-item-content>
           <div class="width-100 text-center">
+            <v-btn outlined color="error" class="mb-2" @click="resetTour">
+              <v-icon left>mdi-lightbulb-variant-outline</v-icon>
+              Restart app tour
+            </v-btn>
+          </div>
+          <div class="width-100 text-center">
             <v-btn outlined color="error" class="mb-2" @click="askConfirm('clear')">
               <v-icon left>mdi-trash-can-outline</v-icon>
               Clear analysis history
@@ -71,7 +77,7 @@ export default {
   },
   methods: {
     ...mapActions(['clearHistory']),
-    ...mapMutations(['resetState']),
+    ...mapMutations(['resetState','setTourStep']),
 
     askConfirm(id) {
       this.confirmPopUp = true
@@ -88,6 +94,11 @@ export default {
       this.confirmPopUp = false
       this.clearHistory()
     },
+
+    resetTour(){
+      this.setTourStep('tour')
+      location.reload()
+    }
 
   }
 }

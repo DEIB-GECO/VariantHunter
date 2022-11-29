@@ -21,7 +21,7 @@
       <!-- Histogram loading animation -->
       <v-row v-if='isLoading.histogram'>
         <v-col>
-          <v-skeleton-loader width='100%' type='image'/>
+          <v-skeleton-loader width='100%' height="390" class="explorer-loader" type='image'/>
         </v-col>
       </v-row>
 
@@ -33,7 +33,7 @@
       <!-- Breakdown loading animation -->
       <v-row v-if='isLoading.breakdown'>
         <v-col>
-          <v-skeleton-loader width='100%' type='image'/>
+          <v-skeleton-loader width='100%' height="390" class="explorer-loader" type='image'/>
         </v-col>
       </v-row>
 
@@ -239,6 +239,11 @@ export default {
 }
 </script>
 
+<style>
+.explorer-loader *{
+  height: 100%;
+}
+</style>
 <style scoped>
 /* Form labels styling */
 .main-label span {

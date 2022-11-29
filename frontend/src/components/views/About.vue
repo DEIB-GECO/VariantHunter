@@ -290,10 +290,6 @@ export default {
 
 <style>
 
-/* Revert usual behavior for links */
-.underlined-links a {
-  color: var(--secondary-color) !important;
-}
 
 /** Fake links styling */
 .fake-link {
