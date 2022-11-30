@@ -11,7 +11,7 @@
 -->
 
 <template>
-  <section-element icon='mdi-align-vertical-bottom'
+  <section-element icon='mdi-align-vertical-bottom' assign-id="odd-ratio"
                    title='Diffusion odd ratio'
                    :subtitle="plotTitle"
                    caption="To visualize specific mutations, select the corresponding rows from the table"

@@ -68,9 +68,6 @@ export default {
     if(this.visibility){
       this.$vuetify.goTo('#explorer')
     }
-  },
-  beforeDestroy() {
-    this.setTourStep('result')
   }
 }
 </script>

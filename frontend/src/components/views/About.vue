@@ -195,7 +195,9 @@ export default {
           name: 'Luca Minotti',
           associate: 'Politecnico di Milano',
           img: require('../../assets/contributors/minotti.jpeg'),
-          mail: 'minottiluca@icloud.com'
+          mail: 'minottiluca@icloud.com',
+          role: 'development',
+          roleColor: 'warning'
         },
         {
           name: 'Anna Bernasconi',

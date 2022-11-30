@@ -68,7 +68,7 @@ export default {
           title: 'Filtering scopes',
           body: 'By default, the filtering scope is <b>local</b>. This means that you apply the filters to the ' +
               'current analysis only. You can switch to the <b>tag-based</b> one at any time.',
-          bodyAppend: 'And switch back whenever you want. You won\'t have to set it every time.'
+          bodyAppend: 'And switch back whenever you want. They remain stored.'
         }
       ],
       currentTip: 0,

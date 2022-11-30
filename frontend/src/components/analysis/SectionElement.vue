@@ -18,12 +18,12 @@
 -->
 
 <template>
-  <v-row>
+  <v-row v-bind:id="assignId">
     <v-col>
 
       <!-- Section Heading -->
       <v-row>
-        <v-col>
+        <v-col >
           <div :class="'text-h5 compact-h5 font-weight-black primary--text mt-8  spaced-5 mb-'+(tabs.length>0?'4':'2')">
             <v-icon left color="primary">{{ icon }}</v-icon>
             {{ title }}
@@ -95,7 +95,9 @@ export default {
     },
 
     /** Collapse the section by default */
-    collapsed: Boolean
+    collapsed: Boolean,
+
+    assignId:{ required: true}
   },
   data() {
     return {

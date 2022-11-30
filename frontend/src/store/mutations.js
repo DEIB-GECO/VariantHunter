@@ -196,6 +196,7 @@ export const mutations = {
 
 
     setTourStep(state,newVal){
+        console.log("SET tour to "+newVal)
         state.tourStep=newVal
     },
 

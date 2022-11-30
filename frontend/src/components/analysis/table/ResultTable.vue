@@ -1,6 +1,8 @@
 <template>
-  <section-element icon='mdi-table-multiple' title="Mutations table">
+  <section-element icon='mdi-table-multiple' title="Mutations table" assign-id="result-table">
     <v-col cols="12" class="pa-0 table-container">
+      <table-intro @showPValues="e=>showPValues=e"/>
+
       <v-data-table :headers='tableHeaders' :custom-sort="customSort"
                     :items='getCurrentFilteredRows' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :loading='isLoadingDetails' single-expand class='table-element'
@@ -57,8 +59,8 @@
         </template>
 
         <!---- TABLE EXPAND/INFO PANEL CONTROLS --------------------------->
-        <template v-slot:item.data-table-expand="{expand,item,isExpanded}">
-          <row-options :expandable="!withLineages" :item="item" :isExpanded="isExpanded" :expand="expand"/>
+        <template v-slot:item.data-table-expand="{index,expand,item,isExpanded}">
+          <row-options :expandable="!withLineages" :idx="index" :item="item" :isExpanded="isExpanded" :expand="expand"/>
         </template>
 
         <!---- TABLE ROW SELECT CONTROL --------------------------->
@@ -199,10 +201,12 @@ import GoToCovSpectrum from "@/components/analysis/table/GoToCovSpectrum";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
 import RowOptions from "@/components/analysis/table/RowOptions";
 import EmptyTable from "@/components/analysis/table/EmptyTable";
+import TableIntro from "@/components/intros/TableIntro";
 
 export default {
   name: "ResultTable",
   components: {
+    TableIntro,
     EmptyTable,
     RowOptions,
     LoadingSticker, GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement
@@ -278,7 +282,6 @@ export default {
     /** Array defining asc(true)/desc(false) order for each column selected for sorting in sortingIndexes */
     isDescSorting: {
       set(newVal) {
-        console.log("SET to " + newVal)
         this.setOpt({local: this.useLocalOpt, opt: 'isDescSorting', value: newVal})
       },
       get() {
@@ -325,7 +328,6 @@ export default {
     ...mapMutations(['setOpt']),
 
     manageRowSelect(rowKey) {
-      console.log(rowKey)
       if (this.selectedRows.includes(rowKey)) {
         // deselect this row only  (keep all the others)
         this.selectedRows = this.selectedRows.filter(rk => rk !== rowKey)
@@ -340,7 +342,6 @@ export default {
      * Clear all the selected rows on deselect-all table event
      */
     manageSelectAll() {
-      console.log("MANAGER ")
       const isIndeterminate = this.selectedRows.length > 0 && !this.hasSelectedAll
       if (isIndeterminate) {
         // Two viable options. Ask.
@@ -353,12 +354,10 @@ export default {
     },
 
     deselectAllRows() {
-      console.log("DESELECT ALL")
       this.selectedRows = []  // clear selected rows
     },
 
     selectAllRows() {
-      console.log("SELECT ALL")
       this.selectedRows = this.getCurrentFilteredRows.map(({item_key}) => item_key) // select all and only these mutations
     },
 
@@ -416,10 +415,7 @@ export default {
   width: 100% !important;
 }
 
-/* Special formatting for characterizing muts*/
-.char-mut {
-  background: rgba(255, 255, 0, 0.45);
-}
+
 
 /* Expanded element style */
 td.expanded-td {

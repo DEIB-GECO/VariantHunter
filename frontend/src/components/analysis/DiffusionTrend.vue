@@ -10,7 +10,7 @@
 -->
 
 <template>
-  <section-element icon="mdi-chart-line"
+  <section-element icon="mdi-chart-line" assign-id="diffusion-trend"
                    title="Diffusion trend"
                    :subtitle="plotTitle"
                    caption="To visualize specific mutations, select the corresponding rows from the table">

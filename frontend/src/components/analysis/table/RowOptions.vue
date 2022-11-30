@@ -3,7 +3,7 @@
     <!-- Expand option -->
     <v-tooltip bottom nudge-bottom="-3" allow-overflow z-index="10" max-width="400px" v-if="expandable" close-delay="0">
       <template v-slot:activator="{ on }">
-        <v-btn icon small @click="expand(!isExpanded)" v-on="on">
+        <v-btn icon small @click="expand(!isExpanded)" v-on="on" v-bind:id="idx+'-expand'">
           <v-icon>{{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
         </v-btn>
       </template>
@@ -116,6 +116,8 @@ export default {
 
     /** Show expand function flag */
     expandable:{},
+
+    idx:{},
   },
   data() {
     return {
