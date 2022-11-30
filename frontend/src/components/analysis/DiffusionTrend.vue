@@ -14,6 +14,7 @@
                    title="Diffusion trend"
                    :subtitle="plotTitle"
                    caption="To visualize specific mutations, select the corresponding rows from the table">
+    <trend-intro/>
     <div class='regular-plot plotly-container'>
 
       <!-- LineChart plot -->
@@ -66,10 +67,12 @@ import {Plotly} from 'vue-plotly'
 import DialogOpener from '@/components/general/basic/DialogOpener'
 import SectionElement from "@/components/analysis/SectionElement";
 import {mapGetters} from "vuex";
+import TrendIntro from "@/components/intros/TrendIntro";
 
 export default {
   name: 'DiffusionTrend',
   components: {
+    TrendIntro,
     SectionElement,
     DialogOpener,
     Plotly

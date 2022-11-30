@@ -1,5 +1,5 @@
 <template>
-  <feature-intro v-model="visibility" floating step="trend" :internal-steps="2" next-step="odd-ratio"
+  <feature-intro v-model="visibility" floating step="trend" :internal-steps="0" next-step="odd-ratio"
                  :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep">
     <template>
@@ -26,6 +26,13 @@ export default {
     return {
       visibility: false,
       tips: [
+          {
+          id: 'ER',
+          icon: 'mdi-chart-line',
+          heading: 'Trend',
+          title: 'SORRY, THE TOUR FUNCTION IS NOT AVAILABLE YET, come back soon.',
+          body: 'click NEXT until this box disappears (DO NOT CLICK END TOUR) .',
+        },
         {
           id: 'intro',
           icon: 'mdi-chart-line',

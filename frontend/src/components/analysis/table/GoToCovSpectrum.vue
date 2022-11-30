@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div class="d-flex mt-4 px-5 width-100">
     <v-row no-gutters><v-col class="text-center text-sm-left">
     <btn-with-tooltip size="small" outlined top color="primary" :click-handler="generateAnalysis">
 
@@ -36,7 +36,7 @@
 
     </btn-with-tooltip>
     </v-col></v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
