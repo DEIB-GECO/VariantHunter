@@ -17,6 +17,7 @@ class Parser:
         """
         self.con = con
         self.f = f
+        self.cols = {}
         self.filter_by_data_flag = False
         self.beginning_date_flag = False
         self.end_data_flag = False
@@ -50,6 +51,25 @@ class Parser:
             self.beginning_date = (datetime.strptime(beginning_date, "%Y-%m-%d") - start_date).days
         if self.end_data_flag:
             self.end_date = (datetime.strptime(end_date, "%Y-%m-%d") - start_date).days
+
+    def auto_extract_cols(self,expected_cols):
+        """
+        Automatically extract columns positions based on the names of the columns
+        Args:
+            expected_cols: List of string representing the names of the expected columns
+        """
+        line = self.f.readline()
+        s = line.split("\t")
+        self.cols = {name: idx for idx, name in enumerate(s)}
+
+        found_keys = list(self.cols.keys())
+        has_failed = any(col not in found_keys for col in expected_cols)
+        if has_failed:
+            print(
+                "\033[91mFATAL ERROR: \tThe metadata file is malformed or its structure has changed and " +
+                "is not compatible with this version of Variant Hunter.\n\t\tPlease report this error by " +
+                "opening an issue at github.com/DEIB-GECO/VariantHunter/issues \033[0m")
+            exit(-1)
 
     def is_out_of_range(self, date):
         """
