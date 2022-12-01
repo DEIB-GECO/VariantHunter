@@ -224,7 +224,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['clearHistory']),
     ...mapMutations(["setCurrentAnalysis", "setStarredAnalysis", "removeAnalysis"]),
 
     clearFilters() {

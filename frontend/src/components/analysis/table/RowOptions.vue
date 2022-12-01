@@ -34,11 +34,12 @@
           <v-expand-transition>
             <v-card-text v-if="!isLoadingDetails && !error" class="text-s-center dialog-text text-center">
               <div class="pt-4 pb-7">
-                <div class="text-h6 text-uppercase font-weight-bold">Characterized <span class="font-weight-black">Lineages</span></div>
+                <div class="text-h6 text-uppercase font-weight-bold">Characterized <span class="font-weight-black">Lineages</span> <icon-with-tooltip icon="mdi-help-circle-outline" bottom tip="The characterizing mutations are identified as those that are
+                        present in at least 50% of the lineage sequences." size="medium"/></div>
                 <div class="px-4">
                   <div class="py-2" v-if="characterizedLineages.length>0">
-                    {{ item.protein + "_" + item.mut }} is a <span class="char-mut">characterizing mutation</span> for
-                    the following lineages
+                    {{ item.protein + "_" + item.mut }} is a <span class="char-mut">characterizing mutation</span>
+                     for the following lineages
                   </div>
                   <div class="py-2" v-else>No lineage is characterized by {{ item.protein + "_" + item.mut }}
                   </div>
@@ -100,10 +101,11 @@
 <script>
 import {getRandomColor} from "@/utils/colorService";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
+import IconWithTooltip from "../../general/basic/IconWithTooltip";
 
 export default {
   name: "RowOptions",
-  components: {LoadingSticker},
+  components: {IconWithTooltip, LoadingSticker},
   props: {
     /** Row item */
     item: {},

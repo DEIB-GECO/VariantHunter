@@ -6,7 +6,7 @@
                  :class="currentView==='new-search'?'v-list-item--active':''" @click.native="newAnalysisHandler()"/>
       <v-divider/>
 
-      <list-item icon="mdi-history" title="Recent analysis" subtitle="Your recent analysis" with-actions>
+      <list-item icon="mdi-history" title="Recent analyses" subtitle="Your recent analyses" with-actions>
         <template v-slot:actions>
           <icon-with-tooltip v-if="showHistory" icon="mdi-chevron-up" tip="Collapse" bottom
                              :click-handler="()=>{showHistory=false}"/>

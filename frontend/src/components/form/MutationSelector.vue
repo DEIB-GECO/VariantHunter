@@ -44,7 +44,7 @@
           <!-- Dialog title -->
           <v-toolbar color='f_primary' class='dialog-title' dark flat>
             <v-icon left large>mdi-file-upload-outline</v-icon>
-            Select mutations from list
+            Advanced editor
             <v-spacer/>
             <icon-with-tooltip hover-color="error" bottom tip="Close without applying filters" icon="mdi-close"
                                :click-handler="()=>close(false)"/>

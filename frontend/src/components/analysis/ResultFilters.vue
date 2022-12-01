@@ -22,14 +22,14 @@
                   </span>
                 </template>
                 <div class="mb-3" v-html="useLocalOpt ? options.local.subtitle : options.tag.subtitle"/>
-                Press <v-icon color="warning" small>mdi-swap-vertical</v-icon> to edit.
+                Press <v-icon color="warning" small>mdi-pencil-outline</v-icon> to edit.
               </v-tooltip>
               <v-menu v-model="showOptions" content-class="rounded-xl navbar-menu" offset-y open-on-click
                       :open-on-hover="false" :close-on-content-click="false" max-width="80vw">
                 <template v-slot:activator="{ attrs, on }">
                   <span v-bind="attrs" v-on="on">
                     <icon-with-tooltip bottom color="dark-grey" hover-color="warning" size="medium"
-                                       icon="mdi-swap-vertical" assign-id="scope-selector"
+                                       icon="mdi-pencil-outline" assign-id="scope-selector"
                                        :tip="showOptions?'':'Change the scope of the filtering options'"
                                        :click-handler="()=>showOptions=!showOptions"/>
                   </span>
