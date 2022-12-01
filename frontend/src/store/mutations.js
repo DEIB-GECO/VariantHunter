@@ -115,6 +115,16 @@ export const mutations = {
         Vue.set(state.analyses[state.currentAnalysisId], 'notes', note)
     },
 
+    setTag(state, {analysisId,tagName}){
+        console.log("# Set from "+analysisId+" to tag: "+tagName)
+        Vue.set(state.analyses[analysisId],'tag',tagName)
+    },
+
+    renameTag(state,{newName,oldName}){
+        console.log("# Rename from "+oldName+" to "+newName)
+        Vue.set(state.tags, newName, state.tags[oldName])
+    },
+
     addTag(state, tagName) {
         console.log("# Add tag " + tagName)
         // New tag? save and assign color
@@ -129,8 +139,13 @@ export const mutations = {
                 isDescSorting:[true]
             })
         }
-        state.analyses[state.currentAnalysisId].tag = tagName
+        Vue.set(state.analyses[state.currentAnalysisId],'tag', tagName)
     },
+
+    deleteTag(state,tagName){
+      Vue.delete(state.tags,tagName)
+    },
+
     removeTag(state, tagName) {
         console.log("# Remove tag " + tagName)
         state.analyses[state.currentAnalysisId].tag = null

@@ -1,3 +1,5 @@
+import Vue from "vue";
+
 /**
  *
  *  STORE ACTIONS METHODS
@@ -59,6 +61,23 @@ export const actions={
             if(tag)
                 commit('addTag',tag)
              resolve()
+        })
+    },
+    
+    updateTagName({commit,state,getters},{newName,oldName}){
+        return new Promise(resolve => {
+            newName= newName.toUpperCase()
+
+            // New tag: create it
+            if(!Object.keys(state.tags).includes(newName)){
+                commit('renameTag', {oldName,newName})
+            }
+            // replace and delete old one
+            getters.getAnalysesSummary
+                    .filter(({tag})=>tag===oldName)
+                    .forEach(({id})=>commit('setTag',{analysisId: id, tagName: newName}))
+            commit('deleteTag',oldName)
+            resolve()
         })
     }
 
