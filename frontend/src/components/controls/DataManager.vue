@@ -77,7 +77,7 @@ export default {
   },
   methods: {
     ...mapActions(['clearHistory']),
-    ...mapMutations(['resetState','setTourStep']),
+    ...mapMutations(['resetState','setTourStep','setCurrentAnalysis']),
 
     askConfirm(id) {
       this.confirmPopUp = true
@@ -97,7 +97,7 @@ export default {
 
     resetTour(){
       this.setTourStep('tour')
-      location.reload()
+      this.setCurrentAnalysis(null)
     }
 
   }

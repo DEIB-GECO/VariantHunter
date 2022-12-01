@@ -1,6 +1,6 @@
 <template>
   <feature-intro v-model="visibility" floating step="trend" :internal-steps="2" next-step="odd-ratio"
-                 :icon="tips[currentTip].icon" @nextStep="showOddRatio"
+                 :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep">
     <template>
       <div class="pl-4 mb-6">
@@ -69,6 +69,10 @@ export default {
 
     nextInternalStep() {
       this.currentTip++
+
+      if(this.tips[this.currentTip].id==='select'){
+        this.showOddRatio() // show in advance odd ratio to allow scrolling
+      }
     },
 
     showOddRatio(){

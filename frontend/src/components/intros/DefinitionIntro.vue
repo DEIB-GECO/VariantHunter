@@ -37,8 +37,8 @@ export default {
           icon: 'mdi-map-marker',
           heading: 'Analysis parameters',
           title: 'Location',
-          body: 'For instance, let\'s focus on the lineage-independent one. Now, you need to ' +
-              'set the location of interest: a <b>region</b>, a <b>country</b>, or an entire <b>continent</b>.',
+          body: 'Next, you need to set the location of interest: either a <b>region</b>, ' +
+              'a <b>country</b>, or an entire <b>continent</b>.',
           bodyAppend: 'Type its name directly (e.g., "Europe") or proceed in an ' +
               'exploratory manner, adding a slash (e.g., "Europe/" to see European countries).'
         },

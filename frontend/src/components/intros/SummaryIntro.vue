@@ -1,6 +1,6 @@
 <template>
   <feature-intro v-model="visibility" floating step="summary" :internal-steps="1" next-step="navbar"
-                 :icon="tips[currentTip].icon" @nextStep="hideOddRatio"
+                 :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep">
     <template>
       <div class="pl-4 mb-6">
