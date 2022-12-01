@@ -10,10 +10,10 @@
                  :colored-border="!floating">
           <slot></slot>
           <div class="text-right pl-4 mt-6">
-            <btn-with-tooltip :text="beginning?'Skip':'End tour'" icon="mdi-debug-step-over" :click-handler="terminate" hover-color="error"
+            <btn-with-tooltip v-if="!lastStep" :text="beginning?'Skip':'End tour'" icon="mdi-debug-step-over" :click-handler="terminate" hover-color="error"
                               size="small" content-class="ml-1 mt-1 mt-md-0" :bottom="!floating" :top="floating"
                               tip="I already know how the tool works"/>
-            <btn-with-tooltip :text="this.beginning?'Start':this.end?'Okay':'Next'" :icon="end?'mdi-check':'mdi-chevron-right'"
+            <btn-with-tooltip :text="this.beginning?'Start':this.lastStep?'Okay':'Next'" :icon="end?'mdi-check':'mdi-chevron-right'"
                               :click-handler="showNext" hover-color="success"
                               size="small" content-class="ml-1 mt-1 mt-md-0" append-icon :bottom="!floating"
                               :top="floating" :tip="this.end?'End tour':'Next step'"/>
@@ -52,6 +52,10 @@ export default {
 
     showTip() {
       return this.tourStep === this.step || (this.altStep && this.altStep === this.step)
+    },
+
+    lastStep(){
+      return this.internalSteps===this.nextPressCount && this.end
     }
   },
   watch:{

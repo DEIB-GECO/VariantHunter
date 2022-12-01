@@ -58,7 +58,7 @@ export default {
           heading: 'Filters',
           title: '#Tags!',
           body: 'You can associate a tag with the analyses you perform. This allows you to group the analyses and ' +
-              'maintain the same filtering and sorting options for all analyses.',
+              'keep the same filtering and sorting options for all analyses.',
           bodyAppend: 'We\'ll see later how to do it.'
         },
         {

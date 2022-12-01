@@ -40,16 +40,16 @@
             <div class='section-options'>
 
               <!-- Tabs-->
-              <span v-for='(tab, index) in tabs' v-bind:key='index'
+              <span v-for='(tab, index) in tabs' v-bind:key='index' v-bind:id="assignId+'-tab'+index"
                     :class='tabLabelClass + (currentTab!==index?" current-tab":"")' @click='currentTab=index'>
               {{ tab }}
               </span>
 
               <!-- Expand/collapse option-->
               <span class='expand-collapse-icon'>
-              <v-icon v-if='showSectionBody' small color='f_primary'
+              <v-icon v-if='showSectionBody' small color='f_primary' v-bind:id="assignId+'-collapse'"
                       @click='invertVisibility'>mdi-arrow-collapse</v-icon>
-              <v-icon v-else small color='f_primary' @click='invertVisibility'>mdi-arrow-expand</v-icon>
+              <v-icon v-else small color='f_primary' @click='invertVisibility' v-bind:id="assignId+'-expand'">mdi-arrow-expand</v-icon>
             </span>
 
             </div>

@@ -16,6 +16,7 @@
                    :subtitle="plotTitle"
                    caption="To visualize specific mutations, select the corresponding rows from the table"
                    collapsed :tabs='["Week-by-week","Week-to-first-week","All"]' @tabChange='(selected) => type=selected'>
+    <odd-ratio-intro/>
     <div class='regular-plot plotly-container'>
 
         <!-- SUBSEQUENT WEEKS ODD RATIO -->
@@ -34,10 +35,12 @@
 import {Plotly} from 'vue-plotly'
 import SectionElement from "@/components/analysis/SectionElement";
 import {mapGetters} from "vuex";
+import OddRatioIntro from "../intros/OddRatioIntro";
 
 export default {
   name: 'DiffusionOddRatio',
   components: {
+    OddRatioIntro,
     SectionElement,
     Plotly
   },

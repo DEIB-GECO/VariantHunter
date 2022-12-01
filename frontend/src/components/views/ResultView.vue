@@ -19,6 +19,7 @@
     <result-navbar @shiftPeriod="d => shiftPeriod(d)" @shiftArea="a => shiftArea(a)" @shiftType="shiftType"/>
     <v-container class="view-sizing" id="result-top">
       <result-intro/>
+      <sidebar-intro/>
 
       <!-- Filtering options -->
       <v-slide-y-reverse-transition hide-on-leave>
@@ -88,10 +89,12 @@ import ResultInfo from "@/components/analysis/ResultInfo";
 import ResultFilters from "@/components/analysis/ResultFilters";
 import Vue from "vue";
 import ResultIntro from "@/components/intros/ResultIntro";
+import SidebarIntro from "../intros/SidebarIntro";
 
 export default {
   name: 'ResultView',
   components: {
+    SidebarIntro,
     ResultIntro,
     ResultFilters,
     ResultInfo,

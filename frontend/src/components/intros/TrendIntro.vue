@@ -1,6 +1,6 @@
 <template>
-  <feature-intro v-model="visibility" floating step="trend" :internal-steps="0" next-step="odd-ratio"
-                 :icon="tips[currentTip].icon"
+  <feature-intro v-model="visibility" floating step="trend" :internal-steps="2" next-step="odd-ratio"
+                 :icon="tips[currentTip].icon" @nextStep="showOddRatio"
                  @nextInternalStep="nextInternalStep">
     <template>
       <div class="pl-4 mb-6">
@@ -18,6 +18,7 @@
 
 <script>
 import FeatureIntro from "@/components/general/basic/FeatureIntro";
+import {mapMutations} from "vuex";
 
 export default {
   name: "TrendIntro",
@@ -26,13 +27,6 @@ export default {
     return {
       visibility: false,
       tips: [
-          {
-          id: 'ER',
-          icon: 'mdi-chart-line',
-          heading: 'Trend',
-          title: 'SORRY, THE TOUR FUNCTION IS NOT AVAILABLE YET, come back soon.',
-          body: 'click NEXT until this box disappears (DO NOT CLICK END TOUR) .',
-        },
         {
           id: 'intro',
           icon: 'mdi-chart-line',
@@ -48,13 +42,13 @@ export default {
           body: 'By default, the 10 mutations with the most pronounced trend are shown.' +
               'To visualize the ones you are interested in, check the corresponding boxes in the table.',
         },
-          {
+        {
           id: 'adv',
           icon: 'mdi-checkbox-marked',
           heading: 'Trend',
-          title: 'Select to show in the plot',
-          body: 'By default, the 10 mutations with the most pronounced trend are shown.' +
-              'To visualize the ones you are interested in, check the corresponding boxes in the table.',
+          title: 'Show, hide or zoom in!',
+          body: 'You can interact with the chart by selecting a specific area, and you ' +
+              'can click on items in the legend to temporarily hide or show them.',
         }
       ],
       currentTip: 0,
@@ -71,9 +65,18 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setTourStep']),
 
     nextInternalStep() {
       this.currentTip++
+    },
+
+    showOddRatio(){
+      const el= document.getElementById('odd-ratio-expand')
+      if(el)
+        el.click() // expand odd-ratio section
+      else
+        this.setTourStep('summary') // skip odd-ratio tour if not able to expand it
     }
   },
   mounted() {

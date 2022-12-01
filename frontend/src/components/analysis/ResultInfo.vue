@@ -1,6 +1,7 @@
 <template>
-  <v-row class="mt-6" no-gutters>
+  <v-row class="mt-6" no-gutters id="summary">
     <v-col>
+      <summary-intro/>
       <v-list color="transparent">
         <v-list-item>
           <v-list-item-icon>
@@ -96,10 +97,11 @@ import {computeDateLabel} from "@/store/utils/utils";
 import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip";
 import TagEditor from "@/components/controls/TagEditor";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
+import SummaryIntro from "../intros/SummaryIntro";
 
 export default {
   name: "ResultInfo",
-  components: {IconWithTooltip, TagEditor, BtnWithTooltip},
+  components: {SummaryIntro, IconWithTooltip, TagEditor, BtnWithTooltip},
   data() {
     return {
 
