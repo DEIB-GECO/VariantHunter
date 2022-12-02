@@ -6,13 +6,7 @@
       <tour-intro/>
 
       <v-col>
-        <div class="text-right text-body-4 font-weight-medium pb-3 compact-text-3 success--text">
-          <span v-if="lastUpdate"><v-icon left small
-                                          color="success">mdi-clock-outline</v-icon>Last dataset update: <span
-              class="font-weight-regular d-block d-md-inline-block">{{ lastUpdate }}</span></span>
-          <span v-else><v-progress-circular class="mr-2" indeterminate
-                                            size="15"/> Fetching last dataset update...</span>
-        </div>
+        <dataset-info/>
 
         <div class="text-h4 font-weight-black primary--text pb-2">Define new analysis</div>
         <div class="text-body-3 compact-text-2">VariantHunter analyzes the frequencies of amino acid mutations of
@@ -117,10 +111,12 @@ import QuickTagSelector from "@/components/form/QuickTagSelector";
 import TourIntro from "@/components/intros/TourIntro";
 import DefinitionIntro from "@/components/intros/DefinitionIntro";
 import ExplorerIntro from "@/components/intros/ExplorerIntro";
+import DatasetInfo from "../general/DatasetInfo";
 
 export default {
   name: "NewSearchView",
   components: {
+    DatasetInfo,
     ExplorerIntro,
     DefinitionIntro,
     TourIntro,
@@ -142,7 +138,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate', 'lastUpdate']),
+    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate']),
 
     /** Form error flag: true if the form cannot be sent */
     formError() {

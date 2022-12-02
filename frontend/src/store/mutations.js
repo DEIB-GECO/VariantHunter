@@ -218,6 +218,13 @@ export const mutations = {
     setLastUpdate(state, newVal) {
         state.lastUpdate = newVal
     },
+    setDatasetInfo(state,info){
+        Vue.set(state.datasetInfo,'fileType',info['file_type'])
+        Vue.set(state.datasetInfo,'filteredCountries',info['filtered_countries'])
+        Vue.set(state.datasetInfo,'beginDate',info['begin_date'])
+        Vue.set(state.datasetInfo,'endDate',info['end_date'])
+        Vue.set(state.datasetInfo,'parsedOn',info['parsed_on'])
+    },
 
     resetState(state) {
         state.reset = true

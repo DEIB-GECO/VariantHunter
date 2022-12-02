@@ -78,6 +78,7 @@ export const state = {
 
     /** lastUpdate: last update date */
     lastUpdate: null,
+    datasetInfo: {},
 
     tourStep: 'tour',
     reset: false,

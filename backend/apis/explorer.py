@@ -147,7 +147,7 @@ def extract_dataset_info():
         return cur.execute(query).fetchone()
 
     parsing_info = extract_parsing_info()
-    info={
+    info = {
         'last_update': extract_last_update(),
         'file_type': parsing_info[0],
         'filtered_countries': parsing_info[1] if len(parsing_info[1]) > 0 else "all",
@@ -159,7 +159,7 @@ def extract_dataset_info():
 
     con.close()
     # print(f'done in {time.time() - exec_start:.5f} seconds.')
-    return
+    return info
 
 
 dataset_info = extract_dataset_info()  # At server startup, fetch info

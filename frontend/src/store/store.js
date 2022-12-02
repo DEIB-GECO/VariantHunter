@@ -6,13 +6,14 @@ import {mutations} from "@/store/mutations";
 import {actions} from "@/store/actions";
 import VuexPersistence from 'vuex-persist';
 import localForage from 'localforage';
+import {version} from '../../package.json';
 
 const vuexLocal = new VuexPersistence({
-    reducer (val) {
-      if(val.reset) {
-        return {}
-      }
-      return val
+    reducer(val) {
+        if (val.reset || val.version!==version) {
+            return {}
+        }
+        return val
     },
     storage: localForage,
     asyncStorage: true,
