@@ -7,6 +7,7 @@
 
 from __future__ import print_function
 
+from datetime import date, datetime
 from shutil import rmtree
 from sqlite3 import connect
 from time import time
@@ -21,7 +22,7 @@ from .utils.path_manager import db_paths as paths
 
 api = Namespace('startup', description='startup')
 args = get_cmd_arguments()
-dataset_type = "Gisaid" if args.file_type != 'nextstrain' else "Nextstrain"
+version = "2.0.0"  # Keep consistent wrt package.json file
 
 
 def startup():
@@ -29,6 +30,21 @@ def startup():
     Performs the startup setup: database creation, data extraction and database population
 
     """
+
+    def run_query(query, params=None):
+        cur.execute(query) if params is None else cur.execute(query, params)
+        con.commit()
+
+    def print_parsing_info(prepend="",params_only=False):
+        info_q = f'''   SELECT file_type, filtered_countries, beginning_date, end_date, parse_date, version
+                        FROM  info;'''
+        info = cur.execute(info_q).fetchone()
+        print(f'''\t{prepend} File type: {info[0]},'''+
+              f'''\n\t{prepend} Filtered countries: {info[1] if len(info[1]) > 0 else "all"},''' +
+              f'''\n\t{prepend} Begin date: {info[2]},\n\t{prepend} End date: {info[3]},''')
+        if not params_only:
+            print(f'''\t{prepend} Parsed on: {info[4]}, using app version: {info[5]}\n''')
+
     exec_start = time()
     print("\033[01m\033[33m> Starting initial setup ... \033[0m")
     curr_step, tot_steps = 1, 4
@@ -48,13 +64,10 @@ def startup():
 
         else:
             # Start the app directly
-            print('[database overwrite skipped]\033[0m\n')
+            print('[loading existing one]\033[0m')
+            print_parsing_info()
             con.close()
             return
-
-    def run_query(query):
-        cur.execute(query)
-        con.commit()
 
     with open(args.file_path) as f:
         clear_db(db_name=paths.temp_db1_path)
@@ -100,19 +113,26 @@ def startup():
         run_query('''   CREATE TABLE proteins
                         (protein_id int primary key , protein text)''')
 
+        run_query('''   CREATE TABLE info
+                        (file_type text, filtered_countries text, beginning_date text, end_date text, parse_date text, version text)''')
+
+        params = vars(args)
+        params['filtered_countries'] = '; '.join(params['filtered_countries'])
+        params['version'] = version
+        run_query('''   INSERT INTO info VALUES 
+                        (:file_type,:filtered_countries,:beginning_date, :end_date, DATE('now'), :version);''', params)
+
         print(f'done in {time() - exec_start:.5f} seconds.')
         step_start = time()
 
         ###############################################################
         # Parse the file and load the data into the tables
         curr_step += 1
-        print(f"\t STEP {curr_step}/{tot_steps}: Data extraction ", end="")
-
+        print(f"\t STEP {curr_step}/{tot_steps}: Data extraction ...")
+        print_parsing_info(prepend='\t   *', params_only=True)
         if args.file_type != 'nextstrain':
-            print(" [GISAID parser] ... ")
             parser = GisaidParser(con, f)
         else:
-            print(" [NEXTSTRAIN parser] ...")
             parser = NextstrainParser(con, f)
         parser.set_date_range(args.beginning_date, args.end_date)
         parser.parse(args.filtered_countries)
@@ -199,7 +219,9 @@ def startup():
     print(f'\t>> Setup overall time: {time() - exec_start:.5f} seconds.\n')
 
 
-print("\n\033[01m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯    V A R I A N T    H U N T E R    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\033[0m\n")
+print("...\n...\tServer started on " + str(datetime.now()))
+print("...\tVersion " + version + "\n...")
+print("\n\n\033[01m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯    V A R I A N T    H U N T E R    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\033[0m\n")
 startup()
 
 # clean temporary files

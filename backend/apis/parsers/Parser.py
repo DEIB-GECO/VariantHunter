@@ -66,9 +66,11 @@ class Parser:
         has_failed = any(col not in found_keys for col in expected_cols)
         if has_failed:
             print(
-                "\033[91mFATAL ERROR: \tThe metadata file is malformed or its structure has changed and " +
-                "is not compatible with this version of Variant Hunter.\n\t\tPlease report this error by " +
-                "opening an issue at github.com/DEIB-GECO/VariantHunter/issues \033[0m")
+                "\n\033[91m* FATAL ERROR: \tThe metadata file is malformed or its structure has changed and " +
+                "is not compatible with this version of Variant Hunter.\n*\n*\t\t"+
+                "Make sure the file type parameter is correct and try again. \n*\t\t"
+                "If the problem persists, please report this error by opening an issue at "+
+                "github.com/DEIB-GECO/VariantHunter/issues \033[0m")
             exit(-1)
 
     def is_out_of_range(self, date):

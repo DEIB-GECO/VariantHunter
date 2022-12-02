@@ -16,7 +16,7 @@ def get_cmd_arguments():
     parser = argparse.ArgumentParser(allow_abbrev=True)
 
     parser.add_argument('--filepath', '-fp',
-                        type=str, required=True, dest='file_path',
+                        type=str, dest='file_path',
                         help="path to the .tsv metadata file")
 
     parser.add_argument('--filetype', '-ft',

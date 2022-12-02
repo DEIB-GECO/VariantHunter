@@ -42,7 +42,7 @@ def extract_seq_num(location, lineage):
     cur = con.cursor()
 
     def execute_query():
-        if lineage is not None and lineage!='':
+        if lineage is not None and lineage != '':
             query = f'''    SELECT date,sum(count) 
                             FROM aggr_sequences SQ
                                 JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
@@ -123,28 +123,46 @@ def extract_lineage_breakdown(location, period):
     return lineage_breakdown
 
 
-def extract_last_update():
+def extract_dataset_info():
     """
-    Extract from the database the date of the last sequence
+    Extract from the database dateset info
 
-    Returns: tha date of the last update
+    Returns: an object including date of last sequence and parsing parameters
 
     """
-    # print("> Extract last update date ...", end="")
+    # print("> Extract dataset info date ...", end="")
     # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
-    query = f'''    SELECT max(date) 
-                    FROM aggr_sequences;'''
-    diff = cur.execute(query).fetchall()[0][0]
+    def extract_last_update():
+        query = f'''    SELECT max(date) 
+                        FROM aggr_sequences;'''
+        diff = cur.execute(query).fetchone()[0]
+        return compute_date_from_diff(diff) if diff is not None else None
+
+    def extract_parsing_info():
+        query = f'''    SELECT file_type, filtered_countries, beginning_date, end_date, parse_date, version
+                        FROM  info;'''
+        return cur.execute(query).fetchone()
+
+    parsing_info = extract_parsing_info()
+    info={
+        'last_update': extract_last_update(),
+        'file_type': parsing_info[0],
+        'filtered_countries': parsing_info[1] if len(parsing_info[1]) > 0 else "all",
+        'begin_date': parsing_info[2],
+        'end_date': parsing_info[3],
+        'parsed_on': parsing_info[4],
+        'version': parsing_info[5]
+    }
 
     con.close()
     # print(f'done in {time.time() - exec_start:.5f} seconds.')
-    return compute_date_from_diff(diff) if diff is not None else None
+    return
 
 
-last_update = extract_last_update()  # At server startup, fetch last update
+dataset_info = extract_dataset_info()  # At server startup, fetch info
 
 
 def get_lineage_characterization(lineages):
@@ -228,7 +246,7 @@ def extract_mutation_history(prot, mut):
     total = 0
     for lineage, count in cur.execute(query, {'prot': prot, 'mut': mut}).fetchall():
         total += count
-        history[lineage] = {'abs' : count}
+        history[lineage] = {'abs': count}
 
     for lineage in history:
         history[lineage]['percentage'] = 100 * history[lineage]['abs'] / total
@@ -283,16 +301,16 @@ class FieldList(Resource):
         return info
 
 
-@api.route('/getLastUpdate')
+@api.route('/getDatasetInfo')
 class FieldList(Resource):
-    @api.doc('get_last_update')
+    @api.doc('get_dataset_info')
     def get(self):
         """
-        Endpoint to get the date of the last update of the dataset
-        @return:    The date of the last sequence collected
+        Endpoint to get the date useful dataset info of the dataset
+        @return:    Object including: date of the last sequence collected and parsing params
         """
-        print("\t /getLastUpdate processing...done.")
-        return last_update
+        print("\t /getDatasetInfo processing...done.")
+        return dataset_info
 
 
 @api.route('/getLineagesCharacteristics')
@@ -331,4 +349,4 @@ class FieldList(Resource):
         characterized_lineages = extract_characterized_lineages(prot=protein, mut=mut)
 
         print(f'done in {time.time() - exec_start:.5f} seconds.')
-        return {'history': mutation_history, 'characterized_lineages':characterized_lineages}
+        return {'history': mutation_history, 'characterized_lineages': characterized_lineages}
