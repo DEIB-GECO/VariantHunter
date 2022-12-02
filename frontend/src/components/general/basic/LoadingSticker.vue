@@ -4,7 +4,7 @@
 
     <v-snackbar v-if="!standalone" max-width="500px" v-model="showSnackbar"
                 :timeout="isLoading?'-1':'9000'"
-                :color="isLoading?'warning':(error?'error':'')">
+                :color="isLoading?'warning':'error'">
       <v-list class="text-left transparent tip rounded-xl white--text " two-line>
         <v-list-item class="justify-center">
           <v-list-item-icon class="text-center ma-auto mr-8" >
@@ -36,13 +36,13 @@
             <v-icon v-if="error">mdi-exclamation-thick</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title class="font-weight-bold">
+            <v-list-item-title class="font-weight-bold break-spaces">
               {{
-                isLoading ? 'Please wait...' : (error ? 'An error occurred while contacting the server. Try again.' : '')
+                isLoading ? 'Please wait...' : (error ? errorTitle : '')
               }}
             </v-list-item-title>
-            <v-list-item-subtitle>{{
-                isLoading ? loadingMessage : (error ? ('Details: ' + error) : '')
+            <v-list-item-subtitle class="break-spaces">{{
+                isLoading ? loadingMessage : (error ? (errorBody) : '')
               }}
             </v-list-item-subtitle>
           </v-list-item-content>

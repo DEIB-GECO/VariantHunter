@@ -57,19 +57,19 @@
             </template>
             <div class="pa-3">
               <div class="text-body-3 font-weight-bold mb-3">
-                <v-icon left>mdi-database-outline</v-icon>
+                <v-icon left color="f_text_light">mdi-database-outline</v-icon>
                 Dataset used
               </div>
               <div class="mb-3">
                 <div>
-                  <v-icon small left>mdi-connection</v-icon>
+                  <v-icon small left color="f_text_light">mdi-connection</v-icon>
                   Metadata provider
                 </div>
                 <span class="text-uppercase font-weight-bold ml-6">{{ datasetInfo['file_type'] }}</span>
               </div>
               <div class="mb-3" v-if="!(noBegin && noEnd)">
                 <div>
-                  <v-icon small left>mdi-clock-outline</v-icon>
+                  <v-icon small left color="f_text_light">mdi-clock-outline</v-icon>
                   Available period
                 </div>
                 <div class="text-body-5 ml-6">The data set was limited to the following time period:</div>
@@ -77,7 +77,7 @@
               </div>
               <div class="mb-3" v-if="!(noCountryFilter)">
                 <div>
-                  <v-icon small left>mdi-map-marker-outline</v-icon>
+                  <v-icon small left color="f_text_light">mdi-map-marker-outline</v-icon>
                   Available countries
                 </div>
                 <div class="text-body-5 ml-6">The dataset was limited to the following countries:</div>

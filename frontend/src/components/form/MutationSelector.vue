@@ -141,7 +141,7 @@
           </v-toolbar>
 
           <!-- Dialog content -->
-          <v-card-text class='text-s-center dialog-text lineage-selector-dialog'>
+          <v-card-text v-if="!error" class='text-s-center dialog-text lineage-selector-dialog'>
             <v-container fluid>
               <v-row>
 
@@ -202,9 +202,14 @@
                     </v-col>
                   </v-row>
                 </v-col>
+
               </v-row>
             </v-container>
           </v-card-text>
+          <v-card-text v-else class="text-center py-5">
+              <loading-sticker :standalone="true" :is-loading="error===undefined" :error="error" no-overlay
+                             :loading-messages="[{text:'Analyzing mutation data',time:3000},{text:'This may take some time',time:6000},{text:'This may take up to 1 minute',time:15000},{text:'Almost done! Hang in there',time:30000}]"/>
+            </v-card-text>
 
           <!-- Dialog actions -->
           <v-card-actions class='justify-end'>
@@ -232,10 +237,11 @@
 <script>
 import FieldSelector from '@/components/form/FieldSelector'
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
+import LoadingSticker from "../general/basic/LoadingSticker";
 
 export default {
   name: 'MutationSelector',
-  components: {IconWithTooltip, FieldSelector},
+  components: {LoadingSticker, IconWithTooltip, FieldSelector},
   props: {
     /** Value variable for binding of the value */
     value: {},
@@ -256,6 +262,8 @@ export default {
 
       /** Processing flag. If true, the list is being parsed. */
       processing: false,
+
+      error: undefined,
 
       /** Error messages for the parsing */
       errorMessages: [],
