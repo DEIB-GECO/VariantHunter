@@ -15,7 +15,8 @@ my_app = Flask(__name__)
 cors = CORS(my_app)
 
 my_app.debug = False
-my_app.config['EXECUTOR_PROPAGATE_EXCEPTIONS'] = True
+my_app.config['EXECUTOR_PROPAGATE_EXCEPTIONS'] = False
+my_app.config['PROPAGATE_EXCEPTIONS'] = False
 my_app.config['EXECUTOR_MAX_WORKERS'] = 20
 
 executor_inner = Executor(my_app)
@@ -82,9 +83,7 @@ my_app.app_context().push()
 # prevent logging
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
+os.environ['WERKZEUG_RUN_MAIN'] = 'true'
 
 if __name__ == '__main__':
-    port = os.getenv('PORT', 5000)
-    print("\n\n\033[01m\033[32m> * STARTUP COMPLETED:\033[0m\033[32m The application is now accessible from your browser at http://localhost:"
-          + str(port) + " (PRESS CTRL+C to stop)\033[0m\n")
     my_app.run(host="0.0.0.0", port=5000)

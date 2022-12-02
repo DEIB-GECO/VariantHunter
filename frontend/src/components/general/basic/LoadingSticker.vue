@@ -3,7 +3,7 @@
     <div v-if="isLoading && !noOverlay" class="v-overlay__scrim" style="opacity: 0.46; background-color: rgb(33, 33, 33); border-color: rgb(33, 33, 33);"></div>
 
     <v-snackbar v-if="!standalone" max-width="500px" v-model="showSnackbar"
-                :timeout="isLoading?'-1':(error?'10000':'10000')"
+                :timeout="isLoading?'-1':'9000'"
                 :color="isLoading?'warning':(error?'error':'')">
       <v-list class="text-left transparent tip rounded-xl white--text " two-line>
         <v-list-item class="justify-center">
@@ -12,13 +12,13 @@
             <v-icon v-if="error">mdi-exclamation-thick</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title class="font-weight-bold">
+            <v-list-item-title class="font-weight-bold break-spaces">
               {{
-                isLoading ? 'Please wait...' : (error ? 'An error occurred while contacting the server.' : '')
+                isLoading ? 'Please wait...' : (error ? errorTitle : '')
               }}
             </v-list-item-title>
-            <v-list-item-subtitle>{{
-                isLoading ? loadingMessage : (error ? ('Details: ' + error) : '')
+            <v-list-item-subtitle class="break-spaces">{{
+                isLoading ? loadingMessage : (error ? (errorBody) : '')
               }}
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -85,6 +85,21 @@ export default {
       } else {
         this.showSnackbar = this.error !== undefined
       }
+    }
+  },
+  computed:{
+    errorTitle(){
+      if(this.error===423)
+        return 'Dataset update in progress'
+      else
+        return 'An error occurred while contacting the server.'
+    },
+
+     errorBody(){
+      if(this.error===423)
+        return 'Sorry, we are updating the dataset. This operation may take some time. Please try again later.'
+      else
+        return this.error
     }
   },
   methods: {

@@ -162,9 +162,6 @@ def extract_dataset_info():
     return info
 
 
-dataset_info = extract_dataset_info()  # At server startup, fetch info
-
-
 def get_lineage_characterization(lineages):
     """
     Extract from the database the characterizing mutations of specified lineages
@@ -310,7 +307,7 @@ class FieldList(Resource):
         @return:    Object including: date of the last sequence collected and parsing params
         """
         print("\t /getDatasetInfo processing...done.")
-        return dataset_info
+        return extract_dataset_info()
 
 
 @api.route('/getLineagesCharacteristics')

@@ -15,7 +15,7 @@ import time
 from flask import request
 from flask_restplus import Namespace, Resource
 
-from .explorer import dataset_info
+from .explorer import extract_dataset_info
 from .locations import get_location_data
 from .utils.path_manager import db_path
 from .utils.utils import compute_weeks_from_date, produce_statistics
@@ -198,7 +198,7 @@ class FieldList(Resource):
         metadata = {
             'date': date,
             'location': get_location_data(location),
-            'dataset_info': dataset_info
+            'dataset_info': extract_dataset_info()
         }
 
         print(f'done in {time.time() - exec_start:.5f} seconds.')

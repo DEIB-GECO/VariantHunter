@@ -55,7 +55,7 @@ export default {
           })
           .catch((e) => {
             this.setLastUpdate(null)
-            setTimeout(this.fetchDatasetInfo,4000)
+            setTimeout(this.fetchDatasetInfo,10000)
             this.error = e
           })
     }

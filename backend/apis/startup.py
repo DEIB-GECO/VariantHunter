@@ -7,9 +7,11 @@
 
 from __future__ import print_function
 
-from datetime import date, datetime
+import os
+from datetime import datetime
 from shutil import rmtree
 from sqlite3 import connect
+from threading import Thread
 from time import time
 
 from flask_restplus import Namespace
@@ -24,6 +26,14 @@ api = Namespace('startup', description='startup')
 args = get_cmd_arguments()
 version = "2.0.0"  # Keep consistent wrt package.json file
 
+def on_done():
+    # clean temporary files
+    rmtree(paths.temp_tree, ignore_errors=True)
+    port = os.getenv('PORT', 5000)
+    print(
+        "\n\n\033[01m\033[32m> * STARTUP COMPLETED:\033[0m\033[32m The application is now accessible from your browser at http://localhost:"
+        + str(port) + " (PRESS CTRL+C to stop)\033[0m\n")
+
 
 def startup():
     """
@@ -35,11 +45,11 @@ def startup():
         cur.execute(query) if params is None else cur.execute(query, params)
         con.commit()
 
-    def print_parsing_info(prepend="",params_only=False):
+    def print_parsing_info(prepend="", params_only=False):
         info_q = f'''   SELECT file_type, filtered_countries, beginning_date, end_date, parse_date, version
                         FROM  info;'''
         info = cur.execute(info_q).fetchone()
-        print(f'''\t{prepend} File type: {info[0]},'''+
+        print(f'''\t{prepend} File type: {info[0]},''' +
               f'''\n\t{prepend} Filtered countries: {info[1] if len(info[1]) > 0 else "all"},''' +
               f'''\n\t{prepend} Begin date: {info[2]},\n\t{prepend} End date: {info[3]},''')
         if not params_only:
@@ -67,6 +77,7 @@ def startup():
             print('[loading existing one]\033[0m')
             print_parsing_info()
             con.close()
+            on_done()
             return
 
     with open(args.file_path) as f:
@@ -218,11 +229,14 @@ def startup():
 
     print(f'\t>> Setup overall time: {time() - exec_start:.5f} seconds.\n')
 
+    on_done()
+
 
 print("...\n...\tServer started on " + str(datetime.now()))
 print("...\tVersion " + version + "\n...")
 print("\n\n\033[01m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯    V A R I A N T    H U N T E R    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\033[0m\n")
-startup()
 
-# clean temporary files
-rmtree(paths.temp_tree, ignore_errors=True)
+# create a thread
+thread = Thread(target=startup)
+thread.start()
+print("THIS MEANS I AM REACTIVE")
