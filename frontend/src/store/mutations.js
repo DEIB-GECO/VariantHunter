@@ -85,8 +85,7 @@ export const mutations = {
                     w3: computeDateLabel(endDate, 13, 7), w4: computeDateLabel(endDate, 6, 0)
                 },
                 performedOn: new Date().toDateString() + ", " + new Date().toTimeString().slice(0, 5),
-                datasetAsOf: metadata['dataset_date'],
-                datasetType: metadata['dataset_type'],
+                datasetInfo: metadata['dataset_info'],
             },
             notes: null,
             tag: null,

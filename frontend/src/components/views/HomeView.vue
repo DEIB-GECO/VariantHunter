@@ -62,7 +62,6 @@ export default {
   },
   watch:{
     loading(newVal){
-      console.log("LOADING "+newVal)
       if(!newVal){
         this.fetchDatasetInfo()
       }
