@@ -7,10 +7,12 @@
 """
 
 import sqlite3
-from flask import request
 import time
-from .utils.path_manager import db_path
+
+from flask import request
 from flask_restplus import Namespace, Resource
+
+from .utils.path_manager import db_path
 
 api = Namespace('locations', description='locations')
 
@@ -132,12 +134,12 @@ class FieldList(Resource):
         Endpoint to get all the locations matching a given string
         @return:    An array of regions
         """
-        print("\t /getLocations processing...", end="")
         exec_start = time.time()
 
         args = request.args
         args.to_dict()
         locations = get_locations(args.get('string'))
 
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        print(f'\t[GET] /getLocations: processed in {time.time() - exec_start:.5f} seconds.')
+
         return locations

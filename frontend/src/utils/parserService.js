@@ -24,7 +24,6 @@ export function json2csv(jsonData, headersInfo) {
     })
 
     const csv = jsonData.map(function (jsonRow) {
-        console.log(jsonRow)
         return fieldsNames
             .map(function (fieldName) {
                 return JSON.stringify(String(jsonRow[fieldName]))

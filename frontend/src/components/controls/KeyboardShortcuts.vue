@@ -41,7 +41,6 @@ export default {
     ...mapMutations(['setCurrentAnalysis']),
 
     onShortcut(id) {
-      console.log(id)
       this.shortcut = id
       this.showSnackbar = true
       clearTimeout(this.timeout)

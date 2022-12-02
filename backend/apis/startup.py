@@ -26,6 +26,7 @@ api = Namespace('startup', description='startup')
 args = get_cmd_arguments()
 version = "2.0.0"  # Keep consistent wrt package.json file
 
+
 def on_done():
     # clean temporary files
     rmtree(paths.temp_tree, ignore_errors=True)
@@ -239,4 +240,3 @@ print("\n\n\033[01m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯    V A R I A N T    H
 # create a thread
 thread = Thread(target=startup)
 thread.start()
-print("THIS MEANS I AM REACTIVE")

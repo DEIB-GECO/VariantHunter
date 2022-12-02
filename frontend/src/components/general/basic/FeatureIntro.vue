@@ -70,7 +70,6 @@ export default {
 
     showNext() {
       if(this.internalSteps===this.nextPressCount) {
-        console.log("Switch to " + this.nextStep)
         this.tourStep = this.nextStep
         this.$emit('nextStep')
       } else{

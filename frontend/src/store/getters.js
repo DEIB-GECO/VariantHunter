@@ -13,7 +13,7 @@ export const getters = {
      * Gets a summary of the past analysis
      */
     getAnalysesSummary: (state) => {
-        console.log("getAnalysesSummary")
+        //console.log("getAnalysesSummary")
         // Returns a time-sorted summary for each analysis
         return Object.values(state.analyses)
             .map(({id, starred, query, tag}) => ({id, starred, query, tag}))
@@ -22,13 +22,13 @@ export const getters = {
 
     /** Gets the currently displayed analysis */
     getCurrentAnalysis: (state) => {
-        console.log("getCurrentAnalysis")
+        //console.log("getCurrentAnalysis")
         return state.analyses[state.currentAnalysisId]
     },
 
     /** Gets the local opts of the currently displayed analysis */
     getCurrentLocalOpt: (state) => {
-        console.log("getCurrentLocalOpt")
+        //console.log("getCurrentLocalOpt")
         return state.localOpt[state.currentAnalysisId]
     },
 
@@ -37,7 +37,7 @@ export const getters = {
     getCurrentTagOpt: (state) => {
         if(state.currentAnalysisId===null) return undefined
 
-        console.log("getCurrentTagOpt")
+        //console.log("getCurrentTagOpt")
         const tag = state.analyses[state.currentAnalysisId].tag
         if(tag)
             return state.tags[tag]
@@ -45,7 +45,7 @@ export const getters = {
 
     /** Gets the opts of the currently displayed analysis */
     getCurrentOpt: (state,getters) => {
-        console.log("getCurrentOpt")
+        //console.log("getCurrentOpt")
         return (getters.useLocalOpt)? getters.getCurrentLocalOpt : getters.getCurrentTagOpt
     },
 
@@ -54,7 +54,7 @@ export const getters = {
     useLocalOpt: (state) => {
         if(state.currentAnalysisId===null) return undefined
 
-        console.log("useLocalOpt")
+        //console.log("useLocalOpt")
         return state.localOpt[state.currentAnalysisId].useLocalOpt
     },
 

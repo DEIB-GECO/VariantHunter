@@ -36,8 +36,6 @@ def extract_seq_num(location, lineage):
     Returns: an array of (date, seq_count) pairs
 
     """
-    # print("\t Extract number of sequences ...", end="")
-    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -58,7 +56,6 @@ def extract_seq_num(location, lineage):
 
     daily_sequence_counts = execute_query()
     con.close()
-    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return daily_sequence_counts
 
 
@@ -72,8 +69,6 @@ def extract_lineage_breakdown(location, period):
     Returns: an array of (day,data about the lineage breakdown) pairs
 
     """
-    # print("\t Extract lineage breakdown of sequences ...", end="")
-    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -119,7 +114,6 @@ def extract_lineage_breakdown(location, period):
                 lineage_breakdown[key] = {date: seq_count}
 
     con.close()
-    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return lineage_breakdown
 
 
@@ -130,8 +124,6 @@ def extract_dataset_info():
     Returns: an object including date of last sequence and parsing parameters
 
     """
-    # print("> Extract dataset info date ...", end="")
-    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -158,7 +150,6 @@ def extract_dataset_info():
     }
 
     con.close()
-    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return info
 
 
@@ -171,8 +162,6 @@ def get_lineage_characterization(lineages):
     Returns: an array of characterizing mutations
 
     """
-    # print("\t Extract lineage characterization  ...", end="")
-    # exec_start = time.time()
     con = sqlite3.connect(db_path)
     cur = con.cursor()
 
@@ -188,7 +177,6 @@ def get_lineage_characterization(lineages):
     characterizing_muts = extract_muts_from_lineage()
 
     con.close()
-    # print(f'done in {time.time() - exec_start:.5f} seconds.')
     return characterizing_muts
 
 
@@ -265,14 +253,13 @@ class FieldList(Resource):
         Endpoint to get the sequence counts for each day
         @return:    An array of (date,seq_count) pairs
         """
-        print("\t /getSequenceInfo processing...", end="")
         exec_start = time.time()
         args = request.args
         location = args.get('location')
         lineage = args.get('lineage')
 
         info = extract_seq_num(location, lineage)
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        print(f'\t[GET] /getSequenceInfo: processed in {time.time() - exec_start:.5f} seconds.')
         return info
 
 
@@ -284,7 +271,6 @@ class FieldList(Resource):
         Endpoint to get the lineage breakdown info for each day
         @return:    An array of describing the breakdown
         """
-        print("\t /getLineagesBreakdown processing...", end="")
         exec_start = time.time()
         args = request.args
         location = args.get('location')
@@ -294,7 +280,7 @@ class FieldList(Resource):
         }
 
         info = extract_lineage_breakdown(location, period)
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        print(f'\t[GET] /getLineagesBreakdown: processed in {time.time() - exec_start:.5f} seconds.')
         return info
 
 
@@ -306,8 +292,10 @@ class FieldList(Resource):
         Endpoint to get the date useful dataset info of the dataset
         @return:    Object including: date of the last sequence collected and parsing params
         """
-        print("\t /getDatasetInfo processing...done.")
-        return extract_dataset_info()
+        exec_start = time.time()
+        data = extract_dataset_info()
+        print(f'\t[GET] /getDatasetInfo: processed in {time.time() - exec_start:.5f} seconds.')
+        return data
 
 
 @api.route('/getLineagesCharacteristics')
@@ -318,13 +306,12 @@ class FieldList(Resource):
         Endpoint to get the characterizing protein mutations of specified lineages
         @return:    A list of characterizing mutations
         """
-        print("\t /getLineagesCharacteristics processing...", end="")
         exec_start = time.time()
         args = request.args
         lineages = args.getlist('lineages')
 
         characterization = get_lineage_characterization(lineages)
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        print(f"\t[GET] /getLineagesCharacteristics: processed in {time.time() - exec_start:.5f} seconds.")
         return characterization
 
 
@@ -336,7 +323,6 @@ class FieldList(Resource):
         Endpoint to obtain statistics about history of a given mutation
         @return:    An object including the results
         """
-        print("\t /getMutationHistory processing...", end="")
         exec_start = time.time()
         args = request.args
         protein = args.get('protein')
@@ -345,5 +331,5 @@ class FieldList(Resource):
         mutation_history = extract_mutation_history(prot=protein, mut=mut)
         characterized_lineages = extract_characterized_lineages(prot=protein, mut=mut)
 
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        print(f'\t[GET] /getMutationHistory: processed in {time.time() - exec_start:.5f} seconds.')
         return {'history': mutation_history, 'characterized_lineages': characterized_lineages}

@@ -22,7 +22,6 @@ export default {
   },
   methods: {
     hide() {
-      console.log("HIDE")
       this.$emit('input', false)
     }
   }

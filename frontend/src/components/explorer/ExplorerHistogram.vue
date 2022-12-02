@@ -106,7 +106,6 @@ export default {
           buttons[1].dispatchEvent(new Event('click'))
         }
       } catch (ignored) {
-        console.log('unable')
         // Not able to locate plotly.
       }
     }

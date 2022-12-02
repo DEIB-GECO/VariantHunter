@@ -189,7 +189,6 @@ export default {
     },
 
     filteredAnalysesSummary() {
-      console.log("filteredAnalysesSummary")
       const mode = this.filteredMode
       const granularity = this.filteredGranularity
       const starred = this.filteredStarred

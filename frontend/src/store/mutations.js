@@ -18,7 +18,7 @@ export const mutations = {
      * @param id    Id to be set
      */
     setCurrentAnalysis(state, id) {
-        console.log("setCurrentAnalysis to " + id)
+        //console.log("setCurrentAnalysis to " + id)
         state.currentAnalysisId = id
     },
 
@@ -30,7 +30,7 @@ export const mutations = {
      * @param value     Value of the parameter
      */
     setOpt(state, {local = true, opt, value}) {
-        console.log("setOption of " + opt + " to " + value)
+        //console.log("setOption of " + opt + " to " + value)
         const id = state.currentAnalysisId
 
         if (local) {
@@ -49,7 +49,7 @@ export const mutations = {
      * @param starred   Boolean value for the starred flag
      */
     setStarredAnalysis(state, {id, starred = true}) {
-        console.log("setStarredAnalysis of " + id + " to " + starred)
+        //console.log("setStarredAnalysis of " + id + " to " + starred)
         state.analyses[id].starred = starred
     },
 
@@ -115,17 +115,17 @@ export const mutations = {
     },
 
     setTag(state, {analysisId,tagName}){
-        console.log("# Set from "+analysisId+" to tag: "+tagName)
+        //console.log("# Set from "+analysisId+" to tag: "+tagName)
         Vue.set(state.analyses[analysisId],'tag',tagName)
     },
 
     renameTag(state,{newName,oldName}){
-        console.log("# Rename from "+oldName+" to "+newName)
+        //console.log("# Rename from "+oldName+" to "+newName)
         Vue.set(state.tags, newName, state.tags[oldName])
     },
 
     addTag(state, tagName) {
-        console.log("# Add tag " + tagName)
+        //console.log("# Add tag " + tagName)
         // New tag? save and assign color
         if (!Object.keys(state.tags).includes(tagName)) {
             Vue.set(state.tags, tagName, {
@@ -146,7 +146,7 @@ export const mutations = {
     },
 
     removeTag(state, tagName) {
-        console.log("# Remove tag " + tagName)
+        //console.log("# Remove tag " + tagName)
         state.analyses[state.currentAnalysisId].tag = null
         state.localOpt[state.currentAnalysisId].useLocalOpt = true
     },
@@ -157,7 +157,7 @@ export const mutations = {
      * @param id        Analysis id
      */
     removeAnalysis(state, id) {
-        console.log("removeAnalysis " + id)
+        //console.log("removeAnalysis " + id)
         if (id === state.currentAnalysisId)
             state.currentAnalysisId = null
 
@@ -167,29 +167,29 @@ export const mutations = {
 
 
     setLocation(state, newValue) {
-        console.log("setLocation " + newValue)
+        //console.log("setLocation " + newValue)
         state.selectedLocation = newValue
     },
     setLocations(state, newValue) {
-        console.log("setLocations " + newValue)
+        //console.log("setLocations " + newValue)
         state.possibleLocations = newValue
     },
     setLocationsInfo(state, newValue) {
-        console.log("setLocationsInfo " + newValue)
+        //console.log("setLocationsInfo " + newValue)
         state.possibleLocationsInfo = newValue
     },
 
     setLineage(state, newValue) {
-        console.log("setLineage " + newValue)
+        //console.log("setLineage " + newValue)
         state.selectedLineage = newValue
     },
     setLineages(state, newValue) {
-        console.log("setLineages " + newValue)
+        //console.log("setLineages " + newValue)
         state.possibleLineages = newValue
     },
 
     setDate(state, newValue) {
-        console.log("setDate " + newValue)
+        //console.log("setDate " + newValue)
         if (newValue !== null && newValue.length === 1) {
             // Date has been set from the picker (and has the form [endDate])
             const endDate = newValue[0]
@@ -210,7 +210,7 @@ export const mutations = {
 
 
     setTourStep(state,newVal){
-        console.log("SET tour to "+newVal)
+        //console.log("SET tour to "+newVal)
         state.tourStep=newVal
     },
 
