@@ -6,7 +6,7 @@
                  :icon="this.$vuetify.breakpoint.smAndDown?undefined:this.icon" prominent
                  :border="floating?'right':'left'" elevation="10" :max-height="floating?'45vh':undefined"
                  :max-width="floating?'80vw':undefined" :width="floating?'550px':undefined"
-                 :class="'overflow-scroll pb-3 pt-6 px-7 rounded-xl '+(floating?'rounded-r-0':'bg_var2 text_var1--text rounded-l-0')"
+                 :class="'overflow-scroll pb-3 pt-6 px-7 rounded-xl '+(floating?'rounded-r-0':'bg_var3 f_text_dark--text rounded-l-0')"
                  :colored-border="!floating">
           <slot></slot>
           <div class="text-right pl-4 mt-6">

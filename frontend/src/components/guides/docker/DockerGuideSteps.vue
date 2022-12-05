@@ -22,7 +22,7 @@
 
     <!------ PREREQUISITES ------>
     <v-timeline-item flat color='error' class='mb-10' icon='mdi-exclamation-thick'>
-      <h4 class='red--text' id='prerequisites'>PREREQUISITES</h4>
+      <h4 class='error--text' id='prerequisites'>PREREQUISITES</h4>
       <ul class='red-list aligned-list'>
 
         <li class='mb-2 mt-2'>

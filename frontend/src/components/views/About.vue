@@ -27,7 +27,7 @@
     <!-- Buttons -->
     <v-row class='justify-center mb-10'>
       <v-col cols="12" sm="4" lg="3" class="text-center">
-        <router-link to='/variant_hunter'>
+        <router-link :to="{ name: 'Home'}">
           <v-btn class='' color='text_var1' depressed outlined rounded>
             <v-icon left>mdi-virus-outline</v-icon>
             Go to the tool

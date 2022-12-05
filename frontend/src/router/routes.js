@@ -10,12 +10,12 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         {
-            path: '/variant_hunter',
+            path: '/',
             name: 'Home',
             component: HomeView
         },
         {
-            path: '/variant_hunter/about',
+            path: '/about',
             name: 'About',
             component: About
         },

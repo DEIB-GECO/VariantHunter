@@ -9,7 +9,7 @@
         <!-- Logo -->
         <v-img :src='websiteLogo' class='logo' contain max-height='40px' max-width='40px'/>
         <v-toolbar-title class='site-title'>
-          <router-link to='/variant_hunter/'>
+          <router-link :to="{ name: 'Home'}">
             <span class='emphasis'>Variant</span>
             <span>Hunter</span>
           </router-link>

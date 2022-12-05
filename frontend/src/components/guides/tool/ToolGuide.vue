@@ -16,12 +16,12 @@
       </p>
       <p>
         The
-        <router-link to='/variant_hunter'>
+        <a href="http://cerilab.deib.polimi.it/variant_hunter" target="_blank">
           <v-btn color='secondary' x-small depressed outlined rounded>
             <v-icon x-small>mdi-link</v-icon>
             &nbsp;online version of the tool
           </v-btn>
-        </router-link>
+        </a>
         contains updated data from
         <i>GenBank</i>,
         curated and made openly available by <i>Nextstrain</i> at

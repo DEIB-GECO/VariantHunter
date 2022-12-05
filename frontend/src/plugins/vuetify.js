@@ -23,6 +23,7 @@ const vuetify = new Vuetify({
         // background colors
         bg_var1:'#D2ECF8',
         bg_var2:'#FFFFFF',
+        bg_var3:'#FFFFFF',
 
         // dynamic color
         primary: '#014878',
@@ -47,6 +48,7 @@ const vuetify = new Vuetify({
         // background colors
         bg_var1:'#33383A',
         bg_var2:'#33383A',
+        bg_var3:'#D2ECF8',
 
         // dynamic color
         primary: '#D2ECF8',

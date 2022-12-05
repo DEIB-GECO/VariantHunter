@@ -13,17 +13,18 @@
     <v-tooltip v-if='hover' bottom color='black' max-width='400'>
       <template v-slot:activator="{ on, attrs }">
         <span v-bind="attrs"
-          v-on="on">
-        {{code}}
+              v-on="on">
+        {{ code }}
         </span>
       </template>
       <span v-html="hover"></span>
     </v-tooltip>
-    <span v-else>{{code}}</span>
+    <span v-else>{{ code }}</span>
     <v-icon small class='ml-3'>mdi-content-copy</v-icon>
 
     <!-- Copied alert -->
-    <v-snackbar v-model='successMessage' timeout='2000' height='5' color='success' transition='scroll-y-transition'>
+    <v-snackbar v-model='successMessage' timeout='2000' height='5' color='success' transition='scroll-y-transition'
+                content-class="text-center">
       <v-icon left>mdi-content-copy</v-icon>
       <span><b>Copied to clipboard!</b></span>
     </v-snackbar>
@@ -36,12 +37,12 @@ export default {
   name: 'CodeBlock',
   props: {
     /** The content of the code block */
-    code: { required: true },
+    code: {required: true},
 
     /** The tip text to be shown on hover */
-    hover: { required: false }
+    hover: {required: false}
   },
-  data () {
+  data() {
     return {
       /** Success message for the copy action */
       successMessage: false
@@ -52,15 +53,17 @@ export default {
      * Copy the element content
      * @param e The copy event
      */
-    doCopy (e) {
-      this.$copyText(this.code).then(() => { this.successMessage = true })
+    doCopy(e) {
+      this.$copyText(this.code).then(() => {
+        this.successMessage = true
+      })
     }
   }
 }
 </script>
 
 <style scoped>
-code{
+code {
   cursor: copy;
   font-size: 16px;
   word-spacing: 6px;
