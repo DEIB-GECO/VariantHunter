@@ -4,7 +4,7 @@
 
     <v-snackbar v-if="!standalone" max-width="500px" v-model="showSnackbar"
                 :timeout="isLoading?'-1':'9000'"
-                :color="isLoading?'warning':'error'">
+                :color="isLoading?'warning': (error?'error':'')">
       <v-list class="text-left transparent tip rounded-xl white--text " two-line>
         <v-list-item class="justify-center">
           <v-list-item-icon class="text-center ma-auto mr-8" >
