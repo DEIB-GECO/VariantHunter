@@ -26,14 +26,14 @@ def compute_weeks_from_date(date):
 
     """
     w = {}
-    w['w4_end'] = (datetime.strptime(date, "%Y-%m-%d") - start_date).days
-    w['w4_begin'] = w['w4_end'] - 7
-    w['w3_end'] = w['w4_begin']
-    w['w3_begin'] = w['w3_end'] - 7
-    w['w2_end'] = w['w3_begin']
-    w['w2_begin'] = w['w2_end'] - 7
-    w['w1_end'] = w['w2_begin']
-    w['w1_begin'] = w['w1_end'] - 7
+    w['w4_end'] = (datetime.strptime(date, "%Y-%m-%d") - start_date).days  # end date (included) of the 4th week
+    w['w4_begin'] = w['w4_end'] - 7     # day before the start of the 4th week
+    w['w3_end'] = w['w4_begin']         # end date (included) of the 3rd week
+    w['w3_begin'] = w['w3_end'] - 7     # day before the start of the 3rd week
+    w['w2_end'] = w['w3_begin']         # end date (included) of the 2nd week
+    w['w2_begin'] = w['w2_end'] - 7     # day before the start of the 2nd week
+    w['w1_end'] = w['w2_begin']         # end date (included) of the 1st week
+    w['w1_begin'] = w['w1_end'] - 7     # day before the start of the 1st week
     return w
 
 
@@ -41,7 +41,7 @@ def compute_diff_from_date(date):
     """
     Compute diff from the start_date from date
     Args:
-        date: String representing the date to be considered
+        date: String representing the date to be considered. Takes format YYYY-mm-dd
 
     Returns: Difference from the start date
 
@@ -56,7 +56,7 @@ def compute_date_from_diff(diff):
     Args:
         diff: Difference from the start date
 
-    Returns: A string representing the date
+    Returns: A string representing the date in format YYYY-mm-dd
 
     """
     date = start_date + timedelta(days=diff)
@@ -81,22 +81,23 @@ def compute_pvalue(freq1, freq2):
 
 def correct_pvalues(statistics):
     """
-    Given a set of statistics including the values for the p-values
+    Given a list of statistics including the values for the p-values, it corrects the p-values fot multiple tests
     Args:
-        statistics: object including the p-values to be corrected
+        statistics: Dictionary including the p-values to be corrected
 
-    Returns: statistics including the corrected p-values
+    Returns:    Statistics dictionary including the corrected p-values
+
     """
     uncorrected_p_vals = []
     for s in statistics:
         uncorrected_p_vals.extend([s['p_value_with_mut'], s['p_value_without_mut'], s['p_value_comp']])
-    # filter out cases where p-value is unknown (-1) or equal to 1.0 (avoid library exceptions)
+    # Filter out cases where p-value is unknown (-1) or equal to 1.0 (avoid library exceptions)
     uncorrected_valid_p_vals = list(filter(lambda p_val: abs(p_val) != 1, uncorrected_p_vals))
 
     if len(uncorrected_valid_p_vals) > 0:
         corrected_p_vals = sm.stats.multipletests(pvals=uncorrected_valid_p_vals)[1]
 
-        # update statistics by replacing p-values
+        # Update statistics by replacing p-values
         idx = 0
         for s in statistics:
             if abs(uncorrected_p_vals[idx]) != 1:
@@ -116,12 +117,34 @@ def correct_pvalues(statistics):
 
 def produce_statistics(week_sequence_counts, mutation_data):
     """
-    Process the statistics values by properly formatting them
+    Process the statistics values by properly formatting them into a list of dicts
     Args:
         week_sequence_counts:   Week sequences data
         mutation_data:          Mutation data
 
-    Returns:    An array of statistics
+    Returns:    A list of the following form
+                [
+                    {
+                        'item_key': row identifier obtained as protein_mut
+                        'protein': name of the protein, example='NSP4'
+                        'mut': name of the mutation, example='A146V'
+                        'slope': slope computed through linear interpolation of the diffusion (percentage)
+                        'f1': mutation diffusion in percentage during week 1
+                        'f2': mutation diffusion in percentage during week 2
+                        'f3': mutation diffusion in percentage during week 3
+                        'f4': mutation diffusion in percentage during week 4
+                        'w1': absolute number of sequences affected by the mutation during week 1
+                        'w2': absolute number of sequences affected by the mutation during week 2
+                        'w3': absolute number of sequences affected by the mutation during week 3
+                        'w4': absolute number of sequences affected by the mutation during week 4
+                        'p_value_with_mut': shows if the population «with mutation» is growing differently
+                                            compared to everything (corrected for multiple tests)
+                        'p_value_without_mut':  shows if the population «without mutation» is growing differently
+                                                compared to everything (corrected for multiple tests)
+                        'p_value_comp': shows if the population «with mutation» is growing differently
+                                        compared to the population «without mutation» (corrected for multiple tests)
+                    },...
+                ]
 
     """
     statistics = []
@@ -139,7 +162,7 @@ def produce_statistics(week_sequence_counts, mutation_data):
         f4 = (c4 / tot_seq_w4) * 100 if tot_seq_w4 > 0 else 0
         slope, intercept = np.polyfit([0, 1, 2, 3], [f1, f2, f3, f4], 1)
         statistics.append({
-            'item_key': protein + '_' + mutation,
+            'item_key': mut,
             'protein': protein,
             'mut': mutation,
             'slope': slope,

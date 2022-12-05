@@ -134,7 +134,7 @@
       </v-list-item>
     </div>
 
-    <div class="filter-area text-body-4 pt-2" v-if="filteredAnalysesSummary.length<1">No recent analysis yet</div>
+    <div class="filter-area text-body-4 pt-2" v-if="filteredAnalysesSummary.length<1">No recent analyses yet</div>
 
     <keyboard-shortcuts :filtered-analyses="filteredAnalysesSummary.map(({id})=>id)"/>
 

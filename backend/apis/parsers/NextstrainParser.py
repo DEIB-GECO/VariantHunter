@@ -22,6 +22,8 @@ class NextstrainParser(Parser):
     missing_data_col = 'missing_data'  # name for missing data column
     aa_subs_col = 'aaSubstitutions'  # name for aa substitutions column
 
+    # ############################################################ #
+
     def parse(self, selected_countries):
         # Read first line and extract cols positions
         self.auto_extract_cols(
