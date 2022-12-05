@@ -1,257 +1,54 @@
 """
 
-    API to retrieve daily sequences counts
-    Endpoints:
-    ├── getSequenceInfo: endpoint to get the sequence counts for each day
-    ├── getLineagesBreakdown: endpoint to get the lineage breakdown info for each day
-    ├── getLastUpdate: endpoint to get the date of the last update of the dataset
-    └── getLineagesCharacteristics: endpoint to get the characterizing protein mutations of specified lineages
+    DATASET EXPLORATION APIS @ /explorer
+    These APIs provide dataset exploration capabilities.
+    They allow the extraction of information about the quantity of sequences,
+    the distribution of sequences over lineages, and other metadata of the dataset
 
 """
 
-from __future__ import print_function
-
-import sqlite3
 import time
 
 from flask import request
 from flask_restplus import Namespace, Resource
 
-from .utils.path_manager import db_path
-from .utils.utils import compute_date_from_diff, compute_diff_from_date
+from .extractors.explorer import extract_seq_num, extract_lineage_characterization, extract_dataset_info, \
+    extract_lineage_breakdown, extract_mutation_history, extract_characterized_lineages
+from .utils.utils import compute_diff_from_date
 
-api = Namespace('explorer', description='explorer')
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+api = Namespace(name='Dataset exploration', path='/explorer')
 
 
-def extract_seq_num(location, lineage):
-    """
-    Extract from the database the sequence count for the selected params
-    Args:
-        location:       The location identifier
-        lineage:        The lineage name
-
-    Returns: an array of (date, seq_count) pairs
-
-    """
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    def execute_query():
-        if lineage is not None and lineage != '':
-            query = f'''    SELECT date,sum(count) 
-                            FROM aggr_sequences SQ
-                                JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                            WHERE location_id = "{location}" AND lineage = '{lineage}'
-                            GROUP BY date, SQ.location_id, SQ.lineage_id;'''
-        else:
-            query = f'''    SELECT date,sum(count) 
-                            FROM aggr_sequences SQ
-                            WHERE location_id = "{location}"
-                            GROUP BY date, SQ.location_id;'''
-        seqs = cur.execute(query).fetchall()
-        return [{'date': x[0], 'seq_count': x[1]} for x in seqs]
-
-    daily_sequence_counts = execute_query()
-    con.close()
-    return daily_sequence_counts
-
-
-def extract_lineage_breakdown(location, period):
-    """
-    Extract from the database the lineage breakdown info for the selected params
-    Args:
-        location:       The location identifier
-        period:         The date range
-
-    Returns: an array of (day,data about the lineage breakdown) pairs
-
-    """
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    def extract_lineages():
-        query = f'''    SELECT DISTINCT SQ.lineage_id, lineage
-                        FROM aggr_sequences SQ
-                            JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                        WHERE location_id="{location}" AND date>={period['begin']} AND date<={period['end']}
-                        ORDER BY lineage;'''
-        return {k: v for k, v in cur.execute(query).fetchall()}
-
-    def extract_day_threshold(day):
-        query = f'''    SELECT 0.10 * sum(count)
-                        FROM aggr_sequences SQ
-                        WHERE location_id="{location}" AND date={day};'''
-        day_threshold = cur.execute(query).fetchone()
-        return day_threshold[0] if day_threshold[0] is not None else 0
-
-    def extract_lineage_data(lin_id, day):
-        query = f'''    SELECT sum(count)
-                        FROM aggr_sequences SQ
-                        WHERE lineage_id='{lin_id}' AND location_id="{location}" and date={day}
-                        GROUP BY date, lineage_id, SQ.location_id;'''
-        day_count = cur.execute(query).fetchone()
-        return day_count[0] if day_count is not None else 0
-
-    lineages = extract_lineages()
-    lineage_breakdown = {}
-    for date in range(period['begin'], period['end'] + 1):
-        threshold = extract_day_threshold(date)
-        for lineage_id, lineage_name in lineages.items():
-            seq_count = extract_lineage_data(lineage_id, date)
-            key = lineage_name if seq_count > threshold else 'Others'
-
-            # Lineage already in the dictionary?
-            if key in lineage_breakdown.keys():
-                # Do we need to accumulate in 'Others'?
-                if key == 'Others' and date in lineage_breakdown['Others'].keys():
-                    lineage_breakdown[key][date] += seq_count
-                else:
-                    lineage_breakdown[key][date] = seq_count
-            else:
-                lineage_breakdown[key] = {date: seq_count}
-
-    con.close()
-    return lineage_breakdown
-
-
-def extract_dataset_info():
-    """
-    Extract from the database dateset info
-
-    Returns: an object including date of last sequence and parsing parameters
-
-    """
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    def extract_last_update():
-        query = f'''    SELECT max(date) 
-                        FROM aggr_sequences;'''
-        diff = cur.execute(query).fetchone()[0]
-        return compute_date_from_diff(diff) if diff is not None else None
-
-    def extract_parsing_info():
-        query = f'''    SELECT file_type, filtered_countries, beginning_date, end_date, parse_date, version
-                        FROM  info;'''
-        return cur.execute(query).fetchone()
-
-    parsing_info = extract_parsing_info()
-    info = {
-        'last_update': extract_last_update(),
-        'file_type': parsing_info[0],
-        'filtered_countries': parsing_info[1] if len(parsing_info[1]) > 0 else "all",
-        'begin_date': parsing_info[2],
-        'end_date': parsing_info[3],
-        'parsed_on': parsing_info[4],
-        'version': parsing_info[5]
-    }
-
-    con.close()
-    return info
-
-
-def get_lineage_characterization(lineages):
-    """
-    Extract from the database the characterizing mutations of specified lineages
-    Args:
-        lineages:    array of lineages to be considered
-
-    Returns: an array of characterizing mutations
-
-    """
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    def extract_muts_from_lineage():
-        query = f'''    SELECT DISTINCT protein, mut
-                        FROM lineages_characteristics LC
-                            JOIN lineages LN ON LC.lineage_id = LN.lineage_id
-                            JOIN proteins PR ON LC.protein_id = PR.protein_id
-                        WHERE lineage in (%s) ''' % ("?," * len(lineages))[:-1] + '''
-                        ORDER BY protein, mut;'''
-        return [x[0] + '_' + x[1] for x in cur.execute(query, lineages).fetchall()]
-
-    characterizing_muts = extract_muts_from_lineage()
-
-    con.close()
-    return characterizing_muts
-
-
-def extract_characterized_lineages(prot, mut):
-    """
-    Given a protein mutation pair it retrieves the lineages characterized by that pair
-    Args:
-        prot:   The name of the protein of interest
-        mut:    The mutation of interest
-
-    Returns:    List of characterized lineage names
-
-    """
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    query = ''' SELECT L.lineage
-                FROM lineages_characteristics AS LC
-                    JOIN proteins AS P  ON P.protein_id=LC.protein_id
-                    JOIN lineages AS L ON L.lineage_id=LC.lineage_id
-                WHERE P.protein=:prot AND LC.mut=:mut
-                ORDER BY  L.lineage;'''
-    lineages = [lineage for [lineage] in cur.execute(query, {'prot': prot, 'mut': mut}).fetchall()]
-
-    con.close()
-    return lineages
-
-
-def extract_mutation_history(prot, mut):
-    """
-    Given a protein,mutation pair it computes the percentage at which that pair appeared in each lineage, if >0.
-    Args:
-        prot:   The name of the protein of interest
-        mut:    The mutation of interest
-
-    Returns:    A dictionary of lineages storing the percentage of appearance in each lineage, in all times.
-
-    """
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    query = ''' SELECT L.lineage, SUM(AA.count)
-                FROM aggr_aa_substitutions AS AA
-                    JOIN proteins AS P  ON P.protein_id = AA.protein_id
-                    JOIN lineages AS L ON AA.lineage_id = L.lineage_id
-                WHERE P.protein=:prot AND AA.mut=:mut
-                GROUP BY L.lineage
-                HAVING SUM(AA.count)>0
-                ORDER BY SUM(AA.count) DESC ;'''
-
-    history = {}
-    total = 0
-    for lineage, count in cur.execute(query, {'prot': prot, 'mut': mut}).fetchall():
-        total += count
-        history[lineage] = {'abs': count}
-
-    for lineage in history:
-        history[lineage]['percentage'] = 100 * history[lineage]['abs'] / total
-
-    con.close()
-    return history
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""""                             ENDPOINTS                               """""
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# ######################################################################################
+# #############################   [GET] /getSequenceInfo   #############################
+# ######################################################################################
 
 
 @api.route('/getSequenceInfo')
 class FieldList(Resource):
-    @api.doc('get_sequence_info')
+    @api.doc()
     def get(self):
         """
-        Endpoint to get the sequence counts for each day
-        @return:    An array of (date,seq_count) pairs
+        API to obtain information regarding the number of sequences collected
+        for a given location and possibly a specific lineage.
+
+        Query params:
+        - location (int):   Location identifier
+        - lineage (string): Lineage name
+
+        Success response (code 200):
+            List of dictionaries representing the sequences.
+            [
+                {
+                    'date':         number of days since the reference date
+                    'seq_count':    number of sequences collected in the day for the specified parameters
+                }, ...
+            ]
+
+        Error responses
+        # code 423: Resource unavailable: dataset update in progress
+        # code 500: Generic server error
+
         """
         exec_start = time.time()
         args = request.args
@@ -263,13 +60,37 @@ class FieldList(Resource):
         return info
 
 
+# #######################################################################################
+# ###########################   [GET] /getLineagesBreakdown   ###########################
+# #######################################################################################
+
+
 @api.route('/getLineagesBreakdown')
 class FieldList(Resource):
-    @api.doc('get_lineage_breakdown')
+    @api.doc()
     def get(self):
         """
-        Endpoint to get the lineage breakdown info for each day
-        @return:    An array of describing the breakdown
+        API to obtain information regarding the distribution over lineage of
+        the sequences of a given location for a specified time interval.
+
+        Query params:
+        - location (int):   Location identifier
+        - begin (string):   Start date of the period to be considered. Takes format YYYY-mm-dd.
+        - end (string):     End date of the period to be considered. Takes format YYYY-mm-dd.
+
+        Success response (code 200):
+            The response object is a hashmap with lineage names as the key and an object as
+            the value. That object is a hashmap that has the days (defined as the number
+            of days since the reference date) as the key and the number of sequences assigned
+            to that lineage collected on that day as the value.
+            For each day, only lineages that affected at least 10% of the collected sequences
+            on that date are considered; the others are counted under 'Others'.
+            Example: {'BA.5':{'876':1, '878':3}, ... ,'Others':{'873':14, '874':3}}
+
+        Error responses
+        # code 423: Resource unavailable: dataset update in progress
+        # code 500: Generic server error
+
         """
         exec_start = time.time()
         args = request.args
@@ -284,45 +105,109 @@ class FieldList(Resource):
         return info
 
 
+# #######################################################################################
+# ##############################   [GET] /getDatasetInfo   ##############################
+# #######################################################################################
+
+
 @api.route('/getDatasetInfo')
 class FieldList(Resource):
-    @api.doc('get_dataset_info')
+    @api.doc()
     def get(self):
         """
-        Endpoint to get the date useful dataset info of the dataset
-        @return:    Object including: date of the last sequence collected and parsing params
+        API to obtain information regarding the dataset in use
+
+        Query params:
+        - string (string):  Name of location. Possibly partial for autocompletion.
+
+        Success response (code 200):
+            {
+                'last_update': date of the most recent sequence in the database. Takes format YYYY-mm-dd.
+                'file_type': provider of the dataset. Either 'gisaid' or 'nextstrain'
+                'filtered_countries': list of countries the dataset has been restricted to, 'all' otherwise
+                'begin_date': start date of the time period the dataset was restricted to, 'beginning' otherwise
+                'end_date': end date of the time period the dataset was restricted to, 'end' otherwise
+                'parsed_on': date on which the dataset was uploaded to VariantHunter. Takes format YYYY-mm-dd
+                'version': running backend version of VariantHunter
+            }
+
+        Error responses
+        # code 423: Resource unavailable: dataset update in progress
+        # code 500: Generic server error
+
         """
         exec_start = time.time()
+
         data = extract_dataset_info()
         print(f'\t[GET] /getDatasetInfo: processed in {time.time() - exec_start:.5f} seconds.')
         return data
 
 
+# #######################################################################################
+# ######################   [GET] /getLineagesCharacteristics   ##########################
+# #######################################################################################
+
+
 @api.route('/getLineagesCharacteristics')
 class FieldList(Resource):
-    @api.doc('get_lineages_characteristics')
+    @api.doc()
     def get(self):
         """
-        Endpoint to get the characterizing protein mutations of specified lineages
-        @return:    A list of characterizing mutations
+        API to obtain the list of characterizing mutations for a given list of lineages.
+        A mutation is defined as characterizing if it affects at least 50% of the lineage sequences.
+
+        Query params:
+        - lineages (list):  List of lineages names
+
+        Success response (code 200):
+            List of characterizing mutation for the lineages
+
+        Error responses
+        # code 423: Resource unavailable: dataset update in progress
+        # code 500: Generic server error
+
         """
         exec_start = time.time()
         args = request.args
         lineages = args.getlist('lineages')
 
-        characterization = get_lineage_characterization(lineages)
+        characterization = extract_lineage_characterization(lineages)
         print(f"\t[GET] /getLineagesCharacteristics: processed in {time.time() - exec_start:.5f} seconds.")
         return characterization
 
 
+# ######################################################################################
+# #############################   [GET] /getSequenceInfo   #############################
+# ######################################################################################
+
+
 @api.route('/getMutationHistory')
 class FieldList(Resource):
-    @api.doc('get_mutation_history')
+    @api.doc()
     def get(self):
         """
-        Endpoint to obtain statistics about history of a given mutation
-        @return:    An object including the results
+        API to obtain information regarding a given mutation
+
+        Query params:
+        - protein (string): Protein name
+        - mut (string):     Mutation name
+
+        Success response (code 200):
+            {
+                'characterized_lineages':   list of all lineages that have been characterized by the
+                                            given mutation (such that at least 50 percent of the lineage
+                                            sequences have the mutation)
+                'history':  hashmap in which: keys are names of lineages in which the mutation was found;
+                            values are objects of the form {abs, percentage} representing the number of
+                            sequences in absolute value and percentage.
+                            Example: {'BA.2':{'abs':12, 'percentage':53.4},...}
+
+        Error responses
+        # code 423: Resource unavailable: dataset update in progress
+        # code 500: Generic server error
+
         """
+
         exec_start = time.time()
         args = request.args
         protein = args.get('protein')
