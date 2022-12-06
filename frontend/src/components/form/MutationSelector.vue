@@ -7,12 +7,10 @@
   ├── possibleValues:     Possible values for the selector
   └── characterizingMuts: Object storing the characterizing mutations (lin.spec. only)
 
-  Events:
-  └── error:    Emitted on server errors
 -->
 
 <template>
-  <!-- Decorated Field Selector -->
+  <!-- Decorated field selector -->
   <FieldSelector v-model='selectedValue' label='Mutations' placeholder='All'
                  :possible-values='possibleValues' autocomplete small-chips
                  multiple solo combobox highlight-possible-values assign-id="mutation-selector">
@@ -38,7 +36,7 @@
         All non-characterizing mutations
       </div>
 
-      <!-- List uploader element-->
+      <!-- ADVANCED EDITOR DIALOG ------------------------------------------------->
       <v-dialog v-model='showListUploader' max-width='850' transition='dialog-bottom-transition'>
         <v-card>
           <!-- Dialog title -->
@@ -125,7 +123,7 @@
         </v-card>
       </v-dialog>
 
-      <!-- Lineage selector element-->
+      <!-- LINEAGE SELECTOR ------------------------------------------------------>
       <v-dialog v-model='showLineageSelector' max-width='850' transition='dialog-bottom-transition'>
         <v-card>
           <!-- Dialog title -->
@@ -178,8 +176,12 @@
                 <!-- Result -->
                 <v-col cols='12' v-if='allLinMuts.length>0'>
                   <div class="text-body-3 my-2"> Mutation report:</div>
-                  <v-chip x-small class="mb-5 mr-2" text-color='success darken-3' color='success lighten-5'>PRESENT MUTATION</v-chip>
-                  <v-chip x-small class="mb-5 mr-2" text-color='error darken-3' color='error lighten-5'>ABSENT MUTATION</v-chip>
+                  <v-chip x-small class="mb-5 mr-2" text-color='success darken-3' color='success lighten-5'>PRESENT
+                    MUTATION
+                  </v-chip>
+                  <v-chip x-small class="mb-5 mr-2" text-color='error darken-3' color='error lighten-5'>ABSENT
+                    MUTATION
+                  </v-chip>
                   <br/>
                   <v-chip v-for='elem in allLinMuts' :key='elem' class="mr-1 mb-1"
                           :text-color='possibleValues.includes(elem)?"success darken-3":"error darken-3"'
@@ -207,9 +209,9 @@
             </v-container>
           </v-card-text>
           <v-card-text v-else class="text-center py-5">
-              <loading-sticker :standalone="true" :is-loading="error===undefined" :error="error" no-overlay
+            <loading-sticker :standalone="true" :is-loading="error===undefined" :error="error" no-overlay
                              :loading-messages="[{text:'Analyzing mutation data',time:3000},{text:'This may take some time',time:6000},{text:'This may take up to 1 minute',time:15000},{text:'Almost done! Hang in there',time:30000}]"/>
-            </v-card-text>
+          </v-card-text>
 
           <!-- Dialog actions -->
           <v-card-actions class='justify-end'>
@@ -242,6 +244,7 @@ import LoadingSticker from "../general/basic/LoadingSticker";
 export default {
   name: 'MutationSelector',
   components: {LoadingSticker, IconWithTooltip, FieldSelector},
+
   props: {
     /** Value variable for binding of the value */
     value: {},
@@ -252,6 +255,7 @@ export default {
     /** Object storing the characterizing mutations (lin.spec. only) */
     characterizingMuts: {required: false}
   },
+
   data() {
     return {
       /** List uploader visibility */
@@ -263,6 +267,7 @@ export default {
       /** Processing flag. If true, the list is being parsed. */
       processing: false,
 
+      /** Error data for the table and expansion. Undefined if no error. */
       error: undefined,
 
       /** Error messages for the parsing */
@@ -438,6 +443,10 @@ export default {
       this.$emit('input', nonCharMuts)
     },
 
+    /**
+     * On dialog close action
+     * @param apply True iff filters are to be applied
+     */
     close(apply) {
       if (this.showListUploader) {
         this.showListUploader = false
@@ -448,6 +457,7 @@ export default {
       }
     }
   },
+
   watch: {
     /** On uploader close apply filter parsing */
     showListUploader(newVal) {

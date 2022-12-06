@@ -1,10 +1,11 @@
 <!--
+
   Component:    WeekSlider
   Description:  Slider for the analysis period
 
   Events:
-  ├── moveBackward:  Emitted whenever prev button is pressed
-  └── moveForward:   Emitted whenever next button is pressed
+  └── shiftPeriod:   Emitted whenever next/prev buttons are pressed together with the delay
+
 -->
 
 <template>

@@ -1,4 +1,5 @@
 <!--
+
   Component:    FieldSelector
   Description:  Custom select input element
 
@@ -8,23 +9,31 @@
   ├── placeholder: Placeholder for the selector
   ├── possibleValues: Possible values for the selector
   ├── autocomplete: Autocomplete flag. If true, the selector is a v-autocomplete
+  ├── combobox: Combobox flag. If true, the selector is a v-combobox
+  ├── highlightPossibleValues: Color flag for the chips. If true, possible values are green and others are red
   ├── multiple: Multiple selector flag. If true, the selector allows multiple selection
   ├── solo: Solo selector flag. If true, changes the style of the input
   ├── loading: Loading selector flag. If true, it displays linear progress bar
+  ├── assignId: Id to be assigned to the select element
   └── smallChips: smallChips flag. If true, the selector shows small chips for selected items
 
   Slots:
-  └── prepend-item: prepend-item slot for v-autocomplete. Only if autocomplete flag is true.
+  ├── no-data: no-data slot for v-combobox
+  └── prepend-item: prepend-item slot for v-combobox or v-autocomplete
+
 -->
 
 <template>
   <v-row>
-    <v-col cols="12" sm="4" v-if='label'>
+
+    <!-- Headings -->
+    <v-col v-if='label' cols="12" sm="4">
        <span class="text-body-3 compact-text-3 primary--text d-block text-left text-sm-right align-center">
           <span class="compact-text-5 font-weight-bold">{{ label }}</span>
        </span>
     </v-col>
 
+    <!-- Input element -->
     <v-col cols="12" sm="8" class='field-element'>
       <!-- Manual selector -->
       <v-select v-if='!autocomplete' v-model='selectedValue' :items='possibleValues' no-data-text="Not found"
@@ -41,8 +50,11 @@
           <slot name='prepend-item'></slot>
         </template>
 
+        <!-- Selection summary -->
         <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
-          <v-chip v-if="index<5" class="mr-1 my-1 font-weight-medium" small :color="getChipColor(item)" :text-color="getTextColor(item)">{{ item }}</v-chip>
+          <v-chip v-if="index<5" class="mr-1 my-1 font-weight-medium" small :color="getChipColor(item)"
+                  :text-color="getTextColor(item)">{{ item }}
+          </v-chip>
           <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999"
                      max-width="80vw">
             <template v-slot:activator="{ on, attrs }">
@@ -55,8 +67,10 @@
                     :color="getChipColor(value)" :text-color="getTextColor(value)">{{ value }}
             </v-chip>
             <div class="mt-5">
-              <v-chip x-small class="mr-2 font-weight-medium" text-color='success darken-3' color='success lighten-5'>F O U N D</v-chip>
-              <v-chip x-small class="mr-2 font-weight-medium" text-color='error darken-3' color='error lighten-5'>A B S E N T</v-chip>
+              <v-chip x-small class="mr-2 font-weight-medium" text-color='success darken-3' color='success lighten-5'>F O U N D
+              </v-chip>
+              <v-chip x-small class="mr-2 font-weight-medium" text-color='error darken-3' color='error lighten-5'>A B S E N T
+              </v-chip>
             </div>
           </v-tooltip>
         </template>
@@ -77,8 +91,11 @@
           <slot name='prepend-item'></slot>
         </template>
 
+        <!-- Selection summary-->
         <template v-if='smallChips && multiple' v-slot:selection="{ item, index }">
-          <v-chip v-if="index<5" class="mr-1 my-1 font-weight-medium" small :color="getChipColor(item)" :text-color="getTextColor(item)">{{ item }}</v-chip>
+          <v-chip v-if="index<5" class="mr-1 my-1 font-weight-medium" small :color="getChipColor(item)"
+                  :text-color="getTextColor(item)">{{ item }}
+          </v-chip>
           <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999"
                      max-width="80vw">
             <template v-slot:activator="{ on, attrs }">
@@ -91,8 +108,10 @@
                     :color="getChipColor(value)" :text-color="getTextColor(value)">{{ value }}
             </v-chip>
             <div class="mt-5">
-              <v-chip x-small class="mr-2 font-weight-medium" text-color='success darken-3' color='success lighten-5'>F O U N D</v-chip>
-              <v-chip x-small class="mr-2 font-weight-medium" text-color='error darken-3' color='error lighten-5'>A B S E N T</v-chip>
+              <v-chip x-small class="mr-2 font-weight-medium" text-color='success darken-3' color='success lighten-5'>F O U N D
+              </v-chip>
+              <v-chip x-small class="mr-2 font-weight-medium" text-color='error darken-3' color='error lighten-5'>A B S E N T
+              </v-chip>
             </div>
           </v-tooltip>
         </template>
@@ -106,24 +125,27 @@
 <script>
 export default {
   name: 'FieldSelector',
+
   props: {
     /** Value variable for binding of the value */
     value: {},
 
     /** Label for the field */
-    label: {required: false},
+    label: {},
 
     /** Placeholder for the selector */
-    placeholder: {required: true},
+    placeholder: {},
 
     /** Possible values for the selector */
-    possibleValues: {required: true},
+    possibleValues: {},
 
     /** Autocomplete flag. If true, the selector is a v-autocomplete */
     autocomplete: Boolean,
 
+    /** Combobox flag. If true, the selector is a v-combobox */
     combobox: Boolean,
 
+    /** Color flag for the chips. If true, possible values are green and others are red */
     highlightPossibleValues: Boolean,
 
     /** Multiple selector flag. If true, the selector allows multiple selection */
@@ -132,14 +154,16 @@ export default {
     /** Solo flag. If true, the selector has solo style */
     solo: Boolean,
 
-    /** smallChips flag. If true, the selector shows small chips for selected items */
+    /** Small-chips flag. If true, the selector shows small chips for selected items */
     smallChips: Boolean,
 
-    /** loading flag. If true, the selector is loading data */
+    /** Boolean loading flag. If true, the selector is loading data */
     loading: Boolean,
 
+    /** Id to be assigned to the select element */
     assignId: undefined,
   },
+
   computed: {
     /** Selected value */
     selectedValue: {
@@ -160,13 +184,16 @@ export default {
       }
     }
   },
+
   methods: {
+    /** Get chip bg color for the selector */
     getChipColor(value) {
       return this.highlightPossibleValues
           ? this.possibleValues.includes(value) ? "success lighten-5" : "error lighten-5"
           : undefined
     },
 
+    /** Get chip text color for the selector */
     getTextColor(value) {
       return this.highlightPossibleValues
           ? this.possibleValues.includes(value) ? "success darken-3" : "error darken-3"
@@ -177,14 +204,6 @@ export default {
 </script>
 
 <style scoped>
-
-/* Form labels styling */
-.field-label {
-  justify-content: center;
-  padding-top: 8px !important;
-  padding-bottom: 5px !important;
-  color: white;
-}
 
 /* Form elements styling */
 .field-element {

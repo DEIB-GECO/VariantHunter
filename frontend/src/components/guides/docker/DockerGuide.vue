@@ -1,6 +1,8 @@
 <!--
+
   Component:    DockerGuide
   Description:  Container for the guides to install and run the docker
+
 -->
 
 <template>
@@ -14,7 +16,7 @@
       <v-expansion-panels class='mt-3' flat>
 
         <!-- WINDOWS LINUX GUIDE -->
-        <ExpansionPanel double-icon>
+        <expansion-panel double-icon>
           <template v-slot:icons>
             <v-icon color="text_var1">mdi-microsoft</v-icon>
             <v-icon color="text_var1">mdi-slash-forward</v-icon>
@@ -24,12 +26,12 @@
             <span class='hidden-xs-only'>Instructions for </span> <b>Windows / Linux</b>
           </template>
           <template v-slot:default>
-            <DockerGuideSteps />
+            <docker-guide-steps/>
           </template>
-        </ExpansionPanel>
+        </expansion-panel>
 
         <!-- MACOS GUIDE -->
-        <ExpansionPanel double-icon>
+        <expansion-panel double-icon>
           <template v-slot:icons>
             <v-icon left color='text_var1'>mdi-apple</v-icon>
           </template>
@@ -37,9 +39,9 @@
             <span class='hidden-xs-only'>Instructions for </span> <b>MacOS</b>
           </template>
           <template v-slot:default>
-            <DockerGuideSteps mac-guide />
+            <docker-guide-steps mac-guide/>
           </template>
-        </ExpansionPanel>
+        </expansion-panel>
 
       </v-expansion-panels>
     </v-container>
@@ -52,7 +54,7 @@ import ExpansionPanel from '@/components/general/basic/ExpansionPanel'
 
 export default {
   name: 'DockerGuide',
-  components: { ExpansionPanel, DockerGuideSteps }
+  components: {ExpansionPanel, DockerGuideSteps}
 }
 </script>
 

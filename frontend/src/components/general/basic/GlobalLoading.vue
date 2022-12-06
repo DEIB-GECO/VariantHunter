@@ -1,8 +1,17 @@
+<!--
+
+  Component:    GlobalLoading
+  Description:  Global loading element
+
+-->
+
 <template>
   <v-dialog v-model="loading" hide-overlay persistent>
     <v-overlay :value="true" color="f_primary" opacity="0.9" class="loading-global">
       <v-list class="text-left transparent tip rounded-xl warning--text mx-5" two-line>
-      <v-list-item class="justify-center">
+        <v-list-item class="justify-center">
+
+          <!-- Loading text -->
           <v-list-item-icon class="text-center ma-auto mr-8">
             <v-progress-circular color="warning" indeterminate/>
           </v-list-item-icon>
@@ -28,15 +37,15 @@ import {mapState} from "vuex";
 
 export default {
   name: "GlobalLoading",
-  computed:{
+  computed: {
     ...mapState(['loading']),
   }
 }
 </script>
 
 <style scoped>
-.loading-global{
- margin-top: 56px;
+.loading-global {
+  margin-top: 56px;
   border-radius: 0;
 }
 </style>

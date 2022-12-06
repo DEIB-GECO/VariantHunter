@@ -1,6 +1,8 @@
 <!--
+
   View:         About
-  Description:  Component for the about section.
+  Description:  View for the about section.
+
 -->
 
 <template>
@@ -13,7 +15,8 @@
           <div class='huge-logo hidden-xs-only'>
             <v-img :src='websiteLogo' class="about-logo" max-height='150px' max-width='150px' aspect-ratio="1"/>
           </div>
-          <v-img :src='websiteLogo' class='about-logo hidden-sm-and-up' max-height='80px' max-width='80px' aspect-ratio="1"/>
+          <v-img :src='websiteLogo' class='about-logo hidden-sm-and-up' max-height='80px' max-width='80px'
+                 aspect-ratio="1"/>
         </div>
       </v-col>
       <v-col cols="12" sm="5" lg="3">
@@ -55,6 +58,8 @@
     </v-row>
 
     <v-row class='justify-center mt-5'>
+
+      <!-- Contributors -->
       <v-col cols='col-xs-12 col-sm-12 col-lg-6'>
         <v-container class='mt-5'>
 
@@ -84,16 +89,22 @@
           </v-timeline>
         </v-container>
       </v-col>
+
       <v-col cols='col-xs-12 col-sm-12 col-lg-6'>
+
+        <!-- Contacts -->
         <v-container class='mt-5'>
           <h3>
             <v-icon left color='text_var1' large>mdi-account-box-outline</v-icon>
             Contacts
           </h3>
           <v-row>
-          <v-col cols="12" sm="5" >
-            <div class='pa-5 pb-0'><v-img alt="Logo of Politecnico di Milano" :src="require('@/assets/others/deib_logo.png')" contain max-width="250px"/></div>
-          </v-col>
+            <v-col cols="12" sm="5">
+              <div class='pa-5 pb-0'>
+                <v-img alt="Logo of Politecnico di Milano" :src="require('@/assets/others/deib_logo.png')" contain
+                       max-width="250px"/>
+              </div>
+            </v-col>
             <v-col cols="12" sm="7">
               <p class='pa-5'>
                 <span class="font-weight-medium">Dipartimento di Elettronica, Informazione e Bioingegneria</span> <br/>
@@ -107,8 +118,8 @@
           </v-row>
         </v-container>
 
+        <!-- License -->
         <v-container class='mt-5'>
-
           <h3>
             <v-icon left color='text_var1' large>mdi-shield-star-outline</v-icon>
             License
@@ -123,6 +134,7 @@
           </p>
         </v-container>
 
+        <!-- Acknowledgements -->
         <v-container class='mt-5'>
 
           <h3>
@@ -142,7 +154,9 @@
             </v-timeline-item>
           </v-timeline>
         </v-container>
+
       </v-col>
+
     </v-row>
 
   </v-container>
@@ -156,6 +170,7 @@ import DockerGuide from '@/components/guides/docker/DockerGuide'
 export default {
   name: 'About',
   components: {ToolGuide, DockerGuide},
+
   data() {
     return {
       /** VariantHunter logo */
@@ -332,12 +347,12 @@ h4 {
   padding-bottom: 3px;
 }
 
-.about-logo{
+.about-logo {
   background-color: white;
   border-radius: 22px;
 }
 
-.huge-logo .about-logo{
+.huge-logo .about-logo {
   border-radius: 35px;
 }
 </style>

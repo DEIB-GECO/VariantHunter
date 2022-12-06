@@ -1,11 +1,23 @@
+<!--
+
+  Component:    Sidebar
+  Description:  Sidebar app element with history
+
+-->
+
 <template>
   <v-navigation-drawer class="sidebar-sizing" :mini-variant="isCollapsed" clipped permanent expand-on-hover touchless
                        absolute dark color="f_primary" width="500px" height="100vh" floating>
+    <!-- Sidebar body -->
     <v-list rounded nav dense>
+
+      <!-- New analysis -->
       <list-item icon="mdi-plus" title="New analysis" link subtitle="Perform a new analysis" expand-on-hover
                  :class="currentView==='new-search'?'v-list-item--active':''" @click.native="newAnalysisHandler()"/>
+
       <v-divider/>
 
+      <!-- Analysis history -->
       <list-item icon="mdi-history" title="Recent analyses" subtitle="Your recent analyses" with-actions>
         <template v-slot:actions>
           <icon-with-tooltip v-if="showHistory" icon="mdi-chevron-up" tip="Collapse" bottom
@@ -17,8 +29,10 @@
       <v-expand-transition>
         <search-history v-if="showHistory" type="all"/>
       </v-expand-transition>
+
     </v-list>
 
+    <!-- Sidebar append -->
     <template v-slot:append>
       <app-preferences/>
     </template>
@@ -36,21 +50,30 @@ import AppPreferences from "@/components/general/AppPreferences";
 export default {
   name: "Sidebar",
   components: {AppPreferences, IconWithTooltip, SearchHistory, ListItem},
+
   data() {
     return {
+      /** Boolean flag set to true if the bar is collapsed */
       isCollapsed: true,
+
+      /** Boolean visibility flag set to true if the history is visible */
       showHistory: true,
     }
   },
+
   computed: {
     ...mapState(['currentAnalysisId']),
+
+    /** Currently displayed mode */
     currentView() {
       return this.currentAnalysisId !== null ? 'result' : 'new-search'
     }
   },
+
   methods: {
     ...mapMutations(['setCurrentAnalysis']),
 
+    /** Show new analysis tab */
     newAnalysisHandler() {
       this.setCurrentAnalysis(null)
     }

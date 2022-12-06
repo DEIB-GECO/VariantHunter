@@ -209,7 +209,7 @@
 import SectionElement from "@/components/analysis/SectionElement";
 import TableControls from "@/components/analysis/table/TableControls";
 import TableSuperHeader from "@/components/analysis/table/TableSuperHeader";
-import ExpansionModeMenu from "@/components/menus/ExpansionModeMenu";
+import ExpansionModeMenu from "@/components/analysis/menus/ExpansionModeMenu";
 import {mapGetters, mapMutations} from "vuex";
 import {compactLineagesData} from "@/utils/formatterService";
 import {sortItems} from "@/utils/sorterService";

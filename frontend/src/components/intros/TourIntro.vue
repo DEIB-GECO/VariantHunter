@@ -1,3 +1,10 @@
+<!--
+
+  Component:    TourIntro
+  Description:  Initial step of the app-tour
+
+-->
+
 <template>
   <v-col cols="12">
     <feature-intro step="tour" next-step="definition" icon="mdi-human-greeting-variant" beginning>

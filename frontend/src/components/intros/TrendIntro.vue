@@ -1,3 +1,10 @@
+<!--
+
+  Component:    TrendIntro
+  Description:  Trenc chart step of the app-tour
+
+-->
+
 <template>
   <feature-intro v-model="visibility" floating step="trend" :internal-steps="2" next-step="odd-ratio"
                  :icon="tips[currentTip].icon"
@@ -23,9 +30,13 @@ import {mapMutations} from "vuex";
 export default {
   name: "TrendIntro",
   components: {FeatureIntro},
+
   data() {
     return {
-      visibility: false,
+      /** Boolean flag set to true if the step is visible */
+      visibility:false,
+
+      /** Tips steps */
       tips: [
         {
           id: 'intro',
@@ -51,9 +62,12 @@ export default {
               'can click on items in the legend to temporarily hide or show them.',
         }
       ],
+
+      /** Current tip step */
       currentTip: 0,
     }
   },
+
   watch: {
     currentTip() {
       this.$vuetify.goTo('#diffusion-trend')
@@ -64,9 +78,10 @@ export default {
       }
     }
   },
+
   methods: {
     ...mapMutations(['setTourStep']),
-
+    /** Go to the next internal step */
     nextInternalStep() {
       this.currentTip++
 
@@ -75,6 +90,7 @@ export default {
       }
     },
 
+    /** Show odd ratio plots */
     showOddRatio(){
       const el= document.getElementById('odd-ratio-expand')
       if(el)
@@ -83,6 +99,7 @@ export default {
         this.setTourStep('summary') // skip odd-ratio tour if not able to expand it
     }
   },
+
   mounted() {
     if (this.visibility) {
       this.$vuetify.goTo('#diffusion-trend')

@@ -1,5 +1,13 @@
+<!--
+
+  Component:    TakeScreenshot
+  Description:  Take a full page screenshot of the current view of the tool
+
+-->
+
 <template>
-  <v-list-item link dense  @click='onDownloadClick'>
+  <!-- Action button -->
+  <v-list-item link dense @click='onDownloadClick'>
     <v-icon v-if="!downloadLoading" class="pr-3" color="primary">mdi-monitor-screenshot</v-icon>
     <v-progress-circular v-else indeterminate color="warning"/>
     <v-list-item-content>
@@ -16,19 +24,24 @@ import domtoimage from "dom-to-image-more";
 
 export default {
   name: "TakeScreenshot",
+
   data() {
     return {
-      /* Download flag: true if a file download is in progress */
+      /* Boolean download flag set to true if a file download is in progress */
       downloadLoading: false,
     }
   },
+
   computed: {
     ...mapGetters(['getCurrentAnalysis']),
   },
-  methods: {
 
-    onDownloadClick(){
-      setTimeout(this.downloadScreen,500)
+  methods: {
+    /**
+     * Click manager for the download option
+     */
+    onDownloadClick() {
+      setTimeout(this.downloadScreen, 500) // wait for the menu to close
     },
 
     /**

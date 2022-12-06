@@ -1,30 +1,25 @@
 <!--
-  Component:    ResultView
-  Description:  Container of the data table, heatmap and a barchart
 
-  Props:
-  ├── queryResult:  Array of raw data fetched from the server
-  ├── queryParams:  Object storing the query parameters {granularity, location, date, [lineage]}
-  ├── querySupport: Object storing additional info such as total number of sequences collected per week and characterizing muts
-  ├── queryCustOpt: Object storing the custom preselection for the filtering/selection options
-  └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis.
+  View:         ResultView
+  Description:  Sub-view container for the result panel
 
-  Events:
-  ├── askAnalysis:  Emitted whenever a next/prev button is pressed
-  └── error:        Emitted on server errors
 -->
 
 <template>
   <div>
+    <!-- Result toolbar with various options -->
     <result-navbar @shiftPeriod="d => shiftPeriod(d)" @shiftArea="a => shiftArea(a)" @shiftType="shiftType"/>
+
+    <!-- Actual result panel -->
     <v-container class="view-sizing" id="result-top">
+      <!-- Steps of the app-tour -->
       <result-intro/>
       <sidebar-intro/>
 
       <!-- Filtering options -->
       <v-slide-y-reverse-transition hide-on-leave>
         <result-filters v-if="sections?.filters"/>
-        <v-skeleton-loader v-else type="card" height="110" class="mt-5" />
+        <v-skeleton-loader v-else type="card" height="110" class="mt-5"/>
       </v-slide-y-reverse-transition>
 
       <!-- Table -->
@@ -36,7 +31,7 @@
       <!-- Diffusion Heatmap -->
       <v-slide-y-reverse-transition hide-on-leave>
         <diffusion-heatmap v-if="sections?.heatmap"/>
-        <v-skeleton-loader v-else type="image" height="200" class="mt-8" />
+        <v-skeleton-loader v-else type="image" height="200" class="mt-8"/>
       </v-slide-y-reverse-transition>
 
       <!-- Diffusion Trend -->
@@ -45,7 +40,7 @@
         <v-skeleton-loader v-else type="image" height="200" class="mt-8"/>
       </v-slide-y-reverse-transition>
 
-      <!-- Diffusion Trend -->
+      <!-- Diffusion Odd ratio -->
       <v-slide-y-reverse-transition hide-on-leave>
         <diffusion-odd-ratio v-if="sections?.ratio"/>
         <v-skeleton-loader v-else type="image" height="200" class="mt-8"/>
@@ -60,12 +55,13 @@
       <!-- Info -->
       <v-slide-y-reverse-transition hide-on-leave>
         <result-info v-if="sections?.append"/>
-         <v-skeleton-loader v-else type="list-item" height="200" class="mt-8"/>
+        <v-skeleton-loader v-else type="list-item" height="200" class="mt-8"/>
       </v-slide-y-reverse-transition>
 
+      <!-- Local processing loading element -->
       <loading-sticker :is-loading="Object.values(sections).some(x=>!x)" no-overlay
                        :loading-messages="[{text:'Processing',time:3000}]"/>
-
+      <!-- Server-side processing loading/error element -->
       <loading-sticker :is-loading="isLoading" :error="error"
                        :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
 
@@ -93,21 +89,13 @@ import SidebarIntro from "../intros/SidebarIntro";
 export default {
   name: 'ResultView',
   components: {
-    SidebarIntro,
-    ResultIntro,
-    ResultFilters,
-    ResultInfo,
-    NoDataAlert,
-    DiffusionOddRatio,
-    DiffusionTrend,
-    DiffusionHeatmap,
-    LoadingSticker,
-    ResultTable,
-    ResultNavbar,
-    WeekSlider,
+    SidebarIntro, ResultIntro, ResultFilters, ResultInfo, NoDataAlert, DiffusionOddRatio,
+    DiffusionTrend, DiffusionHeatmap, LoadingSticker, ResultTable, ResultNavbar, WeekSlider,
   },
+
   data() {
     return {
+      /** Visibility flags for the sections */
       sections: {
         'filters': false,
         'table': false,
@@ -116,19 +104,26 @@ export default {
         'ratio': false,
         'append': false
       },
+
+      /** Boolean visibility flag for the no data warning popup*/
       noDataWarning: false,
+      /** Boolean loading flag for the table and expansion */
       isLoading: false,
+      /** Error data for the table and expansion. Undefined if no error. */
       error: undefined,
     }
   },
+
   computed: {
     ...mapState(['selectedLocation', 'selectedDate', 'selectedLineage']),
     ...mapGetters(['getCurrentAnalysis']),
 
+  /** Boolean flag set to true iff the current analysis is lineage specific */
     withLineages() {
       return this.getCurrentAnalysis.query.lineage !== null
     },
   },
+
   methods: {
     ...mapActions(['addGroupAnalysis']),
     ...mapMutations(['setLocations', 'setLocation', 'setLineages', 'setLineage', 'setDate']),
@@ -139,9 +134,8 @@ export default {
     restoreCurrentAnalysis() {
       const {location, granularity, lineage, endDate} = this.getCurrentAnalysis.query
       this.setLocation(location[granularity])
-      if (this.withLineages) {
-        this.setLineage(lineage)
-      }
+      this.setLineage(lineage)
+
       const referenceDate = new Date(endDate)
       this.setDate([null, referenceDate.toISOString().slice(0, 10)])
     },
@@ -210,14 +204,18 @@ export default {
     },
 
   },
+
+  /** Always scroll to top */
   beforeMount() {
     window.scrollTo({top: 0})
   },
+
+  /** Allow faster page rendering */
   mounted() {
     Object.keys(this.sections).forEach((section) => {
-        setTimeout(() => {
-          this.sections[section] = !this.sections[section]
-        }, 1)
+      setTimeout(() => {
+        this.sections[section] = !this.sections[section]
+      }, 1)
     })
   }
 }

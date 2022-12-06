@@ -1,3 +1,10 @@
+<!--
+
+  Component:    ResultIntro
+  Description:  Result intro step of the app-tour
+
+-->
+
 <template>
   <v-col cols="12">
     <feature-intro step="result" :alt-steps="['tour','explorer']" next-step="filters" icon="mdi-human-greeting-variant" beginning>

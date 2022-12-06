@@ -1,13 +1,23 @@
+<!--
+
+  View:         NewSearchView
+  Description:  Sub-view container for the new analysis form
+
+-->
+
 <template>
   <v-container class="view-sizing">
 
 
     <v-row id="top" class="px-5 pt-3">
+      <!-- Main introduction to the app-tour-->
       <tour-intro/>
 
       <v-col>
+        <!-- Dataset info summary -->
         <dataset-info/>
 
+        <!-- Headings -->
         <div class="text-h4 font-weight-black primary--text pb-2">Define new analysis</div>
         <div class="text-body-3 compact-text-2">VariantHunter analyzes the frequencies of amino acid mutations of
           SARS-CoV-2 in order to observe interesting variant trends or identify novel emerging variants.
@@ -17,31 +27,44 @@
         </div>
       </v-col>
     </v-row>
-    <v-row >
+
+    <!-- Definition form -------------------------------------------->
+    <v-row>
+      <!-- Definition step of the app-tour -->
       <definition-intro @selectMode="mode='li'" @showExplorer="showExplorer? {} : showExplorer=true"/>
 
+      <!-- Analysis type selector -->
       <v-tabs id="type-tabs" background-color="transparent" centered active-class="font-weight-black">
         <v-tabs-slider color="primary"></v-tabs-slider>
         <v-tab v-for="[value,title] in Object.entries(modeOptions)" :key="value" @click="mode=value">
           {{ title }}
         </v-tab>
       </v-tabs>
+
       <v-container class="pt-5 definition-container">
+        <!-- Location selector -->
         <v-row>
           <location-selector/>
         </v-row>
+
+        <!-- Period selector -->
         <v-row>
           <date-picker/>
         </v-row>
+
+        <!-- Lineage selector -->
         <v-expand-transition>
           <v-row v-if="mode==='ls'">
             <lineage-selector/>
           </v-row>
         </v-expand-transition>
+
+        <!-- Tag selector -->
         <v-row>
           <quick-tag-selector v-model="tag"/>
         </v-row>
 
+        <!-- Controls -->
         <v-row class='my-4'>
           <v-col>
             <v-btn class='delete-action mr-2 text_var2--text' color='primary' @click='clearForm' depressed small
@@ -58,8 +81,12 @@
         </v-row>
       </v-container>
     </v-row>
+
+    <!-- Dataset explorer ------------------------------------------->
     <v-row class="px-5">
       <v-container>
+
+        <!-- Intro text -->
         <v-row>
           <v-col>
             <div class="text-h5 font-weight-black primary--text pb-2" id="explorer">
@@ -82,7 +109,10 @@
             </div>
           </v-col>
         </v-row>
+
+        <!-- Plots -->
         <v-row no-gutters>
+          <!-- Explorer step of the app-tour -->
           <explorer-intro/>
           <v-scroll-y-reverse-transition>
             <dataset-explorer v-if="showExplorer" :with-lineages='mode==="ls"' @weekSelection='onWeekSelection'/>
@@ -94,6 +124,7 @@
     <loading-sticker :is-loading="isLoading" :error="error"
                      :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
 
+    <!-- No data alert -->
     <no-data-alert v-model="noDataWarning"/>
 
   </v-container>
@@ -116,27 +147,31 @@ import DatasetInfo from "../general/DatasetInfo";
 export default {
   name: "NewSearchView",
   components: {
-    DatasetInfo,
-    ExplorerIntro,
-    DefinitionIntro,
-    TourIntro,
-    QuickTagSelector,
-    NoDataAlert, LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector
+    DatasetInfo, ExplorerIntro, DefinitionIntro, TourIntro, QuickTagSelector, NoDataAlert,
+    LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector
   },
   data() {
     return {
+      /** Currently selected mode. Either 'li' or 'ls'*/
       mode: 'li',
+      /** Available modes */
       modeOptions: {li: 'Lineage independent', ls: 'Lineage specific'},
 
+      /** Current tag. Possibly null. */
       tag: null,
 
+      /** Boolean loading flag for the table and expansion */
       isLoading: false,
+      /** Error data for the table and expansion. Undefined if no error. */
       error: undefined,
-      noDataWarning: false,
 
+      /** Boolean visibility flag for the no data warning popup*/
+      noDataWarning: false,
+      /** Boolean visibility flag for the dataset explore */
       showExplorer: false
     }
   },
+
   computed: {
     ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate']),
 
@@ -145,10 +180,12 @@ export default {
       return !this.selectedLocation || !this.selectedDate || (!this.selectedLineage && this.mode === 'ls')
     }
   },
+
   methods: {
     ...mapActions(['addAnalysis']),
     ...mapMutations(['setDate', 'setLineage', 'setLocation', 'setLocations', 'setLineages', 'setCurrentAnalysis']),
 
+    /** Clear the form completely */
     clearForm() {
       this.setLineage(null)
       this.setLineages([])
@@ -180,12 +217,8 @@ export default {
               this.noDataWarning = true
             }
           })
-          .catch((e) => {
-            this.error = e
-          })
-          .finally(() => {
-            this.isLoading = false
-          })
+          .catch((e) => this.error = e)
+          .finally(() => this.isLoading = false)
     },
 
     /**
@@ -201,6 +234,8 @@ export default {
       }
     }
   },
+
+  /** Always scroll to top */
   beforeMount() {
     window.scrollTo({top: 0})
   }

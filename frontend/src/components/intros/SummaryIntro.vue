@@ -1,3 +1,10 @@
+<!--
+
+  Component:    SummaryIntro
+  Description:  Summary step of the app-tour
+
+-->
+
 <template>
   <feature-intro v-model="visibility" floating step="summary" :internal-steps="1" next-step="navbar"
                  :icon="tips[currentTip].icon"
@@ -22,9 +29,13 @@ import FeatureIntro from "@/components/general/basic/FeatureIntro";
 export default {
   name: "SummaryIntro",
   components: {FeatureIntro},
+
   data() {
     return {
-      visibility: false,
+      /** Boolean flag set to true if the step is visible */
+      visibility:false,
+
+      /** Tips steps */
       tips: [
         {
           id: 'intro',
@@ -41,9 +52,12 @@ export default {
           body: 'From here you can also manage the tag associated with the analysis',
         }
       ],
+
+      /** Current tip step */
       currentTip: 0,
     }
   },
+
   watch: {
     currentTip() {
       this.$vuetify.goTo('#summary')
@@ -54,8 +68,9 @@ export default {
       }
     }
   },
-  methods: {
 
+  methods: {
+    /** Go to the next internal step */
     nextInternalStep() {
       this.currentTip++
     },

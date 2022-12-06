@@ -1,4 +1,5 @@
 <!--
+
   Component:    DockerGuideSteps
   Description:  Steps of the docker guide
 
@@ -34,7 +35,7 @@
           <v-expansion-panels class='mt-3' accordion flat>
 
             <!---- GISAID GUIDE ---->
-            <ExpansionPanel>
+            <expansion-panel>
               <template v-slot:icons>
                 <v-icon left color='text_var1'>mdi-lifebuoy</v-icon>
               </template>
@@ -58,10 +59,10 @@
                   </li>
                 </ul>
               </template>
-            </ExpansionPanel>
+            </expansion-panel>
 
             <!---- NEXTSTRAIN GUIDE ---->
-            <ExpansionPanel>
+            <expansion-panel>
               <template v-slot:icons>
                 <v-icon left color='text_var1'>mdi-lifebuoy</v-icon>
               </template>
@@ -83,7 +84,7 @@
                   </li>
                 </ul>
               </template>
-            </ExpansionPanel>
+            </expansion-panel>
           </v-expansion-panels>
         </li>
       </ul>
@@ -143,35 +144,35 @@
 
     <v-timeline-item v-if='!macGuide' flat small color='success'>
       <b>Run</b> the following command
-      <CodeBlock code='docker pull gecopolimi/varianthunter' />
+      <code-block code='docker pull gecopolimi/varianthunter' />
     </v-timeline-item>
 
     <v-timeline-item flat small color='success'>
       <b>Run</b> the following command
-      <CodeBlock v-if='!macGuide' code='{parameters_list} docker-compose up' />
-      <CodeBlock v-else code='/bin/zsh ./launcher.sh {parameters_list}' />
+      <code-block v-if='!macGuide' code='{parameters_list} docker-compose up' />
+      <code-block v-else code='/bin/zsh ./launcher.sh {parameters_list}' />
       <br />
       where {parameters_list} is a space-separated list of the following parameters:
-      <DockerParamsTable v-model='showAllParams' />
+      <docker-params-table v-model='showAllParams' />
       <div class='ml-0 ml-sm-5 examples'>
         <p>
           <i>Full example 1 &nbsp;&nbsp; [ generation from .tsv file ]:</i><br />
-          <CodeBlock v-if='!macGuide'
+          <code-block v-if='!macGuide'
                      code='FILE_PATH=/gisaid/metadata.tsv docker-compose up'
                      hover='This generates a new database starting from <b>all</b> the sequences of the <span class="monospaced">metadata.tsv</span> file'
           />
-          <CodeBlock v-else
+          <code-block v-else
                      code='/bin/zsh ./launcher.sh FILE_PATH=/gisaid_metadata/metadata.tsv'
                      hover='This generates a new database starting from <b>all</b> the sequences of the <span class="monospaced">metadata.tsv</span> file'
           />
         <p />
         <p>
           <i>Full example 2 &nbsp;&nbsp; [ generation from .tsv file with filters ]:</i><br />
-          <CodeBlock v-if='!macGuide'
+          <code-block v-if='!macGuide'
                      code='FILE_PATH=/gisaid/metadata.tsv LOCATIONS="Italy" START_DATE=2021-12-01 docker-compose up'
                      hover='This generates a new database starting from the sequences of the <span class="monospaced">metadata.tsv</span> file collected starting <b>from 2021-12-01 in Italy</b>'
           />
-          <CodeBlock v-else
+          <code-block v-else
                      code='/bin/zsh ./launcher.sh FILE_PATH=/gisaid_metadata/metadata.tsv LOCATIONS="Italy" START_DATE=2021-12-01'
                      hover='This generates a new database starting from the sequences of the <span class="monospaced">metadata.tsv</span> file collected starting <b>from 2021-12-01 in Italy</b>'
           />
@@ -179,11 +180,11 @@
         </p>
         <p>
           <i>Full example 3 &nbsp;&nbsp; [ importing an existing database ]:</i><br />
-          <CodeBlock v-if='!macGuide'
+          <code-block v-if='!macGuide'
                      code='DB_PATH=./fetch_existing_db_from_here docker-compose up'
                      hover='This loads the <span class="monospaced">varianthunter.db</span> database file located in the specified folder</b>'
           />
-          <CodeBlock v-else
+          <code-block v-else
                      code='/bin/zsh ./launcher.sh DB_PATH=./fetch_existing_db_from_here'
                      hover='This loads the <span class="monospaced">varianthunter.db</span> database file located in the specified folder</b>'
           />
@@ -191,11 +192,11 @@
         <p />
         <p>
           <i>Full example 4 &nbsp;&nbsp; [ generation from .tsv file + export ]:</i><br />
-          <CodeBlock v-if='!macGuide'
+          <code-block v-if='!macGuide'
                      code='FILE_PATH=/gisaid/metadata.tsv DB_PATH=./save_db_here docker-compose up'
                      hover='This generates a new database starting from <b>all</b> the sequences of the <span class="monospaced">metadata.tsv</span> file, <b>exporting it into the save_db_here folder</b> for later usage'
           />
-          <CodeBlock v-else
+          <code-block v-else
                      code='/bin/zsh ./launcher.sh FILE_PATH=/gisaid/metadata.tsv DB_PATH=./save_db_here'
                      hover='This generates a new database starting from <b>all</b> the sequences of the <span class="monospaced">metadata.tsv</span> file, <b>exporting it into the save_db_here folder</b> for later usage'
           />
@@ -259,7 +260,7 @@
         <span class='fake-link' @click.self='showTroubleshooting=true; showAllParams=false'>
             Troubleshooting
           </span>
-        <DockerTroubleshooting v-model='showTroubleshooting' />
+        <docker-troubleshooting v-model='showTroubleshooting' />
       </v-alert>
     </v-timeline-item>
 
@@ -275,10 +276,12 @@ import ExpansionPanel from '@/components/general/basic/ExpansionPanel'
 export default {
   name: 'DockerGuideSteps',
   components: { ExpansionPanel, DockerParamsTable, CodeBlock, DockerTroubleshooting },
+
   props: {
     /** Mac guide flag: true iff the guide is for macOS */
     macGuide: Boolean
   },
+
   data () {
     return {
       /** Flag to show/hide the advanced optional params */

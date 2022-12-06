@@ -1,12 +1,14 @@
 <!--
+
   Component:    DatePicker
   Description:  Select input element with embedded date picker for the analysis period
-                It transfers the date period value to the $store
+
 -->
 
 <template>
-
   <v-col>
+
+    <!-- Headings -->
     <v-row class="px-5 pb-2">
       <v-col>
         <span class="text-body-3 compact-text-3 primary--text d-block">
@@ -15,6 +17,8 @@
         </span>
       </v-col>
     </v-row>
+
+    <!-- Input element -->
     <v-row dense class="px-5">
       <v-col>
         <v-menu v-model='menuVisibility' :close-on-content-click='false' min-width='auto' offset-y
@@ -29,10 +33,11 @@
                           persistent-placeholder/>
           </template>
           <v-date-picker v-model='selectedDate' :max='lastUpdate' first-day-of-week='1' no-title range :show-current="lastUpdate"
-                          @input='menuVisibility = false' header-color="f_primary" color="f_primary"/>
+                          @input='menuVisibility = false' header-color="f_primary" color="f_primary" class="rounded-t-0"/>
         </v-menu>
       </v-col>
     </v-row>
+
   </v-col>
 </template>
 
@@ -42,12 +47,14 @@ import {mapState} from "vuex";
 
 export default {
   name: 'DatePicker',
+
   data() {
     return {
       /** Visibility flag of date picker menu */
       menuVisibility: false,
     }
   },
+
   computed: {
     ...mapState(['lastUpdate']),
     ...mapStateTwoWay({
@@ -76,50 +83,6 @@ export default {
 </script>
 
 <style scoped>
-/* Hint for date-picker */
-.hint {
-  color: rgba(0, 0, 0, 0.54);
-  background: white;
-  text-align: center;
-  max-width: 290px;
-  padding: 10px 14px 0;
-  line-height: 17px;
-  line-break: loose;
-  text-transform: initial !important;
-}
-
-.tip {
-  margin-top: 15px;
-  margin-bottom: 0;
-  text-align: left;
-  text-transform: uppercase;
-  font-size: 11px;
-  line-height: 12px;
-  color: #ffa815;
-}
-
-.tip-icon {
-  padding-top: 0;
-  padding-bottom: 0;
-  margin: auto;
-  text-align: right;
-  border-right: solid 1px #ffa815;
-}
-
-.tip-icon * {
-  color: #ffa815;
-  font-size: 18px !important;
-}
-
-.tip-text .v-icon::before {
-  color: #ffa815;
-  font-size: 14px !important;
-}
-
-.tip-text {
-  padding-top: 0;
-  padding-bottom: 0;
-}
 
 /* Menu container style */
 .menu-container {

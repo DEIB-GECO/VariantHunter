@@ -1,3 +1,10 @@
+<!--
+
+  Component:    OddRatioIntro
+  Description:  Odd ratio step of the app-tour
+
+-->
+
 <template>
   <feature-intro v-model="visibility" floating step="odd-ratio" :internal-steps="1" next-step="summary"
                  :icon="tips[currentTip].icon" @nextStep="hideOddRatio"
@@ -24,7 +31,10 @@ export default {
   components: {FeatureIntro},
   data() {
     return {
+      /** Boolean flag set to true if the step is visible */
       visibility: false,
+
+      /** Tips steps */
       tips: [
         {
           id: 'intro',
@@ -44,9 +54,12 @@ export default {
               'of the period <span class="text-body-4">(WEEK-TO-FIRST-WEEK)</span>.',
         }
       ],
+
+       /** Current tip step */
       currentTip: 0,
     }
   },
+
   watch: {
     currentTip() {
       this.$vuetify.goTo('#odd-ratio')
@@ -57,8 +70,9 @@ export default {
       }
     }
   },
-  methods: {
 
+  methods: {
+    /** Go to the next internal step */
     nextInternalStep() {
       this.currentTip++
 
@@ -69,12 +83,14 @@ export default {
       }
     },
 
+    /** Hide odd ratio plots */
     hideOddRatio(){
       const el= document.getElementById('odd-ratio-collapse')
       if(el)
         el.click() // collapse odd-ratio section
     }
   },
+
   mounted() {
     if (this.visibility) {
       this.$vuetify.goTo('#odd-ratio')

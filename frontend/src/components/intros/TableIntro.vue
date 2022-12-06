@@ -1,3 +1,10 @@
+<!--
+
+  Component:    TableIntro
+  Description:  Table step of the app-tour
+
+-->
+
 <template>
   <feature-intro v-model="visibility" floating step="table" :internal-steps="6" next-step="heatmap"
                  :icon="tips[currentTip].icon"
@@ -22,9 +29,13 @@ import FeatureIntro from "@/components/general/basic/FeatureIntro";
 export default {
   name: "TableIntro",
   components: {FeatureIntro},
+
   data() {
     return {
-      visibility: false,
+      /** Boolean flag set to true if the step is visible */
+      visibility:false,
+
+      /** Tips steps */
       tips: [
         {
           id: 'intro',
@@ -86,9 +97,12 @@ export default {
               'some mutations of interest by checking the boxes.'
         }
       ],
+
+      /** Current tip step */
       currentTip: 0,
     }
   },
+
   watch: {
     currentTip() {
       this.$vuetify.goTo('#result-table')
@@ -99,8 +113,9 @@ export default {
       }
     }
   },
-  methods: {
 
+  methods: {
+    /** Go to the next internal step */
     nextInternalStep() {
       this.currentTip++
       let btn = null
@@ -122,6 +137,7 @@ export default {
       }
     }
   },
+
   mounted() {
     if (this.visibility) {
       this.$vuetify.goTo('#result-table')

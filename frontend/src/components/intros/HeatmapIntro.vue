@@ -1,3 +1,10 @@
+<!--
+
+  Component:    HeatmapIntro
+  Description:  Heatmap step of the app-tour
+
+-->
+
 <template>
   <feature-intro v-model="visibility" floating step="heatmap" :internal-steps="1" next-step="trend"
                  :icon="tips[currentTip].icon"
@@ -24,7 +31,10 @@ export default {
   components: {FeatureIntro},
   data() {
     return {
+      /** Boolean flag set to true if the step is visible */
       visibility: false,
+
+      /** Tips steps */
       tips: [
         {
           id: 'intro',
@@ -42,9 +52,12 @@ export default {
               'To visualize the ones you are interested in, check the corresponding boxes in the table.',
         }
       ],
+
+       /** Current tip step */
       currentTip: 0,
     }
   },
+
   watch: {
     currentTip() {
       this.$vuetify.goTo('#diffusion-heatmap')
@@ -55,12 +68,14 @@ export default {
       }
     }
   },
-  methods: {
 
+  methods: {
+    /** Go to the next internal step */
     nextInternalStep() {
       this.currentTip++
     }
   },
+
   mounted() {
     if (this.visibility) {
       this.$vuetify.goTo('#diffusion-heatmap')

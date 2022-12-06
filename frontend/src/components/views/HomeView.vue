@@ -1,10 +1,16 @@
 <!--
+
   View:         HomeView
   Description:  View container for the tool home
+
 -->
+
 <template>
   <div class="height-100">
+    <!-- Tool sidebar -->
     <sidebar/>
+
+    <!-- Main sub-view -->
     <div class="tool-views-container height-100">
       <v-fade-transition hide-on-leave>
         <new-search-view v-if="currentView==='new-search'"/>
@@ -27,20 +33,25 @@ import LoadingSticker from "@/components/general/basic/LoadingSticker";
 export default {
   name: "HomeView",
   components: {LoadingSticker, ResultView, NewSearchView, Sidebar},
+
   data() {
     return {
+      /** Error data for the table and expansion. Undefined if no error. */
       error: undefined,
     }
   },
-  computed: {
-    ...mapState(['currentAnalysisId','loading']),
 
+  computed: {
+    ...mapState(['currentAnalysisId', 'loading']),
+
+    /** Current type of main sub-view */
     currentView() {
       return this.currentAnalysisId !== null ? 'result' : 'new-search'
     }
   },
+
   methods: {
-    ...mapMutations(['setLastUpdate','setDatasetInfo']),
+    ...mapMutations(['setLastUpdate', 'setDatasetInfo']),
 
     /** Fetch the last update date of the dataset and other info */
     fetchDatasetInfo() {
@@ -55,14 +66,16 @@ export default {
           })
           .catch((e) => {
             this.setLastUpdate(null)
-            setTimeout(this.fetchDatasetInfo,10000)
+            setTimeout(this.fetchDatasetInfo, 10000)
             this.error = e
           })
     }
   },
-  watch:{
-    loading(newVal){
-      if(!newVal){
+
+  watch: {
+    /** After storage restore has been completed */
+    loading(newVal) {
+      if (!newVal) {
         this.fetchDatasetInfo()
       }
     }

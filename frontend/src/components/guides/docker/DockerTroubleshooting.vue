@@ -1,4 +1,5 @@
 <!--
+
   Component:    DockerTroubleshooting
   Description:  Troubleshooting guide
 
@@ -263,36 +264,32 @@
 
 export default {
   name: 'DockerTroubleshooting',
+
   props: {
     /** Value variable for binding of the flag to show the dialog */
     value: {}
   },
+
   data() {
     return {
+      /** Docker settings image */
       dockerSettingsImg: require('../../../assets/troubleshooting/docker_settings.png')
     }
   },
+
   computed: {
 
     /** Flag to show/hide the dialog */
     showDialog: {
-      /**
-       * Getter the flag
-       * @returns {boolean}  The selected value
-       */
       get() {
         return this.value
       },
-
-      /**
-       * Setter for the value
-       * @param val The new value
-       */
       set(val) {
         this.$emit('input', val)
       }
     }
   },
+
   methods: {
     /** Go to the contact section by hiding all the dialogs */
     showContacts() {

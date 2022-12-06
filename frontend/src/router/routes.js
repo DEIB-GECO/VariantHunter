@@ -27,6 +27,9 @@ const router = new VueRouter({
     ]
 })
 
+/**
+ * When the app opens show global loading util restore has been completed
+ */
 router.beforeEach(async (to, from, next) => {
     store.commit('setLoading',true)
     store.restored.then(()=>{store.commit('setLoading',false)})

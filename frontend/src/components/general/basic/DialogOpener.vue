@@ -1,14 +1,17 @@
 <!--
+
   Component:    DialogOpener
   Description:  Button that opens a v-dialog.
 
   Props:
   ├── title:          Title for the dialog. Required.
   ├── icon:           Icon for the dialog.
+  ├── color:          Color of the dialog
   └── buttonPrefix:   Flag to add the prefix "show" on the button
 
   Slots:
   └── default:  The content of the dialog
+
 -->
 
 <template>
@@ -50,19 +53,22 @@
 
 export default {
   name: 'DialogOpener',
+
   props: {
     /** Title for the dialog. Required */
-    title: { required: true },
+    title: {required: true},
 
     /** Icon for the dialog. */
-    icon: { default: 'mdi-help-circle-outline' },
+    icon: {default: 'mdi-help-circle-outline'},
 
-    /* Flag to add the prefix "show" on the button */
-    buttonPrefix: { default: true },
+    /** Flag to add the prefix "show" on the button */
+    buttonPrefix: {default: true},
 
-    color:{default:'f_primary'},
+    /** Color of the dialog */
+    color: {default: 'f_primary'},
   },
-  data () {
+
+  data() {
     return {
       /** Flag to show the dialog element */
       showDialog: false
@@ -85,16 +91,16 @@ export default {
   font-size: 16px !important;
 }
 
-.dialog-text p:first-child{
+.dialog-text p:first-child {
   padding-top: 15px;
 }
 
-.ul-table{
+.ul-table {
   display: flex;
   flex-direction: column;
 }
 
-.li-table{
+.li-table {
   padding-top: 10px;
   padding-bottom: 10px;
   margin-bottom: 10px;
@@ -103,7 +109,7 @@ export default {
   flex-direction: row;
 }
 
-.li-name{
+.li-name {
   width: 20%;
   min-width: 100px;
   font-weight: bold;
@@ -112,7 +118,7 @@ export default {
   border-right: solid 1px var(--tertiary-color-light);
 }
 
-.li-content{
+.li-content {
   width: 80%;
 }
 </style>

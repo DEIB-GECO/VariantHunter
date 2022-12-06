@@ -1,4 +1,5 @@
 <!--
+
   Component:    Paragraph
   Description:  Paragraph with an image
 
@@ -13,6 +14,7 @@
 
   Slots:
   └── default:      Text of the paragraph
+
 -->
 
 <template>
@@ -28,7 +30,9 @@
         </p>
       </slot>
     </v-col>
-    <v-col :class='(src? (largerImg? "col-md-4 col-sm-12 hidden-sm-and-down":"col-md-6 col-sm-5 hidden-xs-only") : "")+" ma-auto"' :order='right? 2 : 0'>
+    <v-col
+        :class='(src? (largerImg? "col-md-4 col-sm-12 hidden-sm-and-down":"col-md-6 col-sm-5 hidden-xs-only") : "")+" ma-auto"'
+        :order='right? 2 : 0'>
       <slot>
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
@@ -40,16 +44,18 @@
       </slot>
     </v-col>
     <v-col v-if='src' :class='(largerImg? "col-md-8 col-sm-12": "col-md-6 col-sm-7")+" mb-5 mt-5"'>
-      <Picture :src='src' :alt='alt' :max-height='imgMaxHeight' :no-zoom='noZoom' />
+      <pic :src='src' :alt='alt' :max-height='imgMaxHeight' :no-zoom='noZoom'/>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import Picture from '@/components/general/basic/Picture'
+import Pic from '@/components/general/basic/Pic'
+
 export default {
   name: 'Paragraph',
-  components: { Picture },
+  components: {Pic},
+
   props: {
     /** Image for the paragraph */
     src: {},

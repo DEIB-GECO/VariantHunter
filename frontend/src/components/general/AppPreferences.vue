@@ -1,10 +1,21 @@
+<!--
+
+  Component:    AppPreferences
+  Description:  App preferences panel
+
+-->
+
 <template>
   <v-list rounded nav dense>
+    <!-- Preferences opener -->
     <list-item icon="mdi-tune-variant" title="Preferences" link subtitle="App settings" expand-on-hover
                @click.native="showSettings=true"/>
 
+    <!-- Preference panel -->
     <v-dialog v-model="showSettings" eager fullscreen hide-overlay transition="dialog-bottom-transition" scrollable>
       <v-card>
+
+        <!-- Headings -->
         <v-toolbar flat dark color="f_primary" class="px-5">
           <v-toolbar-title class="font-weight-bold">Preferences</v-toolbar-title>
           <v-spacer/>
@@ -13,7 +24,10 @@
           </v-btn>
         </v-toolbar>
 
+        <!-- List of preferences -->
         <v-card-text class="py-3">
+
+          <!-- Appearance preferences-->
           <v-list thwo-line subheader>
             <v-subheader class="text-body-1">Appearance</v-subheader>
             <v-list-item>
@@ -46,8 +60,9 @@
             </v-list-item>
           </v-list>
 
-        <v-divider/>
+          <v-divider/>
 
+          <!-- Information section -->
           <v-list thwo-line subheader>
             <v-subheader class="text-body-1">Information</v-subheader>
             <v-list-item>
@@ -77,8 +92,9 @@
             </v-list-item>
           </v-list>
 
-        <v-divider/>
+          <v-divider/>
 
+          <!-- Keyboard shortcut info -->
           <v-list thwo-line subheader class="mt-5">
             <v-list-item>
               <v-list-item-icon>
@@ -100,11 +116,12 @@
             </v-list-item>
           </v-list>
 
-        <data-manager/>
+          <!-- Reset options-->
+          <data-manager/>
 
         </v-card-text>
 
-        <div style="flex: 1 1 auto;"></div>
+        <div style="flex: 1 1 auto;"/>
       </v-card>
     </v-dialog>
 
@@ -120,21 +137,25 @@ import {mapState} from "vuex";
 export default {
   name: "AppPreferences",
   components: {DataManager, ListItem},
+
   data() {
     return {
+      /** Boolean visibility flag for the panel */
       showSettings: false,
 
+      /** Auto dark theme option*/
       autoDarkTheme: true,
-
     }
   },
   computed: {
     ...mapState(['version']),
 
+    /** Map shortcuts data */
     shortcuts() {
       return shortcuts
     },
 
+    /** Dark theme option */
     darkTheme: {
       get() {
         return this.$vuetify.theme.dark
@@ -143,10 +164,10 @@ export default {
         this.$vuetify.theme.dark = !this.$vuetify.theme.dark
       }
     },
-
   },
-  methods: {
 
+  methods: {
+    /** Toggle theme */
     toggleTheme(evt) {
       if (this.autoDarkTheme) {
         this.$vuetify.theme.dark = evt.matches
@@ -156,9 +177,7 @@ export default {
 
   },
 
-  /**
-   * Listen for external dark mode changes
-   */
+  /** Listen for external dark mode changes */
   mounted() {
     const matcher = window.matchMedia('(prefers-color-scheme: dark)')
     matcher.addEventListener('change', this.toggleTheme)

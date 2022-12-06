@@ -1,3 +1,13 @@
+<!--
+
+  Component:    NoDataAlert
+  Description:  App preferences panel
+
+  Props:
+  └── value: Value variable for binding of the value
+
+-->
+
 <template>
   <alert-overlay :value="value" @input="update" icon="mdi-database-remove-outline" type="error">
     <template>
@@ -21,10 +31,14 @@ import AlertOverlay from "@/components/general/basic/AlertOverlay";
 export default {
   name: "NoDataAlert",
   components: {AlertOverlay},
+
   props: {
+    /** Value variable for binding of the value */
     value: {},
   },
+
   methods: {
+    /** On alert overlay updates */
     update(newVal) {
       this.$emit('input', newVal)
     }

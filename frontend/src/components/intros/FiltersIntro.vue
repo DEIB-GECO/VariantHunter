@@ -1,3 +1,10 @@
+<!--
+
+  Component:    FiltersIntro
+  Description:  Filters step of the app-tour
+
+-->
+
 <template>
   <feature-intro v-model="visibility" floating step="filters" :internal-steps="4" next-step="table"
                  :icon="tips[currentTip].icon"
@@ -24,7 +31,10 @@ export default {
   components: {FeatureIntro},
   data() {
     return {
+      /** Boolean flag set to true if the step is visible */
       visibility: false,
+
+      /** Tips steps */
       tips: [
         {
           id: 'toolbar',
@@ -70,9 +80,12 @@ export default {
           bodyAppend: 'And switch back whenever you want. They remain stored.'
         }
       ],
+
+       /** Current tip step */
       currentTip: 0,
     }
   },
+
   watch: {
     currentTip() {
       this.$vuetify.goTo('#result-top')
@@ -83,8 +96,9 @@ export default {
       }
     }
   },
-  methods: {
 
+  methods: {
+    /** Go to the next internal step */
     nextInternalStep() {
       this.currentTip++
 
@@ -98,6 +112,7 @@ export default {
       }
     }
   },
+
   mounted() {
     if (this.visibility) {
       this.$vuetify.goTo('#result-top')

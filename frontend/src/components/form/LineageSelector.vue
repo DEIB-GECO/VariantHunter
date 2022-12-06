@@ -1,14 +1,14 @@
 <!--
+
   Component:    LineageSelector
   Description:  Select input element for lineage
-                It transfers the lineage value to the $store
 
-  Events:
-  └── error:    Emitted on server errors
 -->
 
 <template>
   <v-col>
+
+    <!-- Headings -->
     <v-row class="px-5 pb-2">
       <v-col>
         <span class="text-body-3 compact-text-3 primary--text d-block">
@@ -17,12 +17,16 @@
         </span>
       </v-col>
     </v-row>
+
+    <!-- Input element -->
     <v-row dense class="px-5">
       <v-col>
         <v-autocomplete v-model='selectedLineage' :items='possibleLineages' :disabled="!selectedLocation"
                         :loading='isLoading' placeholder='Select a lineage from the list' persistent-hint flat
-                        :hint="(!selectedLocation)?'You must select at least a location first':''" :hide-details="selectedLocation!==null" attach solo
-                        persistent-placeholder clearable clear-icon="mdi-backspace-outline" :class="(!selectedLocation)?'warning--text cursor-forbidden':''">
+                        :hint="(!selectedLocation)?'You must select at least a location first':''"
+                        :hide-details="selectedLocation!==null" attach solo
+                        persistent-placeholder clearable clear-icon="mdi-backspace-outline"
+                        :class="(!selectedLocation)?'warning--text cursor-forbidden':''">
           <template v-slot:prepend-item>
             <slot name='prepend-item'>
               <div class='hint'>{{ hint }}</div>
@@ -32,7 +36,7 @@
       </v-col>
     </v-row>
 
-    <loading-sticker :error="error" />
+    <loading-sticker :error="error"/>
 
   </v-col>
 </template>
@@ -45,12 +49,17 @@ import LoadingSticker from "@/components/general/basic/LoadingSticker";
 export default {
   name: 'LineageSelector',
   components: {LoadingSticker},
+
   data() {
     return {
+      /** Boolean loading flag for the table and expansion */
       isLoading: false,
+
+      /** Error data for the table and expansion. Undefined if no error. */
       error: undefined,
     }
   },
+
   computed: {
     ...mapState(['selectedLocation', 'selectedDate']),
     ...mapStateTwoWay({selectedLineage: 'setLineage', possibleLineages: 'setLineages'}),
@@ -62,6 +71,7 @@ export default {
           : 'All available lineages:'
     }
   },
+
   methods: {
     /** Fetch all possible values for lineages (given the other params) */
     getPossibleLineages() {
@@ -96,10 +106,11 @@ export default {
       }
     }
   },
+
   watch: {
     /** Adjust the possible lineages according to the selected location */
     selectedLocation() {
-        this.getPossibleLineages()
+      this.getPossibleLineages()
     },
 
     /** Adjust the possible lineages according to the selected date */
@@ -107,6 +118,8 @@ export default {
       this.getPossibleLineages()
     }
   },
+
+  /** Get possible lineages */
   mounted() {
     this.getPossibleLineages()
   }

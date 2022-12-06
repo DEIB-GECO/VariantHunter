@@ -1,4 +1,5 @@
 <!--
+
   Component:    FunctionGuide
   Description:  Guide for a specific function
 
@@ -9,10 +10,11 @@
   Slots:
   ├── default:    Content of the function intro
   └── use-cases:  Content of the use case section
+
 -->
 
 <template>
-  <ExpansionPanel>
+  <expansion-panel>
 
     <template v-slot:icons>
       <v-icon left color='text_var1'>mdi-star-circle-outline</v-icon>
@@ -40,7 +42,7 @@
       </v-row>
 
     </template>
-  </ExpansionPanel>
+  </expansion-panel>
 </template>
 
 <script>
@@ -48,7 +50,8 @@ import ExpansionPanel from '@/components/general/basic/ExpansionPanel'
 
 export default {
   name: 'FunctionGuide',
-  components: { ExpansionPanel },
+  components: {ExpansionPanel},
+
   props: {
     /** Title for the panel header */
     title: {},

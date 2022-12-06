@@ -1,6 +1,17 @@
+<!--
+
+  Component:    TagEditor
+  Description:  Tag editing component to change, un-assign or rename tags
+
+-->
+
 <template>
   <div>
-    <v-list-item-subtitle class="break-spaces" v-if="tag!==null || addTagMode">
+
+    <!-- Add tag mode -->
+    <v-list-item-subtitle v-if="tag!==null || addTagMode" class="break-spaces">
+
+      <!-- Current tag if set with rename and un-assign buttons-->
       <v-chip v-if="tag!==null" :color="tags[tag].tagColor.color" :dark="tags[tag].tagColor.isDark"
               :light="!tags[tag].tagColor.isDark" class="mr-1 mb-1 pr-0">
         <span v-if="!renameMode" class="tag-name mr-6">{{ tag }}</span>
@@ -12,9 +23,10 @@
                            size="medium"/>
         <icon-with-tooltip v-if="!renameMode" icon="mdi-close-circle-outline" hover-color="error" bottom
                            tip="Un-assign tag" :click-handler="()=>removeTag(tag)" size="medium"/>
-
       </v-chip>
-      <span class="white rounded-xl add-tag mr-1 mb-1" v-if="!renameMode">
+
+      <!-- Change tag mode: combobox with confirmation button -->
+      <span v-if="!renameMode" class="white rounded-xl add-tag mr-1 mb-1">
           <v-combobox height="15px" flat v-model="newTag" hide-details :items="Object.keys(tags)" light
                       color="f_primary" persistent-placeholder
                       :placeholder="tag!==null?'change tag':'select / add tag '"
@@ -33,11 +45,15 @@
                              :icon="tag!==null?'mdi-pencil-outline':'mdi-plus'"
                              :click-handler="()=>addTagManager()"/>
       </span>
+
     </v-list-item-subtitle>
+
+    <!-- No tag initial view: button to open add tag mode -->
     <v-list-item-subtitle v-else>
       <btn-with-tooltip bottom tip="Add a tag to the current analysis" text="Add tag" append-icon
                         icon="mdi-plus" size="x-small" outlined :click-handler="()=>addTagMode=true"/>
     </v-list-item-subtitle>
+
   </div>
 </template>
 
@@ -49,33 +65,46 @@ import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 export default {
   name: "TagEditor",
   components: {IconWithTooltip, BtnWithTooltip},
+
   data() {
     return {
+      /** Boolean flag set to true if add tag mode is enabled (if no tag is set show add form) */
       addTagMode: false,
-      renameMode: false,
-      newName: '',
+      /** Tag name to be assigned (and confirmed with enter). Used in add tag mode */
       newTag: '',
+      /** Tag name to be assigned (but just typed). Used in add tag mode */
       newTagInput: '',
+
+      /** Boolean flag set to true if renaming mode is enabled (trying to rename a tag) */
+      renameMode: false,
+      /** New name for the tag. Used in rename mode */
+      newName: '',
     }
   },
+
   computed: {
     ...mapState(['tags']),
     ...mapGetters(['getCurrentAnalysis']),
 
+    /** Currently assigned tag. Possibly null */
     tag() {
       return this.getCurrentAnalysis.tag
     },
-
   },
+
   methods: {
     ...mapActions(['updateTagName']),
     ...mapMutations(['addTag', 'removeTag']),
 
+    /** Opener for the rename mode */
     openRenameMode() {
       this.renameMode = true
-      this.newName = this.tag
+      this.newName = this.tag // set current name in the edit field
     },
 
+    /**
+     * Actually perform the renaming of an existing tag and close rename mode
+     */
     renameTag() {
       if (this.newName && this.newName.toUpperCase() !== this.tag)
         this.updateTagName({oldName: this.tag, newName: this.newName}).then(() => this.renameMode = false)
@@ -83,10 +112,14 @@ export default {
         this.renameMode = false
     },
 
+    /**
+     * Add/replace tag to the current analysis
+     */
     addTagManager() {
       const input = this.newTagInput ? this.newTagInput : this.newTag
       if (input) {
-        this.addTag(input.toUpperCase())
+        this.addTag(input.toUpperCase()) // if the tag does not exist it will be created
+        // reset form
         this.newTag = ''
         this.newTagInput = ''
       }

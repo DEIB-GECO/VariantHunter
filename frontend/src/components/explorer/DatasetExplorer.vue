@@ -3,11 +3,10 @@
   Description:  Component to explore the number of sequences available in the dataset
 
   Props:
-  └── withLineages: Flag for lineage search
+  └── withLineages: Boolean flag set to true if lineage-specific mode
 
   Events:
-  ├── weekSelection:  Emitted when the user select the 4 weeks to analyze
-  └── error:          Emitted on server errors
+  └── weekSelection:  Emitted when the user select the 4 weeks to analyze
 -->
 
 <template>
@@ -18,46 +17,46 @@
       <v-col>{{ title }}</v-col>
     </v-row>
 
-      <!-- Histogram loading animation -->
-      <v-row v-if='isLoading.histogram'>
-        <v-col>
-          <v-skeleton-loader width='100%' height="390" class="explorer-loader" type='image'/>
-        </v-col>
-      </v-row>
+    <!-- Histogram loading animation -->
+    <v-row v-if='isLoading.histogram'>
+      <v-col>
+        <v-skeleton-loader width='100%' height="390" class="explorer-loader" type='image'/>
+      </v-col>
+    </v-row>
 
-      <!-- Histogram plot -->
-      <v-row v-if='showPlot.histogram'>
-        <explorer-histogram :sequence-data='sequencesData' @timeRangeChange='(tr) => onTimeRangeChanges(tr)'/>
-      </v-row>
+    <!-- Histogram plot -->
+    <v-row v-if='showPlot.histogram'>
+      <explorer-histogram :sequence-data='sequencesData' @timeRangeChange='(tr) => onTimeRangeChanges(tr)'/>
+    </v-row>
 
-      <!-- Breakdown loading animation -->
-      <v-row v-if='isLoading.breakdown'>
-        <v-col>
-          <v-skeleton-loader width='100%' height="390" class="explorer-loader" type='image'/>
-        </v-col>
-      </v-row>
+    <!-- Breakdown loading animation -->
+    <v-row v-if='isLoading.breakdown'>
+      <v-col>
+        <v-skeleton-loader width='100%' height="390" class="explorer-loader" type='image'/>
+      </v-col>
+    </v-row>
 
-      <v-row v-if='isDisabled.breakdown' class='disabled-label warning--text'>
-        <v-col><sub>
-          <v-icon color='warning' small left>mdi-information-outline</v-icon>
-          Reduce the time range to at most 4 weeks to see lineages breakdown </sub></v-col>
-      </v-row>
+    <v-row v-if='isDisabled.breakdown' class='disabled-label warning--text'>
+      <v-col><sub>
+        <v-icon color='warning' small left>mdi-information-outline</v-icon>
+        Reduce the time range to at most 4 weeks to see lineages breakdown </sub></v-col>
+    </v-row>
 
-      <!-- Breakdown plot -->
-      <v-row v-if='showPlot.breakdown' class='lineage-breakdown'>
-        <lineages-breakdown :lineages-data='lineagesData'/>
-      </v-row>
+    <!-- Breakdown plot -->
+    <v-row v-if='showPlot.breakdown' class='lineage-breakdown'>
+      <lineages-breakdown :lineages-data='lineagesData'/>
+    </v-row>
 
-      <!-- Button to fill in the date -->
-      <v-row v-if='showPlot.breakdown' class='text-center'>
-        <v-col>
-          <btn-with-tooltip bottom color="primary" text="Consider these 4 weeks" icon="mdi-calendar"
-                            :click-handler="()=>emitAnalysisPeriod()" content-class="text_var2--text"
-                            tip="Fill the form using the currently selected 4 weeks as analysis period."/>
-        </v-col>
-      </v-row>
+    <!-- Button to fill in the date -->
+    <v-row v-if='showPlot.breakdown' class='text-center'>
+      <v-col>
+        <btn-with-tooltip bottom color="primary" text="Consider these 4 weeks" icon="mdi-calendar"
+                          :click-handler="()=>emitAnalysisPeriod()" content-class="text_var2--text"
+                          tip="Fill the form using the currently selected 4 weeks as analysis period."/>
+      </v-col>
+    </v-row>
 
-      <loading-sticker :error="error"/>
+    <loading-sticker :error="error"/>
 
   </v-col>
 </template>
@@ -73,10 +72,12 @@ import LoadingSticker from "@/components/general/basic/LoadingSticker";
 export default {
   name: 'DatasetExplorer',
   components: {LoadingSticker, BtnWithTooltip, LineagesBreakdown, ExplorerHistogram},
+
   props: {
-    /** Flag for lineage search. */
+    /** Boolean flag set to true if lineage-specific mode */
     withLineages: Boolean
   },
+
   data() {
     return {
       /** Loading flag. If true data are being fetched */
@@ -99,6 +100,7 @@ export default {
       /** Currently selected time range */
       selectedRange: null,
 
+      /** Error data for the table and expansion. Undefined if no error. */
       error: undefined,
     }
   },
@@ -140,7 +142,7 @@ export default {
         const sequenceAPI = `/explorer/getSequenceInfo`
         const queryParams = {
           location: this.selectedLocation.id,
-          lineage: this.withLineages? this.selectedLineage : undefined   // possibly it has no value
+          lineage: this.withLineages ? this.selectedLineage : undefined   // possibly it has no value
         }
 
         this.$axios
@@ -171,18 +173,15 @@ export default {
           begin: this.selectedRange[0],
           end: this.selectedRange[1],
         }
+
         this.$axios
-            .get(sequenceAPI, {params: queryParams, cache: false })
-            .then(res => {
-              this.lineagesData = res.data
-            })
+            .get(sequenceAPI, {params: queryParams, cache: false})
+            .then(res => this.lineagesData = res.data)
             .catch((e) => {
-              this.error=e
+              this.error = e
               this.lineagesData = {}
             })
-            .finally(() => {
-              this.isLoading.breakdown = false
-            })
+            .finally(() => this.isLoading.breakdown = false)
       } else {
         this.lineagesData = {}
       }
@@ -208,14 +207,15 @@ export default {
       this.$emit('weekSelection', [null, this.selectedRange[1]])
     }
   },
+
+  /** Fetch the sequence info on show/hide section */
   beforeMount() {
-    // Fetch the sequence info on show/hide section
     this.fetchSequenceInfo()
   },
-  watch: {
 
+  watch: {
     /** Fetch sequence info on tab changes */
-    withLineages(){
+    withLineages() {
       this.fetchSequenceInfo()
     },
 
@@ -240,7 +240,7 @@ export default {
 </script>
 
 <style>
-.explorer-loader *{
+.explorer-loader * {
   height: 100%;
 }
 </style>

@@ -1,3 +1,18 @@
+<!--
+
+  Component:    AlertOverlay
+  Description:  General purpose alert with overlay
+
+  Props:
+  ├── value:    Value for binding of visibility status
+  ├── icon:     Alert icon
+  └── type:     Alert type
+
+  Slots:
+  └── default:  Body
+
+-->
+
 <template>
   <v-overlay :value="value">
     <v-alert v-click-outside="hide" prominent :type="type" :icon="icon" max-width="70vw" width="800px"
@@ -15,12 +30,20 @@
 <script>
 export default {
   name: "AlertOverlay",
+
   props: {
+    /** Value for binding of visibility status */
     value: {},
+
+    /** Alert icon */
     icon: {},
+
+    /** Alert type*/
     type: {}
   },
+
   methods: {
+    /** On hide button press */
     hide() {
       this.$emit('input', false)
     }

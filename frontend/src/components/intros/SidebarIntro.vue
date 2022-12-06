@@ -1,3 +1,10 @@
+<!--
+
+  Component:    SidebarIntro
+  Description:  Sidebar step of the app-tour
+
+-->
+
 <template>
   <feature-intro v-model="visibility" floating step="navbar" :internal-steps="1" :next-step="null"
                  :icon="tips[currentTip].icon" end
@@ -24,7 +31,10 @@ export default {
   components: {FeatureIntro},
   data() {
     return {
-      visibility: false,
+      /** Boolean flag set to true if the step is visible */
+      visibility:false,
+
+      /** Tips steps */
       tips: [
         {
           id: 'intro',
@@ -43,9 +53,12 @@ export default {
           bodyAppend: 'You can restart the tour from the preferences',
         }
       ],
+
+      /** Current tip step */
       currentTip: 0,
     }
   },
+
   watch: {
     currentTip() {
       this.$vuetify.goTo('#result-top')
@@ -56,12 +69,14 @@ export default {
       }
     }
   },
-  methods: {
 
+  methods: {
+    /** Go to the next internal step */
     nextInternalStep() {
       this.currentTip++
     },
   },
+
   mounted() {
     if (this.visibility) {
       this.$vuetify.goTo('#result-top')

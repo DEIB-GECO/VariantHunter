@@ -1,3 +1,10 @@
+<!--
+
+  Component:    ExplorerIntro
+  Description:  Explorer step of the app-tour
+
+-->
+
 <template>
   <feature-intro v-model="visibility" floating step="explorer" :internal-steps="1" next-step="result" :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep" :end="currentTip>0" >
@@ -24,7 +31,10 @@ export default {
   components: {FeatureIntro},
   data() {
     return {
+      /** Boolean flag set to true if the step is visible */
       visibility:false,
+
+      /** Tips steps */
       tips: [
         {
           icon: 'mdi-star-circle',
@@ -44,9 +54,12 @@ export default {
           bodyAppend: 'Continue the tour by performing an analysis.'
         },
       ],
+
+       /** Current tip step */
       currentTip: 0,
     }
   },
+
   watch: {
     currentTip() {
       this.$vuetify.goTo('#explorer')
@@ -57,13 +70,16 @@ export default {
       }
     }
   },
+
   methods: {
     ...mapMutations(['setLocation','setLocations', 'setDate', 'setTourStep']),
 
+    /** Go to the next internal step */
     nextInternalStep() {
       this.currentTip++
     }
   },
+
   mounted() {
     if(this.visibility){
       this.$vuetify.goTo('#explorer')

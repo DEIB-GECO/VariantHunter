@@ -1,6 +1,8 @@
 <!--
+
   Component:    ToolGuide
   Description:  Usage guide for the tool
+
 -->
 
 <template>
@@ -39,16 +41,16 @@
         deleted</i> at the user's choice).
       </p>
 
-      <Paragraph :src='introImg' img-max-height='230' left no-zoom>
+      <paragraph :src='introImg' img-max-height='230' left no-zoom>
         <p>
           The underlying mechanism of both methodologies is the same: each amino acid mutation is analyzed for a
-          <b>time period of 4 weeks</b>.<br />
+          <b>time period of 4 weeks</b>.<br/>
           For each week, the <i>frequency of the mutation</i> (computed as
           <span class='formula'>"number of sequencing harboring the mutation"/"total number of sequences collected in that week"</span>)
           is considered (see the four blue dots in the Figure);
           then, a linear model is fitted on the four data points (red line in the Figure).
         </p>
-      </Paragraph>
+      </paragraph>
       <p>
         The <b>slope</b> of the regression line represents <i>how fast the mutation is growing</i> (i.e., its
         percentage is increasing). <i>Positive slopes</i> indicate an increasing trend, while <i>negative</i>
@@ -71,10 +73,10 @@
       <v-expansion-panels multiple class='mt-3' flat>
 
         <!-- LINEAGE INDEPENDENT -->
-        <LinIndGuide />
+        <lin-ind-guide/>
 
         <!-- LINEAGE SPECIFIC -->
-        <LinDepGuide />
+        <lin-dep-guide/>
 
       </v-expansion-panels>
     </v-container>
@@ -90,8 +92,9 @@ import LinDepGuide from '@/components/guides/tool/LinDepGuide'
 
 export default {
   name: 'ToolGuide',
-  components: { LinDepGuide, LinIndGuide, Paragraph },
-  data () {
+  components: {LinDepGuide, LinIndGuide, Paragraph},
+
+  data() {
     return {
       /** Images */
       introImg: require('../../../assets/guide/intro.png')
@@ -115,7 +118,7 @@ export default {
   background: rgba(255, 255, 0, .45);
 }
 
-.linkk-alt{
+.linkk-alt {
   color: darkgrey !important;
 }
 

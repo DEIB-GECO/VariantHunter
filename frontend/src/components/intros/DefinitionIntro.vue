@@ -1,3 +1,10 @@
+<!--
+
+  Component:    DefinitionIntro
+  Description:  Definition step of the app-tour
+
+-->
+
 <template>
   <feature-intro v-model="visibility" floating step="definition" :internal-steps="2" next-step="explorer" :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep" @nextStep="$emit('showExplorer')">
@@ -22,9 +29,13 @@ import {mapMutations, mapState} from "vuex";
 export default {
   name: "DefinitionIntro",
   components: {FeatureIntro},
+
   data() {
     return {
+      /** Boolean flag set to true if the step is visible */
       visibility:false,
+
+      /** Tips steps */
       tips: [
         {
           icon: 'mdi-magnify',
@@ -52,12 +63,16 @@ export default {
               'last week considered, and their trend over the period will be analyzed.'
         }
       ],
+
+      /** Current tip step */
       currentTip: 0,
     }
   },
+
   computed: {
     ...mapState(['lastUpdate','selectedLocation','selectedDate']),
   },
+
   watch: {
     currentTip() {
       this.$vuetify.goTo('#top')
@@ -68,9 +83,11 @@ export default {
       }
     }
   },
+
   methods: {
     ...mapMutations(['setLocation','setLocations', 'setDate']),
 
+    /** Go to the next internal step */
     nextInternalStep() {
       this.$emit('selectMode')
       if(!this.selectedLocation && this.currentTip>0) {
@@ -83,6 +100,7 @@ export default {
       this.currentTip++
     }
   },
+
   mounted() {
     if(this.visibility){
       this.$vuetify.goTo('#top')

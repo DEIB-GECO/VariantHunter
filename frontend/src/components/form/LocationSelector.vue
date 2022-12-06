@@ -1,14 +1,14 @@
 <!--
+
   Component:    LocationSelector
   Description:  Select input element for location
-                It transfers the location value to the $store
 
-  Events:
-  └── error:    Emitted on server errors
 -->
 
 <template>
   <v-col>
+
+    <!-- Headings -->
     <v-row class="px-5 pb-2">
       <v-col>
         <span class="text-body-3 compact-text-3 primary--text d-block">
@@ -20,6 +20,8 @@
         </span>
       </v-col>
     </v-row>
+
+    <!-- Input element -->
     <v-row dense class="px-5">
       <v-col>
         <v-autocomplete v-model='selectedLocation' :items='possibleLocations' :search-input.sync="searchQuery"
@@ -30,6 +32,7 @@
                         :no-data-text="(isLoading?'Loading locations...':(searchQuery && searchQuery.length<2?'Continue typing...':'This location seems not to exist'))"
                         clearable clear-icon="mdi-backspace-outline" v-click-outside="onClickOutside"
                         @click:clear.stop="onClear" @change="onChange">
+
           <!-- Current selection -->
           <template v-slot:selection="{item}">
             <div @click="onBoxClick">
@@ -60,6 +63,7 @@
               {{ possibleLocationsInfo[item.id].type }}
             </v-chip>
           </template>
+
         </v-autocomplete>
       </v-col>
     </v-row>
@@ -87,13 +91,19 @@ export default {
         selectedLocation: null,
       },
 
-      /** Loading progress */
+      /** Boolean loading flag for the table and expansion */
       isLoading: false,
+      /** Error data for the table and expansion. Undefined if no error. */
       error: undefined,
+
+      /** Current search query */
       searchQuery: undefined,
+
+      /** Boolean flag set to true when the data are fetched not because of user input */
       externalTriggering: false,
     }
   },
+
   computed: {
     ...mapStateTwoWay({
       selectedLocation: 'setLocation',
@@ -101,8 +111,12 @@ export default {
       possibleLocationsInfo: 'setLocationsInfo'
     })
   },
+
   methods: {
 
+    /**
+     * Manager for the input element click
+     */
     onBoxClick() {
       // Store previous values and clear them
       this.previousValues = {
@@ -116,10 +130,13 @@ export default {
 
       // Fill the search area with the past selection to enable exploring (eg "Europe/", "Italy/")
       Vue.nextTick(() => {
-        this.searchQuery = this.previousValues.selectedLocation? this.previousValues.selectedLocation.text : null
+        this.searchQuery = this.previousValues.selectedLocation ? this.previousValues.selectedLocation.text : null
       });
     },
 
+    /**
+     * Manager for the click outside the input element
+     */
     onClickOutside() {
       // Restore previous values if set
       if (this.previousValues.selectedLocation) {
@@ -129,6 +146,9 @@ export default {
       }
     },
 
+    /**
+     * Manager of the clear form action
+     */
     onClear() {
       this.possibleLocationsInfo = []
       this.possibleLocations = []
@@ -138,6 +158,9 @@ export default {
       this.previousValues.selectedLocation = null
     },
 
+    /**
+     * Manager for the selection of a new value
+     */
     onChange() {
       this.previousValues.possibleLocationsInfo = []
       this.previousValues.possibleLocations = []
@@ -148,10 +171,20 @@ export default {
       });
     },
 
+    /** Fill the search text with a certain string followed by '/'
+     * @param itemText  The string to be considered
+     */
     fillWith(itemText) {
       this.searchQuery = itemText + '/'
     },
 
+    /**
+     * Custom filter for the autocomplete items
+     * @param item        Item to be considered
+     * @param queryText   Current query text
+     * @param itemText    Text value of the item to be considered
+     * @returns {boolean} True iff item has to be shown in the list or not
+     */
     customFilter(item, queryText, itemText) {
       const {type, continent, country} = this.possibleLocationsInfo[item.id]
       queryText = queryText.trim().toLowerCase() // clean the query string
@@ -189,9 +222,9 @@ export default {
             })
 
             // If the fetch was caused by external triggering, then select the corresponding value
-            if(this.externalTriggering){
-              this.externalTriggering=false
-              this.selectedLocation=this.possibleLocations.find(({text})=>fullQueryString.toUpperCase()===text.toUpperCase())
+            if (this.externalTriggering) {
+              this.externalTriggering = false
+              this.selectedLocation = this.possibleLocations.find(({text}) => fullQueryString.toUpperCase() === text.toUpperCase())
             }
           })
           .catch((e) => {
@@ -201,6 +234,11 @@ export default {
 
     },
 
+    /**
+     * Gets the color to be associated with the item
+     * @param itemId  Location identifier
+     * @returns {string}  String representing the color
+     */
     getLocationColor(itemId) {
       return this.possibleLocationsInfo[itemId].type === 'region'
           ? '#7CB17B'
@@ -209,16 +247,25 @@ export default {
               : '#90177d'
     }
   },
+
   watch: {
+    /**
+     * On selected location changes
+     */
     selectedLocation(newVal) {
       if (newVal !== null && this.possibleLocationsInfo[newVal.id]) {
+        // new value selected, update corresponding granularity value
         this.selectedGranularity = this.possibleLocationsInfo[newVal.id].type
-      }else if(newVal !== null &&this.possibleLocations.length===0){
-        // location has been set manually: trigger fetch
-        this.searchQuery=newVal
-        this.externalTriggering=true
+      } else if (newVal !== null && this.possibleLocations.length === 0) {
+        // location has been set manually (not through user input): trigger fetch
+        this.searchQuery = newVal
+        this.externalTriggering = true
       }
     },
+
+    /**
+     * On search query changes, triggers the fetch
+     */
     searchQuery(newVal, oldVal) {
       // If the new query extends the previous one ('Eu'->'Eur') prevent fetch
       if (newVal?.length >= 2 && (oldVal?.length < 2 || oldVal?.slice(0, 2) !== newVal?.slice(0, 2)))
@@ -226,7 +273,7 @@ export default {
       else if (newVal?.length < 2 && oldVal?.length >= 2 && newVal !== '') {
         this.possibleLocations = [] // reset locations when query string is less than 2 characters
       } else if (newVal?.length >= 2 && this.error) {
-        this.fetchLocations()
+        this.fetchLocations() // an error occurred previously, fetch anyway
       }
     }
   }

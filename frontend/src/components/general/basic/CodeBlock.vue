@@ -1,10 +1,12 @@
 <!--
+
   Component:    CodeBlock
   Description:  Code block with copy button
 
   Props:
   ├── code:   The content of the code block
   └── hover:  The tip text to be shown on hover
+
 -->
 
 <template>
@@ -35,6 +37,7 @@
 <script>
 export default {
   name: 'CodeBlock',
+
   props: {
     /** The content of the code block */
     code: {required: true},
@@ -42,12 +45,14 @@ export default {
     /** The tip text to be shown on hover */
     hover: {required: false}
   },
+
   data() {
     return {
       /** Success message for the copy action */
       successMessage: false
     }
   },
+
   methods: {
     /**
      * Copy the element content

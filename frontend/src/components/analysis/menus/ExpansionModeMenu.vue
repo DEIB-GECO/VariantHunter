@@ -1,35 +1,37 @@
 <!--
-  Component:    ExpasionModeMenu
-  Description:  Component to change modes for the expanded row
+
+  Component:    ExpansionModeMenu
+  Description:  Component to change aggregation mode for the expanded row
 
   Props:
-  ├── queryResult:  Array of raw data fetched from the server
-  ├── queryParams:  Object storing the query parameters {granularity, location, date, [lineage]}
-  ├── querySupport: Object storing additional info such as total number of sequences collected per week and characterizing muts
-  ├── queryCustOpt: Object storing the custom preselection for the filtering/selection options
-  └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis.
+  └── value: Value of the aggregation mode
 
-  Events:
-  ├── askAnalysis:  Emitted whenever a next/prev button is pressed
-  └── error:        Emitted on server errors
 -->
 
 <template>
   <v-card width="90%" class="options text-left" color="transparent" flat>
+
+    <!-- Headings -->
     <div class="options-intro">
       <div class="main">Lineages breakdown</div>
       computed considering the expanded mutation in the 4 weeks and location
     </div>
-    <v-menu v-model="showOptions" content-class="rounded-xl navbar-menu" offset-y open-on-click width="250px" max-width="80vw"
-            :open-on-hover="false" close-on-content-click>
+
+    <!-- Aggregation options menu -->
+    <v-menu v-model="showOptions" content-class="rounded-xl navbar-menu" offset-y open-on-click width="250px"
+            max-width="80vw" :open-on-hover="false" close-on-content-click>
+
+      <!-- Activator: button -->
       <template v-slot:activator="{ attrs, on }">
-                  <span v-bind="attrs" v-on="on">
-                    <btn-with-tooltip bottom color="primary" outlined hover-color="warning" size="x-small"
-                                      :icon="notationOptions[notationMode].icon" text="Change notation"
-                                      :tip="showOptions?'':'Change the notation for the lineages by defining the level of aggregation'"
-                                      :click-handler="()=>showOptions=!showOptions"/>
-                  </span>
+        <span v-bind="attrs" v-on="on">
+          <btn-with-tooltip bottom color="primary" outlined hover-color="warning" size="x-small"
+                            :icon="notationOptions[notationMode].icon" text="Change notation"
+                            :tip="showOptions?'':'Change the notation for the lineages by defining the level of aggregation'"
+                            :click-handler="()=>showOptions=!showOptions"/>
+        </span>
       </template>
+
+      <!-- Actual menu with aggregation options-->
       <div @mouseleave="showOptions=false">
         <v-list color="bg_var1" rounded dense width="auto">
           <v-list-item v-for="[key,opt] in Object.entries(notationOptions)" :key="key" link dense
@@ -47,18 +49,23 @@
 </template>
 
 <script>
-import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip";
+import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip.vue";
 
 export default {
   name: "ExpansionModeMenu",
   components: {BtnWithTooltip},
-  props:{
-    value:{},
+
+  props: {
+    /** Value of the aggregation mode */
+    value: {},
   },
+
   data() {
     return {
+      /** Boolean visibility flag for the aggregation options menu */
       showOptions: false,
 
+      /** Possible aggregation options */
       notationOptions: {
         1: {
           text: 'Use simplified notation (level 1)',
@@ -80,18 +87,25 @@ export default {
       }
     }
   },
-  computed:{
-    notationMode:{
-      set(newVal){
-        this.$emit('input',Number(newVal))
+
+  computed: {
+
+    /** Current value of aggregation mode */
+    notationMode: {
+      set(newVal) {
+        this.$emit('input', Number(newVal))
       },
-      get(){
+      get() {
         return String(this.value)
       }
     },
   },
-  methods: {
 
+  methods: {
+    /**
+     * Change notation mode
+     * @param e The selected mode
+     */
     changeNotationMode(e) {
       this.notationMode = e
     }

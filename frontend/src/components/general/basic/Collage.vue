@@ -1,4 +1,5 @@
 <!--
+
   Component:    Collage
   Description:  Side by side images with zoom feature
 
@@ -13,21 +14,23 @@
 -->
 
 <template>
- <v-row>
+  <v-row>
     <v-col class='col-md-6 col-sm-12 pr-sm-auto mr-sm-auto mr-md-0 pr-md-0 ma-auto'>
-      <Picture :src='src1' :alt='alt1' :no-zoom='noZoom' :img-max-height='imgMaxHeight' />
+      <pic :src='src1' :alt='alt1' :no-zoom='noZoom' :img-max-height='imgMaxHeight'/>
     </v-col>
-   <v-col class='col-md-6 col-sm-12 pl-sm-auto ml-sm-auto ml-md-0 pl-md-0 ma-auto'>
-      <Picture :src='src2' :alt='alt2' :no-zoom='noZoom' :img-max-height='imgMaxHeight' />
+    <v-col class='col-md-6 col-sm-12 pl-sm-auto ml-sm-auto ml-md-0 pl-md-0 ma-auto'>
+      <pic :src='src2' :alt='alt2' :no-zoom='noZoom' :img-max-height='imgMaxHeight'/>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import Picture from '@/components/general/basic/Picture'
+import Pic from '@/components/general/basic/Pic'
+
 export default {
   name: 'Collage',
-  components: { Picture },
+  components: {Pic},
+
   props: {
     /** Image 1 */
     src1: {},

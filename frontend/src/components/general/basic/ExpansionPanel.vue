@@ -1,4 +1,5 @@
 <!--
+
   Component:    ExpansionPanel
   Description:  Customized expansion panel
 
@@ -36,6 +37,7 @@
 <script>
 export default {
   name: 'ExpansionPanel',
+
   props: {
     /** Flag to reserve space for two icons in the name */
     doubleIcon: Boolean

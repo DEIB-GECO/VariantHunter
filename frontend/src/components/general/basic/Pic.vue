@@ -1,5 +1,6 @@
 <!--
-  Component:    Picture
+
+  Component:    Pic
   Description:  Image with zoom feature
 
   Props:
@@ -11,18 +12,20 @@
 -->
 
 <template>
-    <v-img :src='src' :alt='alt' contain :max-height='imgMaxHeight' :class='"rounded "+(noZoom? "":"zoom-in-action")' eager
-           @click='manageImgZoom' >
+  <v-img :src='src' :alt='alt' contain :max-height='imgMaxHeight' :class='"rounded "+(noZoom? "":"zoom-in-action")'
+         eager
+         @click='manageImgZoom'>
     <!-- Dialog element for image -->
     <v-dialog v-model='showImg' transition='dialog-bottom-transition'>
-      <v-img :src='src' :alt='alt' contain eager class='rounded-xl zoom-out-action' @click='showImg=false' />
+      <v-img :src='src' :alt='alt' contain eager class='rounded-xl zoom-out-action' @click='showImg=false'/>
     </v-dialog>
-    </v-img>
+  </v-img>
 </template>
 
 <script>
 export default {
-  name: 'Picture',
+  name: 'Pic',
+
   props: {
     /** Image for the paragraph */
     src: {},
@@ -36,14 +39,16 @@ export default {
     /** If true, the image cannot be opened in a popup */
     noZoom: Boolean
   },
-  data () {
+
+  data() {
     return {
       /** Visibility flag for the img dialog */
       showImg: false
     }
   },
+
   methods: {
-    manageImgZoom () {
+    manageImgZoom() {
       if (!this.noZoom) {
         this.showImg = true
       }
@@ -55,10 +60,11 @@ export default {
 <style scoped>
 
 /** Cursor behavior */
-.zoom-out-action{
+.zoom-out-action {
   cursor: zoom-out !important;
 }
-.zoom-in-action{
+
+.zoom-in-action {
   cursor: zoom-in;
 }
 
