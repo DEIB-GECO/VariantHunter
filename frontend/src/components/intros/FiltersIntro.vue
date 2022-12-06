@@ -18,7 +18,6 @@
 
 <script>
 import FeatureIntro from "@/components/general/basic/FeatureIntro";
-import {mapMutations, mapState} from "vuex";
 
 export default {
   name: "FiltersIntro",

@@ -1,5 +1,3 @@
-import Vue from "vue";
-
 /**
  *
  *  STORE ACTIONS METHODS

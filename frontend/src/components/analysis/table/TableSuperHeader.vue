@@ -4,15 +4,15 @@
 
   Props:
   ├── showPValues:  Flag to show the p_values in the table
-  └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis. Required
+  └── withLineages: Lineages flag. True if the data refers to a lineage specific analysis
 -->
 
 <template>
   <thead class='main-headers'>
   <tr>
-    <th colspan='3' class='empty-main-header' />
-    <th colspan='1' class='empty-main-header' />
-    <th colspan='1' class='empty-main-header' />
+    <th colspan='3' class='empty-main-header'/>
+    <th colspan='1' class='empty-main-header'/>
+    <th colspan='1' class='empty-main-header'/>
     <th colspan='4'>
       Mutation diffusion in % &nbsp;&nbsp; (affected sequences)
     </th>
@@ -24,12 +24,13 @@
 <script>
 export default {
   name: 'TableSuperHeader',
+
   props: {
-    /** Lineages flag. True if the data refers to a lineage specific analysis. Required */
-    withLineages: { required: true },
+    /** Lineages flag. True if the data refers to a lineage specific analysis */
+    withLineages: {},
 
     /** Flag to show the p_values in the table */
-    showPValues: { required: true }
+    showPValues: {}
   }
 }
 </script>

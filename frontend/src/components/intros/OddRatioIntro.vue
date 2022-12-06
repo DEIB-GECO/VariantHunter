@@ -18,7 +18,6 @@
 
 <script>
 import FeatureIntro from "@/components/general/basic/FeatureIntro";
-import {mapMutations} from "vuex";
 
 export default {
   name: "OddRatioIntro",

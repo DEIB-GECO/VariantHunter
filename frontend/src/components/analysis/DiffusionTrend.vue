@@ -1,27 +1,25 @@
 <!--
-  Component:    LineChart
+
+  Component:    DiffusionTrend
   Description:  Barchart plot. Implemented using vue-plotly.
 
-  Props:
-  ├── plotTitle:  Title for the plot. Required.
-  ├── plotData:   Data for the plot. Required.
-  ├── dateLabel:  Array of data labels for the periods
-  └── weekSeq:    Total number of sequences collected per week
 -->
 
 <template>
   <section-element icon="mdi-chart-line" assign-id="diffusion-trend"
                    title="Diffusion trend"
-                   :subtitle="plotTitle"
+                   :subtitle="getCurrentPlotTitle"
                    caption="To visualize specific mutations, select the corresponding rows from the table">
+    <!-- Diffusion trend app-tour -->
     <trend-intro/>
+
     <div class='regular-plot plotly-container'>
 
-      <!-- LineChart plot -->
-      <Plotly :data='data' :layout='layout' :displaylogo='false'
+      <!-- Actual plot -->
+      <plotly :data='data' :layout='layout' :displaylogo='false'
               :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']"/>
 
-      <!-- Markers/lines Dialog -->
+      <!-- Markers/lines dialog -->
       <v-container class='plot-controls'>
         <v-layout justify-center row wrap>
           <DialogOpener :button-prefix='false' title='Chart interpretation'>
@@ -58,7 +56,9 @@
           </DialogOpener>
         </v-layout>
       </v-container>
+
     </div>
+
   </section-element>
 </template>
 
@@ -71,30 +71,19 @@ import TrendIntro from "@/components/intros/TrendIntro";
 
 export default {
   name: 'DiffusionTrend',
-  components: {
-    TrendIntro,
-    SectionElement,
-    DialogOpener,
-    Plotly
-  },
+  components: {TrendIntro, SectionElement, DialogOpener, Plotly},
+
   computed: {
-    ...mapGetters(['getCurrentPlotRows','getCurrentPlotTitle','getCurrentAnalysis']),
+    ...mapGetters(['getCurrentPlotRows', 'getCurrentPlotTitle', 'getCurrentAnalysis']),
 
-    plotData(){
-      return this.getCurrentPlotRows
-    },
-
-    plotTitle(){
-      return this.getCurrentPlotTitle
-    },
-
-    dateLabel(){
+    /** Date labels */
+    dateLabel() {
       return this.getCurrentAnalysis.query.weeks
     },
 
     /** Data processed for the plot */
     data() {
-      return this.plotData.map(element => {
+      return this.getCurrentPlotRows.map(element => {
         return {
           x: [1, 2, 3, 4],
           y: [element['f1'], element['f2'], element['f3'], element['f4']],
@@ -123,7 +112,7 @@ export default {
     /** Layout data for the plot */
     layout() {
       return {
-        height: this.plotData.length >= 20 ? 520 : 480,
+        height: this.getCurrentPlotRows.length >= 20 ? 520 : 480,
         colorway:
             [
               '#ef5378', '#5ee171', '#f3df67', '#6685f1',
@@ -132,7 +121,7 @@ export default {
               '#efc69a', '#fffac8', '#d24f32', '#aaffc3',
               '#808000', '#ffd8b1', '#575793', '#a9a9a9'
             ],
-        //title: this.plotTitle,
+        //title: this.getCurrentPlotTitle,
         xaxis: {
           tickmode: 'array',
           tickvals: [1, 2, 3, 4],
@@ -180,6 +169,7 @@ export default {
       }
     }
   },
+
   methods: {
     /**
      * Compute enriched labels for the x-axis containing period and total period samples
@@ -189,7 +179,7 @@ export default {
       const labels = []
       for (let i = 1; i <= 4; i++) {
         labels.push(
-            '<br>' + this.dateLabel['w' + i] + '<br>Tot. seq.: ' + this.getCurrentAnalysis.totSeq['w' +i]
+            '<br>' + this.dateLabel['w' + i] + '<br>Tot. seq.: ' + this.getCurrentAnalysis.totSeq['w' + i]
         )
       }
       return labels

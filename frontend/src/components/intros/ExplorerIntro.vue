@@ -17,7 +17,7 @@
 
 <script>
 import FeatureIntro from "@/components/general/basic/FeatureIntro";
-import {mapMutations, mapState} from "vuex";
+import {mapMutations} from "vuex";
 
 export default {
   name: "ExplorerIntro",

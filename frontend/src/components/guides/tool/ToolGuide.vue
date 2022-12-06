@@ -87,7 +87,6 @@
 import Paragraph from '@/components/general/basic/Paragraph'
 import LinIndGuide from '@/components/guides/tool/LinIndGuide'
 import LinDepGuide from '@/components/guides/tool/LinDepGuide'
-import { mapState } from 'vuex'
 
 export default {
   name: 'ToolGuide',

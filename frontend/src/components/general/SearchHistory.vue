@@ -142,7 +142,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
+import {mapGetters, mapMutations, mapState} from "vuex";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 import ChipMenu from "@/components/general/basic/ChipMenu";
 import KeyboardShortcuts from "@/components/controls/KeyboardShortcuts";

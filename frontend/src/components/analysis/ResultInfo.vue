@@ -129,7 +129,7 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations, mapState} from "vuex";
+import {mapGetters, mapMutations} from "vuex";
 import {computeDateLabel} from "@/store/utils/utils";
 import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip";
 import TagEditor from "@/components/controls/TagEditor";

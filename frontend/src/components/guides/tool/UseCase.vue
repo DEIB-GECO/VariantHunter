@@ -54,7 +54,6 @@
 
 <script>
 import ExpansionPanel from '@/components/general/basic/ExpansionPanel'
-import { mapState } from 'vuex'
 export default {
   name: 'UseCase',
   components: { ExpansionPanel },

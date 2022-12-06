@@ -4,10 +4,13 @@
                 It is equipped with a show/hide section body control.
 
   Props:
-  ├── icon:       Icon name for the title. MDI icon are used.
-  ├── title:      Title for the section.
+  ├── icon:       Icon name for the title
+  ├── title:      Title for the section
+  ├── subtitle:   Subtitle for the section
+  ├── caption:    Additional text to be displayed under the subtitle
   ├── tabs:       Array of labels for the tabs of the section
-  └── collapsed:  Collapse the section by default
+  ├── collapsed:  Collapse the section by default
+  └── assignId:   HTML id to be assigned to the section
 
   Slots:
   └── default:  The content of the section body
@@ -21,7 +24,7 @@
   <v-row v-bind:id="assignId">
     <v-col>
 
-      <!-- Section Heading -->
+      <!-- Section headings -->
       <v-row>
         <v-col >
           <div :class="'text-h5 compact-h5 font-weight-black primary--text mt-8  spaced-5 mb-'+(tabs.length>0?'4':'2')">
@@ -35,7 +38,7 @@
             </v-fade-transition>
           </div>
 
-          <!-- Section Options -->
+          <!-- Section options -->
           <div :class="'options-container '+((tabs.length>0 && showSectionBody)?'mt-6':'')">
             <div class='section-options'>
 
@@ -57,12 +60,12 @@
         </v-col>
       </v-row>
 
-      <!-- Section Body Collapsed -->
+      <!-- Section body collapsed -->
       <v-row v-if='!showSectionBody' class='section-container' justify-center>
         <div class='collapsed-element'/>
       </v-row>
 
-      <!-- Section Body Expanded -->
+      <!-- Section body expanded -->
       <v-expand-transition>
         <v-row v-if='showSectionBody' class='section-container' justify-center>
           <slot></slot>
@@ -76,15 +79,18 @@
 <script>
 export default {
   name: 'SectionElement',
+
   props: {
     /** Title for the section */
     title: {required: true},
 
+    /** Subtitle for the section */
     subtitle: {},
 
+    /** Additional text to be displayed under the subtitle */
     caption: {},
 
-    /** Icon name for the title. MDI icon are used. */
+    /** Icon name for the title */
     icon: {required: true},
 
     /** Array of labels for the tabs of the section */
@@ -97,8 +103,10 @@ export default {
     /** Collapse the section by default */
     collapsed: Boolean,
 
-    assignId:{ required: true}
+    /** HTML id to be assigned to the section */
+    assignId:{}
   },
+
   data() {
     return {
       /** Flag for the visibility of the section body */

@@ -1,5 +1,14 @@
+<!--
+
+  Component:    EmptyTable
+  Description:  Contents of an empty results table. View includes options to remove current filters
+
+-->
+
 <template>
   <div class="my-8">
+
+    <!-- 'No mutation' label -->
     <v-list class="mx-auto text-center" width="fit-content" color="transparent">
       <v-list-item>
         <v-list-item-icon>
@@ -8,14 +17,21 @@
         <span class="text-body-3 error--text">No mutations matching the selected filters.</span>
       </v-list-item>
     </v-list>
+
+    <!-- Option to disable tag-based filters, if active -->
     <div v-if="!useLocalOpt">
+      <!-- Switch scope -->
       <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="warning" color="tertiary"
-                        icon="mdi-filter-off" text="Switch to local filtering scope" bottom :click-handler="disableTagFilters"
+                        icon="mdi-filter-off" text="Switch to local filtering scope" bottom
+                        :click-handler="disableTagFilters"
                         tip="Use local filters for this analysis instead of the tag-based ones"/>
+      <!-- Clear tag-based filter option -->
       <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="error" color="tertiary"
                         icon="mdi-filter-remove" text="Clear filters" bottom :click-handler="()=>clearFilters(false)"
                         tip="Clear the filtering options for all the analysis belonging to this tag group"/>
     </div>
+
+    <!-- Option to clear current local filters, if current scope il local -->
     <div v-else>
       <btn-with-tooltip size="x-small" content-class="my-1  mx-auto d-block" hover-color="error" color="tertiary"
                         icon="mdi-filter-remove" text="Clear filters" bottom :click-handler="()=>clearFilters(true)"
@@ -31,27 +47,29 @@ import {mapGetters, mapMutations} from "vuex";
 export default {
   name: "EmptyTable",
   components: {BtnWithTooltip},
-  computed:{
+
+  computed: {
     ...mapGetters(['useLocalOpt']),
   },
-  methods:{
+
+  methods: {
     ...mapMutations(['setOpt']),
 
     /**
      * Clear filters of a given scope
      * @param local  True iff the filtering scope to be cleared is the local one.
      */
-    clearFilters(local){
-      this.setOpt({local,opt:'protein',value:null})
-      this.setOpt({local,opt:'muts',value:[]})
-      this.setOpt({local,opt:'rowKeys',value:[]})
+    clearFilters(local) {
+      this.setOpt({local, opt: 'protein', value: null})
+      this.setOpt({local, opt: 'muts', value: []})
+      this.setOpt({local, opt: 'rowKeys', value: []})
     },
 
     /**
      * Change the filtering scope of the current analysis from tag-based to local
      */
-    disableTagFilters(){
-      this.setOpt({local:true,opt:'useLocalOpt',value:true})
+    disableTagFilters() {
+      this.setOpt({local: true, opt: 'useLocalOpt', value: true})
     }
   }
 }

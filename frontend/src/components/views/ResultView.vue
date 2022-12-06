@@ -87,7 +87,6 @@ import DiffusionOddRatio from "@/components/analysis/DiffusionOddRatio";
 import NoDataAlert from "@/components/general/NoDataAlert";
 import ResultInfo from "@/components/analysis/ResultInfo";
 import ResultFilters from "@/components/analysis/ResultFilters";
-import Vue from "vue";
 import ResultIntro from "@/components/intros/ResultIntro";
 import SidebarIntro from "../intros/SidebarIntro";
 

@@ -1,23 +1,21 @@
 <!--
   Component:    TableControls
   Description:  Component to add controls to the header of a v-table
-
-  Props:
-  ├── downloadLoading:  Download flag: true if a file download is in progress:
-  └── showPValues:      Flag to show the p_values in the table
+                Controls includes options to download data, show p-values and show table interpretation
 
   Events:
-  ├── showPValues:  Emitted whenever a show/hide p-values button is pressed
-  ├── downloadData: Emitted whenever download data button is pressed
-  └── downloadAll:  Emitted whenever download all button is pressed
+  └── showPValues:  Emitted on show p-values preference change together with the new value
+
 -->
 
 <template>
   <v-container class='table-controls'>
     <v-layout justify-center row wrap>
 
-      <!---- Show/hide table interpretation button ---->
-      <DialogOpener :button-prefix='false' title="<span class='d-sm-none'>Info</span><span class='hidden-xs-only'><span class='hidden-sm-and-down'>Table</span> interpretation</span>" color="primary">
+      <!---- Button to show/hide table interpretation ---->
+      <dialog-opener :button-prefix='false' color="primary"
+                     title="<span class='d-sm-none'>Info</span><span class='hidden-xs-only'><span class='hidden-sm-and-down'>Table</span> interpretation</span>">
+        <!-- Table interpretation info -->
         <p>The mutation table depicts the trend of all and only the <b>mutations detected in
           the last week of the considered analysis period</b>. Only mutations affecting at least 0.5% of
           the sequences collected in the week are shown.</p>
@@ -75,9 +73,9 @@
             </div>
           </li>
         </ul>
-      </DialogOpener>
+      </dialog-opener>
 
-      <!---- Show/hide p-values info button ---->
+      <!---- Button to show/hide p-values ---->
       <v-flex justify-center class='d-flex pa-1'>
         <v-btn v-if='!showPValues' outlined depressed rounded small color='primary' @click='showPValues=true'>
           <v-icon left>mdi-plus-circle-outline</v-icon>
@@ -89,9 +87,9 @@
         </v-btn>
       </v-flex>
 
-      <!---- Download data button ---->
+      <!---- Button to download data ---->
       <v-flex justify-center class='d-flex pa-1'>
-       <download-data control-type="button"/>
+        <download-data control-type="button"/>
       </v-flex>
 
     </v-layout>
@@ -100,19 +98,21 @@
 
 <script>
 import DialogOpener from '@/components/general/basic/DialogOpener'
-import {mapGetters} from "vuex";
 import DownloadData from "@/components/controls/DownloadData";
 
 export default {
   name: 'TableControls',
   components: {DownloadData, DialogOpener},
+
   data() {
     return {
-      /** Flag to show the p_values in the table */
+      /** Boolean visibility flag set to true if p_values are to be shown */
       showPValues: false,
     }
   },
+
   watch: {
+    /** On button press emit preference on p-values' visibility */
     showPValues(newVal) {
       this.$emit("showPValues", newVal)
     }

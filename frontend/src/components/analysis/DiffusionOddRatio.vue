@@ -1,31 +1,29 @@
 <!--
-  Component:    OddRatioChart
+
+  Component:    DiffusionOddRatio
   Description:  Plot of the odd ratio for the diffusion data. Implemented using vue-plotly.
 
-  Props:
-  ├── plotTitle:   Title for the plot. Required.
-  ├── plotData:    Data for the plot. Required.
-  ├── dateLabel:   Array of data labels for the periods
-  └── type:        Type of odd ratio to be displayed.
-                   0: week-by-week; 1: week-to-first-week; 2: all
 -->
 
 <template>
   <section-element icon='mdi-align-vertical-bottom' assign-id="odd-ratio"
                    title='Diffusion odd ratio'
-                   :subtitle="plotTitle"
+                   :subtitle="getCurrentPlotTitle"
                    caption="To visualize specific mutations, select the corresponding rows from the table"
-                   collapsed :tabs='["Week-by-week","Week-to-first-week","All"]' @tabChange='(selected) => type=selected'>
+                   collapsed :tabs='["Week-by-week","Week-to-first-week","All"]'
+                   @tabChange='(selected) => type=selected'>
+    <!-- Odd ratio app-tour -->
     <odd-ratio-intro/>
+
     <div class='regular-plot plotly-container'>
 
-        <!-- SUBSEQUENT WEEKS ODD RATIO -->
-        <Plotly v-if='type!==1' :data='dataSubsWeeks' :layout='layoutSubsWeeks' :displaylogo='false'
-                :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']"/>
+      <!-- Week-by-week odd ratio -->
+      <plotly v-if='type!==1' :data='dataSubsWeeks' :layout='layoutSubsWeeks' :displaylogo='false'
+              :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']"/>
 
-        <!-- WEEKS TO FIRST ODD RATIO -->
-        <Plotly v-if='type>=1' :data='dataFirstWeekRef' :layout='layoutFirstWeekRef' :displaylogo='false'
-                :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']"/>
+      <!-- Week-to-first week odd ratio -->
+      <plotly v-if='type>=1' :data='dataFirstWeekRef' :layout='layoutFirstWeekRef' :displaylogo='false'
+              :modeBarButtonsToRemove="['lasso2d', 'select2d', 'toggleSpikelines']"/>
 
     </div>
   </section-element>
@@ -39,45 +37,36 @@ import OddRatioIntro from "../intros/OddRatioIntro";
 
 export default {
   name: 'DiffusionOddRatio',
-  components: {
-    OddRatioIntro,
-    SectionElement,
-    Plotly
-  },
-  data(){
+  components: {OddRatioIntro, SectionElement, Plotly},
+
+  data() {
     return {
       /**
-     * Type of odd ratio to be displayed.
-     * 0: week-by-week; 1: week-to-first-week; 2: all
-     */
-    type: 0,
+       * Type of odd ratio to be displayed.
+       * 0: week-by-week; 1: week-to-first-week; 2: all
+       */
+      type: 0,
     }
   },
+
   computed: {
-    ...mapGetters(['getCurrentPlotRows','getCurrentPlotTitle','getCurrentAnalysis']),
+    ...mapGetters(['getCurrentPlotRows', 'getCurrentPlotTitle', 'getCurrentAnalysis']),
 
-    plotData(){
-      return this.getCurrentPlotRows
-    },
-
-    plotTitle(){
-      return this.getCurrentPlotTitle
-    },
-
-    dateLabel(){
+    /** Date labels */
+    dateLabel() {
       return this.getCurrentAnalysis.query.weeks
     },
 
     /** Data for the week-by-week odd ratio plot */
     dataSubsWeeks() {
-      return this.plotData.map(el => {
+      return this.getCurrentPlotRows.map(el => {
         return this.computeData(el, false)
       })
     },
 
     /** Data for the week-to-first-week odd ratio plot */
     dataFirstWeekRef() {
-      return this.plotData.map(el => {
+      return this.getCurrentPlotRows.map(el => {
         return this.computeData(el, true)
       })
     },
@@ -92,8 +81,8 @@ export default {
       return this.computeLayout(true)
     }
   },
-  methods: {
 
+  methods: {
     /**
      * Compute the data for the odd ratio plots given a mutation
      * @param mut                 The mutation to be considered
@@ -189,7 +178,7 @@ export default {
      */
     computeLayout(referToFirstWeek) {
       return {
-        title: this.type===2?(referToFirstWeek ? '<br>Odd ratio week-to-first-week' : '<br>Odd ratio week-by-week'):'',
+        title: this.type === 2 ? (referToFirstWeek ? '<br>Odd ratio week-to-first-week' : '<br>Odd ratio week-by-week') : '',
 
         xaxis: {
           tickmode: 'array',
@@ -233,7 +222,7 @@ export default {
         bargroupgap: 0.1,
         hovermode: 'closest',
 
-        height: this.plotData.length >= 20 ? 430 : 390,  // plot height
+        height: this.getCurrentPlotRows.length >= 20 ? 430 : 390,  // plot height
         autosize: true,
         margin: {
           b: this.type === 2 && referToFirstWeek ? 50 : 40,

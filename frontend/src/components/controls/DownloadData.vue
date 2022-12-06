@@ -21,7 +21,7 @@
 
 <script>
 import {getFileName, json2csv} from "@/utils/parserService";
-import {mapGetters, mapState} from "vuex";
+import {mapGetters} from "vuex";
 import {sortItems} from "@/utils/sorterService";
 
 export default {

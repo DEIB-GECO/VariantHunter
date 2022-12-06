@@ -1,21 +1,21 @@
 <!--
-  Component:    HeatMap
+
+  Component:    DiffusionHeatMap
   Description:  HeatMap plot. Implemented using vue-plotly.
 
-  Props:
-  ├── plotTitle:  Title for the plot. Required.
-  ├── plotData:   Data for the plot. Required.
-  └── dateLabel:  Array of data labels for the periods
 -->
 
 <template>
   <section-element icon='mdi-chart-gantt' assign-id="diffusion-heatmap"
                    title="Diffusion heatmap"
-                   :subtitle="plotTitle"
+                   :subtitle="getCurrentPlotTitle"
                    caption="To visualize specific mutations, select the corresponding rows from the table">
+    <!-- Heatmap app-tour -->
     <heatmap-intro/>
+
+    <!-- Actual heatmap -->
     <div class="regular-plot" style="width: 100%;">
-      <Plotly :data='data' :layout='layout' :displaylogo='false'/>
+      <plotly :data='data' :layout='layout' :displaylogo='false'/>
     </div>
   </section-element>
 </template>
@@ -28,23 +28,12 @@ import HeatmapIntro from "@/components/intros/HeatmapIntro";
 
 export default {
   name: 'DiffusionHeatmap',
-  components: {
-    HeatmapIntro,
-    SectionElement,
-    Plotly
-  },
-  props: {},
+  components: {HeatmapIntro, SectionElement, Plotly},
+
   computed: {
     ...mapGetters(['getCurrentPlotRows', 'getCurrentPlotTitle', 'getCurrentAnalysis']),
 
-    plotData() {
-      return this.getCurrentPlotRows
-    },
-
-    plotTitle() {
-      return this.getCurrentPlotTitle
-    },
-
+    /** Date labels */
     dateLabel() {
       return this.getCurrentAnalysis.query.weeks
     },
@@ -56,21 +45,21 @@ export default {
 
     /** Values for the y-axis of the heatmap: protein_mut */
     y() {
-      return this.plotData.map(
+      return this.getCurrentPlotRows.map(
           element => element['protein'] + '_' + element['mut']
       )
     },
 
     /** Values for the z-axis of the heatmap: mutation frequencies in % */
     z() {
-      return this.plotData.map(element => [
+      return this.getCurrentPlotRows.map(element => [
         element['f1'], element['f2'], element['f3'], element['f4']
       ])
     },
 
     /** Absolute value for the z-axis of the heatmap */
     absValue() {
-      return this.plotData.map(element => [
+      return this.getCurrentPlotRows.map(element => [
         element['w1'], element['w2'], element['w3'], element['w4']
       ])
     },
@@ -96,8 +85,8 @@ export default {
     /** Layout data for the plot */
     layout() {
       return {
-        height: this.plotData.length * 25 + 250,
-        // title: this.plotTitle,
+        height: this.getCurrentPlotRows.length * 25 + 250,
+        // title: this.getCurrentPlotTitle,
         annotations: this.annotations,
         yaxis: {
           tickfont: {size: 14},

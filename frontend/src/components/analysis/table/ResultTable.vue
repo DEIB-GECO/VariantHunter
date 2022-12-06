@@ -1,8 +1,20 @@
+<!--
+
+  Component:    ResultTable
+  Description:  Main table of mutations shown in the results view
+
+  Props:
+  └── withLineages: Boolean flag set to true iff the current analysis id lineage-specific
+
+-->
+
 <template>
   <section-element icon='mdi-table-multiple' title="Mutations table" assign-id="result-table">
     <v-col cols="12" class="pa-0 table-container">
+      <!-- Table app-tour step -->
       <table-intro @showPValues="e=>showPValues=e"/>
 
+      <!-- Mutation table -->
       <v-data-table :headers='tableHeaders' :custom-sort="customSort"
                     :items='getCurrentFilteredRows' :sort-by.sync='sortingIndexes' :sort-desc.sync='isDescSorting'
                     :footer-props='footerProps' :loading='isLoadingDetails' single-expand class='table-element'
@@ -10,11 +22,10 @@
                     :expanded.sync='expandedRows' multi-sort show-select mobile-breakpoint='0'
                     @item-expanded='loadLineageDetails' show-expand>
 
-        <!---- TABLE CONTROLS --------------------------------------------->
+        <!---- TABLE HEADER CONTROLS -------------------------------------->
         <template v-slot:top>
           <table-controls @showPValues='(flag) => showPValues=flag'/>
         </template>
-
 
         <!---- TABLE SUPER HEADERS ---------------------------------------->
         <template v-slot:header>
@@ -25,11 +36,13 @@
         <template v-slot:header.data-table-select>
           <v-tooltip :disabled="showSelectOptions" bottom nudge-bottom="-3" allow-overflow z-index="10"
                      max-width="400px" close-delay="0">
+            <!-- Control with hint -->
             <template v-slot:activator="{ on }">
-              <div class="select-all-opt" v-on="on"  >
-                <v-simple-checkbox  :value="selectedRows.length>0" ref="selectToggle"  @click.capture="manageSelectAll"
+              <div class="select-all-opt" v-on="on">
+                <v-simple-checkbox :value="selectedRows.length>0" ref="selectToggle" @click.capture="manageSelectAll"
                                    :indeterminate="selectedRows.length>0 && !hasSelectedAll"/>
               </div>
+              <!-- Selection options menu-->
               <v-menu v-model="showSelectOptions" :attach="$refs.selectToggle" offset-y min-width="fit-content">
                 <v-list color="bg_var1" rounded dense width="auto">
                   <v-list-item link dense @click="selectAllRows">
@@ -47,6 +60,7 @@
                 </v-list>
               </v-menu>
             </template>
+            <!-- Dynamic hint based on current selection -->
             <span v-if="hasSelectedAll">Deselect all mutations</span>
             <span v-else-if="selectedRows.length===0">
               Select all {{ getCurrentFilteredRows.length }} mutations <br/>Previously selected rows will be cleared
@@ -55,7 +69,6 @@
               Click to see select/deselect options
             </span>
           </v-tooltip>
-
         </template>
 
         <!---- TABLE EXPAND/INFO PANEL CONTROLS --------------------------->
@@ -63,7 +76,7 @@
           <row-options :expandable="!withLineages" :idx="index" :item="item" :isExpanded="isExpanded" :expand="expand"/>
         </template>
 
-        <!---- TABLE ROW SELECT CONTROL --------------------------->
+        <!---- TABLE ROW SELECT CONTROL ----------------------------------->
         <template v-slot:item.data-table-select="{item}">
           <v-tooltip bottom content-class="rounded-xl tooltip" allow-overflow z-index="10" max-width="400px">
             <template v-slot:activator='{ on, attrs }'>
@@ -132,15 +145,17 @@
           <span class="text-body-4">{{ '(' + item.w4 + ')' }}</span>
         </template>
 
-        <!---- EXPANDED TABLE ELEMENT ------------------------------------>
+        <!---- EXPANDED TABLE ELEMENT -------------------------------------->
         <template v-if='!withLineages && !isLoadingDetails && !error' v-slot:expanded-item='{ item }'>
+          <!-- Header and lineage aggregation option -->
           <td :colspan='4' class='expanded-item-title'>
             <expansion-mode-menu v-model="notationMode"/>
             <div class="row-name">Lineages</div>
           </td>
+          <!-- Mutation decomposition over lineages data -->
           <td class='expanded-td'>
             <v-simple-table>
-              <tbody>
+              <tbody><!-- Lineage name column -->
               <tr v-for='(lineage, lineage_index) in formatBreakdown' v-bind:key='lineage_index'>
                 <td>{{ lineage.name }}</td>
               </tr>
@@ -149,7 +164,7 @@
           </td>
           <td class='expanded-td' v-for='week in [1, 2, 3, 4]' v-bind:key='week'>
             <v-simple-table>
-              <tbody>
+              <tbody><!-- Lineage breakdown column -->
               <tr v-for='(lineage, lineage_index) in formatBreakdown' v-bind:key='lineage_index'>
                 <td>
                   <span>{{ (lineage['f' + week] === 0 ? 0 : lineage['f' + week].toPrecision(3)) + '% ' }}</span>
@@ -160,6 +175,7 @@
             </v-simple-table>
           </td>
         </template>
+        <!-- Loading/error table expansion-->
         <template v-else-if="isLoadingDetails || error" v-slot:expanded-item>
           <td colspan="9" class="py-5 text-center secondary--text font-weight-medium">
             <loading-sticker :standalone="true" :is-loading="error===undefined" no-overlay :error="error"
@@ -175,13 +191,13 @@
           </td>
         </template>
 
-        <!-- GO TO COVSPECTURM  ----------------------------------------->
+        <!-- GO TO COVSPECTRUM  ----------------------------------------->
         <template v-slot:footer.prepend>
           <go-to-cov-spectrum/>
         </template>
 
         <template v-slot:no-data>
-          <empty-table/>
+          <empty-table/> <!-- Empty table view -->
         </template>
 
       </v-data-table>
@@ -206,38 +222,37 @@ import TableIntro from "@/components/intros/TableIntro";
 export default {
   name: "ResultTable",
   components: {
-    TableIntro,
-    EmptyTable,
-    RowOptions,
-    LoadingSticker, GoToCovSpectrum, ExpansionModeMenu, TableSuperHeader, TableControls, SectionElement
+    TableIntro, EmptyTable, RowOptions, LoadingSticker, GoToCovSpectrum, ExpansionModeMenu,
+    TableSuperHeader, TableControls, SectionElement
   },
+
   props: {
+    /** Boolean flag set to true iff the current analysis id lineage-specific */
     withLineages: Boolean,
   },
+
   data() {
     return {
-      /** Array of keys of expanded rows (relevant for li only )*/
+      /** Array of keys of expanded rows (relevant for li only). Includes full row data. */
       expandedRows: [],
 
+      /** Flag to show the p_values in the table */
+      showPValues: false,
+
+      /** Boolean flag to show the table selection options menu */
       showSelectOptions: false,
 
       /** Notation mode of the breakdown view.  0=full notation; 1,2= start notation (level)  */
       notationMode: 0,
-
-      /** Default sorting options */
-      defaultSorting: {indexes: ['slope'], isDescSorting: [true]},
 
       /** Footer options for the data table */
       footerProps: {
         'items-per-page-options': [-1, 10, 20, 50, 100, 150, 200, 500]
       },
 
-      /** Flag to show the p_values in the table */
-      showPValues: false,
-
-      /** Loading flag for the table */
+      /** Boolean loading flag for the table and expansion */
       isLoadingDetails: false,
-
+      /** Error data for the table and expansion. Undefined if no error. */
       error: undefined,
     }
   },
@@ -245,23 +260,24 @@ export default {
     ...mapGetters(['getCurrentAnalysis', 'getCurrentOpt', 'useLocalOpt',
       'getCurrentFilteredRows', 'getCurrentSelectedRows']),
 
-    /** query: query value of the current analysis */
+    /** Query value of the current analysis */
     query() {
       return this.getCurrentAnalysis.query
     },
 
-    /** characterizingMuts: characterizing muts for the current analysis */
+    /** List of characterizing muts for the current analysis. Null if lineage-independent */
     characterizingMuts() {
       return this.withLineages ? this.getCurrentAnalysis.characterizingMuts : null
     },
 
+    /** Boolean flag set to true if at least all the rows of the current table have been selected */
     hasSelectedAll() {
       return this.selectedRows.length >= this.getCurrentFilteredRows.length &&
           this.getCurrentFilteredRows.every(({item_key}) => this.selectedRows.includes(item_key))
     },
 
 
-    /** Array of selected rows */
+    /** Array of selected row keys */
     selectedRows: {
       set(newVal) {
         this.setOpt({local: this.useLocalOpt, opt: 'rowKeys', value: newVal})
@@ -271,7 +287,7 @@ export default {
       }
     },
 
-    /** Array of columns selected for sorting data */
+    /** Array containing names of the columns selected for sorting data */
     sortingIndexes: {
       set(newVal) {
         this.setOpt({local: this.useLocalOpt, opt: 'sortingIndexes', value: newVal})
@@ -281,7 +297,7 @@ export default {
       }
     },
 
-    /** Array defining asc(true)/desc(false) order for each column selected for sorting in sortingIndexes */
+    /** Flag array defining asc(true)/desc(false) order for each column selected for sorting in sortingIndexes */
     isDescSorting: {
       set(newVal) {
         this.setOpt({local: this.useLocalOpt, opt: 'isDescSorting', value: newVal})
@@ -316,7 +332,7 @@ export default {
     },
 
     /**
-     * Reformat breakdown data based on the notation mode selected. Either using full notation or star notation.
+     * Reformat breakdown data based on the notation mode selected (either full notation or star notation)
      */
     formatBreakdown() {
       if (this.expandedRows.length === 0) return []
@@ -329,38 +345,38 @@ export default {
   methods: {
     ...mapMutations(['setOpt']),
 
+    /** Manager for the table row selection */
     manageRowSelect(rowKey) {
       if (this.selectedRows.includes(rowKey)) {
-        // deselect this row only  (keep all the others)
+        // deselect this row only since already selected  (keep all the others)
         this.selectedRows = this.selectedRows.filter(rk => rk !== rowKey)
       } else {
-        //select this row only (keep all the others)
+        //select this row only since not selected (keep all the others)
         this.selectedRows = [...this.selectedRows, rowKey]
       }
     },
 
 
-    /**
-     * Clear all the selected rows on deselect-all table event
-     */
+    /** Manager for the table select-all option */
     manageSelectAll() {
       const isIndeterminate = this.selectedRows.length > 0 && !this.hasSelectedAll
       if (isIndeterminate) {
-        // Two viable options. Ask.
-        this.showSelectOptions = true
+        this.showSelectOptions = true // two viable options here: ask the user
       } else if (this.hasSelectedAll) {
-        this.deselectAllRows()
+        this.deselectAllRows()  // deselect all rows
       } else {
-        this.selectAllRows()
+        this.selectAllRows() // select all rows
       }
     },
 
+    /** Clear selected rows for the current analysis */
     deselectAllRows() {
-      this.selectedRows = []  // clear selected rows
+      this.selectedRows = []
     },
 
+    /** Select all and only the filtered rows (in all the pages) of the current analysis */
     selectAllRows() {
-      this.selectedRows = this.getCurrentFilteredRows.map(({item_key}) => item_key) // select all and only these mutations
+      this.selectedRows = this.getCurrentFilteredRows.map(({item_key}) => item_key)
     },
 
     /** Custom sorter mapping */
@@ -370,24 +386,24 @@ export default {
 
     /**
      * Fetch lineages data when a row of the table is expanded. Lineage independent search only.
-     * @param item
+     * @param e  Expansion event
      */
-    loadLineageDetails(item) {
+    loadLineageDetails(e) {
       // Catch row expansion only
-      if (item.value) {
+      if (e.value) {
         this.error = undefined
         this.isLoadingDetails = true
         const url = `/lineage_independent/getLineagesStatistics`
         const queryParams = {
           location: this.query.location[this.query.granularity].id,
           date: this.query.endDate,
-          prot: item.item.protein,
-          mut: item.item.mut,
+          prot: e.item.protein,
+          mut: e.item.mut,
         }
 
         this.$axios
             .get(url, {params: queryParams})
-            .then(({data}) => item.item.lineages = data)
+            .then(({data}) => e.item.lineages = data)
             .catch((e) => this.error = e)
             .finally(() => this.isLoadingDetails = false)
       }
@@ -395,8 +411,8 @@ export default {
 
     /**
      * Determines whether a mutation is characterizing the lineage or not
-     * @param item   The item to be considered
-     * @returns {boolean}   True iff the mutation is characterizing the lineage
+     * @param item  The item to be considered
+     * @returns {boolean} True iff the mutation is characterizing the lineage
      */
     isCharacterizingMut(item) {
       return this.getCurrentAnalysis.characterizingMuts.includes(item.item_key)
@@ -416,7 +432,6 @@ export default {
 .table-element {
   width: 100% !important;
 }
-
 
 
 /* Expanded element style */

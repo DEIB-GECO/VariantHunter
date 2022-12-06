@@ -145,8 +145,8 @@ export const mutations = {
       Vue.delete(state.tags,tagName)
     },
 
-    removeTag(state, tagName) {
-        //console.log("# Remove tag " + tagName)
+    removeTag(state) {
+        //console.log("# Remove tag ")
         state.analyses[state.currentAnalysisId].tag = null
         state.localOpt[state.currentAnalysisId].useLocalOpt = true
     },

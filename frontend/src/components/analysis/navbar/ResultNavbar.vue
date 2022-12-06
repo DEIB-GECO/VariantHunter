@@ -1,5 +1,20 @@
+<!--
+
+  Component:    ResultNavbar
+  Description:  Results section toolbar containing options to adjust analysis parameters
+                and other options
+
+  Events:
+  ├── shiftPeriod:  Emitted on period shift together with the delay
+  ├── shiftType:    Emitted on type switch from ls to li
+  └── shiftArea:    Emitted on location switch together with the new location data (id and text)
+
+-->
+
 <template>
   <v-app-bar dense hide-on-scroll scroll-threshold="50" app flat fixed class="result-bar primary--text" color="bg_var1">
+
+    <!-- Current analysis parameters -->
     <v-toolbar-title class="text-body-1 font-weight-black compact-text-2 primary--text">
       {{
         query.location[query.granularity].text + " / " +
@@ -9,21 +24,30 @@
     </v-toolbar-title>
 
     <v-spacer/>
+
+    <!-- Week slider option -->
     <result-navbar-week-slider @shiftPeriod="d => $emit('shiftPeriod',d)"/>
 
+    <!-- Location switcher option -->
     <result-navbar-location-switcher @shiftArea="a => $emit('shiftArea',a)"/>
 
-    <icon-with-tooltip v-if="query.lineage" hover-color="warning" icon="mdi-source-branch-minus" tip="Switch to lineage independent analysis"  bottom
+    <!-- Analysis type switcher option -->
+    <icon-with-tooltip v-if="query.lineage" hover-color="warning" icon="mdi-source-branch-minus"
+                       tip="Switch to lineage independent analysis" bottom
                        :click-handler="()=>$emit('shiftType')" color="primary"/>
 
+    <!-- Mark as favourite option -->
     <icon-with-tooltip v-if="isStarred" color="#C2AD07" hover-color="primary" icon="mdi-star"
                        tip="Mark as not relevant" bottom
-                       :click-handler="()=>setStarredAnalysis({id:currentAnalysisId,starred:false})" />
+                       :click-handler="()=>setStarredAnalysis({id:currentAnalysisId,starred:false})"/>
     <icon-with-tooltip v-else hover-color="#C2AD07" color="primary" icon="mdi-star-outline" tip="Mark as relevant"
                        bottom :click-handler="()=>setStarredAnalysis({id:currentAnalysisId,starred:true})"/>
 
+    <!-- Remove analysis option -->
     <icon-with-tooltip hover-color="error" icon="mdi-trash-can-outline" tip="Delete analysis" bottom
                        :click-handler="()=>removeAnalysis(currentAnalysisId)" color="primary"/>
+
+    <!-- Other result navbar options under 3 dots -->
     <result-navbar-menu/>
 
   </v-app-bar>
@@ -39,17 +63,22 @@ import ResultNavbarLocationSwitcher from "@/components/analysis/navbar/ResultNav
 export default {
   name: "ResultNavbar",
   components: {ResultNavbarLocationSwitcher, ResultNavbarWeekSlider, ResultNavbarMenu, IconWithTooltip},
+
   computed: {
     ...mapState(['currentAnalysisId']),
     ...mapGetters(['getCurrentAnalysis']),
 
+    /** Flag set to true if current analysis is in favorites */
     isStarred() {
       return this.getCurrentAnalysis.starred
     },
-    query(){
+
+    /** Shortcut to query params */
+    query() {
       return this.getCurrentAnalysis.query
     },
   },
+
   methods: {
     ...mapMutations(['removeAnalysis', 'setStarredAnalysis'])
   }
