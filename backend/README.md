@@ -1,4 +1,4 @@
-<p align="center"><img src='https://i.postimg.cc/fLjL5q7K/Schermata-2022-06-12-alle-21-52-50.png' height=180px/></p>
+<p align="center"><img src='https://user-images.githubusercontent.com/50906588/206149285-a241e24f-437a-4825-9276-b573eec606dc.png' height=180px/></p>
 
 ## How to run the backend
 There are several ways to run VariantHunter
