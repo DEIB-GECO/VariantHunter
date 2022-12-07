@@ -27,11 +27,23 @@
                         :hide-details="selectedLocation!==null" attach solo
                         persistent-placeholder clearable clear-icon="mdi-backspace-outline"
                         :class="(!selectedLocation)?'warning--text cursor-forbidden':''">
+
+          <!-- Hint about lineages list -->
           <template v-slot:prepend-item>
             <slot name='prepend-item'>
               <div class='hint'>{{ hint }}</div>
             </slot>
           </template>
+
+          <!-- Item element -->
+          <template v-slot:item="{item}">
+            <span class="font-weight-bold">{{ item }}</span>
+            <v-spacer/>
+            <v-chip v-if="possibleLineagesInfo" small class="hidden-xs-only">
+              {{ possibleLineagesInfo[item] + ' sample' + (possibleLineagesInfo[item] > 1 ? 's' : '') }}
+            </v-chip>
+          </template>
+
         </v-autocomplete>
       </v-col>
     </v-row>
@@ -62,7 +74,11 @@ export default {
 
   computed: {
     ...mapState(['selectedLocation', 'selectedDate']),
-    ...mapStateTwoWay({selectedLineage: 'setLineage', possibleLineages: 'setLineages'}),
+    ...mapStateTwoWay({
+      selectedLineage: 'setLineage',
+      possibleLineages: 'setLineages',
+      possibleLineagesInfo: 'setLineagesInfo'
+    }),
 
     /** Hint for the selector  */
     hint() {
@@ -88,7 +104,8 @@ export default {
         this.$axios
             .get(url, {params: queryParams})
             .then(({data}) => {
-              this.possibleLineages = data
+              this.possibleLineages = data['possible_lineages']
+              this.possibleLineagesInfo = data['availability']
 
               // Keep selected lineage if included in the possible ones
               if (this.selectedLineage && !this.possibleLineages.includes(this.selectedLineage)) {
@@ -103,6 +120,10 @@ export default {
             .finally(() => {
               this.isLoading = false
             })
+      } else {
+        this.selectedLineage = null
+        this.possibleLineages = []
+        this.possibleLineagesInfo = null
       }
     }
   },

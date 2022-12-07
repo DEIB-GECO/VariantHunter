@@ -93,6 +93,8 @@ export const state = {
     selectedLineage: null,
     /** Possible lineages */
     possibleLineages: [],
+    /** Info about possible lineages {'lineage': integer_count} */
+    possibleLineagesInfo: {},
 
     /** Last update date of the dataset (last sequence date) */
     lastUpdate: null,

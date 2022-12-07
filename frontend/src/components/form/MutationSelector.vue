@@ -391,8 +391,8 @@ export default {
         const url = `/lineage_specific/getLineages`
         this.$axios
             .get(url, {params: {location: undefined, date: undefined}})
-            .then(res => {
-              this.possibleLineages = res.data
+            .then(({data}) => {
+              this.possibleLineages = data['possible_lineages']
             })
             .catch((e) => {
               this.error = e

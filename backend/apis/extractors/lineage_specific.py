@@ -32,26 +32,41 @@ def get_all_lineages():
 def get_lineages_from_loc_date(location, date):
     """
     Extract the possible lineages for a given location and period.
-    The possible lineages are those having sequences in the period and location
+    The possible lineages are those having sequences for the specified location and last week of the period
     Args:
         location:   Identifier of the location to be considered
         date:       String representing the (ending) date of the 4-weeks period to be considered.
 
-    Returns: A list of lineage names
+    Returns: Object containing lineages info
+            {
+                possible_lineages: ['BA.1','BA.2',...]  List of lineage names
+                availability:   dictionary describing the availability in the specified period and location,
+                                { 'lineage_name': int_num_sequence }
+            }
 
     """
     stop = (datetime.strptime(date, "%Y-%m-%d") - start_date).days  # date to day-diff conversion
-    start = stop - 7
+    start = stop - 7  # last week only, not the whole period!
+    period_start = stop - 28
 
     con = sqlite3.connect(db_path)
     cur = con.cursor()
-    query = '''    SELECT DISTINCT lineage 
+    query = '''     SELECT lineage, sum(count)
                     FROM aggr_sequences SQ
                         JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                    WHERE date > :start AND date <= :stop AND location_id = :loc_id
+                    WHERE date > :period_start AND date <= :stop AND location_id = :loc_id
+                            AND SQ.lineage_id IN (  SELECT DISTINCT SQ_I.lineage_id
+                                                    FROM aggr_sequences AS SQ_I
+                                                    WHERE SQ_I.date > :start AND SQ_I.date <= :stop 
+                                                        AND SQ_I.location_id = :loc_id )
+                    GROUP BY LN.lineage_id
                     ORDER BY lineage;'''
-    params = {'start': start, 'stop': stop, 'loc_id': location}
-    extracted_lineages = [x[0] for x in cur.execute(query, params).fetchall()]
+    params = {'start': start, 'stop': stop, 'loc_id': location, 'period_start': period_start}
+    res = cur.execute(query, params).fetchall()
+    extracted_lineages = {
+        'possible_lineages': [x[0] for x in res],
+        'availability': {x[0]: x[1] for x in res}
+    }
 
     con.close()
     return extracted_lineages

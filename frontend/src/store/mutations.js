@@ -232,6 +232,14 @@ export const mutations = {
         console.log("setLineages " + newValue)
         state.possibleLineages = newValue
     },
+    /**
+     * Set the information of the possible lineages in the analysis definition panel
+     * @param state
+     * @param newValue  The array of info to be assigned
+     */
+    setLineagesInfo(state, newValue) {
+        state.possibleLineagesInfo = newValue
+    },
 
     /**
      * Set the analysis period value in the analysis definition panel

@@ -18,6 +18,7 @@ from .utils.utils import compute_weeks_from_date, produce_statistics
 
 api = Namespace(name='Lineage specific analysis', path='/lineage_specific')
 
+
 # ############################################################################################
 # ##################################   [GET] /getLineages   ##################################
 # ############################################################################################
@@ -31,11 +32,18 @@ class FieldList(Resource):
         API to get list of possible lineages. Possibly filtered by location and week.
 
         Query params:
-        - location (int):   Location identifier
-        - date (string):    End date (included) of the week to be considered. Takes format YYYY-mm-dd
+        - location (int):   Location identifier. Possibly not specified.
+        - date (string):    End date (included) of the week to be considered. Takes format YYYY-mm-dd.
+                            Possibly not specified, unless location is specified.
 
         Success response (code 200):
-            List of possible lineages names
+            Object containing lineages info
+            {
+                possible_lineages: ['BA.1','BA.2',...]  List of lineage names
+                availability:   dictionary describing the availability in the specified period and location,
+                                None if at least one between location or date is None.
+                                { 'lineage_name': int_num_sequence }
+            }
 
         Error responses
         # code 423: Resource unavailable: dataset update in progress
@@ -48,14 +56,14 @@ class FieldList(Resource):
         date = args.get('date')
 
         if (location is None and date is None) or (location == '' and date == ''):
-            lineages = get_all_lineages()
+            lineages_data = {'possible_lineages': get_all_lineages()}
         elif date is None:
-            lineages = get_lineages_from_loc(location)
+            lineages_data = {'possible_lineages': get_lineages_from_loc(location)}
         else:
-            lineages = get_lineages_from_loc_date(location, date)
+            lineages_data = get_lineages_from_loc_date(location, date)
 
         print(f'\t[GET] /getLineages: processed in {time.time() - exec_start:.5f} seconds.')
-        return lineages
+        return lineages_data
 
 
 # #############################################################################################
