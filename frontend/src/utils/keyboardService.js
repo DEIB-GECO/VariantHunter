@@ -1,3 +1,12 @@
+/**
+ *  KEYBOARD SERVICE
+ *  It provides supported shortcuts info
+ */
+
+/**
+ * Object defining supported shortcuts
+ * @type {{"0": {title: string, kbd: string[]}, "1": {title: string, kbd: string[]}, "2": {title: string, kbd: string[]}}}
+ */
 export const shortcuts = {
     0: {
         title: 'New analysis',

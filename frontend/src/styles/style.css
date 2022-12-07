@@ -1,12 +1,40 @@
+/**
+ *      GLOBAL CSS RULES
+ *      Globally available CSS rules/overwrites
+ */
+
+
 /* Overwrite default Vuetify and Plotly font */
 .v-application, body #app *, * {
     font-family: 'Inter', serif !important;
 }
 
-#app .letter-spacing-1{
+
+/* Global variables for border radius */
+:root {
+    --border-radius: 4px;
+}
+
+
+/* Body background color */
+html, body {
+    background: var(--v-f_primary-base);
+}
+
+#app {
+    background: var(--v-bg_var1-base); /* to ensure readable downloadable images */
+}
+
+/********************************************
+ *        FONT/TEXT MODIFIERS OPTIONS       *
+ ********************************************/
+
+/** Letter spacing options */
+#app .letter-spacing-1 {
     letter-spacing: 1px !important;
 }
 
+/** Font size and line height options */
 #app .compact-h6 {
     line-height: 20px !important;
 }
@@ -55,20 +83,105 @@
     font-size: 12px !important;
 }
 
+/** Spaced words option */
+#app .spaced-5 {
+    word-spacing: 5px !important;
+}
+
+
+/********************************************
+ *          OTHER MODIFIERS OPTIONS         *
+ ********************************************/
+
+/** Overflow scroll option */
+#app .overflow-scroll {
+    overflow: scroll !important;
+}
+
+/** Break spaces option */
+#app .break-spaces {
+    white-space: break-spaces !important;
+}
+
+/** Style cursor as not-allowed */
+.cursor-forbidden:hover, .cursor-forbidden *:hover {
+    cursor: not-allowed !important;
+}
+
+/** Modifiers for the container height to 100% */
 .height-100 {
     height: 100% !important;
 }
 
+/** Modifiers for the container width to 100% */
 .width-100 {
     width: 100% !important;
 }
 
+/** Overwrite default border color */
 .border {
     border: black solid 1px;
 }
 
+/** Size for the main sub view container */
 .view-sizing {
     max-width: 90vw !important;
+}
+
+/** Toolbar navbar menu styling */
+.navbar-menu {
+    max-width: min(350px, 80vw) !important;
+    border: 2px solid var(--v-primary-base);
+}
+
+/* Special formatting for characterizing muts*/
+.char-mut {
+    background: rgba(255, 255, 0, 0.45);
+}
+
+
+/* Border radius for the graph plots*/
+.main-svg {
+    border-radius: 4px;
+}
+
+.regular-plot .main-svg {
+    border-radius: 4px 0 4px 4px;
+}
+
+
+/* Plotly container */
+.plotly-container {
+    border-radius: var(--border-radius);
+    width: 100%;
+    background: white;
+}
+
+/* Prevent text-underline for links */
+a, .site-title a {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+/* Revert usual behavior for links */
+#app .underlined-links a, #app .fake-link {
+    color: var(--v-secondary-base) !important;
+}
+
+
+/*******************************************
+ *  ADDITIONAL VUETIFY STYLING OVERWRITES  *
+ *******************************************/
+
+/** Overwrite the default vuetify ordering icon in v-data-table */
+.v-data-table-header__icon::before {
+    content: '\F033C' !important;
+}
+
+/** Overlay tooltip content custom styling */
+.v-snack__wrapper {
+    margin-bottom: 0 !important;
+    border-radius: 24px 24px 0 0 !important;
 }
 
 .v-window.v-item-group {
@@ -78,44 +191,6 @@
 #app .v-select-list {
     text-transform: initial !important;
 }
-
-#app .spaced-5 {
-    word-spacing: 5px !important;
-}
-
-#app .overflow-scroll{
-    overflow: scroll !important;
-}
-
-.cursor-forbidden:hover, .cursor-forbidden *:hover {
-    cursor: not-allowed !important;
-}
-
-/* Overwrite the default ordering icon with a more intuitive one */
-.v-data-table-header__icon::before {
-    content: '\F033C' !important;
-}
-
-#app .break-spaces {
-    white-space: break-spaces !important;
-}
-
-
-/** Overlay tooltip content */
-.v-snack__wrapper {
-    margin-bottom: 0 !important;
-    border-radius: 24px 24px 0 0 !important;
-}
-
-
-/* Revert usual behavior for links */
-#app .underlined-links a, #app .fake-link {
-    color: var(--v-secondary-base) !important;
-}
-
-/***************************************
- *  TOOLTIP VUETIFY STYLING OVERWRITE  *
- ***************************************/
 
 #app .v-tooltip__content {
     line-height: 15px !important;
@@ -135,12 +210,7 @@
     border-radius: 0 0 22px 22px !important;
 }
 
-.navbar-menu {
-  max-width: min(350px,80vw) !important;
-  border: 2px solid var(--v-primary-base);
-}
-
-/* Special formatting for characterizing muts*/
-.char-mut {
-  background: rgba(255, 255, 0, 0.45);
+/* Capitalize select items */
+.v-select-list {
+    text-transform: capitalize !important;
 }

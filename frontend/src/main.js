@@ -12,7 +12,7 @@ import {cacheAdapterEnhancer, throttleAdapterEnhancer} from 'axios-extensions';
 Vue.config.productionTip = false
 
 
-// enhance the original axios adapter with throttle and cache enhancer
+// Enhance the original axios adapter with throttle and cache enhancer
 Vue.prototype.$axios = axios.create({
     baseURL: publicPath + 'api/',
     headers: {'Cache-Control': 'no-cache'},

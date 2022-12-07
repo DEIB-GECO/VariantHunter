@@ -8,9 +8,19 @@ import VuexPersistence from 'vuex-persist';
 import localForage from 'localforage';
 import {version} from '../../package.json';
 
+/**
+ * Set the store object to be persistent
+ * @type {VuexPersistence<unknown>}
+ */
 const vuexLocal = new VuexPersistence({
+    /**
+     * Function to be called whenever a store data is updated
+     * @param val       Current store obj
+     * @returns {{}|*}  Next store obj
+     */
     reducer(val) {
-        if (val.reset || val.version!==version) {
+        // Reset storage if reset flag or new version of the app
+        if (val.reset || val.version !== version) {
             return {}
         }
         return val

@@ -5,7 +5,7 @@
  * @param to          Difference from the reference date for the ending date of the label
  * @returns {string}  A string of the form "YYYY/mm/dd - YYYY/mm/dd"
  */
-export function computeDateLabel(endDate,from, to) {
+export function computeDateLabel(endDate, from, to) {
     const referenceDate = new Date(endDate)
     const fromDate = new Date(referenceDate)
     const toDate = new Date(referenceDate)

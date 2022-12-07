@@ -104,7 +104,7 @@ export default {
   padding-top: 10px;
   padding-bottom: 10px;
   margin-bottom: 10px;
-  border-bottom: solid 1px var(--tertiary-color-light);
+  border-bottom: solid 1px var(--v-tertiary-base);
   display: flex;
   flex-direction: row;
 }
@@ -115,7 +115,7 @@ export default {
   font-weight: bold;
   padding-right: 5px;
   margin-right: 20px;
-  border-right: solid 1px var(--tertiary-color-light);
+  border-right: solid 1px var(--v-tertiary-base);
 }
 
 .li-content {

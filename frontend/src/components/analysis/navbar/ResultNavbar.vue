@@ -94,6 +94,6 @@ export default {
 </style>
 <style>
 .result-bar .v-toolbar__content {
-  border-bottom: 2px solid var(--primary-color) !important;
+  border-bottom: 2px solid var(--v-primary-base) !important;
 }
 </style>

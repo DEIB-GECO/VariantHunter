@@ -424,7 +424,7 @@ export default {
 <style>
 
 .table-container {
-  border: solid 1px var(--primary-color);
+  border: solid 1px var(--v-primary-base);
   border-radius: 4px;
 }
 
@@ -447,8 +447,8 @@ td.expanded-td tr:hover {
 .expanded-item-title {
   position: relative;
   text-align: -webkit-right;
-  background: var(--tertiary-color-light);
-  border-right: thin solid var(--primary-color);
+  background: var(--v-tertiary-base);
+  border-right: thin solid var(--v-primary-base);
 }
 
 .expanded-item-title .row-name {
@@ -486,7 +486,7 @@ td.table-append {
 .section-container .v-data-table,
 .section-container .v-data-table-header {
   border-radius: 4px;
-  background: var(--tertiary-color-light) !important;
+  background: var(--v-tertiary-base) !important;
 }
 
 .section-container table {

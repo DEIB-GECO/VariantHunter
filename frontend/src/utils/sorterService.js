@@ -1,3 +1,7 @@
+/**
+ *  SORTER SERVICE
+ *  It provides sorting functions
+ */
 
 import {NotSupportedError} from "core-js/internals/dom-exception-constants";
 

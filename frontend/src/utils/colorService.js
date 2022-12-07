@@ -1,4 +1,9 @@
 /**
+ *  COLOR SERVICE
+ *  It provides colors utilities
+ */
+
+/**
  * Determine whether a color is light or dark
  * @param bgColor         Color to be checked
  * @returns {string}    Either 'dark' or 'light'

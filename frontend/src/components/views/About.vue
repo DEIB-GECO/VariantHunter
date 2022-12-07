@@ -269,7 +269,7 @@ export default {
 
 .huge-site-title {
   text-align: center;
-  color: var(--primary-color);
+  color: var(--v-primary-base);
   font-size: 67px;
   line-height: 65px;
 }

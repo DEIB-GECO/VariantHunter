@@ -39,14 +39,14 @@ export default {
 
 /* Custom main headers styling*/
 .main-headers {
-  background: var(--tertiary-color-light);
+  background: var(--v-tertiary-base);
 }
 
 .main-headers th {
   letter-spacing: 0.05em;
   word-spacing: 0.1em;
   text-align: center !important;
-  border-top: var(--primary-color) solid 1px !important;
+  border-top: var(--v-primary-base) solid 1px !important;
   padding-top: 7px !important;
   padding-bottom: 7px !important;
   height: fit-content !important;

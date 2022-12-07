@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <v-app>
+      <!-- Global loading element -->
       <global-loading/>
 
       <!-- Navbar -->
@@ -25,6 +26,7 @@
         </v-btn>
       </v-app-bar>
 
+      <!-- App body container -->
       <v-main :class="$route.name==='About'?'bg_var2':''">
         <router-view/>
       </v-main>
@@ -35,6 +37,7 @@
 <script>
 
 import GlobalLoading from "@/components/general/basic/GlobalLoading";
+
 export default {
   name: 'App',
   components: {GlobalLoading},
@@ -84,53 +87,5 @@ export default {
   float: left;
   position: relative;
 }
-</style>
 
-<style>
-/* Global variables for color palette and border radius */
-:root {
-  --primary-color: var(--v-primary-base);
-  --secondary-color: var(--v-secondary-base);
-  --tertiary-color-light: var(--v-tertiary-base);
-  --tertiary-color-dark: var(--v-accent-base);
-  --border-radius: 4px;
-}
-
-
-/* Body background color */
-html, body {
-  background: var(--v-f_primary-base);
-}
-
-#app {
-  background: var(--v-bg_var1-base); /* to ensure readable downloadable images */
-}
-
-/* Border radius for the graph plots*/
-.main-svg {
-  border-radius: 4px;
-}
-
-.regular-plot .main-svg {
-  border-radius: 4px 0 4px 4px;
-}
-
-/* Capitalize select items */
-.v-select-list {
-  text-transform: capitalize !important;
-}
-
-
-/* Plotly container */
-.plotly-container {
-  border-radius: var(--border-radius);
-  width: 100%;
-  background: white;
-}
-
-/* Prevent text-underline for links */
-a, .site-title a {
-  color: inherit !important;
-  text-decoration: none !important;
-}
 </style>

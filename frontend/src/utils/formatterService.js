@@ -1,11 +1,11 @@
 /**
- * FORMATTER SERVICE
- * It provides general purpose formatter services to summarize lineages data
+ *  FORMATTER SERVICE
+ *  It provides general purpose formatter services to summarize lineages data
  */
 import {NotSupportedError} from "core-js/internals/dom-exception-constants";
 
 export function compactLineagesData(lineagesData, level) {
-    if(level!==1 && level!==2) throw NotSupportedError
+    if (level !== 1 && level !== 2) throw NotSupportedError
 
     // Compute the lineages in star notation
     const regExp = level === 1
@@ -22,7 +22,7 @@ export function compactLineagesData(lineagesData, level) {
             const initialValue = {name: compName, f1: 0, f2: 0, f3: 0, f4: 0, w1: 0, w2: 0, w3: 0, w4: 0, rows: -1}
             let expName
 
-            const dataToConsider = lineagesData.filter(({name}) => (name===compName || name.startsWith(compName+'.')))
+            const dataToConsider = lineagesData.filter(({name}) => (name === compName || name.startsWith(compName + '.')))
             const dataToAggregate = [], dataRelevantTrend = []
             // Aggregate only mutations with non-relevant trend (less than 10% in all the weeks)
             dataToConsider.forEach(data => {

@@ -18,7 +18,6 @@ export const mutations = {
      * @param id    Id to be set
      */
     setCurrentAnalysis(state, id) {
-        //console.log("setCurrentAnalysis to " + id)
         state.currentAnalysisId = id
     },
 
@@ -30,7 +29,6 @@ export const mutations = {
      * @param value     Value of the parameter
      */
     setOpt(state, {local = true, opt, value}) {
-        //console.log("setOption of " + opt + " to " + value)
         const id = state.currentAnalysisId
 
         if (local) {
@@ -49,7 +47,6 @@ export const mutations = {
      * @param starred   Boolean value for the starred flag
      */
     setStarredAnalysis(state, {id, starred = true}) {
-        //console.log("setStarredAnalysis of " + id + " to " + starred)
         state.analyses[id].starred = starred
     },
 
@@ -65,7 +62,7 @@ export const mutations = {
         // Save current analysis data
         const endDate = metadata.date
 
-        const pastKeys = Object.keys(state.analyses).map(x=>Number(x))
+        const pastKeys = Object.keys(state.analyses).map(x => Number(x))
         const assignedId = pastKeys.length > 0 ? (Math.max(...pastKeys) + 1) : 0
 
         Vue.set(state.analyses, assignedId, {
@@ -110,22 +107,42 @@ export const mutations = {
         state.currentAnalysisId = assignedId
     },
 
+    /**
+     * Set the notes associated with the current analysis
+     * @param state
+     * @param note  The notes
+     */
     setNotes(state, note) {
         Vue.set(state.analyses[state.currentAnalysisId], 'notes', note)
     },
 
-    setTag(state, {analysisId,tagName}){
-        //console.log("# Set from "+analysisId+" to tag: "+tagName)
-        Vue.set(state.analyses[analysisId],'tag',tagName)
+    /**
+     * Set the tag of a specified analysis
+     * @param state
+     * @param analysisId    The id of the analysis to be considered
+     * @param tagName       The tag name to be assigned
+     */
+    setTag(state, {analysisId, tagName}) {
+        Vue.set(state.analyses[analysisId], 'tag', tagName)
     },
 
-    renameTag(state,{newName,oldName}){
-        //console.log("# Rename from "+oldName+" to "+newName)
+    /**
+     * Rename an existing tag in the tags list
+     * @param state
+     * @param newName   New name of the tag
+     * @param oldName   Old name of the tag
+     */
+    renameTag(state, {newName, oldName}) {
         Vue.set(state.tags, newName, state.tags[oldName])
     },
 
+    /**
+     * Add a tag to the current analysis.
+     * If the tag is a new one, it also creates it
+     * @param state
+     * @param tagName   Tag name to be assigned
+     */
     addTag(state, tagName) {
-        //console.log("# Add tag " + tagName)
         // New tag? save and assign color
         if (!Object.keys(state.tags).includes(tagName)) {
             Vue.set(state.tags, tagName, {
@@ -133,20 +150,28 @@ export const mutations = {
                 createdAt: new Date(),
                 protein: null,
                 muts: [],
-                rowKeys:[],
-                sortingIndexes:["slope"],
-                isDescSorting:[true]
+                rowKeys: [],
+                sortingIndexes: ["slope"],
+                isDescSorting: [true]
             })
         }
-        Vue.set(state.analyses[state.currentAnalysisId],'tag', tagName)
+        Vue.set(state.analyses[state.currentAnalysisId], 'tag', tagName)
     },
 
-    deleteTag(state,tagName){
-      Vue.delete(state.tags,tagName)
+    /**
+     * Delete a tag from the tags list
+     * @param state
+     * @param tagName   Tag name to be removed
+     */
+    deleteTag(state, tagName) {
+        Vue.delete(state.tags, tagName)
     },
 
+    /**
+     * Un-assign the tag of the current analysis and set it to null
+     * @param state
+     */
     removeTag(state) {
-        //console.log("# Remove tag ")
         state.analyses[state.currentAnalysisId].tag = null
         state.localOpt[state.currentAnalysisId].useLocalOpt = true
     },
@@ -157,7 +182,6 @@ export const mutations = {
      * @param id        Analysis id
      */
     removeAnalysis(state, id) {
-        //console.log("removeAnalysis " + id)
         if (id === state.currentAnalysisId)
             state.currentAnalysisId = null
 
@@ -165,31 +189,57 @@ export const mutations = {
         Vue.delete(state.localOpt, id)
     },
 
-
+    /**
+     * Set the location value in the analysis definition panel
+     * @param state
+     * @param newValue  The value to be assigned
+     */
     setLocation(state, newValue) {
-        //console.log("setLocation " + newValue)
         state.selectedLocation = newValue
     },
+    /**
+     * Set the possible locations in the analysis definition panel
+     * @param state
+     * @param newValue  The list of values to be assigned
+     */
     setLocations(state, newValue) {
-        //console.log("setLocations " + newValue)
         state.possibleLocations = newValue
     },
+    /**
+     * Set the information of the possible locations in the analysis definition panel
+     * @param state
+     * @param newValue  The array of info to be assigned
+     */
     setLocationsInfo(state, newValue) {
-        //console.log("setLocationsInfo " + newValue)
         state.possibleLocationsInfo = newValue
     },
 
+    /**
+     * Set the lineage value in the analysis definition panel
+     * @param state
+     * @param newValue  The value to be assigned
+     */
     setLineage(state, newValue) {
-        //console.log("setLineage " + newValue)
+        console.log("setLineage " + newValue)
         state.selectedLineage = newValue
     },
+    /**
+     * Set the possible lineages in the analysis definition panel
+     * @param state
+     * @param newValue  The value to be assigned
+     */
     setLineages(state, newValue) {
-        //console.log("setLineages " + newValue)
+        console.log("setLineages " + newValue)
         state.possibleLineages = newValue
     },
 
+    /**
+     * Set the analysis period value in the analysis definition panel
+     * @param state
+     * @param newValue  The value to be assigned.
+     *                  Possible forms: [endDate] , [null,endDate] or [startDate,endDate]
+     */
     setDate(state, newValue) {
-        //console.log("setDate " + newValue)
         if (newValue !== null && newValue.length === 1) {
             // Date has been set from the picker (and has the form [endDate])
             const endDate = newValue[0]
@@ -208,26 +258,48 @@ export const mutations = {
         }
     },
 
-
-    setTourStep(state,newVal){
-        //console.log("SET tour to "+newVal)
-        state.tourStep=newVal
+    /**
+     * Set the step of the app-tour feature
+     * @param state
+     * @param newVal    Step name or null value
+     */
+    setTourStep(state, newVal) {
+        state.tourStep = newVal
     },
 
+    /**
+     * Set last update date
+     * @param state
+     * @param newVal    Last update date. Takes format YYYY-mm-dd
+     */
     setLastUpdate(state, newVal) {
         state.lastUpdate = newVal
     },
-    setDatasetInfo(state,info){
-        Vue.set(state.datasetInfo,'fileType',info['file_type'])
-        Vue.set(state.datasetInfo,'filteredCountries',info['filtered_countries'])
-        Vue.set(state.datasetInfo,'beginDate',info['begin_date'])
-        Vue.set(state.datasetInfo,'endDate',info['end_date'])
-        Vue.set(state.datasetInfo,'parsedOn',info['parsed_on'])
+    /**
+     * Set the dataset info including 'file_type','filtered_countries',
+     * 'begin_date', 'end_date' and 'parsed_on'
+     * @param state
+     * @param info      Info object
+     */
+    setDatasetInfo(state, info) {
+        Vue.set(state.datasetInfo, 'fileType', info['file_type'])
+        Vue.set(state.datasetInfo, 'filteredCountries', info['filtered_countries'])
+        Vue.set(state.datasetInfo, 'beginDate', info['begin_date'])
+        Vue.set(state.datasetInfo, 'endDate', info['end_date'])
+        Vue.set(state.datasetInfo, 'parsedOn', info['parsed_on'])
     },
 
+    /**
+     * Set the flag to reset the state. Requires page reload.
+     */
     resetState(state) {
         state.reset = true
     },
+    /**
+     * Set the global loading state
+     * @param state
+     * @param newVal    The new value
+     */
     setLoading(state, newVal) {
         state.loading = newVal
     }
