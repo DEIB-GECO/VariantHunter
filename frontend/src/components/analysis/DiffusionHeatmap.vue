@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import {Plotly} from 'vue-plotly'
+import {Plotly} from '@rleys/vue-plotly'
 import SectionElement from "@/components/analysis/SectionElement";
 import {mapGetters} from "vuex";
 import HeatmapIntro from "@/components/intros/HeatmapIntro";

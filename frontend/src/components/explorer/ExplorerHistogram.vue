@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import {Plotly} from 'vue-plotly'
+import {Plotly} from '@rleys/vue-plotly'
 import {diffToDate} from '@/utils/dateService'
 
 export default {
