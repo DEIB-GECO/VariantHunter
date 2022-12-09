@@ -134,7 +134,7 @@ export default {
     restoreCurrentAnalysis() {
       const {location, granularity, lineage, endDate} = this.getCurrentAnalysis.query
       this.setLocation(location[granularity])
-      this.setLineage(lineage)
+      this.setLineage((lineage ? lineage : {'groups': {}, 'items': []}))
 
       const referenceDate = new Date(endDate)
       this.setDate([null, referenceDate.toISOString().slice(0, 10)])

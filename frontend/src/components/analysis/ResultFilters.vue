@@ -152,8 +152,8 @@ export default {
     possibleProteins() {
       const set = new Set(this.getCurrentAnalysis.rows.map(({protein}) => protein))
       return [...set].sort((a, b) => {
-        if (a === 'Spike') return -1   // Put Spike protein at the top
-        if (b === 'Spike') return 1    // Put Spike protein at the top
+        if (a === 'Spike' || a === 'S') return -1   // Put Spike protein at the top
+        if (b === 'Spike' || b === 'S') return 1    // Put Spike protein at the top
         return a.localeCompare(b)
       })
     },

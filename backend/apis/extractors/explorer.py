@@ -31,7 +31,7 @@ def extract_seq_num(location, lineages):
     cur = con.cursor()
 
     def execute_query():
-        params = list(location)
+        params = [location]
         if lineages is not None and len(lineages) > 0:
             # Count how many seq have been collected for each day, matching given location and lineage
             query = ''' SELECT date,sum(count) 

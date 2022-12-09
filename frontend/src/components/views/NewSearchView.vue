@@ -143,7 +143,6 @@ import TourIntro from "@/components/intros/TourIntro";
 import DefinitionIntro from "@/components/intros/DefinitionIntro";
 import ExplorerIntro from "@/components/intros/ExplorerIntro";
 import DatasetInfo from "../general/DatasetInfo";
-import {toText} from "@/utils/formatterService";
 
 export default {
   name: "NewSearchView",
@@ -190,7 +189,7 @@ export default {
 
     /** Clear the form completely */
     clearForm() {
-      this.setLineage(null)
+      this.setLineage({'groups':{},'items':[]})
       this.setLineages([])
       this.setDate(null)
       this.setLocation(null)
