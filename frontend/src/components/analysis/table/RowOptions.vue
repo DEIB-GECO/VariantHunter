@@ -34,7 +34,8 @@
     </v-tooltip>
 
     <!-- MUTATION HISTORY DIALOG --------------------------------------->
-    <v-dialog v-if="showMutationHistory" v-model="showMutationHistory" max-width="850" transition="dialog-bottom-transition">
+    <v-dialog v-if="showMutationHistory" v-model="showMutationHistory" max-width="850"
+              transition="dialog-bottom-transition">
       <v-card>
         <!-- Dialog title -->
         <v-toolbar color="f_primary" class="dialog-title" dark flat>
@@ -65,8 +66,8 @@
                   </div>
                   <div class="py-2" v-else>No lineage is characterized by {{ item.protein + "_" + item.mut }}
                   </div>
-                  <v-chip :color="getLineageColor().color" :light="!getLineageColor().isDark" small
-                          :dark="getLineageColor().isDark" v-for="lineage in characterizedLineages"
+                  <v-chip :color="getLineageColor(lineage).color" :light="!getLineageColor(lineage).isDark" small
+                          :dark="getLineageColor(lineage).isDark" v-for="lineage in characterizedLineages"
                           :key="lineage" class="mr-1 mb-1">{{ lineage }}
                   </v-chip>
                 </div>
@@ -120,7 +121,7 @@
 </template>
 
 <script>
-import {getRandomColor} from "@/utils/colorService";
+import {getRandomColor, isDark} from "@/utils/colorService";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
 import IconWithTooltip from "../../general/basic/IconWithTooltip";
 
@@ -159,6 +160,9 @@ export default {
        *  Example: {'BA.2':{'abs':12, 'percentage':53.4},...}
        */
       mutationHistory: {},
+
+      /** Object storing lineage colors*/
+      lineageColors: {},
 
       /** Boolean loading flag for the table and expansion */
       isLoadingDetails: false,
@@ -204,10 +208,12 @@ export default {
     },
 
     /** Get a random color to be associated with the lineage */
-    getLineageColor() {
-      return getRandomColor()
+    getLineageColor(lineage) {
+      if (!this.lineageColors[lineage])
+        this.lineageColors[lineage] = getRandomColor()
+      return this.lineageColors[lineage]
     }
-  }
+  },
 }
 </script>
 
