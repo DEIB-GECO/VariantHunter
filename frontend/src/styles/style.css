@@ -108,6 +108,11 @@ html, body {
     cursor: not-allowed !important;
 }
 
+/** Style cursor as pointer */
+.cursor-pointer:hover, .cursor-pointer *:hover {
+    cursor: pointer !important;
+}
+
 /** Modifiers for the container height to 100% */
 .height-100 {
     height: 100% !important;

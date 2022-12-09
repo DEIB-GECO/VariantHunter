@@ -26,10 +26,20 @@ function lightOrDark(bgColor) {
 
 /**
  * Gets a random color
- * @returns {string}    Color string
+ * @returns {Object}    Object describing color code and color brightness
  */
 export function getRandomColor() {
     const colorCode = '#' + (Math.random() * 0xFFFFFF << 0).toString(16)
     const isDark = lightOrDark(colorCode) === 'dark'
     return {color: colorCode, isDark}
+}
+
+/**
+ * Test color brightness
+ * @param colorCode     Color string
+ * @returns {Boolean}    True iff the color is dark one
+ */
+export function isDark(colorCode) {
+    const isDark = lightOrDark(colorCode) === 'dark'
+    return isDark
 }

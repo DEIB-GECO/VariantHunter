@@ -79,13 +79,4 @@ export default {
   margin-right: 6px;
 }
 
-/* Styling for the website body todo: remove */
-.main-body {
-  height: calc(100vh - 57px);
-  width: 100%;
-  overflow-y: auto;
-  float: left;
-  position: relative;
-}
-
 </style>
