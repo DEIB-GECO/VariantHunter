@@ -219,9 +219,14 @@ export const mutations = {
      * @param state
      * @param newValue  The value to be assigned
      */
-    setLineage(state, newValue) {
-        console.log("setLineage " + newValue)
-        state.selectedLineage = newValue
+    setLineage(state, {groups = undefined, items = undefined}) {
+        //console.log("setLineage {groups:" + JSON.stringify(groups) + ", items: " + items + "}")
+        if (groups !== undefined) Vue.set(state.selectedLineage, 'groups', groups)
+        if (items !== undefined) Vue.set(state.selectedLineage, 'items', items)
+
+        // update count
+        const tot = state.selectedLineage.items.length + Object.keys(state.selectedLineage.groups).length
+        Vue.set(state.selectedLineage, 'count', tot)
     },
     /**
      * Set the possible lineages in the analysis definition panel
@@ -229,7 +234,6 @@ export const mutations = {
      * @param newValue  The value to be assigned
      */
     setLineages(state, newValue) {
-        console.log("setLineages " + newValue)
         state.possibleLineages = newValue
     },
     /**

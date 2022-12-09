@@ -117,11 +117,10 @@
 
         <!-- Params -->
         <v-list-item-content>
-          <v-list-item-title class="text-body-3 font-weight-medium">
-            {{
+          <v-list-item-title class="text-body-3 font-weight-medium break-spaces">{{
               query.location[query.granularity].text + " / " +
               query.endDate +
-              (query.lineage ? " / " + query.lineage : "")
+              (query.lineage ? " / " + lineagesToText(query.lineage) : "")
             }}
           </v-list-item-title>
 
@@ -166,6 +165,7 @@ import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 import ChipMenu from "@/components/general/basic/ChipMenu";
 import KeyboardShortcuts from "@/components/controls/KeyboardShortcuts";
 import DataManager from "@/components/controls/DataManager";
+import {toText} from "@/utils/formatterService";
 
 export default {
   name: "SearchHistory",
@@ -259,6 +259,11 @@ export default {
 
   methods: {
     ...mapMutations(["setCurrentAnalysis", "setStarredAnalysis", "removeAnalysis"]),
+
+    /** Mapping lineage toText */
+    lineagesToText(arg) {
+      return toText(arg)
+    },
 
     /** Clear all filters */
     clearFilters() {

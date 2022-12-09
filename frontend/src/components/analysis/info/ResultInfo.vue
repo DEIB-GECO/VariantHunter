@@ -1,5 +1,14 @@
+<!--
+
+  Component:    ResultInfo
+  Description:  Info summary section of the result panel
+
+-->
+
 <template>
   <v-row class="mt-6" no-gutters id="summary">
+
+    <!-- Sequences from -->
     <v-col>
       <summary-intro/>
       <v-list color="transparent">
@@ -14,6 +23,8 @@
         </v-list-item>
       </v-list>
     </v-col>
+
+    <!-- Analysis period -->
     <v-col>
       <v-list color="transparent">
         <v-list-item>
@@ -27,6 +38,8 @@
         </v-list-item>
       </v-list>
     </v-col>
+
+    <!-- Performed on -->
     <v-col>
       <v-list color="transparent">
         <v-list-item>
@@ -40,56 +53,19 @@
         </v-list-item>
       </v-list>
     </v-col>
-    <v-col>
-      <v-list color="transparent">
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon left large color="primary">mdi-database-outline</v-icon>
-          </v-list-item-icon>
-          <v-tooltip top right allow-overflow z-index="999" :close-delay="0" max-width="400px">
-            <template v-slot:activator="{ on, attrs }">
-              <v-list-item-content v-on="on" v-bind="attrs">
-                <v-list-item-title>{{ datasetInfo['file_type'].toUpperCase() }} dataset
-                </v-list-item-title>
-                <v-list-item-subtitle>updated on {{datasetInfo['last_update'] }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </template>
-            <div class="pa-3">
-              <div class="text-body-3 font-weight-bold mb-3">
-                <v-icon left color="f_text_light">mdi-database-outline</v-icon>
-                Dataset used
-              </div>
-              <div class="mb-3">
-                <div>
-                  <v-icon small left color="f_text_light">mdi-connection</v-icon>
-                  Metadata provider
-                </div>
-                <span class="text-uppercase font-weight-bold ml-6">{{ datasetInfo['file_type'] }}</span>
-              </div>
-              <div class="mb-3" v-if="!(noBegin && noEnd)">
-                <div>
-                  <v-icon small left color="f_text_light">mdi-clock-outline</v-icon>
-                  Available period
-                </div>
-                <div class="text-body-5 ml-6">The data set was limited to the following time period:</div>
-                <span class="text-uppercase font-weight-bold ml-6">[ {{ begin }} &nbsp;;&nbsp; {{ end }} ]</span>
-              </div>
-              <div class="mb-3" v-if="!(noCountryFilter)">
-                <div>
-                  <v-icon small left color="f_text_light">mdi-map-marker-outline</v-icon>
-                  Available countries
-                </div>
-                <div class="text-body-5 ml-6">The dataset was limited to the following countries:</div>
-                <span class="text-uppercase font-weight-bold ml-6">{{ datasetInfo['filtered_countries'] }}</span>
-              </div>
-            </div>
-          </v-tooltip>
 
-        </v-list-item>
-      </v-list>
+    <!-- Dataset info  -->
+    <v-col>
+      <result-dataset-info/>
     </v-col>
-    <v-col cols="12" md="8" lg="12">
+
+    <!-- Lineages info  -->
+    <v-col cols="12" md="8" lg="6" v-if="getCurrentAnalysis.query.lineage">
+      <lineages-info/>
+    </v-col>
+
+    <!-- Tags -->
+    <v-col cols="12" md="8" lg="6">
       <v-list color="transparent">
         <v-list-item>
           <v-list-item-icon>
@@ -105,6 +81,8 @@
         </v-list-item>
       </v-list>
     </v-col>
+
+    <!-- Notes -->
     <v-col cols="12">
       <v-list color="transparent">
         <v-list-item>
@@ -125,28 +103,35 @@
         </v-list-item>
       </v-list>
     </v-col>
+
   </v-row>
 </template>
 
 <script>
 import {mapGetters, mapMutations} from "vuex";
 import {computeDateLabel} from "@/store/utils/utils";
-import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip";
-import TagEditor from "@/components/controls/TagEditor";
-import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
-import SummaryIntro from "../intros/SummaryIntro";
+import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip.vue";
+import TagEditor from "@/components/controls/TagEditor.vue";
+import IconWithTooltip from "@/components/general/basic/IconWithTooltip.vue";
+import SummaryIntro from "../../intros/SummaryIntro.vue";
+import ResultDatasetInfo from "@/components/analysis/info/ResultDatasetInfo.vue";
+import LineagesInfo from "@/components/analysis/info/LineagesInfo.vue";
 
 export default {
   name: "ResultInfo",
-  components: {SummaryIntro, IconWithTooltip, TagEditor, BtnWithTooltip},
+  components: {LineagesInfo, ResultDatasetInfo, SummaryIntro, IconWithTooltip, TagEditor, BtnWithTooltip},
+
   data() {
     return {
+      /** Boolean flag set to true if note editing is enabled */
       editNoteMode: false,
     }
   },
+
   computed: {
     ...mapGetters(['getCurrentAnalysis']),
 
+    /** Notes for the current analysis */
     notes: {
       set(newVal) {
         this.setNotes(newVal)
@@ -156,6 +141,7 @@ export default {
       }
     },
 
+    /** Location data */
     locationData() {
       const {granularity, location} = this.getCurrentAnalysis.query
       const {region, country, continent} = location
@@ -170,30 +156,11 @@ export default {
       }
     },
 
+    /** Analysis period */
     period() {
       return computeDateLabel(this.getCurrentAnalysis.query.endDate, 27, 0)
     },
 
-    datasetInfo(){
-      return this.getCurrentAnalysis.query.datasetInfo
-    },
-
-    noBegin(){
-      return this.datasetInfo['begin_date']==='beginning'
-    },
-    noEnd(){
-      return this.datasetInfo['end_date']==='end'
-    },
-    noCountryFilter(){
-      return this.datasetInfo['filtered_countries']==='all'
-    },
-
-    begin(){
-      return this.noBegin?'N.A.':this.datasetInfo['begin_date']
-    },
-    end(){
-      return this.noEnd?'N.A.':this.datasetInfo['end_date']
-    }
   },
   methods: {
     ...mapMutations(['setNotes']),

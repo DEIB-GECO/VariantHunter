@@ -30,7 +30,7 @@
     </v-row>
 
     <!-- Breakdown loading animation -->
-    <v-row v-if='isLoading.breakdown'>
+    <v-row v-show='isLoading.breakdown'>
       <v-col>
         <v-skeleton-loader width='100%' height="390" class="explorer-loader" type='image'/>
       </v-col>
@@ -65,9 +65,10 @@
 import ExplorerHistogram from '@/components/explorer/ExplorerHistogram'
 import LineagesBreakdown from '@/components/explorer/LineagesBreakdown'
 import {dateDiff} from '@/utils/dateService'
-import {mapState} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
+import {toText} from "@/utils/formatterService";
 
 export default {
   name: 'DatasetExplorer',
@@ -106,6 +107,12 @@ export default {
   },
   computed: {
     ...mapState(['selectedLocation', 'selectedLineage']),
+    ...mapGetters(['getSelectedLineageValues']),
+
+    /** Mapping for toText */
+    lineageText() {
+      return toText(this.selectedLineage)
+    },
 
     /** Visibility flag for the plots */
     showPlot() {
@@ -128,7 +135,7 @@ export default {
       } else {
         return (
             'Sequence availability per day for: ' + this.selectedLocation.text +
-            (this.selectedLineage && this.withLineages ? ', lineage ' + this.selectedLineage : '')
+            (this.lineageText && this.withLineages ? ', lineage ' + this.lineageText : '')
         )
       }
     }
@@ -140,9 +147,11 @@ export default {
         this.error = undefined
         this.isLoading.histogram = true
         const sequenceAPI = `/explorer/getSequenceInfo`
-        const queryParams = {
-          location: this.selectedLocation.id,
-          lineage: this.withLineages ? this.selectedLineage : undefined   // possibly it has no value
+        const queryParams = new URLSearchParams();
+        queryParams.append('location', this.selectedLocation.id)
+        // Add lineages data
+        if (this.withLineages && this.selectedLineage.count > 0) {
+          this.getSelectedLineageValues.forEach(name => queryParams.append("lineages", name))
         }
 
         this.$axios
@@ -225,7 +234,7 @@ export default {
     },
 
     /** Fetch sequence info on lineage value changes */
-    selectedLineage() {
+    getSelectedLineageValues() {
       this.fetchSequenceInfo()
     },
 

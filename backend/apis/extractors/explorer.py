@@ -11,12 +11,12 @@ from ..utils.path_manager import db_path
 from ..utils.utils import compute_date_from_diff
 
 
-def extract_seq_num(location, lineage):
+def extract_seq_num(location, lineages):
     """
     Extract from the database the sequence count for the selected location and lineage
     Args:
         location:   The location identifier to be considered
-        lineage:    The lineage name to be considered
+        lineages:   The list of lineage names to be considered
 
     Returns:    List of dictionaries representing the sequences.
                 [
@@ -31,20 +31,23 @@ def extract_seq_num(location, lineage):
     cur = con.cursor()
 
     def execute_query():
-        if lineage is not None and lineage != '':
+        params = list(location)
+        if lineages is not None and len(lineages) > 0:
             # Count how many seq have been collected for each day, matching given location and lineage
             query = ''' SELECT date,sum(count) 
                         FROM aggr_sequences SQ
                             JOIN lineages LN ON SQ.lineage_id = LN.lineage_id
-                        WHERE location_id = :loc_id AND lineage = :lineage
-                        GROUP BY date, SQ.location_id, SQ.lineage_id;'''
+                        WHERE location_id = ? AND
+                            lineage IN (%s) ''' % ("?," * len(lineages))[:-1] + '''
+                        GROUP BY date;'''
+            params.extend(lineages)
         else:
             # Count how many seq have been collected for each day, matching given location
             query = ''' SELECT date,sum(count) 
                         FROM aggr_sequences SQ
-                        WHERE location_id = :loc_id
-                        GROUP BY date, SQ.location_id;'''
-        seqs = cur.execute(query, {'loc_id': location, 'lineage': lineage}).fetchall()
+                        WHERE location_id = ?
+                        GROUP BY date;'''
+        seqs = cur.execute(query, params).fetchall()
         return [{'date': x[0], 'seq_count': x[1]} for x in seqs]
 
     daily_sequence_counts = execute_query()

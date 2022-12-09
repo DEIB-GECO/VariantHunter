@@ -81,7 +81,7 @@ import DiffusionHeatmap from "@/components/analysis/DiffusionHeatmap";
 import DiffusionTrend from "@/components/analysis/DiffusionTrend";
 import DiffusionOddRatio from "@/components/analysis/DiffusionOddRatio";
 import NoDataAlert from "@/components/general/NoDataAlert";
-import ResultInfo from "@/components/analysis/ResultInfo";
+import ResultInfo from "@/components/analysis/info/ResultInfo.vue";
 import ResultFilters from "@/components/analysis/ResultFilters";
 import ResultIntro from "@/components/intros/ResultIntro";
 import SidebarIntro from "../intros/SidebarIntro";
@@ -116,9 +116,9 @@ export default {
 
   computed: {
     ...mapState(['selectedLocation', 'selectedDate', 'selectedLineage']),
-    ...mapGetters(['getCurrentAnalysis']),
+    ...mapGetters(['getCurrentAnalysis', 'getSelectedLineage']),
 
-  /** Boolean flag set to true iff the current analysis is lineage specific */
+    /** Boolean flag set to true iff the current analysis is lineage specific */
     withLineages() {
       return this.getCurrentAnalysis.query.lineage !== null
     },
@@ -158,7 +158,7 @@ export default {
      */
     shiftType() {
       this.restoreCurrentAnalysis()
-      this.setLineage(null)
+      this.setLineage({groups: {}, items: []})
       this.sendAnalysis()
     },
 
@@ -178,11 +178,13 @@ export default {
     sendAnalysis() {
       this.isLoading = true
       this.error = undefined
-      const url = (this.selectedLineage) ? "/lineage_specific/getStatistics" : "/lineage_independent/getStatistics"
-      const queryParams = {
-        location: this.selectedLocation.id,
-        date: this.selectedDate[1],
-        lineage: this.selectedLineage
+      const url = (this.selectedLineage.count > 0) ? "/lineage_specific/getStatistics" : "/lineage_independent/getStatistics"
+      const queryParams = new URLSearchParams();
+      queryParams.append('location', this.selectedLocation.id)
+      queryParams.append('date', this.selectedDate[1])
+      // Add lineages data
+      if (this.selectedLineage.count > 0) {
+        this.getSelectedLineage.forEach(name => queryParams.append("lineages", name))
       }
 
       this.$axios

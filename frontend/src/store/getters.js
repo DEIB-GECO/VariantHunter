@@ -130,4 +130,21 @@ export const getters = {
         return getters.getCurrentPlotInfo.title
     },
 
+    /**
+     * Get the currently selected lineage values (items + group values)
+     */
+    getSelectedLineageValues: (state) => {
+        const list = [...state.selectedLineage.items]
+        Object.values(state.selectedLineage.groups).forEach(group => list.push(...group))
+        return list
+    },
+    /**
+     * Get the currently selected lineage values (items + group keys)
+     */
+    getSelectedLineage: (state) => {
+        const list = [...state.selectedLineage.items]
+        list.push(...Object.keys(state.selectedLineage.groups))
+        return list
+    }
+
 }

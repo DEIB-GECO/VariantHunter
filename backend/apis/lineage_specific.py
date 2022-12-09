@@ -12,7 +12,7 @@ from flask_restplus import Namespace, Resource
 
 from .extractors.explorer import extract_lineage_characterization, extract_dataset_info
 from .extractors.lineage_specific import get_all_lineages, get_lineages_from_loc, get_lineages_from_loc_date, \
-    extract_week_seq_counts, extract_mutation_data
+    extract_week_seq_counts, extract_mutation_data, parse_lineages
 from .extractors.locations import extract_location_data
 from .utils.utils import compute_weeks_from_date, produce_statistics
 
@@ -83,7 +83,7 @@ class FieldList(Resource):
         Query params:
         - location (int):   Location identifier
         - date (string):    End date of the 4-weeks period to be considered. Takes format YYYY-mm-dd
-        - lineage (string): Lineage to be considered
+        - lineages (list):  List of lineage names to be considered (both specific and in star-notation)
 
         Success response (code 200):
             Dictionary containing the statistics
@@ -109,7 +109,11 @@ class FieldList(Resource):
                         'region': null if the location is not a region, otherwise
                             { 'id': identifier,'text': region name}
                     },
-                    'lineage': Lineage to be considered
+                    'lineage': {
+                        'items': list of well-defined selected lineages,
+                        'groups': list of selected lineages in star notation,
+                        'groups_items': list of well-defined lineages associated with those in 'groups'
+                    },
                 },
                 'rows': [
                     {
@@ -146,23 +150,26 @@ class FieldList(Resource):
         exec_start = time.time()
         args = request.args
         location = args.get('location')
-        lineage = args.get('lineage')
+        lineages = args.getlist('lineages')
         date = args.get('date')
 
         w = compute_weeks_from_date(date)
 
-        week_sequence_counts = extract_week_seq_counts(location, lineage, w)
+        # parse lineages data
+        items, groups, lineages = parse_lineages(location, w['w4_end'], lineages)
+
+        week_sequence_counts = extract_week_seq_counts(location, lineages, w)
 
         min_sequences = int(week_sequence_counts[-1] * 0.005 + 1)
-        mutation_data = extract_mutation_data(location, lineage, w, min_sequences)
+        mutation_data = extract_mutation_data(location, lineages, w, min_sequences)
 
         statistics = produce_statistics(week_sequence_counts, mutation_data)
-        characterizing_muts = extract_lineage_characterization([lineage])
+        characterizing_muts = extract_lineage_characterization(lineages)
 
         metadata = {
             'date': date,
             'location': extract_location_data(location),
-            'lineage': lineage,
+            'lineage': {'items': items, 'groups': groups},
             'dataset_info': extract_dataset_info()
         }
 

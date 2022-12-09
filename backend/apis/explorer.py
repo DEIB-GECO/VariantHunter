@@ -34,7 +34,7 @@ class FieldList(Resource):
 
         Query params:
         - location (int):   Location identifier
-        - lineage (string): Lineage name
+        - lineages (list):  List of lineage names (specific only, not in star notation)
 
         Success response (code 200):
             List of dictionaries representing the sequences.
@@ -53,9 +53,9 @@ class FieldList(Resource):
         exec_start = time.time()
         args = request.args
         location = args.get('location')
-        lineage = args.get('lineage')
+        lineages = args.getlist('lineages')
 
-        info = extract_seq_num(location, lineage)
+        info = extract_seq_num(location, lineages)
         print(f'\t[GET] /getSequenceInfo: processed in {time.time() - exec_start:.5f} seconds.')
         return info
 

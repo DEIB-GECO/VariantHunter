@@ -3,6 +3,8 @@
  *  It provides general purpose functions to convert formats
  */
 
+import {toText} from "@/utils/formatterService";
+
 /**
  * Converter utility json to csv
  * @param jsonData    The json data to be converted
@@ -38,6 +40,6 @@ export function json2csv(jsonData, headersInfo) {
 export function getFileName(query) {
     return (
         query.location[query.granularity].text + "_" + query.endDate +
-        (query.lineage ? "_" + query.lineage : '')
+        (query.lineage ? "_" + toText(query.lineage) : '')
     )
 }

@@ -89,8 +89,8 @@ export const state = {
     /** Selected analysis period as [start, end] */
     selectedDate: null,
 
-    /** Selected lineage */
-    selectedLineage: null,
+    /** Selected lineage. It consists of {'items':['BA.4.1'], 'groups':{'BA.1.*: ['BA.1',...]}}, 'count'} */
+    selectedLineage: {items: [], groups: [], count: 0},
     /** Possible lineages */
     possibleLineages: [],
     /** Info about possible lineages {'lineage': integer_count} */

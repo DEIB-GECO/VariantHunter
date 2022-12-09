@@ -19,7 +19,7 @@
       {{
         query.location[query.granularity].text + " / " +
         query.endDate +
-        (query.lineage ? " / " + query.lineage : "")
+        (query.lineage ? " / " + lineagesToText(query.lineage) : "")
       }}
     </v-toolbar-title>
 
@@ -59,6 +59,7 @@ import {mapGetters, mapMutations, mapState} from "vuex";
 import ResultNavbarMenu from "@/components/analysis/navbar/ResultNavbarMenu";
 import ResultNavbarWeekSlider from "@/components/analysis/navbar/ResultNavbarWeekSlider";
 import ResultNavbarLocationSwitcher from "@/components/analysis/navbar/ResultNavbarLocationSwitcher";
+import {toText} from "@/utils/formatterService";
 
 export default {
   name: "ResultNavbar",
@@ -80,7 +81,12 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['removeAnalysis', 'setStarredAnalysis'])
+    ...mapMutations(['removeAnalysis', 'setStarredAnalysis']),
+
+    /** Mapping lineage toText */
+    lineagesToText(arg) {
+      return toText(arg)
+    },
   }
 }
 </script>

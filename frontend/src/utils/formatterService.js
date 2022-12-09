@@ -4,12 +4,37 @@
  */
 import {NotSupportedError} from "core-js/internals/dom-exception-constants";
 
+/**
+ *
+ * Given a list of lineage and a lineage, it extracts the children
+ * @param possibleValues    Possible values for the group elements
+ * @param group             String representing the selected group
+ * @returns {*[]}           List of children lineages
+ */
+export function extractLineages(possibleValues, group) {
+    return possibleValues.filter((name) => (name === group || name.startsWith(group + '.')))
+}
+
+/**
+ * Compute lineage string starting from the list of selected values
+ * @param lineageObj    Lineage object describing the selected lineages
+ * @returns {*|string}  String of text representing the selection
+ */
+export function toText(lineageObj) {
+    if (!lineageObj) return ''
+
+    const list = [...lineageObj.items]
+    list.push(...Object.keys((lineageObj.groups)))
+    return list.sort().join(', ')
+}
+
+
 export function compactLineagesData(lineagesData, level) {
     if (level !== 1 && level !== 2) throw NotSupportedError
 
     // Compute the lineages in star notation
     const regExp = level === 1
-        ? (/^([a-zA-Z0-9]+.[a-zA-Z0-9]+|[[a-zA-Z0-9]+)/) // aggregate at level 1 (A.1.*)
+        ? (/^([a-zA-Z0-9]+.[a-zA-Z0-9]+|[[a-zA-Z0-9]+)/) // aggregate at level 1 (A.1.* or XE)
         : (/^([a-zA-Z0-9]+.[a-zA-Z0-9]+.[a-zA-Z0-9]+|[a-zA-Z0-9]+.[a-zA-Z0-9]+|[[a-zA-Z0-9]+)/)  // aggregate at level 2 (A.1.2.*)
     const lineagesNames = [...new Set(lineagesData.map(({name}) => name.match(regExp).at(0)))]
 

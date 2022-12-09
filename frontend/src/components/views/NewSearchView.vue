@@ -135,7 +135,7 @@ import LocationSelector from "@/components/form/LocationSelector";
 import DatePicker from "@/components/form/DatePicker";
 import LineageSelector from "@/components/form/LineageSelector";
 import DatasetExplorer from "@/components/explorer/DatasetExplorer";
-import {mapActions, mapMutations, mapState} from "vuex";
+import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
 import NoDataAlert from "@/components/general/NoDataAlert";
 import QuickTagSelector from "@/components/form/QuickTagSelector";
@@ -143,6 +143,7 @@ import TourIntro from "@/components/intros/TourIntro";
 import DefinitionIntro from "@/components/intros/DefinitionIntro";
 import ExplorerIntro from "@/components/intros/ExplorerIntro";
 import DatasetInfo from "../general/DatasetInfo";
+import {toText} from "@/utils/formatterService";
 
 export default {
   name: "NewSearchView",
@@ -174,10 +175,12 @@ export default {
 
   computed: {
     ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate']),
+    ...mapGetters(['getSelectedLineage']),
 
     /** Form error flag: true if the form cannot be sent */
     formError() {
-      return !this.selectedLocation || !this.selectedDate || (!this.selectedLineage && this.mode === 'ls')
+      return !this.selectedLocation || !this.selectedDate ||
+          (this.selectedLineage.count < 1 && this.mode === 'ls')
     }
   },
 
@@ -201,10 +204,12 @@ export default {
       this.isLoading = true
       this.error = undefined
       const url = (this.mode === 'li') ? "/lineage_independent/getStatistics" : "/lineage_specific/getStatistics"
-      const queryParams = {
-        location: this.selectedLocation.id,
-        date: this.selectedDate[1],
-        lineage: this.selectedLineage
+      const queryParams = new URLSearchParams();
+      queryParams.append('location', this.selectedLocation.id)
+      queryParams.append('date', this.selectedDate[1])
+      // Add lineages data
+      if (this.selectedLineage.count > 0) {
+        this.getSelectedLineage.forEach(name => queryParams.append("lineages", name))
       }
 
       this.$axios
