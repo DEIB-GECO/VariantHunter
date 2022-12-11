@@ -92,9 +92,6 @@ export default {
      */
     computeData(mut, referToFirstWeek) {
       const yBeforeLog = this.computeY(mut, referToFirstWeek)
-      console.log(mut['item_key'])
-      console.log(this.computeReferences(mut, referToFirstWeek, yBeforeLog))
-      console.log("___")
 
       return {
         name: mut['protein'] + '_' + mut['mut'],        //  mutation name for the legend
@@ -155,8 +152,6 @@ export default {
      * @param yValues Array of 4 odd radio values (possibly '-' if not defined)
      */
     logY(yValues) {
-      console.log(yValues)
-      console.log(yValues.map((oddRatio) => (oddRatio === 0 || oddRatio === '-') ? '-' : Math.log2(oddRatio)))
       return yValues.map((oddRatio) => (oddRatio === 0 || oddRatio === '-') ? '-' : Math.log2(oddRatio))
     },
 

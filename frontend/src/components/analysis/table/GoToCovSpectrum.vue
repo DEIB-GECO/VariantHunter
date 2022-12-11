@@ -11,15 +11,61 @@
       <v-col class="text-center text-sm-left">
 
         <!-- Analysis generation action button -->
-        <btn-with-tooltip size="small" outlined top color="primary" :click-handler="generateAnalysis">
+        <btn-with-tooltip size="small" :tip="showMenuOptions?'':undefined" outlined top color="primary"
+                          :click-handler="()=>btnClickManager()">
 
           <!-- Custom appearance with covSPECTRUM logo -->
           <template v-slot:btn>
-            <v-icon left>mdi-open-in-new</v-icon>
-            Analyze <span class="hidden-xs-only">the selected mutations</span> with
-            <span class="pl-1 inline-img">
-              <v-img max-height="14px" width="115px" contain :src="require('@/assets/others/CovSpecturm.svg')"/>
+            <span ref="analyzeBtn">
+              <v-icon left>mdi-open-in-new</v-icon>
+              Analyze <span class="hidden-xs-only">the selected mutations</span> with
+              <span class="pl-1 inline-img">
+                <v-img max-height="14px" width="115px" contain :src="require('@/assets/others/CovSpecturm.svg')"/>
+              </span>
             </span>
+
+            <!-- Selection options menu-->
+            <v-menu v-model="showMenuOptions" :attach="$refs.analyzeBtn" offset-y :position-y="23"
+                    content-class="bg_var1 text-normal text-left" min-width="fill-available">
+              <div class="break-spaces pt-4 px-4">You have selected multiple mutations. <br/>Choose how to select the
+                sequences to be analyzed.
+              </div>
+              <v-list color="bg_var1" rounded dense width="auto">
+                <v-list-item link dense @click="generateAnalysis(true)">
+                  <v-icon class="pr-3" color="primary">mdi-set-all</v-icon>
+                  <v-list-item-content>
+                    <v-list-item-title class="primary--text">Use the <span class="font-weight-bold">OR</span> operator
+                    </v-list-item-title>
+                    <v-list-item-subtitle>Consider sequences that contain at least one of the selected mutations.
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item link dense @click="generateAnalysis(false)">
+                  <v-icon class="pr-3" color="primary">mdi-set-center</v-icon>
+                  <v-list-item-content>
+                    <v-list-item-title class="primary--text">Use the <span class="font-weight-bold">AND</span> operator
+                    </v-list-item-title>
+                    <v-list-item-subtitle>Considers only sequences that contain all of the selected mutations.
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+
+              <!-- Compatibility warnings -->
+              <div class="break-spaces pa-4 pt-0">
+                <div class="mt-0 border-t error--text rounded-xl px-4 py-1" v-if="nspWarning">
+                  <v-icon small color="error" left> mdi-alert</v-icon>
+                  <span class="font-weight-bold">Warning:</span>
+                  NSP proteins are not currently supported and will not be considered
+                </div>
+                <div class="mt-3 border-t error--text rounded-xl px-4 py-1" v-if="stopWarning">
+                  <v-icon small color="error" left> mdi-alert</v-icon>
+                  <span class="font-weight-bold">Warning:</span>
+                  Stop mutations are not currently supported and will not be considered
+                </div>
+              </div>
+            </v-menu>
+
           </template>
 
           <!-- Custom button user tip with a summary -->
@@ -65,6 +111,13 @@ export default {
   name: "GoToCovSpectrum",
   components: {BtnWithTooltip},
 
+  data() {
+    return {
+      /** Boolean visibility flag for the menu options */
+      showMenuOptions: true
+    }
+  },
+
   computed: {
     ...mapGetters(['getCurrentAnalysis', 'getCurrentSelectedRows']),
 
@@ -85,8 +138,19 @@ export default {
   },
 
   methods: {
-    /** Generate an analysis on covSPECTRUM for the selected parameters */
-    generateAnalysis() {
+    /** Manager for the click on 'analyze with covSpectrum' button */
+    btnClickManager() {
+      if (this.selectedRows.length > 1)
+        this.showMenuOptions = true
+      else
+        this.generateAnalysis()
+    },
+
+    /**
+     * Generate an analysis on covSPECTRUM for the selected parameters
+     * @param useOr Boolean flag set to true if or operator should be used
+     */
+    generateAnalysis(useOr = true) {
       // Location data: if granularity is regional, then perform a country-level
       //                analysis since CovSpectrum does not support regions
       const {location: locationData, granularity} = this.getCurrentAnalysis.query
@@ -105,7 +169,7 @@ export default {
       const muts = this.selectedRows
           .map(({protein, mut}) => this.convertFormat(protein, mut)) // converts
           .filter(str => str !== null) // remove unsupported muts
-          .join('+%7C+') // join to create the url
+          .join(useOr ? '+%7C+' : '+%26+') // join to create the url
 
       // Finally generate the URL
       const url = "https://cov-spectrum.org/explore/" + location +
