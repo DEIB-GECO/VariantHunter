@@ -29,7 +29,7 @@
         <v-col >
           <div :class="'text-h5 compact-h5 font-weight-black primary--text mt-8  spaced-5 mb-'+(tabs.length>0?'4':'2')">
             <v-icon left color="primary">{{ icon }}</v-icon>
-            {{ title }}
+            <span v-html="title"/>
             <v-fade-transition hide-on-leave>
             <div v-if="subtitle && showSectionBody" class="ml-11">
               <div class="text-body-0 compact-text-0 font-weight-medium " v-html="subtitle"/>

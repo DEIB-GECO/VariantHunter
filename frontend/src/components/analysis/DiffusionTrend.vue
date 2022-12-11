@@ -68,6 +68,7 @@ import DialogOpener from '@/components/general/basic/DialogOpener'
 import SectionElement from "@/components/analysis/SectionElement";
 import {mapGetters} from "vuex";
 import TrendIntro from "@/components/intros/TrendIntro";
+import {palette} from "@/utils/colorService";
 
 export default {
   name: 'DiffusionTrend',
@@ -113,14 +114,7 @@ export default {
     layout() {
       return {
         height: this.getCurrentPlotRows.length >= 20 ? 520 : 480,
-        colorway:
-            [
-              '#ef5378', '#5ee171', '#f3df67', '#6685f1',
-              '#fda05f', '#d46ff5', '#71daf1', '#f37fed',
-              '#cfee82', '#fcb0ca', '#7ed7cd', '#dac4f8',
-              '#efc69a', '#fffac8', '#d24f32', '#aaffc3',
-              '#808000', '#ffd8b1', '#575793', '#a9a9a9'
-            ],
+        colorway: palette,
         //title: this.getCurrentPlotTitle,
         xaxis: {
           tickmode: 'array',

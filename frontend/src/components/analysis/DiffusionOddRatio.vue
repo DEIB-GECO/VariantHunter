@@ -7,7 +7,7 @@
 
 <template>
   <section-element icon='mdi-align-vertical-bottom' assign-id="odd-ratio"
-                   title='Diffusion odd ratio'
+                   title='Log<sub>2</sub> odd ratio'
                    :subtitle="getCurrentPlotTitle"
                    caption="To visualize specific mutations, select the corresponding rows from the table"
                    collapsed :tabs='["Week-by-week","Week-to-first-week","All"]'
@@ -34,6 +34,7 @@ import {Plotly} from '@rleys/vue-plotly'
 import SectionElement from "@/components/analysis/SectionElement";
 import {mapGetters} from "vuex";
 import OddRatioIntro from "../intros/OddRatioIntro";
+import {palette} from "@/utils/colorService";
 
 export default {
   name: 'DiffusionOddRatio',
@@ -90,19 +91,24 @@ export default {
      * @returns {Object}  The data object for the odd ratio plot
      */
     computeData(mut, referToFirstWeek) {
+      const yBeforeLog = this.computeY(mut, referToFirstWeek)
+      console.log(mut['item_key'])
+      console.log(this.computeReferences(mut, referToFirstWeek, yBeforeLog))
+      console.log("___")
+
       return {
         name: mut['protein'] + '_' + mut['mut'],        //  mutation name for the legend
         x: [1, 2, 3, 4],                                //  weeks
-        y: this.computeY(mut, referToFirstWeek),         //  odd ratio for the 4 weeks
+        y: this.logY(yBeforeLog),         //  odd ratio for the 4 weeks
 
         // Hover label info
-        meta: mut['protein'] + '_' + mut['mut'],                    //  mutation name for hover label
-        customdata: this.computeReferences(mut, referToFirstWeek),   //  references for hover label
+        meta: mut['protein'] + '_' + mut['mut'], //  mutation name for hover label
+        customdata: this.computeReferences(mut, referToFirstWeek, yBeforeLog),   //  references for hover label
         hovertemplate:
             '%{meta}, %{y:.2f} (from %{customdata[0]}% to %{customdata[1]}%) <br />' +
             (referToFirstWeek
-                ? 'The diffusion is %{y:.0%} compared to the first week'
-                : 'The diffusion is %{y:.0%} compared to the previous week') +
+                ? 'The diffusion is %{customdata[2]:0%} compared to the first week'
+                : 'The diffusion is %{customdata[2]:0%} compared to the previous week') +
             '<extra></extra>',
         hoverlabel: {
           bordercolor: 'transparent',
@@ -145,28 +151,39 @@ export default {
     },
 
     /**
-     * Compute the reference for the plot labels for a given mutation.
+     * Computes the log2 of the values for the odd ratio
+     * @param yValues Array of 4 odd radio values (possibly '-' if not defined)
+     */
+    logY(yValues) {
+      console.log(yValues)
+      console.log(yValues.map((oddRatio) => (oddRatio === 0 || oddRatio === '-') ? '-' : Math.log2(oddRatio)))
+      return yValues.map((oddRatio) => (oddRatio === 0 || oddRatio === '-') ? '-' : Math.log2(oddRatio))
+    },
+
+    /**
+     * Compute additional custom data  for the plot labels for a given mutation.
      * @param mut               The mutation to be considered
      * @param referToFirstWeek  Flag to compute the odd ratio wrt to the first week
+     * @param percValue         Percentage values for the weeks (i.e., y values before log)
      * @returns {Array} Array whose elements represent a step of the frequency change.
      */
-    computeReferences(mut, referToFirstWeek) {
+    computeReferences(mut, referToFirstWeek, percValue) {
       if (referToFirstWeek) {
         // The odd ratio is computed for each week wrt to the first one
         const firstWeekFreq = mut['f1'].toPrecision(3)
         return [
-          ['initial', firstWeekFreq],     // [from,to] 1st week
-          [firstWeekFreq, mut['f2'].toPrecision(3)], // [from,to] 2nd week
-          [firstWeekFreq, mut['f3'].toPrecision(3)], // [from,to] 3rd week
-          [firstWeekFreq, mut['f4'].toPrecision(3)]  // [from,to] 4th week
+          ['initial', firstWeekFreq, percValue[0]],     // [from,to,change] 1st week
+          [firstWeekFreq, mut['f2'].toPrecision(3), percValue[1]], // [from,to,change] 2nd week
+          [firstWeekFreq, mut['f3'].toPrecision(3), percValue[2]], // [from,to,change] 3rd week
+          [firstWeekFreq, mut['f4'].toPrecision(3), percValue[3]]  // [from,to,change] 4th week
         ]
       } else {
         // The odd ratio is computed for each week wrt to the previous one
         return [
-          ['initial', mut['f1'].toPrecision(3)],                // [from,to] 1st week
-          [mut['f1'].toPrecision(3), mut['f2'].toPrecision(3)], // [from,to] 2nd week
-          [mut['f2'].toPrecision(3), mut['f3'].toPrecision(3)], // [from,to] 3rd week
-          [mut['f3'].toPrecision(3), mut['f4'].toPrecision(3)]  // [from,to] 4th week
+          ['initial', mut['f1'].toPrecision(3), percValue[0]],                // [from,to,change] 1st week
+          [mut['f1'].toPrecision(3), mut['f2'].toPrecision(3), percValue[1]], // [from,to,change] 2nd week
+          [mut['f2'].toPrecision(3), mut['f3'].toPrecision(3), percValue[2]], // [from,to,change] 3rd week
+          [mut['f3'].toPrecision(3), mut['f4'].toPrecision(3), percValue[3]]  // [from,to,change] 4th week
         ]
       }
     },
@@ -178,7 +195,7 @@ export default {
      */
     computeLayout(referToFirstWeek) {
       return {
-        title: this.type === 2 ? (referToFirstWeek ? '<br>Odd ratio week-to-first-week' : '<br>Odd ratio week-by-week') : '',
+        title: this.type === 2 ? (referToFirstWeek ? '<br>Log<sub>2</sub> odd ratio week-to-first-week' : '<br>Log<sub>2</sub> odd ratio week-by-week') : '',
 
         xaxis: {
           tickmode: 'array',
@@ -210,13 +227,7 @@ export default {
           ticks: 'outside',
           itemsizing: 'constant'
         },
-        colorway: // color palette for the legend
-            [
-              '#ef5378', '#5ee171', '#f3df67', '#6685f1', '#fda05f',
-              '#d46ff5', '#71daf1', '#f37fed', '#cfee82', '#fcb0ca',
-              '#7ed7cd', '#dac4f8', '#efc69a', '#fffac8', '#d24f32',
-              '#aaffc3', '#808000', '#ffd8b1', '#575793', '#a9a9a9'
-            ],
+        colorway: palette, // color palette for the legend
         barmode: 'group',
         bargap: 0.15,
         bargroupgap: 0.1,

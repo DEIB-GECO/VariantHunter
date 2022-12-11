@@ -43,3 +43,15 @@ export function isDark(colorCode) {
     const isDark = lightOrDark(colorCode) === 'dark'
     return isDark
 }
+
+/** Colors for plots */
+export const palette = [
+    '#ef5378', '#72ee84', '#f3df67', '#6685f1',
+    '#2fd901', '#ff3f00', '#ff1cb6', '#003aff',
+    '#ef8f4b', '#d46ff5', '#4fcbe7', '#ffb600',
+    '#ff6200', '#9a02ff', '#00fff7', '#ff00f2',
+    '#bbef39', '#fcb0ca', '#7ed7cd', '#ef479e',
+    '#ffbc73', '#fffac8', '#c56100', '#95e0ab',
+    '#808000', '#ffd8b1', '#601e1e', '#29b7d5',
+    '#058011', '#6b6868', '#b2b2b2', '#000000'
+]
