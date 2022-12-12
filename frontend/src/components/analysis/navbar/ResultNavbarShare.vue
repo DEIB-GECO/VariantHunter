@@ -49,9 +49,14 @@ export default {
       // Generate the url string
       const {lineage, endDate, location: locationData, granularity} = this.getCurrentAnalysis.query
       const type = lineage ? 'ls' : 'li'
-      const locationId = locationData[granularity].id
+      // Format as continent/country/region; continent/country or continent
+      let locationName =
+          locationData.continent.text +
+          (granularity !== 'continent' ? ("%2F" + locationData.country.text) : "") +
+          (granularity === 'region' ? ("%2F" + locationData.region.text) : "")
+      locationName = locationName.replaceAll(' ', '%20')
 
-      let url = location.origin + '/variant_hunter/linkTo?type=' + type + '&location=' + locationId + '&date=' + endDate
+      let url = location.origin + '/variant_hunter/linkTo?type=' + type + '&locationName=' + locationName + '&date=' + endDate
       if (lineage) {
         const lineages = [...lineage.items]
         lineages.push(...Object.keys(lineage.groups))
@@ -59,7 +64,6 @@ export default {
         url = url.replaceAll('*', '%2a')
       }
 
-      console.log(url)
       this.error = undefined
       this.$copyText(url).then(() => {
         this.showDialog = true

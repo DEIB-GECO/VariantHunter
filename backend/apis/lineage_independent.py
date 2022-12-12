@@ -12,7 +12,7 @@ from flask_restplus import Namespace, Resource
 
 from .explorer import extract_dataset_info
 from .extractors.lineage_independent import extract_week_seq_counts, extract_mutation_data, extract_lineages_data
-from .extractors.locations import extract_location_data
+from .extractors.locations import extract_location_data, extract_location_id
 from .utils.utils import compute_weeks_from_date, produce_statistics
 
 api = Namespace(name='Lineage independent analysis',path='/lineage_independent')
@@ -32,8 +32,10 @@ class FieldList(Resource):
         over the 4 weeks.
 
         Query params:
-        - location (int):   Location identifier
-        - date (string):    End date of the 4-weeks period to be considered. Takes format YYYY-mm-dd
+        - location (int):           Location identifier
+        - locationName (string):    Location name specified using continent[/country[/region]] notation
+                                    (used in alternative to location, when the id is not known)
+        - date (string):            End date of the 4-weeks period to be considered. Takes format YYYY-mm-dd
 
         Success response (code 200):
            Dictionary containing the statistics
@@ -93,6 +95,9 @@ class FieldList(Resource):
         exec_start = time.time()
         args = request.args
         location = args.get('location')
+        if location is None:
+            location_name = args.get('locationName')
+            location = extract_location_id(location_name)
         date = args.get('date')
 
         w = compute_weeks_from_date(date)

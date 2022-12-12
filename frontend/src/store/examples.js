@@ -11,21 +11,21 @@
  */
 export const examples = [
     {
-        title: "Omicron BA.1.12.1 lineage",
-        intro: "Appearance and spread of Omicron BA.1.12.1 lineage in the USA in March 2022.",
+        title: "Omicron BA.2.12.1 lineage",
+        intro: "Appearance and spread of Omicron BA.2.12.1 lineage in the USA in March 2022.",
         body:
             "<p>From Pango designationissue 499 " +
             "(https://github.com/cov-lineages/pango-designation/issues/499) , which led to " +
-            "the definition of the BA.1.12.1 sublineage of SARS-CoV-2.</p>" +
+            "the definition of the BA.2.12.1 sublineage of SARS-CoV-2.</p>" +
             "<p>The novel lineage is defined by a L452Q amino acid change in the spike glycoprotein " +
             "according to the submitter.</p>" +
-            "<p>A clear increase in the prevalence of L452Q within lineage BA.1.12.1 is observed " +
+            "<p>A clear increase in the prevalence of L452Q within lineage BA.2.12.1 is observed " +
             "both from the Diffusion Odds Ratio plot and the Diffusion Heatmap. </p>" +
             "<p>As outlined from the Diffusion Odds Ratio plot the amino acid change that defines " +
             "the new lineage seems to be associated with a clear growth advantage.</p>",
         type: 'ls',
         granularity: 'country',
-        url: '.../linkTo?type=ls&location=76&date=2022-03-30&lineages=BA.1.12&lineages=BA.1.12.1',
+        url: '.../linkTo?type=ls&locationName=North%20America%2FUSA&date=2022-03-30&lineages=BA.2.12&lineages=BA.2.12.1',
     },
     {
         title: "Omicron variant in Europe",
@@ -42,7 +42,7 @@ export const examples = [
             "<p>Equivalent patterns are recovered both from the Diffusion Heatmap and Diffusion Trend Chart.</p>",
         granularity: 'continent',
         type: 'li',
-        url: '.../linkTo?type=li&location=11&date=2022-01-01',
+        url: '.../linkTo?type=li&locationName=Europe&date=2022-01-01',
     },
     {
         title: "Omicron BA.1.15.2 lineage",
@@ -57,7 +57,7 @@ export const examples = [
             "both from the Diffusion Odds Ratio plot and the Diffusion Heatmap.</p>",
         granularity: 'country',
         type: 'ls',
-        url: '.../linkTo?type=ls&location=76&date=2022-03-30&lineages=BA.1.15&lineages=BA.1.15.2',
+        url: '.../linkTo?type=ls&locationName=North%20America%2FUSA&date=2022-03-30&lineages=BA.1.15&lineages=BA.1.15.2',
     },
     {
         title: "Alpha variant in the United Kingdom",
@@ -71,7 +71,7 @@ export const examples = [
             "be observed also from the Diffusion Trend Chart and Diffusion Odds Ratio plots.</p>",
         granularity: 'country',
         type: 'li',
-        url: '.../linkTo?type=li&location=105&date=2020-11-16',
+        url: '.../linkTo?type=li&locationName=Europe%2FUnited%20Kingdom&date=2020-11-16',
     },
 
 ]

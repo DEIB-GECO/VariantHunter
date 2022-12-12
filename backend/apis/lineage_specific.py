@@ -13,7 +13,7 @@ from flask_restplus import Namespace, Resource
 from .extractors.explorer import extract_lineage_characterization, extract_dataset_info
 from .extractors.lineage_specific import get_all_lineages, get_lineages_from_loc, get_lineages_from_loc_date, \
     extract_week_seq_counts, extract_mutation_data, parse_lineages
-from .extractors.locations import extract_location_data
+from .extractors.locations import extract_location_data, extract_location_id
 from .utils.utils import compute_weeks_from_date, produce_statistics
 
 api = Namespace(name='Lineage specific analysis', path='/lineage_specific')
@@ -81,9 +81,11 @@ class FieldList(Resource):
         and analyzes their trend over the 4 weeks.
 
         Query params:
-        - location (int):   Location identifier
-        - date (string):    End date of the 4-weeks period to be considered. Takes format YYYY-mm-dd
-        - lineages (list):  List of lineage names to be considered (both specific and in star-notation)
+        - location (int):           Location identifier
+        - locationName (string):    Location name specified using continent[/country[/region]] notation
+                                    (used in alternative to location, when the id is not known)
+        - date (string):            End date of the 4-weeks period to be considered. Takes format YYYY-mm-dd
+        - lineages (list):          List of lineage names to be considered (both specific and in star-notation)
 
         Success response (code 200):
             Dictionary containing the statistics
@@ -150,6 +152,9 @@ class FieldList(Resource):
         exec_start = time.time()
         args = request.args
         location = args.get('location')
+        if location is None:
+            location_name = args.get('locationName')
+            location = extract_location_id(location_name)
         lineages = args.getlist('lineages')
         date = args.get('date')
 

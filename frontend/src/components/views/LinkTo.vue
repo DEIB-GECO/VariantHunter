@@ -91,7 +91,7 @@ export default {
     /**
      * Triggers the analysis request to the server
      */
-    sendAnalysis({type, location, date, lineages}) {
+    sendAnalysis({type, locationName, date, lineages}) {
       if (typeof lineages === "string")
         lineages = [lineages]
       else if (!lineages) {
@@ -102,7 +102,7 @@ export default {
       this.error = undefined
       const url = (type === 'li') ? "/lineage_independent/getStatistics" : "/lineage_specific/getStatistics"
       const queryParams = new URLSearchParams();
-      queryParams.append('location', location)
+      queryParams.append('locationName', locationName)
       queryParams.append('date', date)
 
       // Add lineages data
@@ -133,7 +133,8 @@ export default {
      */
     toHome() {
       this.setCurrentAnalysis(null)
-      this.$router.push({name: 'Home'})
+      if (!this.triggered)
+        this.$router.push({name: 'Home'})
     }
   },
 

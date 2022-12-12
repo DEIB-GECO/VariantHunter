@@ -166,7 +166,7 @@ export default {
         // Set params to trigger search
         this.params = {
           type: url.get('type'),
-          location: url.get('location'),
+          locationName: url.get('locationName'),
           date: url.get('date'),
           lineages: url.getAll('lineages')
         }

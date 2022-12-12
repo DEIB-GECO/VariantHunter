@@ -10,6 +10,51 @@ import sqlite3
 from ..utils.path_manager import db_path
 
 
+def extract_location_id(location_name):
+    """
+    Given the name of a location, extract the identifier
+    Args:
+        location_name:  Location name specified using continent[/country[/region]] notation
+
+    Returns:    Integer identifier for the location or None if not found
+
+    """
+    locs = location_name.split('/')
+    locs_len = len(locs)
+
+    con = sqlite3.connect(db_path)
+    cur = con.cursor()
+
+    if locs_len == 1:
+        # Is a continent
+        query = ''' SELECT CO.continent_id
+                    FROM continents AS CO
+                        JOIN locations AS CO_LO ON CO.continent_id=CO_LO.location_id
+                    WHERE CO_LO.location=?;'''
+    elif locs_len == 2:
+        # Is a country
+        query = ''' SELECT COU.country_id
+                    FROM continents AS CO
+                        JOIN locations AS CO_LO ON CO.continent_id=CO_LO.location_id
+                        JOIN countries COU ON CO.continent_id = COU.continent_id
+                        JOIN locations AS COU_LO ON COU.country_id=COU_LO.location_id
+                    WHERE CO_LO.location=? AND COU_LO.location=?;'''
+    else:
+        # Is a region
+        query = ''' SELECT RE.region_id
+                    FROM continents AS CO
+                        JOIN locations AS CO_LO ON CO.continent_id=CO_LO.location_id
+                        JOIN countries COU ON CO.continent_id = COU.continent_id
+                        JOIN locations AS COU_LO ON COU.country_id=COU_LO.location_id
+                        JOIN regions RE ON RE.country_id = COU.country_id
+                        JOIN locations AS RE_LO ON RE.region_id=RE_LO.location_id
+                    WHERE CO_LO.location=? AND COU_LO.location=? AND RE_LO.location=?;'''
+    location_id = cur.execute(query, locs).fetchone()
+
+    con.close()
+    return location_id[0] if location_id is not None else None
+
+
 def extract_location_data(location):
     """
     Extract all the data of a given location
