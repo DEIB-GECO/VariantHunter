@@ -1,10 +1,17 @@
+<!--
+
+  Component:    QuickStart
+  Description:  Section with featured examples
+
+-->
+
 <template>
-  <v-row class="px-5 mt-5">
+  <v-row class="px-5 mt-8">
     <v-container>
       <!-- Intro text -->
       <v-row>
         <v-col>
-          <div class="text-h5 font-weight-black primary--text pb-2" id="explorer">
+          <div class="text-h5 font-weight-black primary--text pb-3" id="explorer">
             Featured Analyses
           </div>
 
@@ -23,13 +30,13 @@
                   </div>
 
                   <div class="mb-2">
-                    <v-chip x-small :color="locationColor(example.params.granularity)" dark
+                    <v-chip x-small :color="locationColor(example.granularity)" dark
                             class="text-uppercase mr-1 mb-1">
-                      {{ example.params.granularity }}
+                      {{ example.granularity }}
                     </v-chip>
-                    <v-chip x-small :color="example.params.lineage?'#1f2215':'#3398DC'" dark
+                    <v-chip x-small :color="example.type==='ls'?'#1f2215':'#3398DC'" dark
                             class="text-uppercase mr-1 mb-1">
-                      {{ example.params.lineage ? "lineage-specific" : "lineage-independent" }}
+                      {{ example.type === 'ls' ? "lineage-specific" : "lineage-independent" }}
                     </v-chip>
                   </div>
 
@@ -71,13 +78,13 @@
 
                         <h3 class="font-weight-bold text-h5 primary--text">{{ examples[opened].title }}</h3>
                         <div class="my-2">
-                          <v-chip x-small :color="locationColor(examples[opened].params.granularity)" dark
+                          <v-chip x-small :color="locationColor(examples[opened].granularity)" dark
                                   class="text-uppercase mr-1 mb-1">
-                            {{ examples[opened].params.granularity }}
+                            {{ examples[opened].granularity }}
                           </v-chip>
-                          <v-chip x-small :color="examples[opened].params.lineage?'#1f2215':'#3398DC'" dark
+                          <v-chip x-small :color="examples[opened].type=='ls'?'#1f2215':'#3398DC'" dark
                                   class="text-uppercase mr-1 mb-1">
-                            {{ examples[opened].params.lineage ? "lineage-specific" : "lineage-independent" }}
+                            {{ examples[opened].type == 'ls' ? "lineage-specific" : "lineage-independent" }}
                           </v-chip>
                         </div>
 
@@ -96,11 +103,8 @@
             </v-dialog>
           </v-sheet>
         </v-col>
-      </v-row>
 
-      <!-- Plots -->
-      <v-row no-gutters>
-        <!-- Explorer step of the app-tour -->
+        <link-to v-model="params" triggered/>
 
       </v-row>
     </v-container>
@@ -110,9 +114,11 @@
 <script>
 import {examples} from "@/store/examples";
 import {getLocationColor} from "@/utils/colorService";
+import LinkTo from "@/components/views/LinkTo.vue";
 
 export default {
   name: "QuickStart",
+  components: {LinkTo},
 
   data() {
     return {
@@ -121,6 +127,9 @@ export default {
 
       /** Identifier for the currently opened example */
       opened: 0,
+
+      /** Params object when triggered manually */
+      params: undefined,
     }
   },
 
@@ -147,6 +156,21 @@ export default {
      */
     open(idx) {
       this.showDialog = false
+
+      let url = this.examples[idx].url  // example URL
+      const urlStart = url.indexOf('?')
+      if (urlStart > -1) {
+        url = url.slice(urlStart + 1) // cut not relevant part
+        url = new URLSearchParams(url)
+
+        // Set params to trigger search
+        this.params = {
+          type: url.get('type'),
+          location: url.get('location'),
+          date: url.get('date'),
+          lineages: url.getAll('lineages')
+        }
+      }
     },
 
     /**

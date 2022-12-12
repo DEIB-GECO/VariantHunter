@@ -123,7 +123,7 @@
     </v-row>
 
     <!-- QuickStart ------------------------------------------->
-    <quick-start v-if="isPublicEndpoint"/>
+    <quick-start v-if="isPublicEndpoint && datasetInfo?.fileType==='nextstrain'"/>
 
     <loading-sticker :is-loading="isLoading" :error="error"
                      :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
@@ -179,7 +179,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate','isPublicEndpoint']),
+    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate','isPublicEndpoint','datasetInfo']),
     ...mapGetters(['getSelectedLineage']),
 
     /** Form error flag: true if the form cannot be sent */

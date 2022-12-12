@@ -27,6 +27,9 @@
       <!-- Take screenshot option -->
       <take-screenshot/>
 
+      <!-- Share -->
+      <result-navbar-share v-if="isPublicEndpoint"/>
+
     </v-list>
 
   </v-menu>
@@ -35,10 +38,16 @@
 <script>
 import DownloadData from "@/components/controls/DownloadData";
 import TakeScreenshot from "@/components/controls/TakeScreenshot";
+import ResultNavbarShare from "@/components/analysis/navbar/ResultNavbarShare.vue";
+import {mapState} from "vuex";
 
 export default {
   name: "ResultNavbarMenu",
-  components: {TakeScreenshot, DownloadData}
+  components: {ResultNavbarShare, TakeScreenshot, DownloadData},
+
+  computed: {
+    ...mapState(['isPublicEndpoint'])
+  }
 }
 </script>
 

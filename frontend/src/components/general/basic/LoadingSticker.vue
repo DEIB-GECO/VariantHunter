@@ -28,8 +28,7 @@
             <v-icon v-if="error">mdi-exclamation-thick</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title class="font-weight-bold break-spaces">
-              {{
+            <v-list-item-title class="font-weight-bold break-spaces">{{
                 isLoading ? 'Please wait...' : (error ? errorTitle : '')
               }}
             </v-list-item-title>
@@ -52,8 +51,7 @@
           <v-icon v-if="error">mdi-exclamation-thick</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title class="font-weight-bold break-spaces">
-            {{
+          <v-list-item-title class="font-weight-bold break-spaces">{{
               isLoading ? 'Please wait...' : (error ? errorTitle : '')
             }}
           </v-list-item-title>

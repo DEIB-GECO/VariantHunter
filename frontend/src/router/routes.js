@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import HomeView from '../components/views/HomeView.vue'
 import About from '../components/views/About.vue'
 import store from '../store/store.js'
+import LinkTo from "@/components/views/LinkTo.vue";
 
 Vue.use(VueRouter)
 
@@ -18,6 +19,11 @@ const router = new VueRouter({
             path: '/about',
             name: 'About',
             component: About
+        },
+        {
+            path: '/linkTo',
+            name: 'LinkTo',
+            component: LinkTo
         },
         {
             path: '/:catchAll(.*)',
