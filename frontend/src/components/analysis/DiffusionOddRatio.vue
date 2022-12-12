@@ -10,8 +10,7 @@
                    title='Log<sub>2</sub> odd ratio'
                    :subtitle="getCurrentPlotTitle"
                    caption="To visualize specific mutations, select the corresponding rows from the table"
-                   collapsed :tabs='["Week-by-week","Week-to-first-week","All"]'
-                   @tabChange='(selected) => type=selected'>
+                   collapsed :tabs='tabs' v-model="type">
     <!-- Odd ratio app-tour -->
     <odd-ratio-intro/>
 
@@ -42,9 +41,33 @@ export default {
 
   data() {
     return {
+      /** Possible views */
+      tabs: {
+        0: {
+          icon:'mdi-calendar-expand-horizontal',
+          title: 'Week-by-week',
+          subtitle: 'Week-by-week',
+          description: 'Computes the odd ratio for each week with respect to the previous week.',
+          hint: 'Best suited to analyze the growth rate week by week.'
+        },
+        1: {
+          icon:'mdi-calendar-start',
+          title: 'Week-to-first-week',
+          subtitle: 'Week-to-first-week',
+          description: 'Computes the odd ratio for each week with respect to the first week of the period.',
+          hint: 'Best suited to compare the trend from the first week.'
+        },
+        2:{
+          icon:'mdi-calendar-blank-outline',
+          title: 'All',
+          subtitle: 'Week-by-week and Week-to-first-week',
+          description: 'Show both views.',
+          hint: 'Best suited to compare the two views.'
+        }
+      },
+
       /**
        * Type of odd ratio to be displayed.
-       * 0: week-by-week; 1: week-to-first-week; 2: all
        */
       type: 0,
     }

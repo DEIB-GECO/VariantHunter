@@ -234,11 +234,12 @@ export default {
 
               // Keep selected lineage if included in the possible ones.
               // Discard in any case if * notation is in use
-              if ((this.selectedLineage.count > 1) ||
-                  (this.selectedLineage.count === 1 && !this.possibleLineages.includes(this.selectedLineage.items[0]))) {
-                this.clearLineages()
-              }
+               if ((this.selectedLineage.count > 1) ||
+                   (this.selectedLineage.count === 1 && !this.possibleLineages.includes(this.selectedLineage.items[0]))) {
+                 this.clearLineages()
+               }
             })
+
             .catch((e) => {
               this.error = e
               this.possibleLineages = []

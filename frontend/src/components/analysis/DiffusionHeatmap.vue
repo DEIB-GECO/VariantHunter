@@ -9,7 +9,8 @@
   <section-element icon='mdi-chart-gantt' assign-id="diffusion-heatmap"
                    title="Diffusion heatmap"
                    :subtitle="getCurrentPlotTitle"
-                   caption="To visualize specific mutations, select the corresponding rows from the table">
+                   caption="To visualize specific mutations, select the corresponding rows from the table"
+                   :tabs='tabs' v-model="type">
     <!-- Heatmap app-tour -->
     <heatmap-intro/>
 
@@ -29,6 +30,33 @@ import HeatmapIntro from "@/components/intros/HeatmapIntro";
 export default {
   name: 'DiffusionHeatmap',
   components: {HeatmapIntro, SectionElement, Plotly},
+
+  data() {
+    return {
+      /** Possible views */
+      tabs: {
+        0: {
+          icon: 'mdi-percent-outline',
+          title: 'Diffusion',
+          subtitle: 'Regular heatmap',
+          description: 'Regular heatmap with colors selected according to the mutation diffusion value.',
+          hint: 'Best suited to quickly identify the most prevalent mutations.'
+        },
+        1: {
+          icon: 'mdi-speedometer',
+          title: 'Growth speed',
+          subtitle: 'Highlights trend',
+          description: 'Heatmap with colors selected according to the individual mutation trend.',
+          hint: 'Best suited to quickly identify the fastest growing mutations.'
+        },
+      },
+
+      /**
+       * Type of heatmap to be displayed.
+       */
+      type: 0,
+    }
+  },
 
   computed: {
     ...mapGetters(['getCurrentPlotRows', 'getCurrentPlotTitle', 'getCurrentAnalysis']),
@@ -50,11 +78,19 @@ export default {
       )
     },
 
-    /** Values for the z-axis of the heatmap: mutation frequencies in % */
+    /** Values for the z-axis of the heatmap for the regular view: mutation frequencies in % */
     z() {
       return this.getCurrentPlotRows.map(element => [
         element['f1'], element['f2'], element['f3'], element['f4']
       ])
+    },
+
+    /** Values for the z-axis of the heatmap for the speed view: mutation frequencies in % divided by the minimum */
+    zSpeed() {
+      return this.getCurrentPlotRows.map(({f1, f2, f3, f4}) => {
+        const min = Math.min(f1, f2, f3, f4)
+        return (min!==0)? [f1 / min, f2 / min, f3 / min, f4 / min] : []
+      })
     },
 
     /** Absolute value for the z-axis of the heatmap */
@@ -70,17 +106,20 @@ export default {
         {
           x: this.x,
           y: this.y,
-          z: this.z,
+          z: this.type === 0 ? this.z : this.zSpeed,
           customdata: this.absValue,
+
           hovertemplate:
               'Period:     %{x}<br>Mutation:  %{y}<br>Diffusion:  %{z:.2f}%  (%{customdata})<extra></extra>',
-          zmax: 100,
-          zmin: 0,
+          zmax: this.type === 0 ? 100 : undefined,
+          zmin: this.type === 0 ? 0 : undefined,
           type: 'heatmap',
-          hoverongaps: false
+          hoverongaps: false,
+          //showscale: this.type === 0,
         }
       ]
-    },
+    }
+    ,
 
     /** Layout data for the plot */
     layout() {
@@ -101,7 +140,8 @@ export default {
         },
         autosize: true
       }
-    },
+    }
+    ,
 
     /** Produce the annotations for the heatmap: z values to be displayed as annotations */
     annotations() {

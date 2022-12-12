@@ -14,7 +14,7 @@
 
     <!-- Label -->
     <v-row class='text-body-1 font-weight-medium text-center'>
-      <v-col>{{ title }}</v-col>
+      <v-col :class="(!showPlot.histogram && !isLoading.histogram)?'mb-10':''">{{ title }}</v-col>
     </v-row>
 
     <!-- Histogram loading animation -->

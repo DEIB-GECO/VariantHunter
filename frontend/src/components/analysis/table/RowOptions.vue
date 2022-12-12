@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import {getRandomColor, isDark} from "@/utils/colorService";
+import {getRandomColor} from "@/utils/colorService";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
 import IconWithTooltip from "../../general/basic/IconWithTooltip";
 

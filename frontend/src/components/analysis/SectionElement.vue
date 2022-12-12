@@ -4,19 +4,17 @@
                 It is equipped with a show/hide section body control.
 
   Props:
+  ├── value:      Value for binding of the tab
   ├── icon:       Icon name for the title
   ├── title:      Title for the section
   ├── subtitle:   Subtitle for the section
   ├── caption:    Additional text to be displayed under the subtitle
-  ├── tabs:       Array of labels for the tabs of the section
+  ├── tabs:       Object describing tabs of the section
   ├── collapsed:  Collapse the section by default
   └── assignId:   HTML id to be assigned to the section
 
   Slots:
   └── default:  The content of the section body
-
-  Events:
-  └── tabChange:  Emitted on tab change together with the selected tab index
 
 -->
 
@@ -26,27 +24,46 @@
 
       <!-- Section headings -->
       <v-row>
-        <v-col >
-          <div :class="'text-h5 compact-h5 font-weight-black primary--text mt-8  spaced-5 mb-'+(tabs.length>0?'4':'2')">
+        <v-col>
+          <div
+              :class="'text-h5 compact-h5 font-weight-black primary--text mt-8  spaced-5 mb-'+(sectionTabs.length>0?'4':'2')">
             <v-icon left color="primary">{{ icon }}</v-icon>
             <span v-html="title"/>
             <v-fade-transition hide-on-leave>
-            <div v-if="subtitle && showSectionBody" class="ml-11">
-              <div class="text-body-0 compact-text-0 font-weight-medium " v-html="subtitle"/>
-              <div class="text-body-4 compact-text-2 font-weight-regular">{{ caption }}</div>
-            </div>
+              <div v-if="subtitle && showSectionBody" class="ml-11">
+                <div class="text-body-0 compact-text-0 font-weight-medium " v-html="subtitle"/>
+                <div class="text-body-4 compact-text-2 font-weight-regular">{{ caption }}</div>
+              </div>
             </v-fade-transition>
           </div>
 
           <!-- Section options -->
-          <div :class="'options-container '+((tabs.length>0 && showSectionBody)?'mt-6':'')">
+          <div :class="'options-container '+((sectionTabs.length>0 && showSectionBody)?'mt-6':'')">
             <div class='section-options'>
 
               <!-- Tabs-->
-              <span v-for='(tab, index) in tabs' v-bind:key='index' v-bind:id="assignId+'-tab'+index"
-                    :class='tabLabelClass + (currentTab!==index?" current-tab":"")' @click='currentTab=index'>
-              {{ tab }}
-              </span>
+              <v-tooltip v-for='({icon,title,subtitle,description,hint}, index) in sectionTabs' v-bind:key='index'
+                         bottom nudge-bottom="0" allow-overflow z-index="10" max-width="400px" close-delay="0">
+                <template v-slot:activator="{ on }">
+                  <span v-bind:id="assignId+'-tab'+index" v-on="on"
+                        :class='tabLabelClass + (currentTab!==index?" current-tab":"")' @click='currentTab=index'>
+                  {{ title }}
+                  </span>
+                </template>
+                <v-list color="transparent" class="break-spaces" rounded dense width="auto">
+                  <v-list-item dense>
+                    <v-icon class="pr-3" color="f_text_light">{{ icon }}</v-icon>
+                    <v-list-item-content>
+                      <v-list-item-title class="f_text_light--text">{{ subtitle }}
+                      </v-list-item-title>
+                      <v-list-item-subtitle>
+                        <div>{{ description }}</div>
+                        <div class="mt-2 text-body-5 compact-text-4 warning--text">{{ hint }}</div>
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-tooltip>
 
               <!-- Expand/collapse option-->
               <span class='expand-collapse-icon'>
@@ -81,6 +98,9 @@ export default {
   name: 'SectionElement',
 
   props: {
+    /** Value for binding of the tab */
+    value: {},
+
     /** Title for the section */
     title: {required: true},
 
@@ -93,10 +113,10 @@ export default {
     /** Icon name for the title */
     icon: {required: true},
 
-    /** Array of labels for the tabs of the section */
+    /** Object describing tabs of the section */
     tabs: {
       default() {
-        return []
+        return {}
       }
     },
 
@@ -104,33 +124,40 @@ export default {
     collapsed: Boolean,
 
     /** HTML id to be assigned to the section */
-    assignId:{}
+    assignId: {}
   },
 
   data() {
     return {
       /** Flag for the visibility of the section body */
       showSectionBody: !this.collapsed,
-
-      /** Currently selected tab */
-      currentTab: 0
     }
   },
   computed: {
+    /** Currently selected tab */
+    currentTab: {
+      set(newVal) {
+        this.$emit('input', newVal)
+      },
+      get() {
+        return this.value
+      }
+    },
+
+    /** Class for the label*/
     tabLabelClass() {
       return 'tab-icon ' + (this.showSectionBody ? '' : 'hidden-tab ')
+    },
+
+    /** Entries of the tabs object */
+    sectionTabs() {
+      return Object.values(this.tabs)
     }
   },
   methods: {
     /** Change the visibility flag value for the section body*/
     invertVisibility() {
       this.showSectionBody = !this.showSectionBody
-    }
-  },
-  watch: {
-    /** Emit tabChange when tab is changed */
-    currentTab() {
-      this.$emit('tabChange', this.currentTab)
     }
   }
 }
