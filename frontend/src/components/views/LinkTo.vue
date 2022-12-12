@@ -1,8 +1,19 @@
-<!-- TODO -->
+<!--
+
+  Component:    LinkTo
+  Description:  View to redirect the user to an analysis from a link.
+
+  Props:
+  ├── value:      Params object when triggered manually
+  └── triggered:  Boolean flag set to true if analysis is not performed automatically
+
+-->
+
 <template>
   <div>
     <v-container v-if="!triggered" class="mt-14 pt-14 text-center">
       <div class="text-h4 font-weight-bold">You are being redirected...</div>
+      <div class="text-h6">The new analysis will be added to your history.</div>
       <div class="load-elem">
         <loading-sticker :is-loading="isLoading" :error="error" :standalone="true" no-overlay
                          :loading-messages="[{text:'You are being redirected',time:0},{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
@@ -21,14 +32,14 @@
                      :loading-messages="[{text:'You are being redirected',time:0},{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
 
     <!-- No data alert -->
-    <no-data-alert v-model="noDataWarning"/>
+    <no-data-alert v-model="noDataWarning" @close="toHome"/>
   </div>
 </template>
 
 <script>
 import NoDataAlert from "@/components/general/NoDataAlert.vue";
 import LoadingSticker from "@/components/general/basic/LoadingSticker.vue";
-import {mapActions} from "vuex";
+import {mapActions, mapMutations} from "vuex";
 
 export default {
   name: "LinkTo",
@@ -75,6 +86,7 @@ export default {
 
   methods: {
     ...mapActions(['addAnalysis']),
+    ...mapMutations(['setCurrentAnalysis']),
 
     /**
      * Triggers the analysis request to the server
@@ -115,6 +127,14 @@ export default {
           .catch((e) => this.error = e)
           .finally(() => this.isLoading = false)
     },
+
+    /**
+     * Take user to the definition panel (to avoid confusion)
+     */
+    toHome() {
+      this.setCurrentAnalysis(null)
+      this.$router.push({name: 'Home'})
+    }
   },
 
   mounted() {

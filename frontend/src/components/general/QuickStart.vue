@@ -88,7 +88,7 @@
                           </v-chip>
                         </div>
 
-                        <p>{{ examples[opened].body }}</p>
+                        <p v-html="examples[opened].body"/>
 
                         <v-btn class="my-3" color="f_tertiary" light elevation="0" rounded small @click="open(opened)">
                           <v-icon left small>mdi-lead-pencil</v-icon>

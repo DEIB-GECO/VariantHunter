@@ -6,6 +6,9 @@
   Props:
   └── value: Value variable for binding of the value
 
+  Events:
+  └── close: Emitted on 'okay' click
+
 -->
 
 <template>
@@ -39,8 +42,12 @@ export default {
 
   methods: {
     /** On alert overlay updates */
-    update(newVal) {
+    update(newVal, oldVal) {
       this.$emit('input', newVal)
+      if(!newVal && (oldVal===true || oldVal===undefined)){
+        this.$emit('close')
+      }
+
     }
   }
 }

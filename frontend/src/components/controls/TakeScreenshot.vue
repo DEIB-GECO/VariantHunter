@@ -9,10 +9,13 @@
   <!-- Action button -->
   <v-list-item link dense @click='onDownloadClick'>
     <v-icon v-if="!downloadLoading" class="pr-3" color="primary">mdi-monitor-screenshot</v-icon>
-    <v-progress-circular v-else indeterminate color="warning"/>
+    <v-progress-circular v-else class="mr-3" indeterminate color="warning"/>
     <v-list-item-content>
       <v-list-item-title class="primary--text">Take a screenshot</v-list-item-title>
       <v-list-item-subtitle>Download panel as .png file</v-list-item-subtitle>
+      <div v-if="downloadLoading" class="text-body-4 warning--text font-weight-medium">
+        Please wait. Download in progress...
+      </div>
     </v-list-item-content>
   </v-list-item>
 </template>

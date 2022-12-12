@@ -7,7 +7,8 @@
 -->
 
 <template>
-  <v-menu content-class="rounded-b-xl rounded-t-0 navbar-menu" offset-y open-on-hover>
+  <v-menu content-class="rounded-b-xl rounded-t-0 navbar-menu" offset-y open-on-hover v-model="visibility"
+          :close-on-content-click="false">
 
     <!-- Activator: icon to open the option menu -->
     <template v-slot:activator="{ attrs, on }">
@@ -22,13 +23,13 @@
     <v-list color="bg_var1" rounded dense>
 
       <!-- Download data option -->
-      <download-data control-type="navbar"/>
+      <download-data control-type="navbar" @click.native="hide"/>
 
       <!-- Take screenshot option -->
-      <take-screenshot/>
+      <take-screenshot @click.native="hide"/>
 
       <!-- Share -->
-      <result-navbar-share v-if="isPublicEndpoint"/>
+      <result-navbar-share v-if="isPublicEndpoint" @click.native="hide(5000)"/>
 
     </v-list>
 
@@ -44,6 +45,28 @@ import {mapState} from "vuex";
 export default {
   name: "ResultNavbarMenu",
   components: {ResultNavbarShare, TakeScreenshot, DownloadData},
+
+  data() {
+    return {
+      /** Boolean visibility flag for the menu */
+      visibility: false,
+    }
+  },
+
+  methods: {
+    /**
+     * Hide the menu after a specified time
+     * @param time  Delay in ms
+     */
+    hide(time) {
+      if(time)
+        setTimeout(() => {
+          this.visibility = false
+        }, time)
+      else
+        this.visibility = false
+    }
+  },
 
   computed: {
     ...mapState(['isPublicEndpoint'])

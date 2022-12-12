@@ -6,7 +6,7 @@
 -->
 
 <template>
-  <v-navigation-drawer class="sidebar-sizing" :mini-variant="isCollapsed" clipped permanent expand-on-hover touchless
+  <v-navigation-drawer class="sidebar-sizing hide-scrollbar" :mini-variant="isCollapsed" clipped permanent expand-on-hover touchless
                        absolute dark color="f_primary" width="500px" height="100vh" floating>
     <!-- Sidebar body -->
     <v-list rounded nav dense>
