@@ -22,6 +22,7 @@ from .utils.path_manager import db_paths as paths
 
 api = Namespace('startup', description='startup')
 args = get_cmd_arguments()
+is_public = args.public # Boolean flag set to true if Polimi public version
 version = "2.0.1"  # Keep consistent wrt package.json file
 
 
@@ -53,6 +54,8 @@ def startup():
               f'''\n\t{prepend} Begin date: {info[2]},\n\t{prepend} End date: {info[3]},''')
         if not params_only:
             print(f'''\t{prepend} Parsed on: {info[4]}, using app version: {info[5]}\n''')
+        if is_public:
+            print(f'''\t{prepend} Additional public-endpoint features: enabled''')
 
     exec_start = time()
     print("\033[01m\033[33m> Starting initial setup ... \033[0m")

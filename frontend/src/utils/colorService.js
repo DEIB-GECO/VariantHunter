@@ -44,14 +44,27 @@ export function isDark(colorCode) {
     return isDark
 }
 
+/**
+ * Get location color based on granularity
+ * @param granularity Granularity value
+ * @returns {string}  Color code
+ */
+export function getLocationColor(granularity) {
+    return granularity === 'region'
+        ? '#7CB17B'
+        : granularity === 'country'
+            ? '#ff6e3e'
+            : '#90177d'
+}
+
 /** Colors for plots */
 export const palette = [
-    '#ef5378', '#72ee84', '#f3df67', '#6685f1',
-    '#2fd901', '#ff3f00', '#ff1cb6', '#003aff',
+    '#bbef39', '#29b7d5', '#f3df67', '#6685f1',
+    '#2fd901', '#ff3f00', '#003aff', '#ff6200',
     '#ef8f4b', '#d46ff5', '#4fcbe7', '#ffb600',
-    '#ff6200', '#9a02ff', '#00fff7', '#ff00f2',
-    '#bbef39', '#fcb0ca', '#7ed7cd', '#ef479e',
+    '#ff1cb6', '#9a02ff', '#00fff7', '#333333',
+    '#ef5378', '#fcb0ca', '#7ed7cd', '#ef479e',
     '#ffbc73', '#fffac8', '#c56100', '#95e0ab',
-    '#808000', '#ffd8b1', '#601e1e', '#29b7d5',
+    '#808000', '#ffd8b1', '#601e1e', '#72ee84',
     '#058011', '#6b6868', '#b2b2b2', '#000000'
 ]

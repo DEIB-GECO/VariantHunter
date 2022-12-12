@@ -129,6 +129,7 @@ class FieldList(Resource):
                 'end_date': end date of the time period the dataset was restricted to, 'end' otherwise
                 'parsed_on': date on which the dataset was uploaded to VariantHunter. Takes format YYYY-mm-dd
                 'version': running backend version of VariantHunter
+                'is_public': boolean flag set to true iff Polimi public version
             }
 
         Error responses

@@ -7,6 +7,7 @@
 
 import sqlite3
 
+from ..startup import is_public
 from ..utils.path_manager import db_path
 from ..utils.utils import compute_date_from_diff
 
@@ -141,6 +142,7 @@ def extract_dataset_info():
                     'end_date': end date of the time period the dataset was restricted to, 'end' otherwise
                     'parsed_on': date on which the dataset was uploaded to VariantHunter. Takes format YYYY-mm-dd
                     'version': running backend version of VariantHunter
+                    'is_public': boolean flag set to true iff Polimi public version
                 } 
 
     """
@@ -168,7 +170,8 @@ def extract_dataset_info():
         'begin_date': parsing_info[2],
         'end_date': parsing_info[3],
         'parsed_on': parsing_info[4],
-        'version': parsing_info[5]
+        'version': parsing_info[5],
+        'is_public': is_public
     }
 
     con.close()

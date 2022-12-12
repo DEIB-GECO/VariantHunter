@@ -55,7 +55,7 @@ export default {
         },
         {
           id: 'adv',
-          icon: 'mdi-checkbox-marked',
+          icon: 'mdi-magnify-plus-outline',
           heading: 'Trend',
           title: 'Show, hide or zoom in!',
           body: 'You can interact with the chart by selecting a specific area, and you ' +

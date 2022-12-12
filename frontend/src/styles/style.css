@@ -83,6 +83,10 @@ html, body {
     font-size: 12px !important;
 }
 
+#app .text-body-6 {
+    font-size: 10px !important;
+}
+
 /** Spaced words option */
 #app .spaced-5 {
     word-spacing: 5px !important;
@@ -184,10 +188,10 @@ a, .site-title a {
  *******************************************/
 
 /** Overwrite break spaces option in v-lists*/
-.v-list-item__title{
+.break-spaces .v-list-item__title{
     white-space: break-spaces !important;
 }
-.v-list-item__subtitle{
+.break-spaces .v-list-item__subtitle{
     white-space: break-spaces !important;
 }
 

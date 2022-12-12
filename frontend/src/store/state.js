@@ -109,6 +109,9 @@ export const state = {
      */
     datasetInfo: {},
 
+    /** Boolean flag set to true iff public Polimi endpoint */
+    isPublicEndpoint: false,
+
     /** Current step of the app-tour */
     tourStep: 'tour',
 

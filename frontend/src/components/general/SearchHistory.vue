@@ -126,7 +126,7 @@
 
           <!-- Analysis categories -->
           <v-list-item-subtitle class="break-spaces pt-1">
-            <v-chip x-small :color="getLocationColor(query.granularity)" class="text-uppercase mr-1 mb-1 text-body-5">
+            <v-chip x-small :color="locationColor(query.granularity)" class="text-uppercase mr-1 mb-1 text-body-5">
               {{ query.granularity }}
             </v-chip>
             <v-chip x-small :color="query.lineage?'#1f2215':'#3398DC'" class="text-uppercase mr-1 mb-1 text-body-5">
@@ -166,6 +166,7 @@ import ChipMenu from "@/components/general/basic/ChipMenu";
 import KeyboardShortcuts from "@/components/controls/KeyboardShortcuts";
 import DataManager from "@/components/controls/DataManager";
 import {toText} from "@/utils/formatterService";
+import {getLocationColor} from "@/utils/colorService";
 
 export default {
   name: "SearchHistory",
@@ -281,16 +282,10 @@ export default {
     },
 
     /**
-     * Get location color based on granularity
-     * @param granularity Granularity value
-     * @returns {string}  Color code
+     * Mapping for getLocationColor
      */
-    getLocationColor(granularity) {
-      return granularity === 'region'
-          ? '#7CB17B'
-          : granularity === 'country'
-              ? '#ff6e3e'
-              : '#90177d'
+    locationColor(granularity) {
+      return getLocationColor(granularity)
     }
   },
 

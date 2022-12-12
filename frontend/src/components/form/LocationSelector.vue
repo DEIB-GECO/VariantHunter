@@ -36,7 +36,7 @@
           <!-- Current selection -->
           <template v-slot:selection="{item}">
             <div @click="onBoxClick">
-              <v-chip dark small class="text-uppercase mr-3 hidden-xs-only" :color="getLocationColor(item.id)">
+              <v-chip dark small class="text-uppercase mr-3 hidden-xs-only" :color="locationColor(item.id)">
                 granularity: {{ possibleLocationsInfo[item.id].type }}
               </v-chip>
               <span class="text-uppercase">{{ item.text }}</span>
@@ -59,7 +59,7 @@
                                :tip="'Browse locations of '+ item.text" bottom color="secondary" class="ml-1"
                                size="medium" :click-handler="()=>fillWith(item.text)"/>
 
-            <v-chip dark small class="text-uppercase hidden-xs-only" :color="getLocationColor(item.id)">
+            <v-chip dark small class="text-uppercase hidden-xs-only" :color="locationColor(item.id)">
               {{ possibleLocationsInfo[item.id].type }}
             </v-chip>
           </template>
@@ -78,6 +78,7 @@ import {mapStateTwoWay} from "@/utils/bindService";
 import Vue from "vue";
 import IconWithTooltip from "@/components/general/basic/IconWithTooltip";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
+import {getLocationColor} from "@/utils/colorService";
 
 export default {
   name: 'LocationSelector',
@@ -235,16 +236,10 @@ export default {
     },
 
     /**
-     * Gets the color to be associated with the item
-     * @param itemId  Location identifier
-     * @returns {string}  String representing the color
+     * Mapping for getLocationColor
      */
-    getLocationColor(itemId) {
-      return this.possibleLocationsInfo[itemId].type === 'region'
-          ? '#7CB17B'
-          : this.possibleLocationsInfo[itemId].type === 'country'
-              ? '#ff6e3e'
-              : '#90177d'
+    locationColor(itemId) {
+      return getLocationColor(itemId)
     }
   },
 

@@ -21,6 +21,7 @@
         <div class="text-h4 font-weight-black primary--text pb-2">Define new analysis</div>
         <div class="text-body-3 compact-text-2">VariantHunter analyzes the frequencies of amino acid mutations of
           SARS-CoV-2 in order to observe interesting variant trends or identify novel emerging variants.
+          <router-link :to="{name:'About'}" class="primary--text text-body-6 text-uppercase">More info...</router-link>
         </div>
         <div class="text-body-3 compact-text-2 pt-3">Choose the type of analysis you want to perform, then define the
           required parameters.
@@ -121,6 +122,9 @@
       </v-container>
     </v-row>
 
+    <!-- QuickStart ------------------------------------------->
+    <quick-start v-if="isPublicEndpoint"/>
+
     <loading-sticker :is-loading="isLoading" :error="error"
                      :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
 
@@ -143,10 +147,12 @@ import TourIntro from "@/components/intros/TourIntro";
 import DefinitionIntro from "@/components/intros/DefinitionIntro";
 import ExplorerIntro from "@/components/intros/ExplorerIntro";
 import DatasetInfo from "../general/DatasetInfo";
+import QuickStart from "@/components/general/QuickStart.vue";
 
 export default {
   name: "NewSearchView",
   components: {
+    QuickStart,
     DatasetInfo, ExplorerIntro, DefinitionIntro, TourIntro, QuickTagSelector, NoDataAlert,
     LoadingSticker, DatasetExplorer, LineageSelector, DatePicker, LocationSelector
   },
@@ -173,7 +179,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate']),
+    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate','isPublicEndpoint']),
     ...mapGetters(['getSelectedLineage']),
 
     /** Form error flag: true if the form cannot be sent */

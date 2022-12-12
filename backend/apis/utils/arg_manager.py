@@ -37,7 +37,7 @@ def get_cmd_arguments():
                         help="end date to be considered when importing data. Use the format YYYY-mm-dd")
 
     parser.add_argument('--public', '-p',
-                        default=False, action='store_true', dest='regenerate',
+                        default=False, action='store_true', dest='public',
                         help="boolean flag to set when deploying the public version of the tool")
 
     parser.add_argument('--regenerate', '-r',

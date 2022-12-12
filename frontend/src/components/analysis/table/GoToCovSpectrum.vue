@@ -30,7 +30,7 @@
               <div class="break-spaces pt-4 px-4">You have selected multiple mutations. <br/>Choose how to select the
                 sequences to be analyzed.
               </div>
-              <v-list color="bg_var1" rounded dense width="auto">
+              <v-list color="bg_var1" class="break-spaces" rounded dense width="auto">
                 <v-list-item link dense @click="generateAnalysis(true)">
                   <v-icon class="pr-3" color="primary">mdi-set-all</v-icon>
                   <v-list-item-content>
@@ -114,7 +114,7 @@ export default {
   data() {
     return {
       /** Boolean visibility flag for the menu options */
-      showMenuOptions: true
+      showMenuOptions: false,
     }
   },
 

@@ -220,7 +220,6 @@ export const mutations = {
      * @param newValue  The value to be assigned
      */
     setLineage(state, {groups = undefined, items = undefined}) {
-        //console.log("setLineage {groups:" + JSON.stringify(groups) + ", items: " + items + "}")
         if (groups !== undefined) Vue.set(state.selectedLineage, 'groups', groups)
         if (items !== undefined) Vue.set(state.selectedLineage, 'items', items)
 
@@ -289,7 +288,7 @@ export const mutations = {
     },
     /**
      * Set the dataset info including 'file_type','filtered_countries',
-     * 'begin_date', 'end_date' and 'parsed_on'
+     * 'begin_date', 'end_date', 'parsed_on' and 'is_public'
      * @param state
      * @param info      Info object
      */
@@ -299,6 +298,7 @@ export const mutations = {
         Vue.set(state.datasetInfo, 'beginDate', info['begin_date'])
         Vue.set(state.datasetInfo, 'endDate', info['end_date'])
         Vue.set(state.datasetInfo, 'parsedOn', info['parsed_on'])
+        state.isPublicEndpoint= info['is_public']
     },
 
     /**
