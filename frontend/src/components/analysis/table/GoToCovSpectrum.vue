@@ -53,11 +53,6 @@
 
               <!-- Compatibility warnings -->
               <div class="break-spaces pa-4 pt-0">
-                <div class="mt-0 border-t error--text rounded-xl px-4 py-1" v-if="nspWarning">
-                  <v-icon small color="error" left> mdi-alert</v-icon>
-                  <span class="font-weight-bold">Warning:</span>
-                  NSP proteins are not currently supported and will not be considered
-                </div>
                 <div class="mt-3 border-t error--text rounded-xl px-4 py-1" v-if="stopWarning">
                   <v-icon small color="error" left> mdi-alert</v-icon>
                   <span class="font-weight-bold">Warning:</span>
@@ -83,11 +78,6 @@
             </div>
 
             <!-- Compatibility warnings -->
-            <div class="mt-3 border-t white--text  red rounded-xl px-4 py-1" v-if="nspWarning">
-              <v-icon small color="white" left> mdi-alert</v-icon>
-              <span class="font-weight-bold">Warning:</span>
-              NSP proteins are not currently supported and will not be considered
-            </div>
             <div class="mt-3 border-t white--text  red rounded-xl px-4 py-1" v-if="stopWarning">
               <v-icon small color="white" left> mdi-alert</v-icon>
               <span class="font-weight-bold">Warning:</span>
@@ -124,11 +114,6 @@ export default {
     /** Currently selected rows of the table. Returns full row data. */
     selectedRows() {
       return this.getCurrentSelectedRows
-    },
-
-    /** Boolean flag set to true iff NSP proteins have been selected */
-    nspWarning() {
-      return this.selectedRows.map(({protein}) => protein).find((protein) => protein.startsWith('NSP')) !== undefined
     },
 
     /** Boolean flag set to true iff stop mutations have been selected */
@@ -180,65 +165,126 @@ export default {
 
     /**
      * Convert GISAID protein notation into NEXTSTRAIN one.
-     * The conversion is based on the actual value of the string.
-     * @param protein The protein name to be converted (e.g., 'Spike')
-     * @returns {*|string|string} The converted protein string
+     * It converts the protein into the correct one and possibly performs
+     * changes to mut if the protein translation affects it
+     * @param prot{string}   The protein name to be converted (e.g., 'Spike')
+     * @param mut{string}    The mut name associated (e.g., 'L452R')
+     * @returns {{prot:string, mut:string}}  The converted pair in the form {protein, mut}
      */
-    getProtein(protein) {
-      if (protein === "Spike") {
+    convertProtein(prot, mut) {
+      if (prot === "Spike") {
         // Spike => S
-        return "S"
-      } else if (protein.startsWith("NS")) {
+        return {prot: "S", mut}
+      } else if (prot.startsWith("NSP")) {
+        // Complex NSP to ORF translation
+        return this.translateNSP(prot, mut)
+      } else if (prot.startsWith("NS")) {
         // NS3 => ORF3a, otherwise NS<...> => ORF<...>
-        return protein === 'NS3' ? ("ORF3a") : ("ORF" + protein.slice(2))
+        return {prot: prot === 'NS3' ? ("ORF3a") : ("ORF" + prot.slice(2)), mut}
       } else {
         // No conversion required
-        return protein
+        return {prot, mut}
       }
     },
 
     /**
-     * Convert GISAID mutation notation into NEXTSTRAIN one
-     * The conversion is based on the actual value of the string.
-     * @param protein The protein name of the mutation to be converted (e.g., 'Spike')
-     * @param mut     The mutation to be converted (e.g., 'L452R')
-     * @returns {*} The
+     * Convert NSP protein into ORF.
+     * The conversion affects also the mutation position
+     * @param prot{string}  The protein name of the mutation to be converted (e.g., 'NSP3')
+     * @param mut{string}   The mutation to be converted (e.g., 'L452R')
+     * @returns {{prot:string, mut:string}}   The converted pair in the form {protein, mut}
      */
-    getMut(protein, mut) {
-      if (protein === 'NS') {
-        return mut.slice(1) // probably useless
+    translateNSP(prot, mut) {
+      const coords = {
+        'ORF1a': [266, 13468],
+        'ORF1b': [13468, 21555],
+        'NSP1': [266, 805],
+        'NSP2': [806, 2719],
+        'NSP3': [2720, 8554],
+        'NSP4': [8555, 10054],
+        'NSP5': [10055, 10972],
+        'NSP6': [10973, 11842],
+        'NSP7': [11843, 12091],
+        'NSP8': [12092, 12685],
+        'NSP9': [12686, 13024],
+        'NSP10': [13025, 13441],
+        'NSP11': [13442, 13480],
+        'NSP12': [13442, 16236],
+        'NSP13': [16237, 18039],
+        'NSP14': [18040, 19620],
+        'NSP15': [19621, 20658],
+        'NSP16': [20659, 21552]
+      }
+
+      let [, ref, pos, alt,] = mut.match(/([a-zA-Z]+)(\d+)([a-zA-Z]+)/)
+      pos = parseInt(pos)
+      const start = coords[prot][0]  // current protein start position
+
+      const newPosNucleotides = start + pos * 3 // nucleotides pos
+      const startORF1b = coords['ORF1b'][0]
+      let newPosNucleotidesWrtORF, newPosAminoacidsWrtORF
+
+      if (newPosNucleotides > startORF1b) {
+        // ORF1b case
+        prot = 'ORF1b'
+        newPosNucleotidesWrtORF = newPosNucleotides - startORF1b
+        newPosAminoacidsWrtORF = Math.floor(newPosNucleotidesWrtORF / 3)
       } else {
-        return mut
+        // ORF1a case
+        prot = 'ORF1a'
+        const startORF1a = coords['ORF1a'][0]
+        newPosNucleotidesWrtORF = newPosNucleotides - startORF1a
+        newPosAminoacidsWrtORF = Math.floor(newPosNucleotidesWrtORF / 3)
+      }
+
+      return {
+        prot: prot,
+        mut: ref.concat(String(newPosAminoacidsWrtORF)).concat(alt)
+      }
+    },
+
+    /**
+     * Convert GISAID mutation notation into NEXTSTRAIN one.
+     * This step of conversion is related to ins and del
+     * @param prot{string}   The protein name to be converted (e.g., 'Spike')
+     * @param mut{string}    The mut name associated (e.g., 'L452del')
+     * @returns {string}     The final string
+     */
+    convertMutation(prot, mut) {
+      const separator = '%3A' // protein-mutation separator code (escape code of ':')
+
+      if (mut.startsWith('ins')) {
+        // ins214EPE => ins_S:214:EPE
+        mut = mut.slice(3) // 214EPE
+        return 'ins_' + prot + separator + mut.match(/\d+/) + separator + mut.match(/\D+/)
+      } else if (mut.endsWith('del')) {
+        // Spike_V70del => S:V70-
+        mut = mut.slice(0, -3) // V70
+        return prot + separator + mut + '-'
+      } else {
+        // Regular conversion case
+        return prot + separator + mut
       }
     },
 
     /**
      * Convert GISAID notation into NEXTSTRAIN one
      * The conversion is based on the actual value of the string.
-     * @param protein The protein name of the format to be converted (e.g., 'Spike')
-     * @param mut     The mutation of the format to be converted (e.g., 'L452R')
+     * @param prot{string}    The protein name of the format to be converted (e.g., 'Spike')
+     * @param mut{string}     The mutation of the format to be converted (e.g., 'L452R')
      * @returns {string|null} Either the converted string or null if the mutation is currently not supported
      */
-    convertFormat(protein, mut) {
+    convertFormat(prot, mut) {
       // Not supported mutation? return null
-      if (!this.isSupportedMut(protein, mut)) return null
+      if (!this.isSupportedMut(prot, mut)) return null
 
-      /** Actual conversion process **/
-      const separator = '%3A' // protein-mutation separator code (escape code of ':')
+      // First level conversion
+      let {prot:newProt, mut:newMut} = this.convertProtein(prot, mut)
 
-      // Handle special complex conversion cases
-      if (mut.startsWith('ins')) {
-        // ins214EPE => ins_S:214:EPE
-        mut = mut.slice(3) // 214EPE
-        return 'ins_' + this.getProtein(protein) + separator + mut.match(/\d+/) + separator + mut.match(/\D+/)
-      } else if (mut.endsWith('del')) {
-        // Spike_V70del => S:V70-
-        return this.getProtein(protein) + separator + mut.slice(0, -3) + '-'
-      } else {
-        // Regular conversion case
-        return this.getProtein(protein) + separator + this.getMut(protein, mut)
-      }
-    },
+      // Second level conversion
+      return this.convertMutation(newProt, newMut)
+    }
+    ,
 
     /**
      * CovSpectrum compatibility check
@@ -246,12 +292,12 @@ export default {
      * supported by the converter
      * @param protein The protein name of the format to be converted (e.g., 'Spike')
      * @param mut     The mutation of the format to be converted (e.g., 'L452R')
-     * @returns {boolean}  True iff the mutation is NOT a stop mutation and is NOT an NSP one
+     * @returns {boolean}  True iff the mutation is NOT a stop mutation
      */
     isSupportedMut(protein, mut) {
-      return (!mut.includes('stop') && !protein.startsWith('NSP'))
+      return !mut.includes('stop')
     }
-  }
+  },
 }
 </script>
 
