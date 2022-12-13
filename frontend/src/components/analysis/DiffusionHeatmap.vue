@@ -89,7 +89,7 @@ export default {
     zSpeed() {
       return this.getCurrentPlotRows.map(({f1, f2, f3, f4}) => {
         const min = Math.min(f1, f2, f3, f4)
-        return (min!==0)? [f1 / min, f2 / min, f3 / min, f4 / min] : []
+        return [((f1 + 1) / (min + 1)), ((f2 + 1) / (min + 1)), ((f3 + 1) / (min + 1)), ((f4 + 1) / (min + 1))]
       })
     },
 
