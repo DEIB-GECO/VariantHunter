@@ -11,11 +11,13 @@
     <sidebar/>
 
     <!-- Main sub-view -->
-    <div class="tool-views-container height-100">
-      <v-fade-transition hide-on-leave>
-        <new-search-view v-if="currentView==='new-search'"/>
-        <result-view v-if="currentView==='result'"/>
-      </v-fade-transition>
+    <div id="to-print">
+      <div class="tool-views-container height-100">
+        <v-fade-transition hide-on-leave>
+          <new-search-view v-if="currentView==='new-search'"/>
+          <result-view v-if="currentView==='result'"/>
+        </v-fade-transition>
+      </div>
     </div>
 
     <loading-sticker :error="error"/>

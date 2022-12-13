@@ -23,7 +23,7 @@
 <script>
 import {mapGetters} from "vuex";
 import {getFileName} from "@/utils/parserService";
-import domtoimage from "dom-to-image-more";
+import {toPng} from 'html-to-image';
 
 export default {
   name: "TakeScreenshot",
@@ -54,10 +54,12 @@ export default {
       this.downloadLoading = true
       // Retrieve section to be printed
       const fileName = getFileName(this.getCurrentAnalysis.query)
-      const sectionToPrint = document.getElementById('app')
+      const sectionToPrint = document.getElementById('to-print')
+      const ratio = sectionToPrint.clientHeight / sectionToPrint.clientWidth
+      const width = 2500
+      const height = width * ratio
 
-      domtoimage
-          .toPng(sectionToPrint)
+      toPng(sectionToPrint, {canvasWidth: width, canvasHeight: height, pixelRatio: ratio})
           .then((dataUrl) => {
             // Anchor element to download the file
             const anchor = document.createElement('a')

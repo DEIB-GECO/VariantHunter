@@ -6,12 +6,12 @@
 -->
 
 <template>
-  <div>
+  <div class="view-sizing">
     <!-- Result toolbar with various options -->
     <result-navbar @shiftPeriod="d => shiftPeriod(d)" @shiftArea="a => shiftArea(a)" @shiftType="shiftType"/>
 
     <!-- Actual result panel -->
-    <v-container class="view-sizing" id="result-top">
+    <v-container class="content-container" id="result-top">
       <!-- Steps of the app-tour -->
       <result-intro/>
       <sidebar-intro/>

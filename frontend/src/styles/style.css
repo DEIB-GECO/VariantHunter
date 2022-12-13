@@ -139,7 +139,12 @@ html, body {
 
 /** Size for the main sub view container */
 .view-sizing {
-    max-width: 90vw !important;
+    max-width: calc(100vw - 56px) !important;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.view-sizing .content-container {
+    max-width: 91% !important;
 }
 
 /** Toolbar navbar menu styling */
