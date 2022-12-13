@@ -6,132 +6,135 @@
 -->
 
 <template>
-  <v-container class="view-sizing">
+  <div class="view-sizing">
+    <v-container class="content-container">
 
 
-    <v-row id="top" class="px-5 pt-3">
-      <!-- Main introduction to the app-tour-->
-      <tour-intro/>
+      <v-row id="top" class="px-5 pt-3">
+        <!-- Main introduction to the app-tour-->
+        <tour-intro/>
 
-      <v-col>
-        <!-- Dataset info summary -->
-        <dataset-info/>
+        <v-col>
+          <!-- Dataset info summary -->
+          <dataset-info/>
 
-        <!-- Headings -->
-        <div class="text-h4 font-weight-black primary--text pb-2">Define new analysis</div>
-        <div class="text-body-3 compact-text-2">VariantHunter analyzes the frequencies of amino acid mutations of
-          SARS-CoV-2 in order to observe interesting variant trends or identify novel emerging variants.
-          <router-link :to="{name:'About'}" class="primary--text text-body-6 text-uppercase">More info...</router-link>
-        </div>
-        <div class="text-body-3 compact-text-2 pt-3">Choose the type of analysis you want to perform, then define the
-          required parameters.
-        </div>
-      </v-col>
-    </v-row>
+          <!-- Headings -->
+          <div class="text-h4 font-weight-black primary--text pb-2">Define new analysis</div>
+          <div class="text-body-3 compact-text-2">VariantHunter analyzes the frequencies of amino acid mutations of
+            SARS-CoV-2 in order to observe interesting variant trends or identify novel emerging variants.
+            <router-link :to="{name:'About'}" class="primary--text text-body-6 text-uppercase">More info...
+            </router-link>
+          </div>
+          <div class="text-body-3 compact-text-2 pt-3">Choose the type of analysis you want to perform, then define the
+            required parameters.
+          </div>
+        </v-col>
+      </v-row>
 
-    <!-- Definition form -------------------------------------------->
-    <v-row>
-      <!-- Definition step of the app-tour -->
-      <definition-intro @selectMode="mode='li'" @showExplorer="showExplorer? {} : showExplorer=true"/>
+      <!-- Definition form -------------------------------------------->
+      <v-row>
+        <!-- Definition step of the app-tour -->
+        <definition-intro @selectMode="mode='li'" @showExplorer="showExplorer? {} : showExplorer=true"/>
 
-      <!-- Analysis type selector -->
-      <v-tabs id="type-tabs" background-color="transparent" centered active-class="font-weight-black">
-        <v-tabs-slider color="primary"></v-tabs-slider>
-        <v-tab v-for="[value,title] in Object.entries(modeOptions)" :key="value" @click="mode=value">
-          {{ title }}
-        </v-tab>
-      </v-tabs>
+        <!-- Analysis type selector -->
+        <v-tabs id="type-tabs" background-color="transparent" centered active-class="font-weight-black">
+          <v-tabs-slider color="primary"></v-tabs-slider>
+          <v-tab v-for="[value,title] in Object.entries(modeOptions)" :key="value" @click="mode=value">
+            {{ title }}
+          </v-tab>
+        </v-tabs>
 
-      <v-container class="pt-5 definition-container">
-        <!-- Location selector -->
-        <v-row>
-          <location-selector/>
-        </v-row>
-
-        <!-- Period selector -->
-        <v-row>
-          <date-picker/>
-        </v-row>
-
-        <!-- Lineage selector -->
-        <v-expand-transition>
-          <v-row v-if="mode==='ls'">
-            <lineage-selector/>
+        <v-container class="pt-5 definition-container">
+          <!-- Location selector -->
+          <v-row>
+            <location-selector/>
           </v-row>
-        </v-expand-transition>
 
-        <!-- Tag selector -->
-        <v-row>
-          <quick-tag-selector v-model="tag"/>
-        </v-row>
+          <!-- Period selector -->
+          <v-row>
+            <date-picker/>
+          </v-row>
 
-        <!-- Controls -->
-        <v-row class='my-4'>
-          <v-col>
-            <v-btn class='delete-action mr-2 text_var2--text' color='primary' @click='clearForm' depressed small
-                   rounded>
-              <v-icon left>mdi-backspace-outline</v-icon>
-              CLEAR
-            </v-btn>
-            <v-btn class='float-right text_var2--text' color='primary' @click="sendAnalysis" depressed small rounded
-                   :disabled="formError">
-              ANALYSE
-              <v-icon right>mdi-magnify</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-row>
+          <!-- Lineage selector -->
+          <v-expand-transition>
+            <v-row v-if="mode==='ls'">
+              <lineage-selector/>
+            </v-row>
+          </v-expand-transition>
 
-    <!-- Dataset explorer ------------------------------------------->
-    <v-row class="px-5">
-      <v-container>
+          <!-- Tag selector -->
+          <v-row>
+            <quick-tag-selector v-model="tag"/>
+          </v-row>
 
-        <!-- Intro text -->
-        <v-row>
-          <v-col>
-            <div class="text-h5 font-weight-black primary--text pb-2" id="explorer">
-              Dataset Explorer
-            </div>
-            <v-expand-transition>
-              <div v-if="!showExplorer" class="text-body-3 compact-text-2 pb-3">
-                The Dataset Explorer allows you to examine the availability of sequences over time, enabling proper
-                selection of the analysis period.
-                It also provides information on the prevalence of lineages over time.
-              </div>
-            </v-expand-transition>
-            <!-- Show/hide Explorer controls -->
-            <div>
-              <v-btn depressed rounded small color='primary' class="text_var2--text"
-                     @click='showExplorer = !showExplorer'>
-                <v-icon left>{{ showExplorer ? 'mdi-close-circle-outline' : 'mdi-compass' }}</v-icon>
-                {{ showExplorer ? 'Hide' : 'Show dataset explorer' }}
+          <!-- Controls -->
+          <v-row class='my-4'>
+            <v-col>
+              <v-btn class='delete-action mr-2 text_var2--text' color='primary' @click='clearForm' depressed small
+                     rounded>
+                <v-icon left>mdi-backspace-outline</v-icon>
+                CLEAR
               </v-btn>
-            </div>
-          </v-col>
-        </v-row>
+              <v-btn class='float-right text_var2--text' color='primary' @click="sendAnalysis" depressed small rounded
+                     :disabled="formError">
+                ANALYSE
+                <v-icon right>mdi-magnify</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-row>
 
-        <!-- Plots -->
-        <v-row no-gutters>
-          <!-- Explorer step of the app-tour -->
-          <explorer-intro/>
-          <v-scroll-y-reverse-transition>
-            <dataset-explorer v-if="showExplorer" :with-lineages='mode==="ls"' @weekSelection='onWeekSelection'/>
-          </v-scroll-y-reverse-transition>
-        </v-row>
-      </v-container>
-    </v-row>
+      <!-- Dataset explorer ------------------------------------------->
+      <v-row class="px-5">
+        <v-container>
 
-    <!-- QuickStart ------------------------------------------->
-    <quick-start v-if="isPublicEndpoint && datasetInfo?.fileType==='nextstrain'"/>
+          <!-- Intro text -->
+          <v-row>
+            <v-col>
+              <div class="text-h5 font-weight-black primary--text pb-2" id="explorer">
+                Dataset Explorer
+              </div>
+              <v-expand-transition>
+                <div v-if="!showExplorer" class="text-body-3 compact-text-2 pb-3">
+                  The Dataset Explorer allows you to examine the availability of sequences over time, enabling proper
+                  selection of the analysis period.
+                  It also provides information on the prevalence of lineages over time.
+                </div>
+              </v-expand-transition>
+              <!-- Show/hide Explorer controls -->
+              <div>
+                <v-btn depressed rounded small color='primary' class="text_var2--text"
+                       @click='showExplorer = !showExplorer'>
+                  <v-icon left>{{ showExplorer ? 'mdi-close-circle-outline' : 'mdi-compass' }}</v-icon>
+                  {{ showExplorer ? 'Hide' : 'Show dataset explorer' }}
+                </v-btn>
+              </div>
+            </v-col>
+          </v-row>
 
-    <loading-sticker :is-loading="isLoading" :error="error"
-                     :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
+          <!-- Plots -->
+          <v-row no-gutters>
+            <!-- Explorer step of the app-tour -->
+            <explorer-intro/>
+            <v-scroll-y-reverse-transition>
+              <dataset-explorer v-if="showExplorer" :with-lineages='mode==="ls"' @weekSelection='onWeekSelection'/>
+            </v-scroll-y-reverse-transition>
+          </v-row>
+        </v-container>
+      </v-row>
 
-    <!-- No data alert -->
-    <no-data-alert v-model="noDataWarning"/>
+      <!-- QuickStart ------------------------------------------->
+      <quick-start v-if="isPublicEndpoint && datasetInfo?.fileType==='nextstrain'"/>
 
-  </v-container>
+      <loading-sticker :is-loading="isLoading" :error="error"
+                       :loading-messages="[{text:'Analyzing sequence data',time:3000},{text:'This may take some time',time:6000},{text:'Almost done! Hang in there',time:9000}]"/>
+
+      <!-- No data alert -->
+      <no-data-alert v-model="noDataWarning"/>
+
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -179,7 +182,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate','isPublicEndpoint','datasetInfo']),
+    ...mapState(['selectedLineage', 'selectedLocation', 'selectedDate', 'isPublicEndpoint', 'datasetInfo']),
     ...mapGetters(['getSelectedLineage']),
 
     /** Form error flag: true if the form cannot be sent */
@@ -195,7 +198,7 @@ export default {
 
     /** Clear the form completely */
     clearForm() {
-      this.setLineage({'groups':{},'items':[]})
+      this.setLineage({'groups': {}, 'items': []})
       this.setLineages([])
       this.setDate(null)
       this.setLocation(null)
