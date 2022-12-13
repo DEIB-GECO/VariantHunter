@@ -1,0 +1,252 @@
+/**
+ *      GLOBAL CSS RULES
+ *      Globally available CSS rules/overwrites
+ */
+
+
+/* Overwrite default Vuetify and Plotly font */
+.v-application, body #app *, * {
+    font-family: 'Inter', serif !important;
+}
+
+
+/* Global variables for border radius */
+:root {
+    --border-radius: 4px;
+}
+
+
+/* Body background color */
+html, body {
+    background: var(--v-f_primary-base);
+}
+
+#app {
+    background: var(--v-bg_var1-base); /* to ensure readable downloadable images */
+}
+
+/********************************************
+ *        FONT/TEXT MODIFIERS OPTIONS       *
+ ********************************************/
+
+/** Letter spacing options */
+#app .letter-spacing-1 {
+    letter-spacing: 1px !important;
+}
+
+/** Font size and line height options */
+#app .compact-h6 {
+    line-height: 20px !important;
+}
+
+#app .text-body-0 {
+    font-size: 19px !important;
+}
+
+#app .compact-text-0 {
+    line-height: 19px !important;
+}
+
+#app .text-body-1 {
+    font-size: 17px !important;
+}
+
+#app .compact-text-1 {
+    line-height: 17px !important;
+}
+
+#app .text-body-2 {
+    font-size: 16px !important;
+}
+
+#app .compact-text-2 {
+    line-height: 16px !important;
+}
+
+#app .text-body-3 {
+    font-size: 15px !important;
+}
+
+#app .compact-text-3 {
+    line-height: 15px !important;
+}
+
+#app .text-body-4 {
+    font-size: 13px !important;
+}
+
+#app .compact-text-4 {
+    line-height: 13px !important;
+}
+
+#app .text-body-5 {
+    font-size: 12px !important;
+}
+
+#app .text-body-6 {
+    font-size: 10px !important;
+}
+
+/** Spaced words option */
+#app .spaced-5 {
+    word-spacing: 5px !important;
+}
+
+/** Reset text transformations */
+#app .text-normal{
+    text-transform: none !important;
+}
+
+
+/********************************************
+ *          OTHER MODIFIERS OPTIONS         *
+ ********************************************/
+
+/** Overflow scroll option */
+#app .overflow-scroll {
+    overflow: scroll !important;
+}
+
+/** Break spaces option */
+#app .break-spaces {
+    white-space: break-spaces !important;
+}
+
+/** Style cursor as not-allowed */
+.cursor-forbidden:hover, .cursor-forbidden *:hover {
+    cursor: not-allowed !important;
+}
+
+/** Style cursor as pointer */
+.cursor-pointer:hover, .cursor-pointer *:hover {
+    cursor: pointer !important;
+}
+
+/** Modifiers for the container height to 100% */
+.height-100 {
+    height: 100% !important;
+}
+
+/** Modifiers for the container width to 100% */
+.width-100 {
+    width: 100% !important;
+}
+
+/** Overwrite default border color */
+.border {
+    border: black solid 1px;
+}
+
+/** Size for the main sub view container */
+.view-sizing {
+    max-width: calc(100vw - 56px) !important;
+}
+.view-sizing .content-container {
+    max-width: 91% !important;
+}
+
+/** Toolbar navbar menu styling */
+.navbar-menu {
+    max-width: min(350px, 80vw) !important;
+    border: 2px solid var(--v-primary-base);
+}
+
+/* Special formatting for characterizing muts*/
+.char-mut {
+    background: rgba(255, 255, 0, 0.45);
+}
+
+
+/* Border radius for the graph plots*/
+.main-svg {
+    border-radius: 4px;
+}
+
+.regular-plot .main-svg {
+    border-radius: 4px 0 4px 4px;
+}
+
+
+/* Plotly container */
+.plotly-container {
+    border-radius: var(--border-radius);
+    width: 100%;
+    background: white;
+}
+
+/* Prevent text-underline for links */
+a, .site-title a {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+/* Revert usual behavior for links */
+#app .underlined-links a, #app .fake-link {
+    color: var(--v-secondary-base) !important;
+}
+
+
+/*******************************************
+ *  ADDITIONAL VUETIFY STYLING OVERWRITES  *
+ *******************************************/
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar .v-navigation-drawer__content::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar .v-navigation-drawer__content{
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+
+/** Overwrite break spaces option in v-lists*/
+.break-spaces .v-list-item__title{
+    white-space: break-spaces !important;
+}
+.break-spaces .v-list-item__subtitle{
+    white-space: break-spaces !important;
+}
+
+/** Overwrite the default vuetify ordering icon in v-data-table */
+.v-data-table-header__icon::before {
+    content: '\F033C' !important;
+}
+
+/** Overlay tooltip content custom styling */
+.v-snack__wrapper {
+    margin-bottom: 0 !important;
+    border-radius: 24px 24px 0 0 !important;
+}
+
+.v-window.v-item-group {
+    width: 100% !important;
+}
+
+#app .v-select-list {
+    text-transform: initial !important;
+}
+
+#app .v-tooltip__content {
+    line-height: 15px !important;
+    background-color: rgba(1, 72, 120) !important;
+    opacity: 1 !important;
+    box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%) !important;
+    border-radius: 15px !important;
+    color: white !important;
+    padding: 7px 13px;
+}
+
+#app .v-dialog {
+    border-radius: 24px !important;
+}
+
+.v-menu__content {
+    border-radius: 0 0 22px 22px !important;
+}
+
+/* Capitalize select items */
+.v-select-list {
+    text-transform: capitalize !important;
+}

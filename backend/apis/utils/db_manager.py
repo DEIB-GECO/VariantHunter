@@ -6,8 +6,6 @@
 """
 from sqlite3 import connect
 
-# from .path_manager import db_paths as paths
-
 
 def connection_preset(db_con):
     """
@@ -20,13 +18,12 @@ def connection_preset(db_con):
     db_con.execute("pragma journal_mode=OFF;")  # disables the rollback journal completely
     db_con.execute("pragma locking_mode=EXCLUSIVE;")  # never releases file-locks
     db_con.execute("pragma synchronous=OFF;")  # continues without syncing
-    # db_con.execute(f"pragma temp_store_directory='{paths.temp_dir}';")  # temporary tables and indices folder
 
 
 def clear_db(db_name=None, db_con=None, db_cur=None):
     """
     Clear the given database (specifying either its name or the connection and the cursor)
-    by removing all tables, indexes and triggers
+    by removing all tables
     Args:
         db_name:    The path to the database file
         db_con:     An already existing connection to the database, if owned

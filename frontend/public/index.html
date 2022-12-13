@@ -1,33 +1,20 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-  <script>
-    window.dataLayer = window.dataLayer || []
-    // Enable navigation prompt
-    window.onbeforeunload = function() {
-      return true
-    }
-
-    function gtag() {
-      dataLayer.push(arguments)
-    }
-
-    gtag('js', new Date())
-
-    gtag('config', 'UA-33687213-3')
-  </script>
   <meta charset='utf-8' />
   <meta http-equiv='X-UA-Compatible' content='IE=edge' />
   <meta name='viewport' content='width=device-width,initial-scale=1.0' />
-  <link rel='apple-touch-icon' href='appicon.png' />
-  <link rel='shortcut icon' href='favicon.ico' />
+
+  <link rel='apple-touch-icon' href='<%= BASE_URL %>appicon.png' />
+  <link rel='shortcut icon' href='<%= BASE_URL %>favicon.ico' />
+    <base href='<%= BASE_URL %>' />
   <title>Variant Hunter</title>
   <meta name='Description'
         content="VariantHunter is a tool for fast detection of emerging SARS-CoV-2 variants. It's an highly flexible and user friendly application for the systematic monitoring of the evolution of SARS-CoV-2 both at global and regional level." />
   <meta name='keywords'
         content='VariantHunter, COVID, covid-19, variants, Genomic Computing, DEIB, Politecnico di Milano, polimi' />
-  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Inter:100,200,300,400,500,700,900' />
-  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css' />
+  <link rel='stylesheet' crossorigin="anonymous" href='https://fonts.googleapis.com/css?family=Inter:100,200,300,400,500,700,900' />
+  <link rel='stylesheet' crossorigin="anonymous" href='https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css' />
 </head>
 <body>
 <noscript>

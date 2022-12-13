@@ -21,6 +21,8 @@ class GisaidParser(Parser):
     n_content_col = 'N-Content'  # name for missing data column
     aa_subs_col = 'AA Substitutions'  # name for aa substitutions column
 
+    # ############################################################ #
+
     def parse(self, selected_countries):
         # Read first line and extract cols positions
         self.auto_extract_cols(expected_cols=[self.location_col, self.date_col, self.lineage_col,

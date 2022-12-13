@@ -1,224 +1,174 @@
 """
 
-    API to perform lineage independent analysis
-    Endpoints:
-    ├── getStatistics: endpoint to perform a lineage independent analysis
-    └── getLineagesStatistics: endpoint to obtain statistics about lineages for given protein, mutation, location and date
+    LINEAGE INDEPENDENT ANALYSIS APIS @ /lineage_independent
+    These APIs provide lineage-independent analysis.
 
 """
 
-from __future__ import print_function
-
-import sqlite3
 import time
 
+from flask import request
 from flask_restplus import Namespace, Resource
 
-from .locations import get_locations
-from .utils.path_manager import db_path
+from .explorer import extract_dataset_info
+from .extractors.lineage_independent import extract_week_seq_counts, extract_mutation_data, extract_lineages_data
+from .extractors.locations import extract_location_data, extract_location_id
 from .utils.utils import compute_weeks_from_date, produce_statistics
 
-api = Namespace('lineage_independent', description='lineage_independent')
+api = Namespace(name='Lineage independent analysis',path='/lineage_independent')
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-def extract_week_seq_counts(location, w, prot=None, mut=None):
-    """
-    Extract weekly sequence counts for the given location and weeks from the database
-    Args:
-        location:   String representing the location to be considered
-        w:          Weeks to be considered
-        prot:       If set, the counts consider only the sequences with a given protein
-        mut:        If set, the counts consider only the sequences with a given mutation
-
-    Returns: An array of sequence counts
-
-    """
-    # print("\t Extract number of sequences in the four weeks...", end="")
-    # exec_start = time.time()
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    def extract_week_count(start, stop):
-        if prot is not None and mut is not None:
-            # count the seq collected for a given week and location having a given mutation
-            query = f'''    SELECT sum(count)
-                            FROM  aggr_aa_substitutions SB
-                                JOIN locations LC ON SB.location_id = LC.location_id
-                                JOIN proteins PR ON SB.protein_id = PR.protein_id
-                            WHERE date > {start} AND date <= {stop} AND location = "{location}" 
-                                AND mut='{mut}' AND protein='{prot}' 
-                            GROUP BY date, SB.location_id;'''
-        else:
-            # count the seq collected for a given week and location
-            query = f'''    SELECT sum(count)
-                            FROM  aggr_sequences SQ
-                                JOIN locations LC ON SQ.location_id = LC.location_id
-                            WHERE date > {start} AND date <= {stop} AND location = "{location}" 
-                            GROUP BY date, SQ.location_id;'''
-        return sum([x[0] for x in cur.execute(query).fetchall()])
-
-    tot_seq_w4 = extract_week_count(w['w4_begin'], w['w4_end'])
-    tot_seq_w3 = extract_week_count(w['w3_begin'], w['w3_end'])
-    tot_seq_w2 = extract_week_count(w['w2_begin'], w['w2_end'])
-    tot_seq_w1 = extract_week_count(w['w1_begin'], w['w1_end'])
-    con.close()
-    # print(f'done in {time.time() - exec_start:.5f} seconds.')
-    return [tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4]
-
-
-def extract_mutation_data(location, w, min_sequences=0):
-    """
-    Extract weekly mutation data for the given location and weeks from the database
-    Args:
-        location:       String representing the location to be considered
-        w:              Weeks to be considered
-        min_sequences:  Minimum number of sequence
-
-    Returns: An array describing the mutations for each week
-
-    """
-    # print("\t Extract mutation data for the four weeks ...", end="")
-    # exec_start = time.time()
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    def extract_week_mutation(start, stop, is_target=False):
-        having_clause = f"HAVING sum(count) >= {min_sequences}"
-        query = f'''    SELECT protein, mut, sum(count) 
-                        FROM aggr_aa_substitutions SB
-                            JOIN proteins PR ON SB.protein_id = PR.protein_id
-                            JOIN locations LC ON SB.location_id = LC.location_id
-                        WHERE date > {start} AND date <= {stop} AND location = "{location}"
-                        GROUP BY SB.protein_id, mut 
-                        {having_clause if is_target else ""};'''
-        return {p + '_' + m: c for p, m, c in cur.execute(query).fetchall()}
-
-    muts_w4 = extract_week_mutation(w['w4_begin'], w['w4_end'], is_target=True)
-    muts_w3 = extract_week_mutation(w['w3_begin'], w['w3_end'])
-    muts_w2 = extract_week_mutation(w['w2_begin'], w['w2_end'])
-    muts_w1 = extract_week_mutation(w['w1_begin'], w['w1_end'])
-    con.close()
-    # print(f'done in {time.time() - exec_start:.5f} seconds.')
-    return [muts_w1, muts_w2, muts_w3, muts_w4]
-
-
-def extract_lineages_data(location, prot, mut, w):
-    """
-    Extract lineages data for the given location, mutation and weeks from the database
-    Args:
-        location:   String representing the location to be considered
-        prot:       String representing the protein to be considered
-        mut:        String representing the mutation to be considered
-        w:          Weeks to be considered
-
-    Returns:
-
-    """
-    # print("\t Extract lineages data in the four weeks for mutation...", end="")
-    # exec_start = time.time()
-    con = sqlite3.connect(db_path)
-    cur = con.cursor()
-
-    week_sequence_counts = extract_week_seq_counts(location, w, prot, mut)
-    tot_seq_w1, tot_seq_w2, tot_seq_w3, tot_seq_w4 = week_sequence_counts
-
-    def extract_all_lineages(start, stop):
-        # get the lineages for the considered period, location, prot and mut
-        query = f'''    SELECT DISTINCT SB.lineage_id, lineage
-                        FROM aggr_aa_substitutions SB
-                            JOIN lineages LN ON SB.lineage_id = LN.lineage_id
-                            JOIN locations LC ON SB.location_id = LC.location_id
-                            JOIN proteins PR ON SB.protein_id = PR.protein_id
-                        WHERE date > {start} AND date <= {stop} AND location = "{location}" 
-                            AND protein = '{prot}' AND mut = '{mut}'
-                        ORDER BY lineage;'''
-        return {k: v for k, v in cur.execute(query).fetchall()}
-
-    def extract_week_info(lin_id, start, stop):
-        query = f'''    SELECT sum(count) 
-                        FROM aggr_aa_substitutions SB
-                            JOIN locations LC ON SB.location_id = LC.location_id
-                            JOIN proteins PR ON SB.protein_id = PR.protein_id
-                        WHERE date > {start} AND date <= {stop} AND location = "{location}" 
-                            AND lineage_id = '{lin_id}' AND protein = '{prot}' AND mut = '{mut}'
-                        GROUP BY date, SB.location_id, SB.protein_id, mut, lineage_id;'''
-        return sum([x[0] for x in cur.execute(query).fetchall()])
-
-    lineages = extract_all_lineages(w['w1_begin'], w['w4_end'])
-    lineages_data = []
-    for lineage_id, lineage_name in lineages.items():
-        lin_w4 = extract_week_info(lineage_id, w['w4_begin'], w['w4_end'])
-        lin_w3 = extract_week_info(lineage_id, w['w3_begin'], w['w3_end'])
-        lin_w2 = extract_week_info(lineage_id, w['w2_begin'], w['w2_end'])
-        lin_w1 = extract_week_info(lineage_id, w['w1_begin'], w['w1_end'])
-        lineages_data.append({
-            'name': lineage_name,
-            'f1': (lin_w1 / tot_seq_w1) * 100 if tot_seq_w1 > 0 else 0,
-            'f2': (lin_w2 / tot_seq_w2) * 100 if tot_seq_w2 > 0 else 0,
-            'f3': (lin_w3 / tot_seq_w3) * 100 if tot_seq_w3 > 0 else 0,
-            'f4': (lin_w4 / tot_seq_w4) * 100 if tot_seq_w4 > 0 else 0,
-            'w1': lin_w1,
-            'w2': lin_w2,
-            'w3': lin_w3,
-            'w4': lin_w4
-        })
-    con.close()
-    # print(f'done in {time.time() - exec_start:.5f} seconds.')
-    return lineages_data
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""""                               ENDPOINTS                             """""
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# ##############################################################################################
+# ##################################   [GET] /getStatistics   ##################################
+# ##############################################################################################
 
 
 @api.route('/getStatistics')
 class FieldList(Resource):
-    @api.doc('get_statistics')
-    def post(self):
+    @api.doc()
+    def get(self):
         """
-        Endpoint to perform a lineage independent analysis
-        @return:    An object including the results and the support info
+        API to perform a lineage-independent analysis. Given a location and a 4-week period,
+        it extracts the mutations present in the last week of the period and analyzes their trend
+        over the 4 weeks.
+
+        Query params:
+        - location (int):           Location identifier
+        - locationName (string):    Location name specified using continent[/country[/region]] notation
+                                    (used in alternative to location, when the id is not known)
+        - date (string):            End date of the 4-weeks period to be considered. Takes format YYYY-mm-dd
+
+        Success response (code 200):
+           Dictionary containing the statistics
+           {
+                'metadata': {
+                    'dataset_info': {
+                        'last_update': date of the most recent sequence in the database. Takes format YYYY-mm-dd.
+                        'file_type': provider of the dataset. Either 'gisaid' or 'nextstrain'
+                        'filtered_countries': list of countries the dataset has been restricted to, 'all' otherwise
+                        'begin_date': start date of the time period the dataset was restricted to, 'beginning' otherwise
+                        'end_date': end date of the time period the dataset was restricted to, 'end' otherwise
+                        'parsed_on': date on which the dataset was uploaded to VariantHunter. Takes format YYYY-mm-dd
+                        'version': running backend version of VariantHunter
+                    },
+                    'date': end date of the 4-weeks period to be considered. Takes format YYYY-mm-dd
+                    'location': {
+                        'continent':
+                            { 'id': identifier,'text': continent name}
+                        'country': null if the location is a continent, otherwise
+                            { 'id': identifier,'text': country name}
+                        'region': null if the location is not a region, otherwise
+                            { 'id': identifier,'text': region name}
+                    },
+                },
+                'rows': [
+                    {
+                        'item_key': row identifier obtained as protein_mut
+                        'protein': name of the protein, example='NSP4'
+                        'mut': name of the mutation, example='A146V'
+                        'slope': slope computed through linear interpolation of the diffusion (percentage)
+                        'f1': mutation diffusion in percentage during week 1
+                        'f2': mutation diffusion in percentage during week 2
+                        'f3': mutation diffusion in percentage during week 3
+                        'f4': mutation diffusion in percentage during week 4
+                        'w1': absolute number of sequences affected by the mutation during week 1
+                        'w2': absolute number of sequences affected by the mutation during week 2
+                        'w3': absolute number of sequences affected by the mutation during week 3
+                        'w4': absolute number of sequences affected by the mutation during week 4
+                        'p_value_with_mut': shows if the population «with mutation» is growing differently
+                                            compared to everything (corrected for multiple tests)
+                        'p_value_without_mut':  shows if the population «without mutation» is growing differently
+                                                compared to everything (corrected for multiple tests)
+                        'p_value_comp': shows if the population «with mutation» is growing differently
+                                        compared to the population «without mutation» (corrected for multiple tests)
+                    },...
+                ],
+                'tot_seq':  List reporting for each of the 4 weeks the total number of sequences
+                            collected for that period and location (if defined).
+                            [ tot_seq_week1,tot_seq_week2,tot_seq_week3,tot_seq_week4]
+           }
+
+        Error responses
+        # code 423: Resource unavailable: dataset update in progress
+        # code 500: Generic server error
+
         """
-        print("\t /getStatistics processing...", end="")
         exec_start = time.time()
-        location = api.payload['location']
-        date = api.payload['date']
+        args = request.args
+        location = args.get('location')
+        if location is None:
+            location_name = args.get('locationName')
+            location = extract_location_id(location_name)
+        date = args.get('date')
 
         w = compute_weeks_from_date(date)
 
         week_sequence_counts = extract_week_seq_counts(location, w)
-        location_data = get_locations(location)
 
-        min_sequences = int(week_sequence_counts[-1] * 0.005 + 1)
+        min_sequences = int(week_sequence_counts[-1] * 0.005 + 1)  # 0.5% of seq in the last week
         mutation_data = extract_mutation_data(location, w, min_sequences)
 
-        statistics = produce_statistics(location, week_sequence_counts, mutation_data)
+        statistics = produce_statistics(week_sequence_counts, mutation_data)
 
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
-        return {'rows': statistics, 'tot_seq': week_sequence_counts, 'location': location_data[0]}
+        metadata = {
+            'date': date,
+            'location': extract_location_data(location),
+            'dataset_info': extract_dataset_info()
+        }
+
+        print(f'\t[GET] /getStatistics: processed in {time.time() - exec_start:.5f} seconds.')
+        return {'rows': statistics,
+                'tot_seq': week_sequence_counts,
+                'metadata': metadata}
+
+
+# ################################################################################################
+# ###############################   [GET] /getLineagesStatistics   ###############################
+# ################################################################################################
 
 
 @api.route('/getLineagesStatistics')
 class FieldList(Resource):
-    @api.doc('get_lineages_statistics')
-    def post(self):
+    @api.doc()
+    def get(self):
         """
-        Endpoint to obtain statistics about lineages for given protein, mutation, location and date
-        @return:    An object including the results
+        API to obtain the decomposition over lineages of the sequences of a given mutation,
+        location and period.
+
+        Query params:
+        - location (int):   Location identifier
+        - date (string):    End date of the 4-weeks period to be considered. Takes format YYYY-mm-dd
+        - protein (string): Protein name
+        - mut (string):     Mutation name
+
+        Success response (code 200):
+            List of dictionaries representing the lineages
+            [
+                {
+                    'name': lineage name
+                    'f1': mutation diffusion in percentage during week 1 for the lineage
+                    'f2': mutation diffusion in percentage during week 2 for the lineage
+                    'f3': mutation diffusion in percentage during week 3 for the lineage
+                    'f4': mutation diffusion in percentage during week 4 for the lineage
+                    'w1': absolute number of sequences affected by the mutation during week 1 for the lineage
+                    'w2': absolute number of sequences affected by the mutation during week 2 for the lineage
+                    'w3': absolute number of sequences affected by the mutation during week 3 for the lineage
+                },...
+            ]
+
+        Error responses
+        # code 423: Resource unavailable: dataset update in progress
+        # code 500: Generic server error
+
         """
-        print("\t /getLineagesStatistics processing...", end="")
         exec_start = time.time()
-        location = api.payload['location']
-        date = api.payload['date']
-        prot = api.payload['prot']
-        mut = api.payload['mut']
+        args = request.args
+        location = args.get('location')
+        date = args.get('date')
+        prot = args.get('prot')
+        mut = args.get('mut')
 
         w = compute_weeks_from_date(date)
         lineage_data = extract_lineages_data(location, prot, mut, w)
 
-        print(f'done in {time.time() - exec_start:.5f} seconds.')
+        print(f'\t[GET] /getLineagesStatistics: processed in {time.time() - exec_start:.5f} seconds.')
         return lineage_data

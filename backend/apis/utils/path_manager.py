@@ -32,13 +32,11 @@ def get_base_path():
     if db_path_env == 'unset':
         create_directory('data_i')
         create_directory('data_i/temp')
-        # create_directory('data_i/temp/temp_folder')
         base_path = 'data_i/'
     else:
         # exploit path binding of docker
         create_directory('data_e')
         create_directory('data_e/temp')
-        # create_directory('data_e/temp/temp_folder')
         base_path = 'data_e/'
     return base_path
 
@@ -57,7 +55,6 @@ def get_db_paths():
     args.__setattr__('db_path', base_path + 'varianthunter.db')
 
     args.__setattr__('temp_tree', base_path + 'temp/')
-    # args.__setattr__('temp_dir', base_path + 'temp/temp_folder/')
     args.__setattr__('temp_db1_path', base_path + 'temp/temp_table1.db')
     args.__setattr__('temp_db2_path', base_path + 'temp/temp_table2.db')
     return args

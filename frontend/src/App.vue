@@ -1,63 +1,50 @@
 <template>
-   <div id="app">
-     <v-app>
+  <div id="app">
+    <v-app>
+      <!-- Global loading element -->
+      <global-loading/>
+
       <!-- Navbar -->
-      <v-toolbar :color='primary_color' class='navbar' short dark flat>
+      <v-app-bar app color='f_primary' class='navbar' max-height="56px" short scroll-off-screen dark flat clipped-left>
 
         <!-- Logo -->
-        <v-img :src='websiteLogo' class='logo' contain max-height='40x' max-width='40px' />
+        <v-img :src='websiteLogo' class='logo' contain max-height='40px' max-width='40px'/>
         <v-toolbar-title class='site-title'>
-          <router-link to='/variant_hunter/'>
+          <router-link :to="{ name: 'Home'}">
             <span class='emphasis'>Variant</span>
             <span>Hunter</span>
           </router-link>
         </v-toolbar-title>
 
-        <v-spacer></v-spacer>
+        <v-spacer/>
 
-        <!-- Scroll to top button -->
-        <v-btn v-if='showSearchShortcut && $route.name!=="About"' class='hidden-xs-only mr-3' href='#top' outlined rounded small>
-          <v-icon left>mdi-plus</v-icon>
-          New <span class='hidden-sm-and-down'>analysis</span>
-        </v-btn>
-
-        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1' outlined rounded small>
+        <v-btn v-if='$route.name!=="About"' class='hidden-xs-only mr-1 app-container f_primary--text' color="f_tertiary"
+               elevation="0" rounded small>
           <router-link :to="{ name: 'About'}">
-            <v-icon left>mdi-information-variant</v-icon>
-            About
+            About this tool
           </router-link>
         </v-btn>
-      </v-toolbar>
+      </v-app-bar>
 
-      <v-main class='main-body' @scroll.native='scrollHandler'>
-        <router-view />
+      <!-- App body container -->
+      <v-main :class="$route.name==='About'?'bg_var2':''">
+        <router-view/>
       </v-main>
-     </v-app>
+    </v-app>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+
+import GlobalLoading from "@/components/general/basic/GlobalLoading";
 
 export default {
   name: 'App',
-
-  data () {
+  components: {GlobalLoading},
+  data() {
     return {
       /** VariantHunter logo */
-      websiteLogo: require('./assets/logo.png'),
-
-      /** Flag to show the new search shortcut */
-      showSearchShortcut: false
-    }
-  },
-  computed: {
-    ...mapState(['primary_color'])
-  },
-  methods: {
-    /** Scroll event handler to hide/show the search shortcut */
-    scrollHandler (e) {
-      this.showSearchShortcut = e.target.scrollTop > 440
+      websiteLogo: require('./assets/logo.svg'),
     }
   }
 }
@@ -66,12 +53,13 @@ export default {
 <style>
 
 /** Navbar overlapping visibility */
-.navbar{
-  z-index: 10 !important;
+.navbar {
+  z-index: 15 !important;
 }
 
 /* Site logo */
-.logo{
+.logo {
+  background-color: white;
   border-radius: 12px;
   margin-left: 17px;
 }
@@ -91,55 +79,4 @@ export default {
   margin-right: 6px;
 }
 
-/* Styling for the website body */
-.main-body {
-  height: calc(100vh - 57px);
-  width: 100%;
-  overflow-y: auto;
-  float: left;
-  position: relative;
-}
-</style>
-
-<style>
-/* Global variables for color palette and border radius */
-:root {
-  --primary-color: #014878;
-  --secondary-color: #35b1ecff;
-  --tertiary-color-light: #d2ecf8ff;
-  --tertiary-color-dark: #1976d2ff;
-  --border-radius: 4px;
-}
-
-/* Body background color */
-body {
-  background: var(--primary-color);
-}
-
-/* Border radius for the graph plots*/
-.main-svg {
-  border-radius: 4px;
-}
-.regular-plot .main-svg {
-  border-radius: 4px 0 4px 4px;
-}
-
-
-/* Overwrite default Vuetify and Plotly font */
-.v-application, body * {
-  font-family: 'Inter', serif !important;
-}
-
-/* Plotly container */
-.plotly-container {
-  border-radius: var(--border-radius);
-  width: 100%;
-  background: white;
-}
-
-/* Prevent text-underline for links */
-a, .site-title a{
-    color: inherit !important;
-    text-decoration: none !important;
-}
 </style>

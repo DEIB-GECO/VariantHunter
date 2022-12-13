@@ -16,7 +16,7 @@ def get_cmd_arguments():
     parser = argparse.ArgumentParser(allow_abbrev=True)
 
     parser.add_argument('--filepath', '-fp',
-                        type=str, required=True, dest='file_path',
+                        type=str, dest='file_path',
                         help="path to the .tsv metadata file")
 
     parser.add_argument('--filetype', '-ft',
@@ -36,6 +36,10 @@ def get_cmd_arguments():
                         type=str.lower, default="end", dest='end_date',
                         help="end date to be considered when importing data. Use the format YYYY-mm-dd")
 
+    parser.add_argument('--public', '-p',
+                        default=False, action='store_true', dest='public',
+                        help="boolean flag to set when deploying the public version of the tool")
+
     parser.add_argument('--regenerate', '-r',
                         default=False, action='store_true', dest='regenerate',
                         help="boolean flag to overwrite the current database, if present")
@@ -49,9 +53,9 @@ def custom_list(str_list):
     Converts a set of comma separated values into a set.
     If only one element is found and the element is 'all' then it returns and empty set
     Args:
-        str_list:   string representing the set
+        str_list:   String representing the set
 
-    Returns:    a set that is the result of the conversion
+    Returns:    A set that is the result of the conversion
 
     """
     values_set = set([x.lower().strip() for x in str_list.split(',') if x])
