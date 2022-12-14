@@ -40,7 +40,7 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
-                <v-switch v-model="darkTheme" inset></v-switch>
+                <v-switch v-model="darkTheme" @change="autoDarkTheme=false" inset></v-switch>
               </v-list-item-action>
             </v-list-item>
 
@@ -132,7 +132,7 @@
 import ListItem from "@/components/general/basic/ListItem"
 import {shortcuts} from "@/utils/keyboardService";
 import DataManager from "@/components/controls/DataManager";
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
 
 export default {
   name: "AppPreferences",
@@ -142,13 +142,10 @@ export default {
     return {
       /** Boolean visibility flag for the panel */
       showSettings: false,
-
-      /** Auto dark theme option*/
-      autoDarkTheme: true,
     }
   },
   computed: {
-    ...mapState(['version']),
+    ...mapState(['version', 'darkMode','autoDarkMode']),
 
     /** Map shortcuts data */
     shortcuts() {
@@ -158,31 +155,28 @@ export default {
     /** Dark theme option */
     darkTheme: {
       get() {
-        return this.$vuetify.theme.dark
+        return this.darkMode
       },
-      set() {
-        this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      set(newVal) {
+        this.setState({name: 'darkMode', newVal})
+      }
+    },
+
+
+    /** Auto dark theme option */
+    autoDarkTheme: {
+      get() {
+        return this.autoDarkMode
+      },
+      set(newVal) {
+        this.setState({name: 'autoDarkMode', newVal})
       }
     },
   },
 
   methods: {
-    /** Toggle theme */
-    toggleTheme(evt) {
-      if (this.autoDarkTheme) {
-        this.$vuetify.theme.dark = evt.matches
-      }
-    },
-
-
+    ...mapMutations(['setState']),
   },
-
-  /** Listen for external dark mode changes */
-  mounted() {
-    const matcher = window.matchMedia('(prefers-color-scheme: dark)')
-    matcher.addEventListener('change', this.toggleTheme)
-    this.toggleTheme(matcher)
-  }
 }
 </script>
 

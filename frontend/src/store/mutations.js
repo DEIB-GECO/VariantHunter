@@ -314,5 +314,15 @@ export const mutations = {
      */
     setLoading(state, newVal) {
         state.loading = newVal
+    },
+
+    /**
+     * General purpose setter
+     * @param state
+     * @param name      Name of the property
+     * @param newVal    Value for the property
+     */
+    setState(state,{name,newVal}){
+        Vue.set(state,name, newVal)
     }
 }

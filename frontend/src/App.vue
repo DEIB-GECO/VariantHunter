@@ -37,6 +37,7 @@
 <script>
 
 import GlobalLoading from "@/components/general/basic/GlobalLoading";
+import {mapMutations, mapState} from "vuex";
 
 export default {
   name: 'App',
@@ -46,7 +47,72 @@ export default {
       /** VariantHunter logo */
       websiteLogo: require('./assets/logo.svg'),
     }
+  },
+
+  computed: {
+    ...mapState(['darkMode','autoDarkMode']),
+
+    /** Dark theme option */
+    darkTheme: {
+      get() {
+        return this.darkMode
+      },
+      set(newVal) {
+        this.setState({name: 'darkMode', newVal})
+      }
+    },
+
+    /** Auto dark theme option */
+    autoDarkTheme: {
+      get() {
+        return this.autoDarkMode
+      },
+      set(newVal) {
+        this.setState({name: 'autoDarkMode', newVal})
+      }
+    },
+
+    /** Theme matcher */
+    matcher() {
+      return window.matchMedia('(prefers-color-scheme: dark)')
+    },
+  },
+
+  watch: {
+    darkTheme(newVal) {
+      if (this.matcher.matches === newVal || !this.autoDarkTheme) {
+        this.$vuetify.theme.dark = newVal
+      }else{
+        this.darkTheme = this.matcher.matches
+      }
+    },
+
+    autoDarkTheme(newVal) {
+      if (newVal) // auto has been enabled: update dark theme accordingly
+        this.toggleTheme(this.matcher)
+    }
+  },
+
+  methods: {
+    ...mapMutations(['setState']),
+
+    /** Toggle theme */
+    toggleTheme(evt) {
+      if (this.autoDarkTheme) {
+        this.darkTheme = evt.matches
+      }
+    },
+  },
+
+
+  /** Listen for external dark mode changes */
+  mounted() {
+    this.matcher.addEventListener('change', this.toggleTheme)
+
+    if(this.darkTheme===undefined)
+      this.toggleTheme(this.matcher)
   }
+
 }
 </script>
 

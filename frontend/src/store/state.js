@@ -118,6 +118,11 @@ export const state = {
     /** Reset flag, if set to true the storage is cleared */
     reset: false,
 
+    /** Dark mode flag, if set to true dark mode is enabled */
+    darkMode: undefined,
+    /** Auto dark mode flag, if set to true dark mode is enabled automatically */
+    autoDarkMode: true,
+
     /** Global loading flag */
     loading: false,
 
