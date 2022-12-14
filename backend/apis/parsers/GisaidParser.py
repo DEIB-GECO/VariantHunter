@@ -58,7 +58,7 @@ class GisaidParser(Parser):
 
             # Parse lineage data
             lineage_name = s[self.cols[self.lineage_col]]
-            lineage_name = lineage_name if lineage_name != self.missing_info_mark else 'None'
+            lineage_name = lineage_name if lineage_name != self.missing_info_mark else 'Unassigned'
 
             # Parse quality data
             length = int(s[self.cols[self.length_col]])
