@@ -19,7 +19,7 @@ VariantHunter is a highly flexible and user-friendly tool for the systematic mon
 
 [> Go to the online version of the tool](http://gmql.eu/variant_hunter)
 
-[> How to run it using Docker](http://gmql.eu/variant_hunter/about)
+[> How to run it using Docker](http://gmql.eu/variant_hunter/about#docker)
  
 </b>
 
