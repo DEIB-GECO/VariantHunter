@@ -11,4 +11,4 @@ mkdir ./docker/frontend
 cp -r ./frontend/dist ./docker/frontend/dist
 rm -f docker/backend/varianthunter.db
 cd docker
-DOCKER_BUILDKIT=0 docker build -t lucagrammer/varianthunter  -f Dockerfile .
+DOCKER_BUILDKIT=0 docker build -t gecopolimi/varianthunter  -f Dockerfile .
