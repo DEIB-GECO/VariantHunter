@@ -57,7 +57,7 @@
                       <v-list-item-title class="f_text_light--text">{{ subtitle }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
-                        <div>{{ description }}</div>
+                        <div class="f_text_light--text">{{ description }}</div>
                         <div class="mt-2 text-body-5 compact-text-4 warning--text">{{ hint }}</div>
                       </v-list-item-subtitle>
                     </v-list-item-content>
