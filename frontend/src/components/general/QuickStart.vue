@@ -11,7 +11,7 @@
       <!-- Intro text -->
       <v-row>
         <v-col>
-          <div class="text-h5 font-weight-black primary--text pb-3" id="explorer">
+          <div class="text-h5 font-weight-black primary--text pb-3" id="featured">
             Featured Analyses
           </div>
 

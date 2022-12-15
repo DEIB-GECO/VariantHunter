@@ -208,7 +208,7 @@ export default {
     ...mapState(['currentAnalysisId', 'tags']),
     ...mapGetters(['getAnalysesSummary']),
 
-    /** Filtered tag otpions */
+    /** Filtered tag options */
     tagOptions() {
       const opts = {null: 'All tags'}
       Object.keys(this.tags).forEach(tag => opts[tag] = tag)
@@ -268,6 +268,7 @@ export default {
 
     /** Clear all filters */
     clearFilters() {
+      this.filteredTag = null
       this.filteredMode = null
       this.filteredStarred = null
       this.filteredGranularity = null
