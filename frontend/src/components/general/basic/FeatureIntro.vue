@@ -9,6 +9,8 @@
   ├── step:           Step name
   ├── altSteps:       Alternative step names
   ├── nextStep:       Next step name or null
+  ├── nextLabel:      Next label
+  ├── prevStep:       Prev step name or null
   ├── beginning:      Boolean flag set to true if the step begin the tour
   ├── end:            Boolean flag set to true if the step ends the tour
   ├── icon:           Step icon
@@ -38,14 +40,20 @@
           <slot></slot>
 
           <!-- Actions -->
-          <div class="text-right pl-4 mt-6">
+          <div class="d-flex pl-4 mt-6">
+            <v-spacer v-if="this.beginning"/>
             <btn-with-tooltip v-if="!lastStep" :text="beginning?'Skip':'End tour'" icon="mdi-debug-step-over"
                               :click-handler="terminate" hover-color="error"
                               size="small" content-class="ml-1 mt-1 mt-md-0" :bottom="!floating" :top="floating"
                               tip="I already know how the tool works"/>
-            <btn-with-tooltip :text="this.beginning?'Start':this.lastStep?'Okay':'Next'"
-                              :icon="this.lastStep?'mdi-check':'mdi-chevron-right'"
-                              :click-handler="showNext" hover-color="success"
+            <v-spacer v-if="!this.beginning"/>
+            <btn-with-tooltip v-if="!this.beginning && !this.$vuetify.breakpoint.xsOnly" text="Prev"
+                              icon="mdi-chevron-left" :click-handler="showPrev" hover-color="secondary"
+                              size="small" content-class="ml-1 mt-1 mt-md-0" :bottom="!floating"
+                              :top="floating" tip="Previous step"/>
+            <btn-with-tooltip :icon="this.lastStep?'mdi-check':'mdi-chevron-right'"
+                              :text="(this.beginning?'Start':(this.lastStep?this.nextLabel:'Next'))"
+                              :click-handler="showNext" hover-color="secondary"
                               size="small" content-class="ml-1 mt-1 mt-md-0" append-icon :bottom="!floating"
                               :top="floating" :tip="this.end?'End tour':'Next step'"/>
           </div>
@@ -79,6 +87,12 @@ export default {
 
     /** Next step name or null */
     nextStep: {},
+
+    /** Next label */
+    nextLabel: {default:'Okay'},
+
+    /** Prev step name or null */
+    prevStep: {},
 
     /** Boolean flag set to true if the step begin the tour */
     beginning: Boolean,
@@ -133,7 +147,17 @@ export default {
         this.$emit('nextStep')
       } else {
         this.nextPressCount++
-        this.$emit('nextInternalStep')
+        this.$emit('nextInternalStep',+1)
+      }
+    },
+
+    /** Go to the previous step */
+    showPrev() {
+      if (this.nextPressCount!==0) {
+        this.nextPressCount--
+        this.$emit('nextInternalStep',-1)
+      } else {
+        this.tourStep = this.prevStep
       }
     }
   },

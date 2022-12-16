@@ -7,7 +7,7 @@
 
 <template>
   <feature-intro v-model="visibility" floating step="filters" :internal-steps="4" next-step="table"
-                 :icon="tips[currentTip].icon"
+                 prev-step="result" :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep">
     <template>
       <div class="pl-4 mb-6">
@@ -99,8 +99,8 @@ export default {
 
   methods: {
     /** Go to the next internal step */
-    nextInternalStep() {
-      this.currentTip++
+    nextInternalStep(diff) {
+      this.currentTip+=diff
 
       switch (this.tips[this.currentTip].id) {
         case 'filter-adv':

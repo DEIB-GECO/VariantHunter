@@ -7,7 +7,7 @@
 
 <template>
   <feature-intro v-model="visibility" floating step="odd-ratio" :internal-steps="1" next-step="summary"
-                 :icon="tips[currentTip].icon" @nextStep="hideOddRatio"
+                 prev-step="trend" :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep">
     <template>
       <div class="pl-4 mb-6">
@@ -73,8 +73,8 @@ export default {
 
   methods: {
     /** Go to the next internal step */
-    nextInternalStep() {
-      this.currentTip++
+    nextInternalStep(diff) {
+      this.currentTip+=diff
 
       if (this.tips[this.currentTip].id==='pov'){
         const el= document.getElementById('odd-ratio-tab1')
@@ -82,13 +82,6 @@ export default {
           el.click() // collapse odd-ratio section
       }
     },
-
-    /** Hide odd ratio plots */
-    hideOddRatio(){
-      const el= document.getElementById('odd-ratio-collapse')
-      if(el)
-        el.click() // collapse odd-ratio section
-    }
   },
 
   mounted() {

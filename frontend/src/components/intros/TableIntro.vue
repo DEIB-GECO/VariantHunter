@@ -7,7 +7,7 @@
 
 <template>
   <feature-intro v-model="visibility" floating step="table" :internal-steps="6" next-step="heatmap"
-                 :icon="tips[currentTip].icon"
+                 prev-step="filters" :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep">
     <template>
       <div class="pl-4 mb-6">
@@ -100,6 +100,9 @@ export default {
 
       /** Current tip step */
       currentTip: 0,
+
+      /** Breakdown expansion status */
+      breakdownExpanded:false,
     }
   },
 
@@ -116,22 +119,33 @@ export default {
 
   methods: {
     /** Go to the next internal step */
-    nextInternalStep() {
-      this.currentTip++
+    nextInternalStep(diff) {
+      this.currentTip+=diff
       let btn = null
 
       switch (this.tips[this.currentTip].id) {
         case 'p-vals':
           this.$emit('showPValues', true)
+          btn = document.getElementById('1-expand')
+          if (btn && this.breakdownExpanded){
+            btn.click()
+            this.breakdownExpanded=false
+          }
           break;
         case 'breakdown':
           this.$emit('showPValues', false)
           btn = document.getElementById('1-expand')
-          if (btn) btn.click()
+          if (btn && !this.breakdownExpanded){
+            this.breakdownExpanded=true
+            btn.click()
+          }
           break;
         case 'char-mut':
           btn = document.getElementById('1-expand')
-          if (btn) btn.click()
+          if (btn && this.breakdownExpanded){
+            btn.click()
+            this.breakdownExpanded=false
+          }
           break;
 
       }

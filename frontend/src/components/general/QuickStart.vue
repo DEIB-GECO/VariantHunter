@@ -45,7 +45,7 @@
                     <v-icon left x-small>mdi-plus</v-icon>
                     Details
                   </v-btn>
-                  <v-btn class="mb-2" rounded x-small elevation="0" @click="open(idx)">
+                  <v-btn class="mb-2" rounded x-small elevation="0" @click="open(idx)" :id="'featured-'+idx">
                     <v-icon left x-small>mdi-lead-pencil</v-icon>
                     Open
                   </v-btn>

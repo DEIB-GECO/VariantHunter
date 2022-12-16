@@ -68,8 +68,8 @@
               <!-- Expand/collapse option-->
               <span class='expand-collapse-icon'>
               <v-icon v-if='showSectionBody' small color='f_primary' v-bind:id="assignId+'-collapse'"
-                      @click='invertVisibility'>mdi-arrow-collapse</v-icon>
-              <v-icon v-else small color='f_primary' @click='invertVisibility' v-bind:id="assignId+'-expand'">mdi-arrow-expand</v-icon>
+                      @click='setVisibility(false)'>mdi-arrow-collapse</v-icon>
+              <v-icon v-else small color='f_primary' @click='setVisibility(true)' v-bind:id="assignId+'-expand'">mdi-arrow-expand</v-icon>
             </span>
 
             </div>
@@ -156,8 +156,8 @@ export default {
   },
   methods: {
     /** Change the visibility flag value for the section body*/
-    invertVisibility() {
-      this.showSectionBody = !this.showSectionBody
+    setVisibility(value){
+      this.showSectionBody = value
     }
   }
 }

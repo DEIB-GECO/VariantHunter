@@ -1,13 +1,13 @@
 <!--
 
   Component:    TrendIntro
-  Description:  Trenc chart step of the app-tour
+  Description:  Trend chart step of the app-tour
 
 -->
 
 <template>
   <feature-intro v-model="visibility" floating step="trend" :internal-steps="2" next-step="odd-ratio"
-                 :icon="tips[currentTip].icon"
+                 prev-step="heatmap" :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep">
     <template>
       <div class="pl-4 mb-6">
@@ -82,8 +82,8 @@ export default {
   methods: {
     ...mapMutations(['setTourStep']),
     /** Go to the next internal step */
-    nextInternalStep() {
-      this.currentTip++
+    nextInternalStep(diff) {
+      this.currentTip+=diff
 
       if(this.tips[this.currentTip].id==='select'){
         this.showOddRatio() // show in advance odd ratio to allow scrolling
@@ -95,8 +95,6 @@ export default {
       const el= document.getElementById('odd-ratio-expand')
       if(el)
         el.click() // expand odd-ratio section
-      else
-        this.setTourStep('summary') // skip odd-ratio tour if not able to expand it
     }
   },
 

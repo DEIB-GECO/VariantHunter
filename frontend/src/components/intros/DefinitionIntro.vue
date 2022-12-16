@@ -6,7 +6,7 @@
 -->
 
 <template>
-  <feature-intro v-model="visibility" floating step="definition" :internal-steps="2" next-step="explorer" :icon="tips[currentTip].icon"
+  <feature-intro v-model="visibility" floating step="definition" :internal-steps="2" prev-step="tour" next-step="explorer" :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep" @nextStep="$emit('showExplorer')">
     <template>
       <div class="pl-4 mb-6">
@@ -88,7 +88,7 @@ export default {
     ...mapMutations(['setLocation','setLocations', 'setDate']),
 
     /** Go to the next internal step */
-    nextInternalStep() {
+    nextInternalStep(diff) {
       this.$emit('selectMode')
       if(!this.selectedLocation && this.currentTip>0) {
         this.setLocations([])
@@ -97,7 +97,7 @@ export default {
       if(!this.selectedDate && this.currentTip>1)
         this.setDate([this.lastUpdate])
 
-      this.currentTip++
+      this.currentTip+=diff
     }
   },
 

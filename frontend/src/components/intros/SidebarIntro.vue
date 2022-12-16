@@ -7,7 +7,7 @@
 
 <template>
   <feature-intro v-model="visibility" floating step="navbar" :internal-steps="1" :next-step="null"
-                 :icon="tips[currentTip].icon" end
+                 prev-step="summary" :icon="tips[currentTip].icon" end
                  @nextInternalStep="nextInternalStep">
     <template>
       <div class="pl-4 mb-6">
@@ -72,8 +72,8 @@ export default {
 
   methods: {
     /** Go to the next internal step */
-    nextInternalStep() {
-      this.currentTip++
+    nextInternalStep(diff) {
+      this.currentTip+=diff
     },
   },
 

@@ -7,7 +7,7 @@
 
 <template>
   <feature-intro v-model="visibility" floating step="heatmap" :internal-steps="1" next-step="trend"
-                 :icon="tips[currentTip].icon"
+                 prev-step="table" :icon="tips[currentTip].icon"
                  @nextInternalStep="nextInternalStep">
     <template>
       <div class="pl-4 mb-6">
@@ -71,8 +71,8 @@ export default {
 
   methods: {
     /** Go to the next internal step */
-    nextInternalStep() {
-      this.currentTip++
+    nextInternalStep(diff) {
+      this.currentTip+=diff
     }
   },
 
