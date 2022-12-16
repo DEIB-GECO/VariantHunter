@@ -36,7 +36,7 @@
           <!-- Current selection as prepend -->
           <template v-slot:prepend-inner>
             <div v-if="getSelectedLineageValues.length>0">
-              <div class="d-flex width-100 mt-3">
+              <div class="d-flex width-100 mt-3 flex-wrap flex-row">
                 <v-chip v-for="el in getSelectedLineage" small :key="el" class="ma-0 mr-1 mb-1">{{ el }}
                   <v-icon x-small right class="cursor-pointer" @click="removeLineage(el)">mdi-close</v-icon>
                 </v-chip>
