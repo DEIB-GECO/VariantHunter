@@ -1,7 +1,7 @@
 <!--
 
-  Component:    LinIndUseCase1
-  Description:  Use case for lineage independent search (ex. UC.2)
+  Component:    LinSpecUseCase4
+  Description:  Use case for lineage specific search (ex. UC.2)
 
 -->
 
