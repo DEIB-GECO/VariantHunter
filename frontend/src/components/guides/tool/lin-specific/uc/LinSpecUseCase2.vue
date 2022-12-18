@@ -61,7 +61,6 @@
 import UseCase from "@/components/guides/tool/UseCase.vue";
 import Paragraph from "@/components/general/basic/Paragraph.vue";
 import Pic from "@/components/general/basic/Pic.vue";
-import Collage from "@/components/general/basic/Collage.vue";
 
 export default {
   name: 'LinSpecUseCase2',

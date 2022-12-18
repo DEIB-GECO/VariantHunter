@@ -68,7 +68,7 @@
 
     <v-container class='pl-0 pl-sm-10 pr-0 pr-sm-10 pb-5'>
 
-      <v-expansion-panels multiple class='mt-3' flat :value="[1]">
+      <v-expansion-panels multiple class='mt-3' flat>
 
         <!-- LINEAGE INDEPENDENT -->
         <lin-independent-guide/>
