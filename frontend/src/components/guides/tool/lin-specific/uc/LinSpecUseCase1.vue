@@ -14,8 +14,7 @@
       the E protein. The lineage was defined by the <b>Pango designation</b>
       <span class='monospaced'>issue 1327</span>
       <a href='https://github.com/cov-lineages/pango-designation/issues/1327' target='_blank'>
-        (https://github.com/cov-lineages/pango-designation/issues/1327)
-      </a>.<br/>
+        (https://github.com/cov-lineages/pango-designation/issues/1327)</a>.<br/>
       A screenshot is reported below.
     </p>
 
