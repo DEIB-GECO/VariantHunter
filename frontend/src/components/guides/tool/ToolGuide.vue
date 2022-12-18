@@ -36,8 +36,7 @@
       <p>
         <i>VariantHunter</i> supports two modes of analysis: <b>Lineage Independent</b> and <b>Lineage
         Specific</b>.
-        Each mode allows the user to open several analysis sessions <del>(managed in panels that can be expanded, collapsed, or
-        deleted at the user's choice). </del><!-- TODO -->
+        Each mode allows the user to open several analysis sessions that can be managed using the "history" side bar.
       </p>
 
       <paragraph :src='introImg' img-max-height='230' left no-zoom>
@@ -45,7 +44,7 @@
           The underlying mechanism of both methodologies is the same: each amino acid change is analyzed over a
           <b>time period of 4 weeks</b>.<br/>
           For each week, the <i>frequency of the change</i> (computed as
-          <span class='formula'>"number of sequences harboring the change"/"total number of sequences collected in that week"</span>)
+          <span class='formula'>"number of sequences harboring the change"/"total number of sequences collected in the week"</span>)
           is considered (see the four blue dots in the Figure);
           then, a linear model is fitted on the four data points (red line in the Figure).
         </p>
