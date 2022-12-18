@@ -13,19 +13,18 @@
       <p>
         A "lineage-independent" analysis was performed to study the prevalence of amino acid changes in
         the Spike glycoprotein in <i>North America</i>.<br/>
-        An interval ranging from 15/05/2022 to 11/06/2022, which corresponds with the displacement
+        An interval ranging from 15/05/2022 to 11/06/2022 was selected, corresponding with the displacement
         of Omicron <b>BA.1.*</b> and <b>BA.2.*</b> lineages by the newly
-        emerged <b>BA.5.*</b> and <b>BA.4.*</b> lineages, was selected.
+        emerged <b>BA.5.*</b> and <b>BA.4.*</b> lineages.
       </p>
     </paragraph>
 
     <paragraph :src='table' right larger-img>
       <p>
-        Compared with BA.1.* and BA.*.2, BA.5.* and BA.4.* lack Q493R, but carry 2 additional amino
-        acid changes in Spike: L452R and F486V.<br/>
-        This pattern is clearly recapitulated by the "expanded" mutation table reported in the figure,
-        where the different distribution of F486V and Q493R across sub-variants
-        of Omicrons can be clearly appreciated.
+        Compared with BA.1.* and BA.*.2, BA.4.* and BA.5.* lack Q493R, but carry 2 additional amino-acid changes in Spike:
+        L452R and F486V.<br/>
+        This pattern is clearly reinforced when expanding the relevant mutation rows in the table reported in the figure,
+        where the different distributions of F486V and Q493R across sub-variants of Omicrons can be clearly appreciated.
       </p>
     </paragraph>
 
@@ -37,7 +36,7 @@
     </paragraph>
     <paragraph :src='trend' left larger-img>
       <p>
-        The same pattern is also recovered from the matched <b>Diffusion Trend</b> plot.
+        The same pattern is also recovered from the corresponding <b>Diffusion Trend</b> plot.
       </p>
     </paragraph>
 
