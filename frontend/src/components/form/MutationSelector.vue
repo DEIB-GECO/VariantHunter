@@ -30,7 +30,7 @@
       </div>
 
       <!-- Non characterizing mutation selector -->
-      <div v-if="characterizingMuts && characterizingMuts.length!==possibleValues.length"
+      <div v-if="characterizingMuts && characterizingMuts.length!==possibleValues.length && characterizingMuts.length>0"
            class='uploader-opener text-body-3 text_var3--text font-weight-bold' @click='selectNonCharMuts()'>
         <v-icon left>mdi-star-off-outline</v-icon>
         All non-characterizing mutations

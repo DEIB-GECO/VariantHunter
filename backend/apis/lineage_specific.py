@@ -90,8 +90,8 @@ class FieldList(Resource):
         Success response (code 200):
             Dictionary containing the statistics
             {
-                'characterizing_muts':  List of mutations characterizing the selected lineage
-                                        (i.e.,mutations affecting at least 50% of the lineage sequences).
+                'characterizing_muts':  List of mutations characterizing the selected lineage if only one lineage is selected.
+                                        (i.e.,mutations affecting at least 50% of the lineage sequences). [] otherwise.
                 'metadata': {
                     'dataset_info': {
                         'last_update': date of the most recent sequence in the database. Takes format YYYY-mm-dd.
@@ -169,7 +169,8 @@ class FieldList(Resource):
         mutation_data = extract_mutation_data(location, lineages, w, min_sequences)
 
         statistics = produce_statistics(week_sequence_counts, mutation_data)
-        characterizing_muts = extract_lineage_characterization(lineages)
+        # Compute char muts only if one lineage has been selected, otherwise disable feature.
+        characterizing_muts = extract_lineage_characterization(lineages) if len(lineages) == 1 else []
 
         metadata = {
             'date': date,

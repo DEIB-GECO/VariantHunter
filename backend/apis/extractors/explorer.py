@@ -185,7 +185,7 @@ def extract_lineage_characterization(lineages):
     Args:
         lineages:   List of lineage names to be considered
 
-    Returns:    List of characterizing mutation for the lineages
+    Returns:    List of characterizing mutation for the lineages.
 
     """
     con = sqlite3.connect(db_path)
