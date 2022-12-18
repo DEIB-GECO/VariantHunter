@@ -32,7 +32,7 @@
       <p class='mt-sm-5'>
         A Variant Hunter "lineage-specific" analysis was applied to study amino-acid changes in the
         <b>BA.5.2 lineage</b>, in <i>North America</i> in an interval of time between
-        <i>25/10/2022 and 22/11/2022</i>, which should coincide with the emergence and spread of BA.5.2.39.
+        <i>26/09/2022 and 23/10/2022</i>, which should coincide with the emergence and spread of BA.5.2.39.
       </p>
     </paragraph>
 
