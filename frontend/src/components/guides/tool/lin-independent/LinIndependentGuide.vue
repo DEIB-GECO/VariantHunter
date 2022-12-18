@@ -15,7 +15,7 @@
       <paragraph :src='formImg' left larger-img>
         <p>
           In this analysis type, the user is required to select a <b>location</b> <i>(New York State in the example)</i>
-          and a <b>time interval of interest</b> &nbsp; <i>(four weeks ending
+          and a <b>time interval of interest</b> <i>(four weeks ending
           on March 20th, 2022 in the example)</i>.
         </p>
       </paragraph>
@@ -29,7 +29,7 @@
         </p>
         <p>
           When used in 4-weeks mode, the explorer also shows a <b>daily breakdown</b> by lineage of the available
-          data &nbsp; <i>(on March 18th, in the example, 39% sequences were BA.2, 28% BA.1.1, 22% BA.2.12.1, and 11%
+          data <i>(on March 18th, in the example, 39% sequences were BA.2, 28% BA.1.1, 22% BA.2.12.1, and 11%
           from other minor lineages)</i>.</p>
       </paragraph>
 
@@ -38,10 +38,10 @@
         The tool analyzes the data of the selected four-week span, returning a <b>table</b> such as the one in the
         Figure:
         <ul>
-          <li>each line corresponds to an amino acid change;</li>
+          <li>each line corresponds to an amino-acid change;</li>
           <li>the <b>slope</b> represents the rate of growth/decrease in prevalence;
           </li>
-          <li>the four columns that follow report the <b>prevalence</b> of the amino acid change at each of the four
+          <li>the four columns that follow report the <b>prevalence</b> of the amino-acid change at each of the four
             weeks;
           </li>
           <li>by clicking the
@@ -58,15 +58,22 @@
       <paragraph :src='tableFiltersImg' right larger-img>
         <p>
           The <b>filters</b> above the table can be used to restrict the scope of the analysis and select
-          a specific gene or collection of amino acid changes to be shown in the table and following analysis.
+          a specific gene or collection of amino-acid changes to be shown in the table and following analysis.
         </p>
         These can be selected:
         <ul>
           <li>from a <b>text list</b> pasted by the user;</li>
-          <li>from the list of <b>amino acid changes characterizing a lineage</b> (prevalence in lineage &gE;50%);
+          <li>from the list of <b>amino-acid changes characterizing a lineage</b> (prevalence in lineage &gE;50%);
           </li>
           <li>from the drop-down menu with the checkboxes.</li>
         </ul>
+        <p>
+          Mutations can be selected by ticking the related checkboxes. Selected mutations can be analyzed using the 
+          <a href="https://cov-spectrum.org/" target="_blank"><i>covSPECTRUM application</i></a>, documented in their Bioinformatics
+          publication <a href="https://doi.org/10.1093/bioinformatics/btab856" target="_blank">(Chen et al., 2022)</a>.
+          A corresponding query is performed on covSPECTRUM using the same country/continent-level location, time period, and list of mutations 
+          (either in conjunction = logical AND - or in disjunction = logical OR).
+        </p>
       </paragraph>
 
       <!-- EXPANSION PANEL -->
@@ -79,12 +86,24 @@
           <i>In the figure, the amino-acid change is predominantly exhibited by sequences assigned to the BA.2.12.1
             lineage.</i>
         </p>
-        <p>TESTO MANCANTE SULLA POSSIBILITA' DI AGGREGARE I LINEAGE A LIVELLI</p><!-- TODO -->
+        <p>Using the CHANGE NOTATION button, it is possible to enable grouping of lineages by level in the Pango hierarchy. 
+        The first option allows to summarize the counts using a level-1 star notation 
+        (e.g., B.1.* includes both B.1 and all its descendants).
+        Similarly, the second option summarizes the counts using a level-2 star notation
+        (e.g., B.1.1.* includes both B.1.1 and all its descendants).
+        In both cases, lineages exceeding 10% (in at least one of the four observed weeks) are not aggregated.
+        </p>
       </paragraph>
 
       <!-- MUTATION HISTORY -->
       <paragraph :src='historyImg' left>
-        TESTO MANCANTE SULLA STORIA DELLE MUTAZIONI<!-- TODO -->
+        <p>
+        Each mutation present in the table can be further explored, by clicking on the INFO symbol on the left of the checkbox.
+        This opens a dialog that informs on two aspects:
+        1) which lineages are characterized by the selected mutation (the mutation appears in at least 50% of sequences of those lineages contained in the database);
+        2) how the sequences harboring the selected mutation distribute over the available lineages.
+        <i>In the figure, S_S704L is considered characterizing for 12 lineages (including B.1.434); 92.3% of sequences with this mutation are of the BA.2.12.1 lineage.<i>
+        </p>
       </paragraph>
 
       <p>
@@ -108,14 +127,15 @@
           increase or decrease in prevalence (dark blue to red = increase; red to dark blue = decrease).
         </li>
       </ul>
-      <collage :src1="heatmapImg1" :src2="heatmapImg2" class="my-2"/>
-      <p>
+       <p>
         <i>
-          In the example, it is evident that a group of 10 changes at the top is decreasing (representing BA.1) while,
+          In the example below, it is evident that a group of 10 changes at the top is decreasing (representing BA.1) while,
           conversely, the 8 at the bottom are increasing together (representing BA.2).
           Other amino acid changes have less clear trends.
         </i>
       </p>
+      <collage :src1="heatmapImg1" :src2="heatmapImg2" class="my-2"/>
+     
 
       <!-- DIFFUSION TREND -->
       <paragraph :src='diffusionImg' right larger-img>
@@ -138,7 +158,7 @@
           Such growth can be appreciated more clearly by observing the <b>Log<sub>2</sub> Odd Ratio</b> plots, where
           the log<sub>2</sub> odd ratio is computed by comparing frequencies of each week against the previous one
           (first plot) or against the first week of the period (second plot). <br/> The log<sub>2</sub> scale is used to
-          facilitate the comparison of the magnitude of the change between increasing and decreasing aa-changes.
+          facilitate the comparison of the magnitude of the change between increasing and decreasing amino-acid changes.
 
         </p>
         <p>
