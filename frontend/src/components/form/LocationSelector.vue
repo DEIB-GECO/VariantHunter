@@ -239,7 +239,7 @@ export default {
      * Mapping for getLocationColor
      */
     locationColor(itemId) {
-      return getLocationColor(itemId)
+      return getLocationColor(this.possibleLocationsInfo[itemId].type)
     }
   },
 

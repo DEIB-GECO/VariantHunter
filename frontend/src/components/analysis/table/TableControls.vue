@@ -45,7 +45,7 @@
           <li class='li-table'>
             <div class='li-name'>P-value with mut</div>
             <div class='li-content underlined-links'>Shows if the population «with mutation» is growing
-              differently compared to everything. Its value is computed using a <i>Chi-square
+              differently compared to the entire population of genome sequences. Its value is computed using a <i>Chi-square
                 test</i> of independence of variables in a contingency table.
               The reported values have been <a
                   href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html"
@@ -55,7 +55,7 @@
           <li class='li-table'>
             <div class='li-name'>P-value without mut</div>
             <div class='li-content underlined-links'>Shows if the population «without mutation» is growing
-              differently compared to everything. Its value is computed using a <i>Chi-square
+              differently compared to the entire population of genome sequences. Its value is computed using a <i>Chi-square
                 test</i> of independence of variables in a contingency table.
               The reported values have been <a
                   href="https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html"
