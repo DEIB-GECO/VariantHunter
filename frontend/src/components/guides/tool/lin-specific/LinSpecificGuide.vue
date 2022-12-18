@@ -12,9 +12,10 @@
     <template v-slot:default>
       <paragraph :src='formImg' left larger-img>
         <p>
-          In this analysis the user is required to specify one or more  lineages of interest,
+          In this analysis the user is required to specify one or more lineages of interest,
           in addition to the other search parameters.<br/>
-          Multiple lineages can be specified simply by entering their name in the lineage-selection form.
+          Lineages can be specified simply by entering their name in the lineage-selection form.
+          To include a specific lineage with its decendants in the Pango hierarchy, users can employ the star-notation (e.g., BA.2.*).
         </p>
         <p>
           <i>In this example we choose the lineage BA.2.</i>
@@ -70,16 +71,12 @@
           (hovering on the dots, the details on the diffusion's growth are shown).
         </p>
       </paragraph>
-
-       <paragraph :src='cmdImg' left>
-        <p><del>By using the <span class='command'>Next/Prev Week</span> buttons below the plot, a user
-          can <b>navigate in time</b> replicating the same analysis using a four-week period shifted of
-          one week ahead or behind.</del>
-          TESTO MANCANTE/ DA RIFORMULARE PER LE NUOVE OPZIONI <!-- TODO -->
-        </p>
-      </paragraph>
-
+      
       <paragraph :src='odd2Img' right>
+         <p>By using the <span class='command'>Next/Prev Week</span> buttons below the plot, a user
+          can <b>navigate in time</b> replicating the same analysis using a four-week period shifted of
+          one week ahead or behind.
+        </p>
         <p>
           <i>
             In the figure, we show the selected mutations when the <span class='command'>Next Week</span>
@@ -87,9 +84,25 @@
           </i>
         </p>
       </paragraph>
+
+       <paragraph :src='cmdImg' left>
+        <p>
+        In both analysis modes, users can replicate the current analysis shifting the selected period of 1 / 2 weeks backward 
+        or 1 / 2 weeks forward. This function is provided in the top right corner of the screen, by clicking on the clock symbol.   
+        </p>
+        <p>
+        In the same menu, users can select the airplane symbol to switch from the current location to a more general granularity 
+        (from Region to Country, from Country to Continent).
+        </p>
+        <p>
+        Finally, the third symbol can be used to switch the current analysis mode (Lineage Specific) to the more general Lineage Independent one.
+        </p>
+      </paragraph>
+
+
       <p>
         This specific mode of analysis can support the discovery of new sub-lineages. We provide  relevant
-        use cases captured at different times of the use of Variant Hunter: three new sub-lineages were
+        use cases captured at different times of the use of VariantHunter: three new sub-lineages were
         identified during April 2022, whereas two new sub-lineages were identified in December 2022.
       </p>
     </template>
