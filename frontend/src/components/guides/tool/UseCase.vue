@@ -30,7 +30,7 @@
         </template>
         <span>
             This use case is based on the analysis of the data contained
-            in the metadata.tsv file published by {{ sourceName }} on {{ sourceDate }}.<br/>
+            in the metadata.tsv file published by {{ sourceName }}, including sequences collected up to {{ sourceDate }}.<br/>
             Find out how to download it from the Docker Guide below.
           </span>
       </v-tooltip>
