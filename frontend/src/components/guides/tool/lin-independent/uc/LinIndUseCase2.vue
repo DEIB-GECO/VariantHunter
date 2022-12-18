@@ -20,15 +20,11 @@
       A clear <i>decrease</i> in the prevalence of 6 amino acid changes <b>characteristic of the Delta VOC</b>
       <span class='monospaced'>(G142D, D950N, L452R, R158G, P681R, T19R)</span>
       and a concomitant and striking <i>increase</i> of amino acid changes characteristic of the
-      <b>Omicron VOC</b><sup>*</sup> of SARS-CoV-2 is observed both in <i>Europe</i> and <i>North America</i>.<br/>
-      Interestingly, the prevalence of T478K, an amino acid change shared by both VOCs, is only marginally affected.
+      <b>Omicron VOC</b><sup>*</sup> of SARS-CoV-2 is observed both in <i>Europe</i> and <i>North America</i>.
     </p>
 
     <p>
       Identical patterns are recovered both from the <b>Diffusion Heatmap</b> and <b>Diffusion Trend</b> chart.
-      <br/>
-      <i>The better uniformity of plots describing mutation trends in Europe vs
-        North America may indicate higher accuracy in sequencing processes.</i>
     </p>
     <p><sub><v-icon x-small>mdi-asterisk</v-icon><i>: a selection of 11 defining amino acid changes is shown for space constraints</i></sub></p>
 
