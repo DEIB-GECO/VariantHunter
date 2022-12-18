@@ -38,7 +38,7 @@
         in the Spike glycoprotein <b>characteristic of the Alpha variant</b>
         <span class='monospaced'>(P681H, D1118H, S982A, A570D, T716I, N501Y) </span>
         and 7 amino acid changes <b>characteristic of the Delta variant</b>
-        <span class='monospaced'>(T19R, S478K, R158G, D950N, P681R, L452R, G142D)</span>.
+        <span class='monospaced'>(T19R, T478K, R158G, D950N, P681R, L452R, G142D)</span>.
       </p>
       <p>
         A clear <i>increase</i> in Delta variant-associated changes and a concomitant
