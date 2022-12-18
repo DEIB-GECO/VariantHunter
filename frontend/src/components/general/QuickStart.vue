@@ -19,13 +19,13 @@
             <v-slide-group class="px-0" show-arrows>
               <v-slide-item v-for="(example,idx) in examples" :key="idx">
                 <!-- Example card element -->
-                <v-card class="mr-3 mt-0 pa-5 pb-2 rounded-xl text-left" flat max-width="50vw" width="340px"
-                        color="primary">
+                <v-card class="mr-3 mt-0 pa-5 pb-2 rounded-xl text-left example-border" flat max-width="50vw" width="340px"
+                        color="transparent">
                   <!-- Example title and intro -->
-                  <div class="example-title text_var2--text" @click="show(idx)">
+                  <div class="example-title text_var1--text" @click="show(idx)">
                     {{ example.title }}
                   </div>
-                  <div class="example-intro text_var2--text pt-1 pb-3">
+                  <div class="example-intro text_var1--text pt-1 pb-3">
                     {{ example.intro }}
                   </div>
 
@@ -41,11 +41,13 @@
                   </div>
 
                   <!-- Example actions -->
+                  <!--
                   <v-btn class="mr-2 mb-2" rounded x-small elevation="0" @click="show(idx)">
                     <v-icon left x-small>mdi-plus</v-icon>
                     Details
                   </v-btn>
-                  <v-btn class="mb-2" rounded x-small elevation="0" @click="open(idx)" :id="'featured-'+idx">
+                  -->
+                  <v-btn class="mb-2" rounded x-small elevation="0" @click="open(idx)" :id="'featured-'+example.id">
                     <v-icon left x-small>mdi-lead-pencil</v-icon>
                     Open
                   </v-btn>
@@ -53,10 +55,9 @@
               </v-slide-item>
             </v-slide-group>
 
-            <!-- EXAMPLE DIALOG  -->
+            <!-- EXAMPLE DIALOG
             <v-dialog v-model="showDialog" max-width="900" transition="dialog-bottom-transition">
               <v-card class="rounded-xl">
-                <!-- Dialog toolbar -->
                 <v-toolbar class="dialog-title pl-2" color="transparent" flat>
                   <v-spacer></v-spacer>
                   <v-btn icon @click="showDialog=false">
@@ -67,8 +68,6 @@
                 <v-card-text class='text-s-center dialog-text'>
                   <v-container>
                     <v-row justify="center" no-gutters>
-
-                      <!-- Description -->
                       <v-col class="text-left" cols="9">
                         <div class="text-right">
                           <v-chip class="mt-0 mb-2 hidden-xs text-uppercase" color="f_tertiary" light x-small>
@@ -101,6 +100,7 @@
                 </v-card-text>
               </v-card>
             </v-dialog>
+            -->
           </v-sheet>
         </v-col>
 
@@ -184,6 +184,10 @@ export default {
 </script>
 
 <style scoped>
+.example-border{
+  border: solid 2px var(--v-primary-base) !important;
+}
+
 .example-title {
   font-weight: 700;
   font-size: 16px;

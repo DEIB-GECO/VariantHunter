@@ -11,67 +11,63 @@
  */
 export const examples = [
     {
-        title: "Omicron BA.2.12.1 lineage",
-        intro: "Appearance and spread of Omicron BA.2.12.1 lineage in the USA in March 2022.",
-        body:
-            "<p>From Pango designationissue 499 " +
-            "(https://github.com/cov-lineages/pango-designation/issues/499) , which led to " +
-            "the definition of the BA.2.12.1 sublineage of SARS-CoV-2.</p>" +
-            "<p>The novel lineage is defined by a L452Q amino acid change in the spike glycoprotein " +
-            "according to the submitter.</p>" +
-            "<p>A clear increase in the prevalence of L452Q within lineage BA.2.12.1 is observed " +
-            "both from the Diffusion Odds Ratio plot and the Diffusion Heatmap. </p>" +
-            "<p>As outlined from the Diffusion Odds Ratio plot the amino acid change that defines " +
-            "the new lineage seems to be associated with a clear growth advantage.</p>",
-        type: 'ls',
-        granularity: 'country',
-        url: '.../linkTo?type=ls&locationName=North%20America%2FUSA&date=2022-03-30&lineages=BA.2.12&lineages=BA.2.12.1',
+        id: 1,
+        title: "Hydra BN.1.9",
+        intro: "Emergence of sub-lineage BN.1.9 in October-November 2022",
+        granularity: "continent",
+        type: "ls",
+        url: "cerilab.deib.polimi.it/variant_hunter/linkTo?type=ls&locationName=North%20America&date=2022-11-14&lineages=BN.1",
     },
     {
-        title: "Omicron variant in Europe",
-        intro: "Spread of the Omicron variant and displacement of the Delta in Europe in December 2022.",
-        body:
-            "<p>A \"lineage-independent\" analysis was applied to study the prevalence of amino acid " +
-            "changes in the Spike glycoprotein in an interval of time spanning from 05/12/2021 to " +
-            "01/01/2022 in Europe.</p><p>This interval coincides the rapid emergence and spread of " +
-            "the Omicron variant of SARS-CoV-2 worldwide.</p>" +
-            "<p>A clear decrease in the prevalence of 6 amino acid changes characteristic of the " +
-            "Delta variant(L452R, P681R, D950N, R158G, S478K, T19R) and a concomitant and striking " +
-            "increase of 23 amino acid changes associated with the Omicron variant of SARS-CoV-2 " +
-            "is observed</p>" +
-            "<p>Equivalent patterns are recovered both from the Diffusion Heatmap and Diffusion Trend Chart.</p>",
-        granularity: 'continent',
-        type: 'li',
-        url: '.../linkTo?type=li&locationName=Europe&date=2022-01-01',
+        id: 2,
+        title: "Omicron BA.5.2.39",
+        intro: "Emergence of sub-lineage BA.5.2.39 in North America in October-November 2022",
+        granularity: "continent",
+        type: "ls",
+        url: "cerilab.deib.polimi.it/variant_hunter/linkTo?type=ls&locationName=North%20America&date=2022-10-31&lineages=BA.5.2",
     },
     {
-        title: "Omicron BA.1.15.2 lineage",
-        intro: "Appearance and spread of Omicron BA.1.15.2 lineage in the USA in March 2022.",
-        body:
-            "<p>From Pango designationissue 508 " +
-            "(https://github.com/cov-lineages/pango-designation/issues/508) , which led to " +
-            "the definition of the BA.1.15.2 sublineage of SARS-CoV-2.</p>" +
-            "<p>The novel lineage is defined by a Q628K amino acid change in the spike glycoprotein " +
-            "according to the submitter. </p>" +
-            "<p>A clear increase in the prevalence of Q628K within lineage BA.1.15.2 is observed " +
-            "both from the Diffusion Odds Ratio plot and the Diffusion Heatmap.</p>",
-        granularity: 'country',
-        type: 'ls',
-        url: '.../linkTo?type=ls&locationName=North%20America%2FUSA&date=2022-03-30&lineages=BA.1.15&lineages=BA.1.15.2',
+        id: 3,
+        title: "Omicron BA.4 & BA.5",
+        intro: "Spread of the Omicron 4 and 5  variants and displacement of Omicron 1 and 2 variants in North America in May-June 2022",
+        granularity: "continent",
+        type: "li",
+        url: "cerilab.deib.polimi.it/variant_hunter/linkTo?type=li&locationName=North%20America&date=2022-06-11",
     },
     {
-        title: "Alpha variant in the United Kingdom",
-        intro: "Appearance and spread of the Alpha variant in the UK in November 2020.",
-        body:
-            "<p>This interval of time corresponds with the emergence and spread of the Alpha " +
-            "variant in the UK. </p><p>As illustrated by the Mutation table and the Diffusion Heatmap, " +
-            "6 amino acid changes in the Spike glycoprotein are singled out due to remarkable " +
-            "increase in frequency (from 1% to 11%).</p>" +
-            "<p>Similar patterns of increase in frequency of the 6 selected amino acid changes can " +
-            "be observed also from the Diffusion Trend Chart and Diffusion Odds Ratio plots.</p>",
-        granularity: 'country',
-        type: 'li',
-        url: '.../linkTo?type=li&locationName=Europe%2FUnited%20Kingdom&date=2020-11-16',
+        id: 4,
+        title: "Omicron BA.1 North America",
+        intro: "Spread of the Omicron variant and displacement of the Delta in North America in December 2021",
+        granularity: "continent",
+        type: "li",
+        url: "cerilab.deib.polimi.it/variant_hunter/linkTo?type=li&locationName=North%20America&date=2022-01-01",
     },
+    {
+        id: 5,
+        title: "Omicron BA.1 Europe",
+        intro: "Spread of the Omicron variant and displacement of the Delta in Europe in December 2021",
+        granularity: "continent",
+        type: "li",
+        url: "cerilab.deib.polimi.it/variant_hunter/linkTo?type=li&locationName=Europe&date=2022-01-01",
+    },
+    {
+        id: 6,
+        title: "Delta B.1.617.2",
+        intro: "Early spread of the Delta variant in the UK in April-May 2021",
+        granularity: "country",
+        type: "li",
+        url: "cerilab.deib.polimi.it/variant_hunter/linkTo?type=li&locationName=Europe%2FUnited%20Kingdom&date=2021-05-07",
+    },
+    {
+        id: 7,
+        title: "Alpha B.1.1.7",
+        intro: "Emergence and spread of the Alpha variant in the UK in October-November 2020",
+        granularity: "continent",
+        type: "li",
+        url: "cerilab.deib.polimi.it/variant_hunter/linkTo?type=li&locationName=Europe%2FUnited%20Kingdom&date=2020-11-22",
+    }
 
 ]
+
+/** Identifier of the example to be used for the app tour */
+export const runExample= 3

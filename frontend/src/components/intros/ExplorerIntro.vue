@@ -35,6 +35,7 @@
 import FeatureIntro from "@/components/general/basic/FeatureIntro";
 import {mapMutations, mapState} from "vuex";
 import BtnWithTooltip from "@/components/general/basic/BtnWithTooltip.vue";
+import {runExample} from "@/store/examples";
 
 export default {
   name: "ExplorerIntro",
@@ -110,7 +111,7 @@ export default {
     /** Run a featured example and skip the tour intro of the app-tour for the result panel */
     selectFeatured() {
       this.setTourStep('filters')
-      const example = document.getElementById('featured-0') // better if lineage-independent
+      const example = document.getElementById('featured-'+runExample) // better if lineage-independent
       if (example) example.click()
     }
   },
