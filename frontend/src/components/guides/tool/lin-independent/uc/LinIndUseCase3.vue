@@ -23,11 +23,11 @@
       </p>
       <p>
         The mutation table illustrates the relative prevalence/association of
-        <span class='monospaced'>S:N501Y</span> and <span class='monospaced'>S:L452R</span>,
+        <span class='monospaced'>S_N501Y</span> and <span class='monospaced'>S_L452R</span>,
         two amino acid changes <i>characteristic of the Alpha and Delta VOC respectively</i>
         in different sub-lineages of SARS-CoV-2.<br/>
-        While <span class='monospaced'>S:N501Y</span> is mostly associated with <i>Alpha-related lineages</i>,
-        <span class='monospaced'>S:L452R</span> is observed almost exclusively in <i>lineages/sub-lineages of
+        While <span class='monospaced'>S_N501Y</span> is mostly associated with <i>Alpha-related lineages</i>,
+        <span class='monospaced'>S_L452R</span> is observed almost exclusively in <i>lineages/sub-lineages of
         Delta</i>.
       </p>
     </paragraph>

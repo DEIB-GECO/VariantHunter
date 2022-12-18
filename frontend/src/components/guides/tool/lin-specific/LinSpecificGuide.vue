@@ -29,7 +29,7 @@
         <p>
           As shown in the figure, in this mode <b>amino acid changes</b> that are <b>characteristic of the selected
           lineage</b> (common to at least 50% of the sequences of the database assigned to
-          that lineage) are <span class='highlight'>highlighted in yellow</span>.
+          that lineage) are <span class='char-mut'>highlighted in yellow</span>.
         </p>
       </paragraph>
 
@@ -53,7 +53,7 @@
       <paragraph :src='heatmapImg' left larger-img>
         <p>
           By selecting in the table only the amino-acid changes that are
-          <span class='highlight'>highlighted in yellow</span>
+          <span class='char-mut'>highlighted in yellow</span>
           <i>(i.e., characterizing for BA.2)</i> we observe the following <b>Heatmap</b>,
           where most mutations are fixed for four weeks, while 8 of them (at the top
           of the heatmap) have increased their prevalence from  about 75% to almost 100%.

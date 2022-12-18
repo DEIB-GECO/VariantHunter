@@ -40,7 +40,7 @@
     <p class='mt-5'>
       The <b>Mutation Table</b> shows a clear increase in the prevalence of Spike R346T in
       sequences assigned to BA.5.2 <i>(3% to 10%)</i> in the selected interval of time.
-      Interestingly a more moderate relative increase of ORF1b T1050N, from 82% to 87% is also observed.
+      Interestingly a more moderate relative increase of ORF1b_T1050N, from 82% to 87% is also observed.
     </p>
     <pic :src='table'/>
 

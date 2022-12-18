@@ -20,8 +20,9 @@
 
           <!-- Headings -->
           <div class="text-h4 font-weight-black primary--text pb-2">Define new analysis</div>
-          <div class="text-body-3 compact-text-2">VariantHunter analyzes the frequencies of amino acid mutations of
-            SARS-CoV-2 in order to observe interesting variant trends or identify novel emerging variants.
+          <div class="text-body-3 compact-text-2">VariantHunter analyzes the prevalence of non-synonymous genomic
+            variants in the genome of SARS-CoV-2 to observe interesting variant trends or identify novel emerging
+            variants.
             <router-link :to="{name:'About'}" class="primary--text text-body-6 text-uppercase">More info...
             </router-link>
           </div>

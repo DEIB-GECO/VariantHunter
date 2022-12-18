@@ -53,7 +53,7 @@
     </p>
 
     <p>
-      Both <span class='monospaced'>S:V320I</span> and <span class='monospaced'>S:Q628K</span>
+      Both <span class='monospaced'>S_V320I</span> and <span class='monospaced'>S_Q628K</span>
       show a similar relative growth advantage according to the <b>Odds Ratio</b><sup>
       <v-icon small color="text_var1">mdi-numeric-2</v-icon>
     </sup> plot

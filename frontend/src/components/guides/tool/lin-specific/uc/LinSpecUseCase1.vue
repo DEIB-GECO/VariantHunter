@@ -33,7 +33,7 @@
 
     <p class='mt-5'>
       The analysis was restricted to the E gene. Notwithstanding the limited number of available
-      sequences, an increase in the prevalence of E V58F, the amino acid change that defines the
+      sequences, an increase in the prevalence of E_V58F, the amino acid change that defines the
       novel lineage, can be observed from the <b>Mutation Table</b>.
     </p>
     <pic :src='table'/>

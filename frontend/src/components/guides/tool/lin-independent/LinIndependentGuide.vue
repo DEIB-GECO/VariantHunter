@@ -63,7 +63,7 @@
         These can be selected:
         <ul>
           <li>from a <b>text list</b> pasted by the user;</li>
-          <li>from the list of <b>amino acid changes characterizing a lineage</b> (prevalence in lineage &gE;50%?);
+          <li>from the list of <b>amino acid changes characterizing a lineage</b> (prevalence in lineage &gE;50%);
           </li>
           <li>from the drop-down menu with the checkboxes.</li>
         </ul>
