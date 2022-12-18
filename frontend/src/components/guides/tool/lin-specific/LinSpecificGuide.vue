@@ -96,6 +96,7 @@
 
     <!-- Use cases -->
     <template v-slot:use-cases>
+      <lin-spec-use-case1/>
       <lin-spec-use-case2/>
       <lin-spec-use-case3/>
       <lin-spec-use-case4/>
@@ -113,10 +114,13 @@ import LinSpecUseCase3 from "@/components/guides/tool/lin-specific/uc/LinSpecUse
 import LinSpecUseCase4 from "@/components/guides/tool/lin-specific/uc/LinSpecUseCase4.vue";
 import LinSpecUseCase5 from "@/components/guides/tool/lin-specific/uc/LinSpecUseCase5.vue";
 import LinSpecUseCase2 from "@/components/guides/tool/lin-specific/uc/LinSpecUseCase2.vue";
+import LinSpecUseCase1 from "@/components/guides/tool/lin-specific/uc/LinSpecUseCase1.vue";
 
 export default {
   name: 'LinSpecificGuide',
-  components: {LinSpecUseCase2, LinSpecUseCase5, LinSpecUseCase4, LinSpecUseCase3, Paragraph, FunctionGuide},
+  components: {
+    LinSpecUseCase1,
+    LinSpecUseCase2, LinSpecUseCase5, LinSpecUseCase4, LinSpecUseCase3, Paragraph, FunctionGuide},
 
   data() {
     return {

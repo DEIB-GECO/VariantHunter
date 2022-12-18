@@ -7,7 +7,7 @@
 
 <template>
   <use-case source-name='Nextstrain' source-date='08/12/2022'
-            name='<b>Use case 3</b>: Omicron BA.5.2.39 lineage'>
+            name='<b>Use case 2</b>: Omicron BA.5.2.39 lineage'>
     <p>
       <b>BA.5.2.39</b>, a sub-lineage of BA.5.2 that carries an additional R346T
       amino acid change in the Spike glycoprotein compared with its ancestor,
