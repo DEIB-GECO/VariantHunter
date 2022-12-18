@@ -16,7 +16,7 @@
       </a>
       , which led to the definition of the <b>BA.2.12.1 sublineage</b> of SARS-CoV-2.<br/>
       The novel lineage is defined by the <span class='monospaced'>L452Q</span> amino acid change
-      in the <i>spike glycoprotein</i> according to the submitter.
+      in the <i>Spike glycoprotein</i> according to the submitter.
     </p>
 
     <div class='with-borders white'>
