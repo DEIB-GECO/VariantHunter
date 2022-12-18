@@ -14,8 +14,7 @@
       was designated by <b>Pango</b>
       <span class='monospaced'>issue 1279</span>
       <a href='https://github.com/cov-lineages/pango-designation/issues/1279' target='_blank'>
-        (https://github.com/cov-lineages/pango-designation/issues/1279)
-      </a>.<br/>
+        (https://github.com/cov-lineages/pango-designation/issues/1279)</a>.<br/>
       A screenshot of the issue and the original designation of the lineage is reported below.
     </p>
     <p>
