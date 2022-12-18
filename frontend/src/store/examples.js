@@ -21,7 +21,7 @@ export const examples = [
     {
         id: 2,
         title: "Omicron BA.5.2.39",
-        intro: "Emergence of sub-lineage BA.5.2.39 in North America in October-November 2022",
+        intro: "Emergence of sub-lineage BA.5.2.39 in North America in September-October 2022",
         granularity: "continent",
         type: "ls",
         url: "cerilab.deib.polimi.it/variant_hunter/linkTo?type=ls&locationName=North%20America&date=2022-10-31&lineages=BA.5.2",
