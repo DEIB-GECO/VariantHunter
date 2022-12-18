@@ -67,14 +67,17 @@
           </li>
           <li>from the drop-down menu with the checkboxes.</li>
         </ul>
-        <p>
-          Mutations can be selected by ticking the related checkboxes. Selected mutations can be analyzed using the 
-          <a href="https://cov-spectrum.org/" target="_blank"><i>covSPECTRUM application</i></a>, documented in their Bioinformatics
-          publication <a href="https://doi.org/10.1093/bioinformatics/btab856" target="_blank">(Chen et al., 2022)</a>.
-          A corresponding query is performed on covSPECTRUM using the same country/continent-level location, time period, and list of mutations 
-          (either in conjunction = logical AND - or in disjunction = logical OR).
-        </p>
       </paragraph>
+
+      <p>
+        Mutations can be selected by ticking the related checkboxes. Selected mutations can be analyzed using the
+        <a href="https://cov-spectrum.org/" target="_blank"><i>covSPECTRUM application</i></a>, documented in their
+        Bioinformatics
+        publication <a href="https://doi.org/10.1093/bioinformatics/btab856" target="_blank">(Chen et al., 2022)</a>.
+        A corresponding query is performed on covSPECTRUM using the same country/continent-level location, time period,
+        and list of mutations
+        (either in conjunction = logical AND - or in disjunction = logical OR).
+      </p>
 
       <!-- EXPANSION PANEL -->
       <paragraph :src='expansionImg' right larger-img>
@@ -86,23 +89,32 @@
           <i>In the figure, the amino-acid change is predominantly exhibited by sequences assigned to the BA.2.12.1
             lineage.</i>
         </p>
-        <p>Using the CHANGE NOTATION button, it is possible to enable grouping of lineages by level in the Pango hierarchy. 
-        The first option allows to summarize the counts using a level-1 star notation 
-        (e.g., B.1.* includes both B.1 and all its descendants).
-        Similarly, the second option summarizes the counts using a level-2 star notation
-        (e.g., B.1.1.* includes both B.1.1 and all its descendants).
-        In both cases, lineages exceeding 10% (in at least one of the four observed weeks) are not aggregated.
+        <p>Using the
+          <v-icon small color='text_var1'>mdi-text</v-icon>&nbsp;<span class='command'>CHANGE NOTATION</span>
+          button, it is possible to enable grouping of lineages by level in the Pango hierarchy.
+          The first option allows to summarize the counts using a level-1 star notation
+          (e.g., B.1.* includes both B.1 and all its descendants).
+          Similarly, the second option summarizes the counts using a level-2 star notation
+          (e.g., B.1.1.* includes both B.1.1 and all its descendants).
+          In both cases, lineages exceeding 10% (in at least one of the four observed weeks) are not aggregated.
         </p>
       </paragraph>
 
       <!-- MUTATION HISTORY -->
       <paragraph :src='historyImg' left>
-        <p>
-        Each mutation present in the table can be further explored, by clicking on the INFO symbol on the left of the checkbox.
+        Each mutation present in the table can be further explored, by clicking
+        on the <v-icon small color='text_var1'>mdi-information-variant</v-icon> symbol on the left of the checkbox.
         This opens a dialog that informs on two aspects:
-        1) which lineages are characterized by the selected mutation (the mutation appears in at least 50% of sequences of those lineages contained in the database);
-        2) how the sequences harboring the selected mutation distribute over the available lineages.
-        <i>In the figure, S_S704L is considered characterizing for 12 lineages (including B.1.434); 92.3% of sequences with this mutation are of the BA.2.12.1 lineage.<i>
+        <ol>
+          <li>which lineages are characterized by the selected mutation (the mutation appears in at least 50% of
+            sequences of those lineages contained in the database);
+          </li>
+          <li>how the sequences harboring the selected mutation distribute over the available lineages.</li>
+        </ol>
+        <br/>
+        <p>
+          <i>In the figure, S_S704L is considered characterizing for 12 lineages (including B.1.434); 92.3% of sequences
+            with this mutation are of the BA.2.12.1 lineage.</i>
         </p>
       </paragraph>
 
@@ -113,13 +125,14 @@
 
       <!-- DIFFUSION HEATMAP -->
       <p>The <b>Diffusion Heatmap</b> allows to observe the increasing and decreasing trends in a fast way.
-      The tabs at the top of the section can be used to change the scaling of color gradients in the heatmap.
+        The tabs at the top of the section can be used to change the scaling of color gradients in the heatmap.
       </p>
       Specifically:
       <ul>
         <li><b>Diffusion</b>: colors are scaled between 1 and 100 based on the prevalence of amino acid changes (dark
           blue = low
-          prevalence, red = high prevalence). This visualization facilitates the identification of highly prevalent amino
+          prevalence, red = high prevalence). This visualization facilitates the identification of highly prevalent
+          amino
           acid changes.
         </li>
         <li><b>Growth</b>: colors are scaled based on the ratio between the minimum and maximum prevalence of every
@@ -127,15 +140,17 @@
           increase or decrease in prevalence (dark blue to red = increase; red to dark blue = decrease).
         </li>
       </ul>
-       <p>
+      <br/>
+      <p>
         <i>
-          In the example below, it is evident that a group of 10 changes at the top is decreasing (representing BA.1) while,
+          In the example below, it is evident that a group of 10 changes at the top is decreasing (representing BA.1)
+          while,
           conversely, the 8 at the bottom are increasing together (representing BA.2).
           Other amino acid changes have less clear trends.
         </i>
       </p>
       <collage :src1="heatmapImg1" :src2="heatmapImg2" class="my-2"/>
-     
+
 
       <!-- DIFFUSION TREND -->
       <paragraph :src='diffusionImg' right larger-img>
@@ -163,6 +178,18 @@
         </p>
         <p>
           <i>In the example, the two lines at the top represent the S_L452Q and S_S704L amino acid changes.</i>
+        </p>
+      </paragraph>
+
+      <paragraph :src='cmdImg' left>
+        <p>
+          Users can replicate the current analysis shifting the selected period of 1 / 2 weeks backward
+          or 1 / 2 weeks forward. This function is provided in the top right corner of the screen, by clicking on the
+          <v-icon small color='text_var1'>mdi-clock-edit-outline</v-icon> symbol.
+        </p>
+        <p>
+          In the same menu, users can select the <v-icon small color='text_var1'>mdi-airplane-edit</v-icon> symbol
+          to switch from the current location to a more general granularity (from Region to Country, from Country to Continent).
         </p>
       </paragraph>
 
@@ -198,6 +225,7 @@ export default {
       /** Images */
       formImg: require('@/assets/guide/lin_ind/form.png'),
       explorerImg: require('@/assets/guide/lin_ind/explorer.png'),
+      cmdImg: require('@/assets/guide/lin_ind/cmd.png'),
       TableImg: require('@/assets/guide/lin_ind/table.png'),
       historyImg: require('@/assets/guide/lin_ind/history.png'),
       tableFiltersImg: require('@/assets/guide/lin_ind/table_filters.png'),

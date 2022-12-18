@@ -31,7 +31,7 @@
         and regularly imported within <i>VariantHunter</i>.
 
         If users wish to use their own data or restricted access data <i>(GISAID)</i>, they may employ our
-        Docker implementation, as explained below in the <a href='#docker' class='link-alt'>dedicated section</a>.
+        Docker implementation, as explained below in the <a href='http://cerilab.deib.polimi.it/variant_hunter/about#docker' target='_blank' class='link-alt'>dedicated section</a>.
       </p>
       <p>
         <i>VariantHunter</i> supports two modes of analysis: <b>Lineage Independent</b> and <b>Lineage

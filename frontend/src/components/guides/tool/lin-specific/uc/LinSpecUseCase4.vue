@@ -68,11 +68,11 @@
       <pic :src='heatmap'/>
       <div class="text-body-5 compact-text-4 mx-2 f_primary--text font-italic">
         <v-icon small color="f_primary">mdi-numeric-1</v-icon>
-        : Screenshots from Variant Hunter 1.0. The app layout may differ from the version in use.</div>
+        : Screenshot from Variant Hunter 1.0. The app layout may differ from the version in use.</div>
       <pic :src='odd'/>
       <div class="text-body-5 compact-text-4 mx-2 f_primary--text font-italic">
         <v-icon small color="f_primary">mdi-numeric-2</v-icon>
-        : Screenshots from Variant Hunter 1.0. The log<sub>2</sub> scale was not yet being applied. The app layout may differ from
+        : Screenshot from Variant Hunter 1.0. The log<sub>2</sub> scale had not been applied yet. The app layout may differ from
         the version in use.</div>
     </div>
 

@@ -39,15 +39,18 @@ export default {
           icon: 'mdi-percent-outline',
           title: 'Diffusion',
           subtitle: 'Regular heatmap',
-          description: 'Regular heatmap with colors selected according to the mutation diffusion value.',
-          hint: 'Best suited to quickly identify the most prevalent mutations.'
+          description: 'Regular heatmap with colors scaled between 1 and 100 based on the prevalence of amino acid ' +
+              'changes (dark blue = low prevalence, red = high prevalence). ',
+          hint: 'Best suited to quickly identify the most prevalent amino acid changes.'
         },
         1: {
           icon: 'mdi-speedometer',
           title: 'Growth speed',
           subtitle: 'Highlights trend',
-          description: 'Heatmap with colors selected according to the individual mutation trend.',
-          hint: 'Best suited to quickly identify the fastest growing mutations.'
+          description: 'Heatmap with colors scaled based on the ratio between the minimum and maximum ' +
+              'prevalence of every amino acid change. ',
+          hint: 'Best suited to quickly identify amino acid changes that had an increase or ' +
+              'decrease in prevalence (dark blue to red = increase; red to dark blue = decrease).'
         },
       },
 

@@ -6,8 +6,8 @@
 -->
 
 <template>
-  <v-container class='ml-0 ml-sm-auto mr-0 mr-sm-auto mt-5'>
-    <h3 id='docker'>
+  <v-container class='ml-0 ml-sm-auto mr-0 mr-sm-auto pt-5'>
+    <h3>
       <v-icon left large color="text_var1">mdi-docker</v-icon>
       How to run the Docker
     </h3>

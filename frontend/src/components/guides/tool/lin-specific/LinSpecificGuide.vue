@@ -15,17 +15,35 @@
           In this analysis the user is required to specify one or more lineages of interest,
           in addition to the other search parameters.<br/>
           Lineages can be specified simply by entering their name in the lineage-selection form.
-          To include a specific lineage with its decendants in the Pango hierarchy, users can employ the star-notation (e.g., BA.2.*).
+          To include a specific lineage with its descendants in the Pango hierarchy, users can employ the star-notation
+          (e.g., BA.2.*).
         </p>
         <p>
           <i>In this example we choose the lineage BA.2.</i>
         </p>
       </paragraph>
 
+      <paragraph :src='cmdImg' left>
+        <p>
+          Users can replicate the current analysis shifting the selected period of 1 / 2 weeks
+          backward or 1 / 2 weeks forward. This function is provided in the top right corner of the screen, by clicking on the
+          <v-icon small color='text_var1'>mdi-clock-edit-outline</v-icon> symbol.
+        </p>
+        <p>
+          In the same menu, users can select the <v-icon small color='text_var1'>mdi-airplane-edit</v-icon> symbol
+          to switch from the current location to a more general
+          granularity (from Region to Country, from Country to Continent).
+        </p>
+        <p>
+          Finally, the <v-icon small color='text_var1'>mdi-source-branch-minus</v-icon> symbol can be used to switch
+          from the current analysis mode (Lineage Specific) to the more general Lineage Independent one.
+        </p>
+      </paragraph>
+
       <paragraph :src='tableImg' right larger-img>
         <p>
           The same visual elements are shown as in the previous analysis mode.<br/>
-          Here, however, counts shown for each amino-acid change  are reported only for the selected lineage(s).
+          Here, however, counts shown for each amino-acid change are reported only for the selected lineage(s).
         </p>
         <p>
           As shown in the figure, in this mode <b>amino acid changes</b> that are <b>characteristic of the selected
@@ -57,7 +75,7 @@
           <span class='char-mut'>highlighted in yellow</span>
           <i>(i.e., characterizing for BA.2)</i> we observe the following <b>Heatmap</b>,
           where most mutations are fixed for four weeks, while 8 of them (at the top
-          of the heatmap) have increased their prevalence from  about 75% to almost 100%.
+          of the heatmap) have increased their prevalence from about 75% to almost 100%.
         </p>
       </paragraph>
 
@@ -67,13 +85,14 @@
 
       <paragraph :src='oddImg' right>
         <p>
-          By looking at the <b>Log<sub>2</sub> Odd Ratio</b> plots we can appreciate an interesting trend of these 8 mutations
+          By looking at the <b>Log<sub>2</sub> Odd Ratio</b> plots we can appreciate an interesting trend of these 8
+          mutations
           (hovering on the dots, the details on the diffusion's growth are shown).
         </p>
       </paragraph>
-      
+
       <paragraph :src='odd2Img' right>
-         <p>By using the <span class='command'>Next/Prev Week</span> buttons below the plot, a user
+        <p>By using the <span class='command'>Next/Prev Week</span> buttons below the plot, a user
           can <b>navigate in time</b> replicating the same analysis using a four-week period shifted of
           one week ahead or behind.
         </p>
@@ -85,23 +104,8 @@
         </p>
       </paragraph>
 
-       <paragraph :src='cmdImg' left>
-        <p>
-        In both analysis modes, users can replicate the current analysis shifting the selected period of 1 / 2 weeks backward 
-        or 1 / 2 weeks forward. This function is provided in the top right corner of the screen, by clicking on the clock symbol.   
-        </p>
-        <p>
-        In the same menu, users can select the airplane symbol to switch from the current location to a more general granularity 
-        (from Region to Country, from Country to Continent).
-        </p>
-        <p>
-        Finally, the third symbol can be used to switch the current analysis mode (Lineage Specific) to the more general Lineage Independent one.
-        </p>
-      </paragraph>
-
-
       <p>
-        This specific mode of analysis can support the discovery of new sub-lineages. We provide  relevant
+        This specific mode of analysis can support the discovery of new sub-lineages. We provide relevant
         use cases captured at different times of the use of VariantHunter: three new sub-lineages were
         identified during April 2022, whereas two new sub-lineages were identified in December 2022.
       </p>
@@ -133,7 +137,8 @@ export default {
   name: 'LinSpecificGuide',
   components: {
     LinSpecUseCase1,
-    LinSpecUseCase2, LinSpecUseCase5, LinSpecUseCase4, LinSpecUseCase3, Paragraph, FunctionGuide},
+    LinSpecUseCase2, LinSpecUseCase5, LinSpecUseCase4, LinSpecUseCase3, Paragraph, FunctionGuide
+  },
 
   data() {
     return {

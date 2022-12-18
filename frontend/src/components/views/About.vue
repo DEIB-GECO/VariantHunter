@@ -53,7 +53,7 @@
     </v-row>
 
     <!-- Docker info -->
-    <v-row class='underlined-links'>
+    <v-row class='underlined-links' id='docker'>
       <DockerGuide/>
     </v-row>
 
