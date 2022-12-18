@@ -95,7 +95,7 @@
         (from Region to Country, from Country to Continent).
         </p>
         <p>
-        Finally, the third symbol can be used to switch the current analysis mode (Lineage Specific) to the more general Lineage Independent one.
+        Finally, the third symbol can be used to switch from the current analysis mode (Lineage Specific) to the more general Lineage Independent one.
         </p>
       </paragraph>
 
