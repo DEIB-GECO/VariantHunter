@@ -12,7 +12,7 @@
 <template>
   <code @click='doCopy()'>
     <!-- Code with tooltip -->
-    <v-tooltip v-if='hover' bottom color='black' max-width='400'>
+    <v-tooltip v-if='hover' bottom color='black' max-width='400' :open-delay="200">
       <template v-slot:activator="{ on, attrs }">
         <span v-bind="attrs"
               v-on="on">

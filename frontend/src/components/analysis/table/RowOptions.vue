@@ -14,7 +14,7 @@
 <template>
   <div>
     <!-- Expand option -->
-    <v-tooltip bottom nudge-bottom="-3" allow-overflow z-index="10" max-width="400px" v-if="expandable" close-delay="0">
+    <v-tooltip bottom nudge-bottom="-3" allow-overflow z-index="10" max-width="400px" v-if="expandable" close-delay="0" :open-delay="600">
       <template v-slot:activator="{ on }">
         <v-btn icon small @click="expand(!isExpanded)" v-on="on" v-bind:id="idx+'-expand'">
           <v-icon>{{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
@@ -24,7 +24,7 @@
     </v-tooltip>
 
     <!-- Mutation history option -->
-    <v-tooltip bottom nudge-bottom="-3" allow-overflow z-index="10" max-width="400px" close-delay="0">
+    <v-tooltip bottom nudge-bottom="-3" allow-overflow z-index="10" max-width="400px" close-delay="0" :open-delay="600">
       <template v-slot:activator="{ on }">
         <v-btn icon small @click="showMutationHistory=true" v-on="on">
           <v-icon>mdi-information-variant</v-icon>
@@ -56,7 +56,7 @@
               <div class="pt-4 pb-7">
                 <div class="text-h6 text-uppercase font-weight-bold">Characterized <span class="font-weight-black">Lineages</span>
                   <icon-with-tooltip icon="mdi-help-circle-outline" bottom tip="The characterizing mutations are identified as those that are
-                        present in at least 50% of the lineage sequences." size="medium"/>
+                        present in at least 50% of the lineage sequences." size="medium" :delay="0"/>
                 </div>
                 <div class="px-4">
                   <!-- Actual list of lineages names -->

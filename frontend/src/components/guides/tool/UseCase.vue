@@ -22,7 +22,7 @@
 
     <template v-slot:title>
       <span v-html='name'></span>
-      <v-tooltip bottom max-width='600' color="f_primary" open-delay='0' content-class='small-hint'>
+      <v-tooltip bottom max-width='600' color="f_primary" content-class='small-hint' :open-delay="200">
         <template v-slot:activator="{ on, attrs }">
           <div class='source' v-bind="attrs" v-on="on">
             Data from {{ sourceName }} dated {{ sourceDate }}

@@ -9,7 +9,7 @@
 -->
 
 <template>
-  <v-tooltip bottom max-width='400'>
+  <v-tooltip bottom max-width='400' :open-delay="600">
 
     <!-- Activator either a button or an icon -->
     <template v-slot:activator='{ on, attrs }'>

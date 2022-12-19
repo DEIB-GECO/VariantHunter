@@ -16,7 +16,7 @@
     <!-- Activator: icon to open the option menu -->
     <template v-slot:activator="{ attrs, on }">
       <div v-bind="attrs" v-on="on">
-        <icon-with-tooltip hover-color="success" icon="mdi-airplane-edit"
+        <icon-with-tooltip hover-color="success" icon="mdi-airplane-edit" :delay="0"
                            :tip="showOptions?'':'Change granularity level'" bottom
                            :click-handler="()=>showOptions=!showOptions" color="primary"/>
       </div>

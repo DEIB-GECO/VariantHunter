@@ -7,6 +7,7 @@
   ├── contentClass:   Class of the button
   ├── color:          Color of the button text
   ├── hoverColor:     Color of the button text on hover
+  ├── delay:          Tip open delay
   ├── text:           Button text
   ├── icon:           Button icon
   ├── appendIcon:     Append icon flag
@@ -29,7 +30,7 @@
 
 <template>
   <v-tooltip :disabled="tip===''" :bottom="bottom" content-class="rounded-xl tooltip" :left="left" :right="right"
-             :top="top" allow-overflow z-index="999" max-width="400px">
+             :top="top" allow-overflow z-index="999" max-width="400px" :open-delay="delay">
 
     <!-- Activator button -->
     <template v-slot:activator="{ on, attrs }">
@@ -72,6 +73,9 @@ export default {
 
     /** Color of the button text on hover */
     hoverColor: {},
+
+    /** Tip open delay */
+    delay:{default:600},
 
     /** Button text */
     text: {},

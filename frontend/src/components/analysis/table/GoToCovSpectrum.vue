@@ -11,7 +11,7 @@
       <v-col class="text-center text-sm-left">
 
         <!-- Analysis generation action button -->
-        <btn-with-tooltip size="small" :tip="showMenuOptions?'':undefined" outlined top color="primary"
+        <btn-with-tooltip size="small" :tip="showMenuOptions?'':undefined" outlined top color="primary" :delay="0"
                           :click-handler="()=>btnClickManager()">
 
           <!-- Custom appearance with covSPECTRUM logo -->

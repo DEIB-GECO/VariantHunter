@@ -21,7 +21,7 @@
             class="ml-8 text-body-5 compact-text-4 font-weight-regular d-block d-sm-inline rounded-xl bg_var2 py-1 pl-3">
               <span class=" text-body-5 compact-text-4 font-weight-bold">Scope</span>:&nbsp;
           <!-- Current scope option -->
-              <v-tooltip bottom allow-overflow z-index="10" max-width="400px" :close-delay="0">
+              <v-tooltip bottom allow-overflow z-index="10" max-width="400px" :close-delay="0" :open-delay="600">
                 <template v-slot:activator="{on,attrs}">
                   <span class="mr-1 text_var1--text" v-on="on" v-bind="attrs">
                     <span v-if="useLocalOpt">{{ options.local.value }}</span>

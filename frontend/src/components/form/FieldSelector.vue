@@ -56,7 +56,7 @@
                   :text-color="getTextColor(item)">{{ item }}
           </v-chip>
           <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999"
-                     max-width="80vw">
+                     max-width="80vw" :open-delay="200">
             <template v-slot:activator="{ on, attrs }">
               <v-chip v-on="on" v-bind="attrs" class="mr-1 my-1" small outlined>
                 +{{ value.length - 5 }} others
@@ -97,7 +97,7 @@
                   :text-color="getTextColor(item)">{{ item }}
           </v-chip>
           <v-tooltip v-else-if="index===5" bottom content-class="rounded-xl" allow-overflow z-index="999"
-                     max-width="80vw">
+                     max-width="80vw" :open-delay="200">
             <template v-slot:activator="{ on, attrs }">
               <v-chip v-on="on" v-bind="attrs" class="mr-1 my-1" small outlined>
                 +{{ value.length - 5 }} others

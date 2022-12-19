@@ -73,7 +73,7 @@
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>Tag group
-              <icon-with-tooltip icon="mdi-help-circle-outline" bottom size="medium"
+              <icon-with-tooltip icon="mdi-help-circle-outline" bottom size="medium" :delay="0"
                                  tip="Tags allow related analyses to be grouped together and can be useful for preserving filtering/ordering options"/>
             </v-list-item-title>
             <tag-editor/>

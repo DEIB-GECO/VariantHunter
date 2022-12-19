@@ -12,7 +12,7 @@
     <!-- Activator: icon to open the option menu -->
     <template v-slot:activator="{ attrs, on }">
       <div v-bind="attrs" v-on="on">
-        <icon-with-tooltip hover-color="success" icon="mdi-clock-edit-outline"
+        <icon-with-tooltip hover-color="success" icon="mdi-clock-edit-outline" :delay="0"
                            :tip="showOptions?'':'Shift the analysis period backward or forward'" bottom
                            :click-handler="()=>showOptions=!showOptions" color="primary"/>
       </div>

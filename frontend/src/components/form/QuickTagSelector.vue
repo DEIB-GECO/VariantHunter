@@ -29,8 +29,8 @@
 
         <!-- Options to avoid tag and hint -->
         <icon-with-tooltip icon="mdi-tag-off-outline" bottom size="medium" color="primary" hover-color="error"
-                           tip="Click to assign no tag" :click-handler="()=>newTag=null"/>
-        <icon-with-tooltip icon="mdi-help-circle-outline" bottom size="medium" color="primary" hover-color="warning"
+                           tip="Click to assign no tag" :click-handler="()=>newTag=null" :delay="0"/>
+        <icon-with-tooltip icon="mdi-help-circle-outline" bottom size="medium" color="primary" hover-color="warning" :delay="0"
                            tip="Tags allow related analyses to be grouped together and can be useful for preserving filtering/ordering options"/>
       </v-col>
     </v-row>

@@ -35,7 +35,7 @@
         <!---- TABLE SELECT ALL OPT  -------------------------------------->
         <template v-slot:header.data-table-select>
           <v-tooltip :disabled="showSelectOptions" bottom nudge-bottom="-3" allow-overflow z-index="10"
-                     max-width="400px" close-delay="0">
+                     max-width="400px" close-delay="0" :open-delay="200">
             <!-- Control with hint -->
             <template v-slot:activator="{ on }">
               <div class="select-all-opt" v-on="on">
@@ -78,7 +78,7 @@
 
         <!---- TABLE ROW SELECT CONTROL ----------------------------------->
         <template v-slot:item.data-table-select="{item}">
-          <v-tooltip bottom content-class="rounded-xl tooltip" allow-overflow z-index="10" max-width="400px">
+          <v-tooltip bottom content-class="rounded-xl tooltip" allow-overflow z-index="10" max-width="400px" :open-delay="600">
             <template v-slot:activator='{ on, attrs }'>
               <v-simple-checkbox :value="selectedRows.includes(item.item_key)" v-bind="attrs" v-on="on"
                                  @click="manageRowSelect(item.item_key)"/>

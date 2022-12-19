@@ -13,7 +13,7 @@
         <v-icon left large color="primary">mdi-database-outline</v-icon>
       </v-list-item-icon>
 
-      <v-tooltip top right allow-overflow z-index="999" :close-delay="0" max-width="400px">
+      <v-tooltip top right allow-overflow z-index="999" :close-delay="0" max-width="400px" :open-delay="600">
         <!-- Activator: section name-->
         <template v-slot:activator="{ on, attrs }">
           <v-list-item-content v-on="on" v-bind="attrs">

@@ -42,7 +42,7 @@ export default {
           heading: 'Sidebar',
           title: 'Browse through your past analyses',
           body: 'All the analyses you perform remain stored, even when you close the browser.',
-          bodyAppend: 'You can find them all in the sidebar.',
+          bodyAppend: 'You can find them all in the sidebar on the left.',
         },
         {
           id: 'done',

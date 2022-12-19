@@ -45,17 +45,17 @@
             <btn-with-tooltip v-if="!lastStep" :text="beginning?'Skip':'End tour'" icon="mdi-debug-step-over"
                               :click-handler="terminate" hover-color="error"
                               size="small" content-class="ml-1 mt-1 mt-md-0" :bottom="!floating" :top="floating"
-                              tip="I already know how the tool works"/>
+                              tip=""/>
             <v-spacer v-if="!this.beginning"/>
             <btn-with-tooltip v-if="!this.beginning && !this.$vuetify.breakpoint.xsOnly" text="Prev"
                               icon="mdi-chevron-left" :click-handler="showPrev" hover-color="secondary"
                               size="small" content-class="ml-1 mt-1 mt-md-0" :bottom="!floating"
-                              :top="floating" tip="Previous step"/>
+                              :top="floating" tip=""/>
             <btn-with-tooltip :icon="this.lastStep?'mdi-check':'mdi-chevron-right'"
                               :text="(this.beginning?'Start':(this.lastStep?this.nextLabel:'Next'))"
                               :click-handler="showNext" hover-color="secondary"
                               size="small" content-class="ml-1 mt-1 mt-md-0" append-icon :bottom="!floating"
-                              :top="floating" :tip="this.end?'End tour':'Next step'"/>
+                              :top="floating" tip=""/>
           </div>
 
         </v-alert>

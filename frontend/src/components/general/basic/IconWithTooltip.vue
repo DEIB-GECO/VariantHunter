@@ -7,6 +7,7 @@
   ├── zIndex:         zIndex of the tip
   ├── contentClass:   Class of the button
   ├── color:          Color of the icon
+  ├── delay:          Tip open delay
   ├── hoverColor:     Color of the icon on hover
   ├── assignId:       HTML id to be assigned
   ├── icon:           Icon
@@ -26,7 +27,7 @@
 
 <template>
   <v-tooltip :disabled="tip===''" :bottom="bottom" :left="left" :right="right" :top="top" allow-overflow z-index="999"
-             :close-delay="0" max-width="400px">
+             :close-delay="0" max-width="400px" :open-delay="delay">
 
     <!-- Activator icon -->
     <template v-slot:activator="{ on, attrs }">
@@ -59,6 +60,9 @@ export default {
 
     /** zIndex of the tip */
     zIndex: {default: 10},
+
+    /** Tip open delay */
+    delay:{default:600},
 
     /** Icon */
     icon: {},

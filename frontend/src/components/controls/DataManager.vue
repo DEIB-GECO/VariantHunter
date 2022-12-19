@@ -20,8 +20,8 @@
 
           <!-- Restart app-tour option -->
           <div class="width-100 text-center">
-            <v-btn outlined color="error" class="mb-2" @click="resetTour">
-              <v-icon left>mdi-lightbulb-variant-outline</v-icon>
+            <v-btn outlined :color="restarted?'success':'error'" class="mb-2" @click="resetTour">
+              <v-icon left :color="restarted?'success':'error'">{{restarted?'mdi-check-outline':'mdi-lightbulb-variant-outline'}}</v-icon>
               Restart app tour
             </v-btn>
           </div>
@@ -105,6 +105,9 @@ export default {
         }
       },
 
+      /** Flag set to true to show confirmation message for the app tour restart */
+      restarted: false,
+
       /** Current popup config */
       popUp: undefined,
     }
@@ -140,6 +143,8 @@ export default {
     resetTour() {
       this.setTourStep('tour')
       this.setCurrentAnalysis(null)
+      this.restarted=true
+      setTimeout(()=>this.restarted=false, 3000)
     }
 
   }

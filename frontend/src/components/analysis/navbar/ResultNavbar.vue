@@ -33,7 +33,7 @@
 
     <!-- Analysis type switcher option -->
     <icon-with-tooltip v-if="query.lineage" hover-color="warning" icon="mdi-source-branch-minus"
-                       tip="Switch to lineage independent analysis" bottom
+                       tip="Switch to lineage independent analysis" bottom :delay="0"
                        :click-handler="()=>$emit('shiftType')" color="primary"/>
 
     <!-- Mark as favourite option -->

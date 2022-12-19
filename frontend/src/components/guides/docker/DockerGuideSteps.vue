@@ -99,7 +99,7 @@
       <b>Download</b> the <span class='monospaced'>docker-compose.yml</span> file from <a
       href='https://github.com/DEIB-GECO/VariantHunter/blob/master/docker-compose.yml' target='_blank'> this</a> link
       <br />
-      <v-tooltip bottom color='text_var1' max-width='400'>
+      <v-tooltip bottom color='text_var1' max-width='400' :open-delay="200">
         <template v-slot:activator='{ on, attrs }'>
         <span v-bind='attrs'
               v-on='on'>
@@ -120,7 +120,7 @@
       <b>Download</b> the <span class='monospaced'>launcher.sh</span> file from <a
       href='https://github.com/DEIB-GECO/VariantHunter/blob/master/launcher.sh' target='_blank'> this</a>
       link and move it into the same folder of the <span class='monospaced'>docker-compose.yml</span> file<br />
-      <v-tooltip bottom color='text_var1' max-width='400'>
+      <v-tooltip bottom color='text_var1' max-width='400' :open-delay="200">
         <template v-slot:activator='{ on, attrs }'>
         <span v-bind='attrs'
               v-on='on'>
