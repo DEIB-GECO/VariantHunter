@@ -44,7 +44,7 @@
 
     <div class="f_tertiary with-borders">
       <pic :src='heatmap'/>
-      <pic :src='odd'/>
+      <pic :src='diffusion'/>
     </div>
 
     <p class='mt-5'>
