@@ -38,14 +38,14 @@
 
     <p class='mt-5'>
       The <b>Mutation Table</b> shows a clear increase in the prevalence of Spike R346T in
-      sequences assigned to BA.5.2 <i>(7% to 16%)</i> in the selected interval of time.
-      Interestingly a more moderate relative increase of ORF1b_T1050N, from 77% to 82% is also observed.
+      sequences assigned to BA.5.2 <i>(6.8% to 16%)</i> in the selected interval of time.
+      Interestingly a more moderate relative increase of ORF1b_T1050N, from 77.6% to 82.3% is also observed.
     </p>
     <pic :src='table'/>
 
     <p class='mt-5'>
       This pattern is clearly illustrated by the “Growth speed” Diffusion heatmap, and by the matched
-      Log2 odd-ratio diffusion plot, where a more than 3 fold increase in the prevalence of Spike: R346T is recovered.
+      Log2 odd-ratio diffusion plot, where a more than 2-fold increase in the prevalence of S_R346T is recovered.
     </p>
 
     <div class="f_tertiary with-borders">

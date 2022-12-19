@@ -21,6 +21,7 @@
       <span class='monospaced'>(G142D, D950N, L452R, R158G, P681R, T19R)</span>
       and a concomitant and striking <i>increase</i> of amino acid changes characteristic of the
       <b>Omicron VOC</b><sup>*</sup> of SARS-CoV-2 is observed both in <i>Europe</i> and <i>North America</i>.
+      Interestingly, the prevalence of T478K, an amino acid change shared by both VOCs, is only marginally affected.
     </p>
 
     <p>
