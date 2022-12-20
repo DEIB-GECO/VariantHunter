@@ -28,7 +28,7 @@
     </v-row>
 
     <!-- Buttons -->
-    <v-row class='justify-center mb-10'>
+    <v-row class='justify-center mb-5'>
       <v-col cols="12" sm="4" lg="3" class="text-center">
         <router-link :to="{ name: 'Home'}">
           <v-btn class='' color='text_var1' depressed outlined rounded>
@@ -45,6 +45,11 @@
           </v-btn>
         </a>
       </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col class="text-center text-body-4 mb-5 text_var1--text"><v-icon color='text_var1' small left>mdi-information-outline</v-icon>
+        This website is free and open to all users and there is no login requirement.</v-col>
     </v-row>
 
     <!-- Tool info -->
