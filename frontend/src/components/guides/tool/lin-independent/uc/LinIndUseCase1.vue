@@ -21,7 +21,7 @@
 
     <paragraph :src='table' right larger-img>
       <p>
-        Compared with BA.1.* and BA.*.2, BA.4.* and BA.5.* lack Q493R, but carry 2 additional amino-acid changes in Spike:
+        Compared with BA.1.* and BA.2.*, BA.4.* and BA.5.* lack Q493R, but carry 2 additional amino-acid changes in Spike:
         L452R and F486V.<br/>
         This pattern is clearly reinforced when expanding the relevant mutation rows in the table reported in the figure,
         where the different distributions of F486V and Q493R across sub-variants of Omicrons can be clearly appreciated.
