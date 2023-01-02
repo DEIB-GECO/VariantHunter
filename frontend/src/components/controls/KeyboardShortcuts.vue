@@ -94,7 +94,7 @@ export default {
       } else {
         // Select prev otherwise (if first, then select the last one)
         const index = this.filteredAnalyses.indexOf(this.currentAnalysisId);
-        if (index >= 1 && index < this.currentAnalysisId.length)
+        if (index >= 1)
           this.setCurrentAnalysis(this.filteredAnalyses[index - 1])
         else
           this.setCurrentAnalysis(this.filteredAnalyses.at(-1))
@@ -116,7 +116,7 @@ export default {
       } else {
         // Select next otherwise (if last, then select the first one)
         const index = this.filteredAnalyses.indexOf(this.currentAnalysisId);
-        if (index >= 0 && index < this.currentAnalysisId.length - 1)
+        if (index < this.filteredAnalyses.length - 1)
           this.setCurrentAnalysis(this.filteredAnalyses[index + 1])
         else
           this.setCurrentAnalysis(this.filteredAnalyses.at(0))
