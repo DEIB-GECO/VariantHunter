@@ -22,6 +22,9 @@
 
     <loading-sticker :error="error"/>
 
+    <!-- Screen size alert -->
+    <screen-size-alert/>
+
   </div>
 </template>
 
@@ -31,10 +34,11 @@ import NewSearchView from "@/components/views/NewSearchView";
 import ResultView from "@/components/views/ResultView";
 import {mapMutations, mapState} from "vuex";
 import LoadingSticker from "@/components/general/basic/LoadingSticker";
+import ScreenSizeAlert from "@/components/general/ScreenSizeAlert.vue";
 
 export default {
   name: "HomeView",
-  components: {LoadingSticker, ResultView, NewSearchView, Sidebar},
+  components: {ScreenSizeAlert, LoadingSticker, ResultView, NewSearchView, Sidebar},
 
   data() {
     return {
